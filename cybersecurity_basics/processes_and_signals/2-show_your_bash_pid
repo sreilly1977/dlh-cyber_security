@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-ps ux --forest | grep bash
+# A Bash script to find your Bash PID
 # shellcheck disable=SC2009
+ps ux --forest | grep bash
