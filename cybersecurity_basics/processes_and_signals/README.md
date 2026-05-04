@@ -5,3 +5,5 @@
 4-to_infinity_and_beyond - A Bash script that displays To infinity and beyond indefinitely
 5-dont_stop_me_now - A Bash script that stops 4-to_infinity_and_beyond process
 6-stop_me_if_you_can - A Bash script that stops 4-to_infinity_and_beyond process without using kill or killall
+7-highlander - A Bash script that displays To infinity and beyond indefinitely until it receievd a SIGTERM, then displays "I am invincible!!!"
+67-stop_me_if_you_can - A Bash script that sends a SIGTERM to 7-highlander
