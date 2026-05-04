@@ -5,13 +5,13 @@ pgrep -f "$0" > /tmp/myscript.pid
 
 hate() {
     	echo "I hate the kill command"
-	sudo rm /tmp/myscript.pid
+	rm -f /tmp/myscript.pid
     	exit 0
 }
 
 why() {
 	echo "Y U no love me?!"
-	sudo rm /tmp/myscript.pid
+	rm -f /tmp/myscript.pid
 	exit 0
 }
 
