@@ -1,2 +1,2 @@
 #!/bin/bash
-ps ux -u "$1" --no-headers | grep -v ' 0[[:space:]]*0 '
+ps aux --no-headers | grep root | grep -v ' 0[[:space:]]*0 '
