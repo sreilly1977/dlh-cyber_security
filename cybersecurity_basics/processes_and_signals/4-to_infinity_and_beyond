@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # A Bash script that displays To infinity and beyond indefinitely
-prockilled() {
-	echo "process killed"
+procterm() {
+	echo "Terminated"
 	exit 0
 }
 
-trap prockilled SIGTERM
+trap procterm SIGTERM
 
 while true; do
     echo "To infinity and beyond"
