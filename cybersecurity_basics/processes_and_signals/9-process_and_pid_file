@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # A Bash script that creates the file /tmp/myscript.pid containing its PID, displays To infinity and beyond indefinitely, displays I hate the kill command when receiving a SIGTERM signal, displays Y U no love me?! when receiving a SIGINT signal, and deletes the file /tmp/myscript.pid and terminates itself when receiving a SIGQUIT or SIGTERM signal
 # shellcheck disable=SC2046
-pgrep -f "$0" > /tmp/myscript.pid
+sudo pgrep -f "$0" > /tmp/myscript.pid
 
 hate() {
     	echo "I hate the kill command"
