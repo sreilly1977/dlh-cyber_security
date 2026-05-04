@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 # A Bash script that displays To infinity and beyond indefinitely
-prockill(){
-	echo "process killed"
-	exit 0
-}
-
-trap prockill SIGKILL
-
 while true; do
     echo "To infinity and beyond"
     sleep 2
