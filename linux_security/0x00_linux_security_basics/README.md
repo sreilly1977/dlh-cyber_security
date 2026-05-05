@@ -5,3 +5,4 @@
 4-network_services.sh - A bash script that list services, their current state, and their corresponding ports
 5-audit_system.sh - A bash script that initiate a system audit for scanning the machine
 6-capture_analyze.sh - A bash script that capture and analyze network traffic going through the system
+7-scan.sh - A bash script that scan a subnetwork to discover live host using scan
