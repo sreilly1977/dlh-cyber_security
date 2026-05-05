@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo netstat -eatnp
+sudo netstat -antp
