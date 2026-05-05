@@ -2,3 +2,4 @@
 1-active-connections.sh - A bash script that display a list of network socket connections
 2-incoming_connections.sh - A bash script that allow only incoming connections with the TCP protocol through port 80
 3-firewall_rules.sh - A bash script that list all the rules in the security table of the firewall
+4-network_services.sh - A bash script that list services, their current state, and their corresponding ports
