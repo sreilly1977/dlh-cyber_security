@@ -1,2 +1,2 @@
 # dlh-cyber_security
-DLH CS Academy Repo
+DLH Cybersecurity Academy Repo
