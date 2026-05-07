@@ -10,4 +10,4 @@
 8-beheaded_process - A Bash script that kills the process 7-highlander
 9-process_and_pid_file - A Bash script that creates the file /tmp/myscript.pid containing its PID, displays To infinity and beyond indefinitely, displays I hate the kill command when receiving a SIGTERM signal, displays Y U no love me?! when receiving a SIGINT signal, and deletes the file /tmp/myscript.pid and terminates itself when receiving a SIGQUIT or SIGTERM signal
 10-manage_my_process - A Bash (init) script that manages manage_my_process
-manage_my_process - A Bash script that prints I am alive! indefinitely to /tmp/my_process
+manage_my_process - A Bash script that prints "I am alive!" indefinitely to /tmp/my_process

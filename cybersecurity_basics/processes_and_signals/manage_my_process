@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# A Bash script that displays I am alive! indefinitely to /tmp/my_process
+# A Bash script that prints "I am alive!" indefinitely to /tmp/my_process
 while true; do
     echo "I am alive!" >> /tmp/my_process
     sleep 2
