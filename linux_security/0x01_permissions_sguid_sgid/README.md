@@ -6,3 +6,4 @@
 5-find_sgid.sh - A bash script that lists all files with SGID set in a given directory
 6-check_files.sh - A bash script that Finds all files modified in the last 24 hours with SUID or SGID set and lists detailed information about those files
 7-file_read.sh - A bash script that changes the permissions of all files in a directory to read-only for others, without modifying owner or group permissions
+8-change_user.sh - A bash script that changes the owner of files in a directory to user3, but only if the current owner is user2
