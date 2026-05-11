@@ -1,4 +1,4 @@
 #!/bin/bash
 addgroup $1
-chgrp $2
+chown :$2 $1
 chmod g+rx $2\n
