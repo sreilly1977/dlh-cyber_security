@@ -1,2 +1,3 @@
 #!/bin/bash
-passwd $1 $2
+useradd $1
+passwd $1 $2\n
