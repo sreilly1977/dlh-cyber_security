@@ -5,3 +5,4 @@
 4-list_user.sh - A Bash script that lists all SELinux user mappings
 5-add_selinux.sh - A Bash script that adds a new login mapping in SELinux, linking the Linux login name with the SELinux user identity user_u
 6-list_booleans.sh - A Bash script to list all SELinux booleans defined on the system
+7-set_sendmail.sh - A Bash script that sets the SELinux boolean httpd_can_sendmail to on permanently
