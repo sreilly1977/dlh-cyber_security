@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/sbin/apparmor_status
+/usr/sbin/aa_status
