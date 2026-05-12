@@ -4,3 +4,4 @@
 3-add_port.sh - A Bash script that adds a new SELinux port, http_port_t, for TCP port 81, allowing SELinux to manage security policies related to HTTP traffic on that port
 4-list_user.sh - A Bash script that lists all SELinux user mappings
 5-add_selinux.sh - A Bash script that adds a new login mapping in SELinux, linking the Linux login name with the SELinux user identity user_u
+6-list_booleans.sh - A Bash script to list all SELinux booleans defined on the system
