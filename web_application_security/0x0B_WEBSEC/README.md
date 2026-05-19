@@ -1,1 +1,2 @@
-0-flag.txt - Results of ffuf on site
+0-flag.txt - Result of ffuf on site
+1-flag.txt - Result of ffuf password crack
