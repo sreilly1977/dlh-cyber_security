@@ -7,3 +7,4 @@
 6-nfs.sh - A script to scan for NFS shares that are accessible by anyone on the network
 7-snmp.sh - A script to find SNMP configurations that allow public access
 8-smtp.sh - A script to check the SMTP server configuration for lack of STARTTLS or other security features. If STARTTLS not configured return STARTTLS not configured
+9-tls_version.txt - Use command-line tools to test which TLS versions are supported by real websites and understand why older versions are deprecated
