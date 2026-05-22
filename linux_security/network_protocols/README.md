@@ -4,3 +4,4 @@
 3-identify.sh - A script to check for unpatched common vulnerabilities using lynis audit tool
 4-audit.sh - A script to check for and report any non-standard SSH configuration settings in /etc/ssh/sshd_config
 5-sshd_config - A secure sshd_config file that follows best practices
+6-nfs.sh - A script to scan for NFS shares that are accessible by anyone on the network
