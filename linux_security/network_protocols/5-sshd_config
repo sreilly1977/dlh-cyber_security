@@ -1,3 +1,4 @@
+Port 22
 Protocol 2
 PermitRootLogin no
 PasswordAuthentication no
@@ -7,4 +8,3 @@ X11Forwarding no
 MaxAuthTries 3
 ClientAliveInterval 300
 ClientAliveCountMax 0
-LogLevel VERBOSE
