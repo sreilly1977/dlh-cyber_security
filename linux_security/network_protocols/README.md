@@ -9,3 +9,4 @@
 8-smtp.sh - A script to check the SMTP server configuration for lack of STARTTLS or other security features. If STARTTLS not configured return STARTTLS not configured
 9-tls_version.txt - Use command-line tools to test which TLS versions are supported by real websites and understand why older versions are deprecated
 10-cipher.sh - A script to test an SSL/TLS server's ciphers and report any weak ciphers using nmap
+11-http_https.txt - Compare HTTP and HTTPS websites to understand the security differences and why HTTPS is essential for modern web applications
