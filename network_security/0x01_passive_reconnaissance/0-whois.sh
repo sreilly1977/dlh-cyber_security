@@ -1,2 +1,2 @@
 #!/bin/bash
-whois $1 | awk 'BEGIN{f=1}{i=index($0,": ");if(i>0){k=substr($0,1,i-1);v=substr($0,i+2);if(k~/Street$/&&v!="")v=v" ";if(k~/Ext$/)k=k":";if(!f)printf"\n";printf"%s,%s",k,v;f=0}}END{printf""}' > $1.csv
+whois $1 | awk '/Registrant|Admin|Tech/{gsub(/^[[:space:]]+|[[:space:]]+$/,"",$0); split($0,a,":"); field=a[1]; sub(/^[[:space:]]+/,"",field); val=""; for(i=2;i<=length(a);i++){val=val (i>2?":":"") a[i]}; if(field ~ /Street/) val=val " "; print field "," val}' > $1.csv
