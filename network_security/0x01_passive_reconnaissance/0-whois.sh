@@ -1,2 +1,2 @@
 #!/bin/bash
-whois "$1" | awk 'BEGIN{t=0}/(Registrant|Admin|Tech)/{t=1}/^(Domain Status|Registrar|Creation Date|Expiration Date|Updated Date|Name Server|DNS|Registry|you agree)/{t=0}t&&/[^[:space:]]/{gsub(/^[ \t]+|[ \t]+$/,"");i=index($0,":");if(i>0){f=substr($0,1,i-1);v=substr($0,i+1);gsub(/^[ \t]+|[ \t]+$/,"",v);if(index(v,",")>0||index(v,"\"")>0){gsub(/"/,"\"\"",v);v="\""v"\""}sep=(v!=""?", ":"");print f sep v}}' | head -c -1 > $1.csv
+awk -F': ' '/^(Registrant|Admin|Tech)/{print $1", " $2}' < <(whois "$1") > "$1.csv"
