@@ -1,4 +1,1 @@
-/contact
 /products
-/login
-/admin
