@@ -7,18 +7,21 @@ from typing import Set
 
 def crawl_website(start_url: str, max_depth: int = 2) -> Set[str]:
     """
-    Recursively crawl a website starting from start_url up to max_depth levels.
+    Recursively crawl a website starting from a given URL.
     
     Args:
-        start_url: The initial URL to start crawling from
+        start_url: The starting URL to crawl from
         max_depth: Maximum depth to crawl (default: 2)
-        
+    
     Returns:
-        A set of all successfully visited URLs within the same domain
+        A set of URLs that were successfully visited from the same domain
+    
+    Raises:
+        None - exceptions are handled internally
     """
     visited = set()
     
-    # Validate and normalize the starting URL
+    # Validate and normalize the start URL
     try:
         parsed_start = urlparse(start_url)
         if not parsed_start.scheme or not parsed_start.netloc:
@@ -28,55 +31,69 @@ def crawl_website(start_url: str, max_depth: int = 2) -> Set[str]:
         return visited
     
     def _crawl(url: str, current_depth: int) -> None:
-        # Base case: if we've reached max depth or already visited this URL
-        if current_depth > max_depth or url in visited:
+        """Recursive helper function to crawl pages."""
+        
+        # Check if already visited or at max depth
+        if url in visited or current_depth > max_depth:
             return
         
+        # Validate URL format
         try:
-            # Fetch the page
+            parsed = urlparse(url)
+            if not parsed.scheme or not parsed.netloc:
+                return
+        except Exception:
+            return
+        
+        # Only crawl same domain
+        if parsed.netloc != base_domain:
+            return
+        
+        # Mark as visited
+        visited.add(url)
+        
+        # Try to fetch the page
+        try:
             response = requests.get(
-                url, 
+                url,
                 timeout=10,
-                headers={'User-Agent': 'Mozilla/5.0 (compatible; WebCrawler/1.0)'}
+                headers={'User-Agent': 'Mozilla/5.0 (compatible; LumoCrawler/1.0)'}
             )
             response.raise_for_status()
-            
-            # Add to visited set
-            visited.add(url)
-            
-            # Parse HTML and extract links
-            soup = BeautifulSoup(response.text, 'html.parser')
-            links = soup.find_all('a', href=True)
-            
-            # Process each link
-            for link in links:
-                href = link['href']
-                absolute_url = urljoin(url, href)
-                
-                # Parse the absolute URL
-                try:
-                    parsed_link = urlparse(absolute_url)
-                    
-                    # Only crawl same domain
-                    if parsed_link.netloc == base_domain:
-                        # Normalize URL
-                        normalized_url = f"{parsed_link.scheme}://{parsed_link.netloc}{parsed_link.path}"
-                        if parsed_link.query:
-                            normalized_url += f"?{parsed_link.query}"
-                        
-                        # Recurse with increased depth
-                        _crawl(normalized_url, current_depth + 1)
-                        
-                except Exception:
-                    # Skip invalid URLs
-                    continue
-                    
-        except (requests.exceptions.ConnectionError, 
+        except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout,
                 requests.exceptions.RequestException,
-                ValueError):
-            # Skip unreachable URLs
+                Exception):
+            # Remove from visited if fetch failed
+            visited.discard(url)
             return
+        
+        # Parse HTML and extract links
+        try:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Find all anchor tags with href attributes
+            for link_tag in soup.find_all('a', href=True):
+                href = link_tag['href']
+                
+                # Convert relative URLs to absolute URLs
+                absolute_url = urljoin(url, href)
+                
+                # Normalize URL (remove fragments, etc.)
+                parsed_link = urlparse(absolute_url)
+                normalized_url = f"{parsed_link.scheme}://{parsed_link.netloc}{parsed_link.path}"
+                if parsed_link.query:
+                    normalized_url += f"?{parsed_link.query}"
+                
+                # Recursively crawl if not visited and within depth limit
+                if normalized_url not in visited:
+                    _crawl(normalized_url, current_depth + 1)
+                    
+        except Exception:
+            # Failed to parse, continue anyway
+            pass
     
-    # Start the recursive crawling
-    _crawl(start_url, 0)
+    # Start the crawling process
+    _crawl(start_url, 1)
+    
+    return visited
