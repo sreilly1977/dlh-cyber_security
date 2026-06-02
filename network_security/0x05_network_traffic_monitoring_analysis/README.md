@@ -4,3 +4,5 @@
 
 4-flag.txt - CTF for FTP password
 5-flag.txt - CTF follow the TCP stream
+
+7-flag.txt - CTF RDP hack analysis
