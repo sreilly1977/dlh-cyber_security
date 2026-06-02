@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Using the correct function name and parameters this time
+
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
