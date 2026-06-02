@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from typing import Set
 
-def crawl_website(start_url: str, max_depth: int = 2) -> Set[str]:
+def crawl_website(start_url: str, max_depth = 2) -> Set[str]:
     """
     Recursively crawl a website starting from a given URL.
     
