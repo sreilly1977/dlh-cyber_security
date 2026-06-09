@@ -3,3 +3,4 @@
 2-flag.txt - Server response spoof flag
 3-flag.txt - Burp repeater flag
 4-flag.txt - Burp interceptor flag
+5-flag.txt - Burp sequencer cookie hijack
