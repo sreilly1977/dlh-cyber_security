@@ -4,3 +4,4 @@
 3-flag.txt - Burp repeater flag
 4-flag.txt - Burp interceptor flag
 5-flag.txt - Burp sequencer cookie hijack
+6-flag.txt - Burp decoder flag
