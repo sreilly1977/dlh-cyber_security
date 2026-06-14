@@ -48,5 +48,5 @@ However, they aren't magic bullets. SAST can generate a "noise storm" that desen
 ## Conclusion
 In the relentless arms race of cyber threats, Static and Dynamic Analysis tools are non-negotiable assets. SAST provides the blueprint-level scrutiny to eliminate design flaws, while DAST offers the battlefield reality check to expose runtime vulnerabilities. Used in tandem, they transform security from a bottleneck into a foundational pillar of software quality.
 
-## Coming Up
+## Coming Up...
 In the next post, we'll dive into **Injection Prevention**, exploring how parameterized queries and input sanitization act as shields against the most pervasive attacks plaguing the web today.
