@@ -1,6 +1,7 @@
 # Patching
 **By Stephen Reilly** | *Understanding Vulnerabilities Series*
 
+## Introduction
 Think of your software stack like a medieval castle. Those patches? They're not cosmetic renovations—they're sealing up the cracks attackers have already spotted.
 
 ## The Reality Check:
