@@ -25,7 +25,7 @@ Over the last decade, the evolution has been driven by DevOps and DevSecOps. The
 Understanding the specific strengths of each tool allows for targeted deployment.
 
 ### Static Analysis (SAST) shines when:
-*   **Early Detection is Critical**: You want to catch a SQL injection risk right as a developer types `SELECT * FROM users WHERE id = ' + userInput`. Fixing it then costs cents; fixing it post-deployment costs thousands.
+*   **Early Detection is Critical**: You want to catch a SQL injection risk right as a developer types `SELECT * FROM users WHERE id = ' + userInput`. Fixing it then costs pennies; fixing it post-deployment costs thousands.
 *   **Code Coverage is Key**: You need to scan code paths that are rarely executed (e.g., error handling logic) which might never trigger in a standard DAST run.
 *   **Proprietary Code Review**: When you own the source code and need granular control over what gets flagged, from hardcoded secrets to deprecated library usage.
 
