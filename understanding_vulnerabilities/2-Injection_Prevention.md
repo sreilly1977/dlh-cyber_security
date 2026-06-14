@@ -1,7 +1,7 @@
 # Injection Prevention
 **By Stephen Reilly** | *Understanding Vulnerabilities Series*
 
-## Introduction
+## Introduction to Injection Prevention
 Injection attacks represent one of the oldest—and still most dangerous—threats in cybersecurity. They're consistently ranked among OWASP Top 10 vulnerabilities because they work, they scale, and they expose critical data.
 
 ## The Injection Landscape
