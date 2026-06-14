@@ -52,5 +52,5 @@ Remember: every line of code accepting external input represents a decision poin
 
 ---
 
-### Coming up
+### Coming up...
 Injection attacks manipulate what your application executes, but there's another threat vector that hijacks who appears to be executing it: **Cross-Site Request Forgery**—the social engineering attack disguised as legitimate user activity.
