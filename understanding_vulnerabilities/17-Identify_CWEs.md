@@ -68,9 +68,9 @@ Never trust user input. The solution is to separate the SQL command from the dat
 ```python
 query = "SELECT * FROM users WHERE username='" + username + "';"
 cursor.execute(query)
+```
 
 #### Secure Code (Parameterized)
-
 The `?` placeholder tells SQLite to treat the argument strictly as data, automatically handling escaping and quoting. This ensures that user input can never be interpreted as executable SQL code.
 
 ```python
