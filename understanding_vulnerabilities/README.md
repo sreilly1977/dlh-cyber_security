@@ -1,7 +1,7 @@
 # Understanding Vulnerabilities Series
 **By Stephen Reilly**
 
-This is a series of blog posts in which I explore IT vulnerabilities and their mitigation, divided into five chapters:
+This is a series of blog posts in which I explore IT vulnerabilities and their mitigation, divided into eighteen chapters:
 
 | File | Summary |
 |------|---------|
