@@ -1,4 +1,4 @@
-# Task 3 - Financial Trading Platform Threat Model
+# Task 3 - Financial Trading Platform
 **By Stephen Reilly** | *Threat Moddeling Series*
 
 ## System Overview
