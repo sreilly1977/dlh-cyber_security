@@ -26,53 +26,138 @@ The system architecture includes:
 
 ---
 
-## 1. Three STRIDE Threats for the Checkout Process
+## 1. STRIDE Threat Analysis: Checkout Process
 
-### Threat 1: Tampering — Price Manipulation via Frontend Request
-- **STRIDE Category:** Tampering
-- **Description:** The React frontend sends cart items and prices to the Node.js API during checkout. An attacker intercepts the request (e.g., using browser dev tools or a proxy like Burp Suite) and modifies the price or total field before it reaches the server — say, changing a $999 item to $0.01 before submitting payment.
-- **Potential Impact:** The attacker receives goods at a fraction of the cost. Revenue loss scales with attack automation. If widely exploited, this could be catastrophic — and if the server trusts the client-side price, there's no integrity check to catch it.
-- **Suggested Mitigation:** We never trust client-side price data. The server should resolve prices from the database using only product IDs from the request. Additionally, we can implement server-side idempotency keys for payment processing and log all price discrepancies between expected and submitted amounts as potential fraud signals.
+The checkout process represents the critical convergence of authentication, financial data, and inventory logic. Below are three high-priority threats identified using the STRIDE methodology.
 
-### Threat 2: Information Disclosure — Payment Data Interception
-- **STRIDE Category:** Information Disclosure
-- **Description:** If the checkout page doesn't enforce TLS properly (e.g., mixed content, expired certificates, or accepting HTTP requests), an attacker on the network path (for example on public Wi-Fi) could intercept payment card details, session tokens, or personally identifiable information in transit.
-- **Potential Impact:** Exposed payment data leads directly to credit card fraud, PCI-DSS violations, and regulatory penalties. Session token leakage enables account takeover. A single intercepted checkout can compromise a user's financial identity.
-- **Suggested Mitigation:** We can enforce HTTPS site-wide with HSTS headers (including includeSubDomains and a long max-age). We can use Stripe's hosted payment fields or Stripe Elements, which keep card data in Stripe's iframes — never touching our server. We can validate TLS configurations with tools like SSL Labs, and implement CSP headers to prevent mixed-content loading.
+### Threat A: Price Tampering via Client-Side Manipulation
 
-### Threat 3: Spoofing — Session Hijacking at Checkout
-- **STRIDE Category:** Spoofing
-- **Description:** An attacker steals an authenticated user's session token (via XSS, insecure cookie flags, or network sniffing) and initiates a checkout pretending to be that victim. They ship goods to their own address or drain stored payment methods.
-- **Potential Impact:** Financial loss for the victim, fraudulent charges, and chargeback costs for the platform. Repeated incidents erode customer trust and can result in increased Stripe processing fees or account suspension.
-- **Suggested Mitigation:** We can set cookies with Secure, HttpOnly, and SameSite=Strict flags. We can implement re-authentication (require password re-entry or MFA) before completing payment, especially for stored payment methods. We can bind sessions to IP and user-agent and flag anomalies. We can implement short-lived checkout sessions with token expiration.
+| Attribute | Details |
+| :--- | :--- |
+| **STRIDE Category** | **Tampering** |
+| **Threat Description** | An attacker modifies the `price` or `quantity` fields in the request payload sent from the React frontend to the Node.js API. If the backend blindly trusts client-supplied pricing instead of recalculating it server-side, the attacker can purchase items for a fraction of their cost. |
+| **Attack Scenario** | 1. Attacker adds a \$100 laptop to the cart.<br>2. Intercepts the POST request to `/api/checkout` via browser DevTools or Burp Suite.<br>3. Changes `"unit_price": 100.00` to `"unit_price": 1.00`.<br>4. Backend processes the order at \$1.00 without validation against the database. |
+| **Impact** | Direct financial loss; inventory discrepancies; potential fraud triggering payment processor bans. |
+| **Likelihood** | **Medium**. Requires basic HTTP manipulation skills but is a frequent oversight in rapid development cycles. |
+| **Mitigation** | **Server-Side Validation Only.** The Node.js API must ignore the `price` field sent by the client. Instead, it must query the PostgreSQL database for the current price of each product ID and calculate the total internally.<br><br>**Code Example:**<br>`const dbPrice = await db.query('SELECT price FROM products WHERE id = ?', [productId]);`<br>`if (Math.abs(dbPrice - requestPayload.price) > 0.01) throw new Error('Price mismatch');` |
+
+### Threat B: Session Hijacking during Payment Handoff
+
+| Attribute | Details |
+| :--- | :--- |
+| **STRIDE Category** | **Information Disclosure** (leading to Impersonation) |
+| **Threat Description** | Attackers intercept session tokens (JWT or cookies) during the transmission between the user and the server. If TLS is misconfigured or tokens are stored insecurely, attackers can steal credentials to impersonate users. |
+| **Attack Scenario** | 1. User accesses the site on a public Wi-Fi network with a compromised router.<br>2. Attacker performs a Man-in-the-Middle (MitM) attack.<br>3. Captures the `Authorization: Bearer <token>` header from the checkout request.<br>4. Uses the stolen token to finalize the purchase or view sensitive order history as the victim. |
+| **Impact** | Unauthorized financial transactions; identity theft; privacy violations regarding purchase history. |
+| **Likelihood** | **Low to Medium**. Modern HTTPS mitigates this, but risks increase with weak HSTS configurations or mixed content errors. |
+| **Mitigation** | Enforce **HTTP Strict Transport Security (HSTS)**. Ensure all cookies have `Secure`, `HttpOnly`, and `SameSite=Strict` attributes. Implement short-lived JWTs with rotation and bind tokens to specific user-agent fingerprints or IP ranges where feasible. |
+
+### Threat C: Race Condition in Inventory Deduction
+
+| Attribute | Details |
+| :--- | :--- |
+| **STRIDE Category** | **Repudiation** / **Elevation of Privilege** |
+| **Threat Description** | A race condition occurs when two concurrent requests attempt to purchase the last unit of an item simultaneously. Both requests pass the stock check before either updates the database, resulting in overselling. |
+| **Attack Scenario** | 1. Only 1 unit of a limited-edition sneaker remains.<br>2. Attacker sends two identical checkout requests milliseconds apart.<br>3. Both requests read `stock = 1`.<br>4. Both proceed to charge the customer.<br>5. System attempts to fulfill two orders for one item, forcing cancellations. |
+| **Impact** | Operational disruption; financial reconciliation costs; loss of customer trust due to order cancellations. |
+| **Likelihood** | **Medium**. High during flash sales or limited drops without proper concurrency controls. |
+| **Mitigation** | Use **Database-Level Locking** in PostgreSQL. Implement atomic updates:<br>`UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0`.<br>If the affected row count is 0, reject the transaction immediately. |
+
+---
 
 ## 2. Trust Boundaries
 
-A trust boundary exists wherever data or control flows cross from a zone of one trust level to another. Here are the critical ones:
+Trust boundaries define where data transitions from untrusted to trusted zones. In your architecture, these are the critical inspection points.
 
-**Boundary 1: User Browser → React Frontend → Node.js API**
-This is the most exposed boundary. The browser is entirely untrusted — all data arriving from it (form inputs, cart contents, auth tokens, headers) could be tampered with. The API must validate and sanitize everything crossing this line. Key risks: parameter tampering, injection attacks, forged authentication tokens, replayed requests.
+### Boundary 1: Public Internet ↔ Frontend (React App)
+*   **Description:** The interface between the external user's browser and the serving layer (CDN/Web Server).
+*   **Trust Level:** **Untrusted**. The user controls this environment entirely.
+*   **Security Implication:** No security logic should reside here. JavaScript can be modified, blocked, or bypassed. All inputs originating here are considered hostile until validated downstream.
 
-**Boundary 2: Node.js API → PostgreSQL Database**
-Data flowing from the application layer to the database crosses from a partially trusted zone (our code, which could still have bugs) to a highly trusted data store. The risk here is that a vulnerability in the API (like SQL injection or improper input validation) allows untrusted data to reach the database and execute as trusted commands. Parameterized queries and least-privilege database credentials are essential controls at this boundary.
+### Boundary 2: Frontend ↔ Backend API (Node.js)
+*   **Description:** The API gateway where HTTP requests enter the application logic.
+*   **Trust Level:** **Transition Zone**.
+*   **Security Implication:** This is the primary enforcement point for input validation, authentication (JWT/OAuth), and authorization. Every parameter crossing this boundary must be sanitized.
 
-**Boundary 3: Node.js API → Stripe Payment Gateway**
-Here, our server communicates with an external system outside our control. This boundary runs both ways: we send payment intents, and Stripe sends webhook confirmations back. Risks include: a malicious actor spoofing Stripe webhook callbacks (confirming payments that never happened), man-in-the-middle attacks on the outbound request, or credential leakage of our Stripe API keys. Mitigations include webhook signature verification, mutual TLS where applicable, and storing API keys in a secrets manager — never in code or environment variables accessible to the frontend.
+### Boundary 3: Backend ↔ Third-Party Payment (Stripe)
+*   **Description:** The integration point exchanging financial tokens with Stripe.
+*   **Trust Level:** **External Trusted**.
+*   **Security Implication:** We rely on Stripe's PCI-DSS compliance. The system handles tokens, not raw credit card numbers. Trust is maintained via TLS encryption and strict API key management.
 
-## 3. DREAD Rating: SQL Injection in Product Search
+#### Visual Representation
 
-The product search is unauthenticated, meaning anyone on the internet can hit it. That's significant.
+```mermaid
+flowchart TD
+    subgraph Untrusted_Zone [Untrusted Zone]
+        User((User Browser))
+    end
 
-| Factor | Score (0-10) | Justification |
-| :--- | :---: | :--- |
-| **Damage** | 8 | SQL injection on the search endpoint likely hits a read-heavy path. An attacker could extract the entire database — customer PII, payment records (even partial), order history, credentials. Worst case with stacked queries or privileged DB users: data modification or dropping tables. |
-| **Reproducibility** | 9 | Product search is a public, predictable endpoint. An attacker can iterate on payloads at will with no rate limiting or authentication friction. Once a working payload is found, it works every time. |
-| **Exploitability** | 7 | Automated tools (sqlmap) make exploitation straightforward if the vulnerability exists. However, whether stacked queries or UNION-based extraction works depends on the specific ORM/query construction and DB permissions — so there's some variability. |
-| **Affected Users** | 10 | A successful SQL injection affecting the shared PostgreSQL database compromises all users — every customer record, every order, every piece of data in that database. This isn't limited to the attacker's session. |
-| **Discoverability** | 9 | The search endpoint is trivially discoverable — it's on the public-facing storefront. No authentication barrier. Automated scanners and reconnaissance tools will find it immediately. |
+    subgraph Transition_Zone [Transition Zone]
+        CDN[React Frontend / CDN]
+    end
 
-**Total DREAD Score: 43/50**
+    subgraph Trusted_Zone [Trusted Zone]
+        API[Node.js API Server]
+        DB[(PostgreSQL)]
+    end
 
-This is a critical rating. The combination of an unauthenticated entry point with access to a shared database makes this a top-priority finding. In real-world terms, this is the kind of vulnerability that leads to breach disclosure headlines.
+    subgraph External_Zone [External Trusted]
+        Stripe[Stripe Gateway]
+    end
 
-**Key mitigations:** We should use parameterized queries exclusively (never string concatenation for SQL). If using an ORM, we need to avoid raw query methods. We need to apply the principle of least privilege to the database user connecting from the API — it should not be able to access tables unrelated to product search. Implementing input validation and rate limiting on the search endpoint is a must. We should consider a WAF as an additional layer, but never as a primary defense against injection.
+    User -->|HTTPS Request| CDN
+    CDN -->|API Calls| API
+    API -->|Query| DB
+    API <-->|Token Exchange| Stripe
+
+    style User fill:#ff9999,stroke:#333,stroke-width:2px
+    style CDN fill:#ffff99,stroke:#333,stroke-width:2px
+    style API fill:#99ff99,stroke:#333,stroke-width:2px
+    style Stripe fill:#ccccff,stroke:#333,stroke-width:2px
+```
+## 3. DREAD Risk Assessment: SQL Injection in Product Search
+
+We will assess the threat of SQL Injection (SQLi) in the product search functionality (`GET /api/products?query=...`).
+
+### DREAD Formula
+
+$$ \text{Risk} = \frac{\text{Damage Potential} + \text{Reproducibility} + \text{Exploitability} + \text{Affected Users} + \text{Discoverability}}{3} $$
+
+*(Note: Some interpretations sum to 15 or average to 5. We will calculate the average score out of 10 for clarity, as per standard industry practice where each factor is 1–10.)*
+
+### Factor Scoring & Justification
+
+**Damage Potential (9/10):**
+- **Justification:** A successful SQLi on the product search could allow an attacker to read the entire `products` table, but more critically, if the search query joins with other tables or if the DB user has excessive privileges, they could access user data (`users` table), order history, or even modify/drop tables (Denial of Service). Since this is a core search function, the blast radius is large.
+
+**Reproducibility (8/10):**
+- **Justification:** If the vulnerability exists, it is highly reproducible. An attacker only needs to craft a string containing SQL syntax (e.g., `' OR '1'='1`) and submit it. It does not require complex timing or race conditions.
+
+**Exploitability (7/10):**
+- **Justification:** The search function is public (no auth required). Tools like SQLmap can automate exploitation almost instantly. However, modern Node.js ORM libraries (like Sequelize or TypeORM) often parameterize queries by default. If the code uses raw strings (`query: SELECT * FROM products WHERE name LIKE '${userInput}'`), exploitability is near maximum. Assuming a standard web application without WAF protections specifically tuned for SQL patterns, 7 is a fair assessment.
+
+**Affected Users (10/10):**
+- **Justification:** The product search is accessible to every user of the site, including anonymous visitors. There is no barrier to entry. Any breach impacts the availability and integrity of the catalog for all customers.
+
+**Discoverability (10/10):**
+- **Justification:** The search endpoint is a primary feature of an e-commerce site. It is obvious to attackers where to target. The input vector (search bar) is visible and interactive.
+
+### Calculation
+
+$$ \text{Average Score} = \frac{9 + 8 + 7 + 10 + 10}{5} = \frac{44}{5} = \mathbf{8.8} $$
+
+**Risk Rating: Critical (8.8/10)**
+
+### Conclusion & Recommendation
+
+With a score of 8.8, this is a critical priority. The combination of zero authentication requirements (high discoverability/exploitability) and high potential data exposure (damage) makes this a severe risk.
+
+- **Immediate Action:** Ensure the Node.js backend uses parameterized queries (prepared statements) exclusively. Never concatenate user input into SQL strings.
+- **Secondary Defense:** Implement a Web Application Firewall (WAF) rule set (e.g., OWASP Core Rule Set) to detect and block common SQLi payloads.
+- **Least Privilege:** Ensure the PostgreSQL user account used by the Node.js app has `SELECT` permissions only on necessary tables, preventing `DROP` or `INSERT` commands even if injection occurs.
+
+### References
+
+- **OWASP Top 10 (A03:2021 - Injection):** https://owasp.org/www-project-top-ten/
+- **STRIDE Threat Modeling Guide:** https://learn.microsoft.com/en-us/previous-versions/bb936563(v=msdn.10)
+- **DREAD Model Original Context:** Microsoft SDL
