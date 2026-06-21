@@ -3,7 +3,7 @@
 
 This is a series of blog posts in which I explore IT vulnerabilities and their mitigation, divided into eighteen chapters:
 
-| File | Summary |
+| Post | Summary |
 |------|---------|
 | [Vulnerability in Cyber Security](https://github.com/sreilly1977/dlh-cyber_security/blob/main/understanding_vulnerabilities/0-Vulnerability_in_Cyber_Security.md) | Cybersecurity vulnerabilities are gaps between system expectations and reality that have evolved from isolated technical glitches into critical business risks driven by interconnectivity across software, hardware, network, and human vectors. |
 | [Analytic Tools](https://github.com/sreilly1977/dlh-cyber_security/blob/main/understanding_vulnerabilities/1-Analytic_Tools.md) | Static Analysis (SAST) and Dynamic Analysis (DAST) tools work in tandem to detect vulnerabilities early in the development lifecycle, transforming security from a reactive bottleneck into a proactive quality pillar while evolving toward AI-enhanced and CI/CD-integrated solutions. |
