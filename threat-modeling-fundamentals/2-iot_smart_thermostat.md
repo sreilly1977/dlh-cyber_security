@@ -17,11 +17,6 @@ A smart thermostat device:
 2. **What happens if an attacker gains physical access** to the device? Describe the attack chain and potential impacts.
 3. **Design security controls** for the OTA (Over-The-Air) update process. What are the essential security requirements?
 
-### Hints
-- **For IoT-specific threats**: Think about physical tampering, weak default credentials, unencrypted communications, firmware vulnerabilities.
-- **For physical access**: Consider debug ports, memory extraction, hardware manipulation.
-- **For OTA security**: Think about code signing, secure boot, encrypted channels, rollback protection.
-
 ---
 
 ## 1. IoT-Specific Threats (Distinct from Web Applications)
