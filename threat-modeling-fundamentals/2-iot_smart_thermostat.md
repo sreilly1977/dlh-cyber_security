@@ -43,7 +43,7 @@ Below are five critical threats specific to this form factor, analyzed using the
 
 ### Threat 3: Unencrypted Actuator Control Channels
 - **Description**: Web apps generally enforce HTTPS for all interactions. IoT devices often use legacy protocols (MQTT without TLS, plain HTTP, or proprietary UDP/TCP) for low-latency control of heating/cooling relays.
-- **Attack Scenario**: An attacker sniffs traffic on the home LAN (or compromises a neighbor's router). They replay captured "Set Temp: 90°F" or "Disable Security Mode" packets to override user preferences or disable alarms.
+- **Attack Scenario**: An attacker sniffs traffic on the home LAN (or compromises a neighbor's router). They replay captured "Set Temp: 30°C" or "Disable Security Mode" packets to override user preferences or disable alarms.
 - **Impact**: Privacy violation (inferring occupancy), financial loss (energy waste), or safety risk (freezing pipes or overheating).
 - **Likelihood**: High (Common default configurations).
 - **Mitigation**: Mandate TLS/mTLS for all control plane communications; implement message authentication codes (HMAC) for non-TLS protocols; enforce mutual authentication between app and device.
