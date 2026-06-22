@@ -1,4 +1,5 @@
 # Task 0 - E-commerce Platform
+**By Stephen Reilly** | *Threat Moddeling Series*
 
 Threat modeling of an e-commerce platform where users can:
 - Browse products (no authentication required)
