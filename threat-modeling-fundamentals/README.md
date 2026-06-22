@@ -1,7 +1,7 @@
 # Threat Moddeling Series
 **By Stephen Reilly**
 
-This is a series of blog posts in which I explore Threat Modelling, divided into five chapters:
+This is a series of blog posts in which I apply Threat Modelling to five scenarios:
 
 | Post | Summary |
 |------|---------|
