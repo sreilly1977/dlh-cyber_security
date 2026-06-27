@@ -13,9 +13,7 @@
 
 ## 🎯 Overview
 
-This repository serves as a comprehensive study and practice resource for students enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
-
-Whether you're building foundational knowledge or reinforcing advanced concepts, this repository provides hands-on exercises, reference materials, and practical guides across core cybersecurity domains.
+This repository serves as a centralized repo for Stephen Reilly, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
 
 ---
 
