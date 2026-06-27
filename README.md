@@ -11,7 +11,7 @@
 
 ---
 
-## 🎯 Overview
+## Overview
 
 This repository serves as a centralized repo for **Stephen Reilly**, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
 
@@ -19,7 +19,7 @@ Most of the scripts published in this repository are one-liners with little to n
 
 ---
 
-## 📚 Repository Structure
+## Repository Structure
 
 | Directory | Description | Security+ Domains Covered |
 |-----------|-------------|--------------------------|
@@ -34,7 +34,7 @@ Most of the scripts published in this repository are one-liners with little to n
 
 ---
 
-## 🛡️ CompTIA Security+ Alignment
+## CompTIA Security+ Alignment
 
 This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 
@@ -50,7 +50,7 @@ This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 
 ---
 
-## 💻 Getting Started
+## Getting Started
 
 ### Prerequisites
 
