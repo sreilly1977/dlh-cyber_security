@@ -13,7 +13,7 @@
 
 ## 🎯 Overview
 
-This repository serves as a centralized repo for Stephen Reilly, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
+This repository serves as a centralized repo for **Stephen Reilly**, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
 
 ---
 
