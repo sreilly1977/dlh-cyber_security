@@ -77,5 +77,7 @@ ls -la
 
 ### Online Training
 [Learn Cybersecurity Step by Step](https://cyber-stride-learn.vercel.app/)
+
 [**HACK**THE**BOX**](https://www.hackthebox.com)
+
 [LetsDefend](https://letsdefend.io/)
