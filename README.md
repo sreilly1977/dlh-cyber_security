@@ -5,8 +5,6 @@
 ![Security+ Badge](https://img.shields.io/badge/Certification-CompTIA_Security%2B-blue)
 ![Academy Badge](https://img.shields.io/badge/Academy-Luxembourg_Academy_of_Cybersecurity-green)
 
-**A structured learning path for aspiring cybersecurity professionals**
-
 </div>
 
 ---
