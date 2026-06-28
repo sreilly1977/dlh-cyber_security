@@ -52,14 +52,6 @@ This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 
 ---
 
-## Getting Started
-
-### Prerequisites
-
-- Basic understanding of computer networking
-- Familiarity with command-line interfaces (Windows/Linux/MacOS)
-- Virtual machine environment recommended for hands-on labs (VirtualBox, VMware)
-
 ### Setup Instructions
 
 ```bash
