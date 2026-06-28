@@ -15,7 +15,7 @@
 
 This repository serves as a centralized repo for **Stephen Reilly**, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
 
-Most of the scripts published in this repository are one-liners with little to no commenting or erro handling, written to showcase command and concept understanding.
+Most of the scripts published in this repository are one-liners with little to no commenting or erro handling, due to the automated checking of the VLE, and are written to showcase command and concept understanding.
 
 ---
 
