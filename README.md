@@ -74,3 +74,8 @@ ls -la
 ```
 ### Cheat Sheets
 [Nishtman's Cyber Study Hub](https://nishtman-k.github.io/cyber-study-hub/)
+
+### Online Training
+[Learn Cybersecurity Step by Step](https://cyber-stride-learn.vercel.app/)
+[**HACK**THE**BOX**](https://www.hackthebox.com)
+[LetsDefend](https://letsdefend.io/)
