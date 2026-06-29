@@ -1,6 +1,6 @@
 # Learning Objectives — DLH Cyber Security
 
-Weekly learning objectives for the DLH Cyber Security common core curriculum, covering foundational and advanced cybersecurity topics across eight weeks.
+Weekly learning objectives for the DLH Cyber Security Common Core curriculum, covering foundational and advanced cybersecurity topics across eight weeks.
 
 ## Overview
 
