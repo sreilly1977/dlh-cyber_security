@@ -17,4 +17,4 @@ This directory contains structured learning objectives organized by week. Each f
 | [Week 5](./week5.md) |Nmap Live Host Discovery, Python for Cybersecurity, Packet Capture & Network Traffic Analysis |
 | [Week 6](./week6.md) | OWASP Top 10, Burp Suite Fundamentals, Content Discovery |
 | [Week 7](./week7.md) | Understanding Vulnerabilities, CVE CWE and NVD, Upload Vulnerabilities |
-| [Week 8](./week8.md) | Threat modeling (CIA Triad, STRIDE, DREAD, PASTA), security policy analysis, cybersecurity career roles |
+| [Week 8](./week8.md) | Threat Modeling (CIA Triad, STRIDE, DREAD, PASTA), Security Policy Analysis, Cybersecurity Career Roles |
