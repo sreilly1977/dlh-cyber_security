@@ -68,6 +68,10 @@ ls -la
 
 [SANS Cybersecurity Posters and Cheat Sheets](https://www.sans.org/posters)
 
+[Python Security Cheat Sheet for Developers](https://www.aptori.com/blog/python-security-cheat-sheet-for-developers)
+
+[Python Cheat Sheet for Ethical Hackers](https://www.comparitech.com/net-admin/python-cheat-sheet-for-ethical-hackers/)
+
 ### Online Training
 [Learn Cybersecurity Step by Step](https://cyber-stride-learn.vercel.app/)
 
