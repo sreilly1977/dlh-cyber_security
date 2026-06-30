@@ -1,4 +1,4 @@
-# DLH Cyber Security Learning Repository
+# DLH Cyber Security Academy Repository
 
 <div align="center">
 
