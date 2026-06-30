@@ -1,5 +1,5 @@
 # Analytic Tools
-**By Stephen Reilly** | *Understanding Vulnerabilities Series*
+**By Stephen Reilly** | *Threat Moddeling Series*
 
 ## Introduction to Security Code Analysis
 Cybersecurity code analysis is the systematic examining of software source code, binaries, or running applications to unearth vulnerabilities before malicious actors can exploit them. By employing a dual-pronged approach—**Static Analysis **(SAST) to dissect code structure for logic flaws without execution, and **Dynamic Analysis **(DAST) to probe live applications against real-world attack vectors—developers can shift security left in the software development lifecycle, transforming potential breaches into preventable bugs. This proactive scrutiny not only fortifies the software's defences against threats like injection attacks and buffer overflows but also instills a culture of resilience, ensuring that security is woven into the very fabric of the code rather than patched on after deployment.
