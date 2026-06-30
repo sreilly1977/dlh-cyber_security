@@ -15,7 +15,7 @@ This repository serves as a centralized repo for **Stephen Reilly**, enrolled in
 
 Most of the scripts published in this repository are one-liners with little to no commenting or erro handling, due to the automated checking of the VLE, and are written to showcase command and concept understanding.
 
-The [Security Policy Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/security_policy_analysis/README.md), [Threat Moddeling](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat-modeling-fundamentals/README.md), and [Understanding Vulnerabilities](https://github.com/sreilly1977/dlh-cyber_security/blob/main/understanding_vulnerabilities/README.md) series are blog posts in which I explore those respective topics. The [Learning Objectives](https://github.com/sreilly1977/dlh-cyber_security/tree/main/learning_objectives) section consists of answers to questions, divided into subject, and condensed to one line, in preparation for that week's test.
+The [Security Policy Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/security_policy_analysis/README.md), [Threat Moddeling](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat-modeling-fundamentals/README.md), and [Understanding Vulnerabilities](https://github.com/sreilly1977/dlh-cyber_security/blob/main/understanding_vulnerabilities/README.md) sections are series' of blog posts in which I explore those respective topics. The [Learning Objectives](https://github.com/sreilly1977/dlh-cyber_security/tree/main/learning_objectives) section consists of answers to questions, divided into subject, and condensed to one line, in preparation for that week's test.
 
 ---
 
