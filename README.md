@@ -24,7 +24,7 @@ The [Security Policy Analysis](https://github.com/sreilly1977/dlh-cyber_security
 | Directory | Description | Security+ Domains Covered |
 |-----------|-------------|--------------------------|
 | `cybersecurity_basics/` | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
-| `learning_objectives/` | Weekly learning objectives for the DLH Cyber Security common core curriculum | Domains 1.0 - 5.0 |
+| `learning_objectives/` | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
 | `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
 | `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
 | `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
