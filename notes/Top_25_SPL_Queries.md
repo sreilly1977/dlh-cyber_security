@@ -1,6 +1,8 @@
-# Authentication & Access
+# Top 25 SPL Queries
 
-## 1. Failed Logins (Brute Force Detection)
+## Authentication & Access
+
+### 1. Failed Logins (Brute Force Detection)
 
 ```spl
 index=* sourcetype=* (eventtype=authentication OR action=failure)
@@ -9,7 +11,7 @@ index=* sourcetype=* (eventtype=authentication OR action=failure)
 | sort -failures
 ```
 
-## 2. Successful Login After Multiple Failures
+### 2. Successful Login After Multiple Failures
 
 ```spl
 index=* sourcetype=* (action=failure OR action=success)
@@ -19,7 +21,7 @@ index=* sourcetype=* (action=failure OR action=success)
 | where failed_attempts > 3 AND isnotnull(success_time)
 ```
 
-## 3. Logins Outside Business Hours
+### 3. Logins Outside Business Hours
 
 ```spl
 index=* sourcetype=* action=success
@@ -28,7 +30,7 @@ index=* sourcetype=* action=success
 | table _time, user, src_ip, dest_host, action
 ```
 
-## 4. Login from New Geographic Location
+### 4. Login from New Geographic Location
 
 ```spl
 index=* sourcetype=* action=success
@@ -38,7 +40,7 @@ index=* sourcetype=* action=success
 | where country_count > 1
 ```
 
-## 5. Multiple Users from Same IP
+### 5. Multiple Users from Same IP
 
 ```spl
 index=* sourcetype=* action=success
@@ -47,9 +49,9 @@ index=* sourcetype=* action=success
 | sort -unique_users
 ```
 
-#  Endpoint & Process Monitoring
+##  Endpoint & Process Monitoring
 
-## 6. Suspicious PowerShell Execution
+### 6. Suspicious PowerShell Execution
 
 ```spl
 index=* (EventCode=4688 OR source=WinEventLog:Microsoft-Windows-PowerShell/Operational)
@@ -58,7 +60,7 @@ index=* (EventCode=4688 OR source=WinEventLog:Microsoft-Windows-PowerShell/Opera
 | table _time, host, user, CommandLine, process_name
 ```
 
-## 7. Rundll32 with Suspicious Arguments
+### 7. Rundll32 with Suspicious Arguments
 
 ```spl
 index=* EventCode=4688 rundll32.exe
@@ -66,7 +68,7 @@ index=* EventCode=4688 rundll32.exe
 | table _time, host, user, CommandLine, parent_process
 ```
 
-## 8. Credential Dumping — LSASS Access
+### 8. Credential Dumping — LSASS Access
 
 ```spl
 index=* (EventCode=4656 OR EventCode=4663)
@@ -75,23 +77,23 @@ index=* (EventCode=4656 OR EventCode=4663)
 | table _time, host, user, process_name, AccessMask
 ```
 
-## 9. Scheduled Task Creation (Persistence)
+### 9. Scheduled Task Creation (Persistence)
 
 ```spl
 index=* (EventCode=4698 OR source=WinEventLog:System "Task Scheduler")
 | table _time, host, user, TaskName, TaskContent, Command
 ```
 
-## 10. New Service Installation (Persistence)
+### 10. New Service Installation (Persistence)
 
 ```spl
 index=* EventCode=7045 OR (EventCode=4697)
 | table _time, host, user, ServiceName, ServiceType, StartType, ServiceCommand
 ```
 
-# Network & Traffic Analysis
+## Network & Traffic Analysis
 
-## 11. DNS Queries to Known Malicious Domains (Threat Intel Match)
+### 11. DNS Queries to Known Malicious Domains (Threat Intel Match)
 
 ```spl
 index=dns sourcetype=dns
@@ -100,7 +102,7 @@ index=dns sourcetype=dns
 | stats count by src_ip, domain, threat_name
 ```
 
-## 12. Beaconing Behavior Detection
+### 12. Beaconing Behavior Detection
 
 ```spl
 index=* sourcetype=firewall OR sourcetype=network
@@ -112,7 +114,7 @@ index=* sourcetype=firewall OR sourcetype=network
 | where sessions > 50
 ```
 
-## 13. Data Exfiltration — Large Outbound Transfers
+### 13. Data Exfiltration — Large Outbound Transfers
 
 ```spl
 index=* sourcetype=firewall action=allowed
@@ -121,7 +123,7 @@ index=* sourcetype=firewall action=allowed
 | sort -total_out
 ```
 
-## 14. Connections to Non-Standard Ports
+### 14. Connections to Non-Standard Ports
 
 ```spl
 index=* sourcetype=firewall action=allowed
@@ -130,7 +132,7 @@ index=* sourcetype=firewall action=allowed
 | sort -count
 ```
 
-## 15. Tor Exit Node Traffic
+### 15. Tor Exit Node Traffic
 
 ```spl
 index=* sourcetype=firewall OR sourcetype=network
@@ -139,9 +141,9 @@ index=* sourcetype=firewall OR sourcetype=network
 | stats count by src_ip, dest_ip, dest_port
 ```
 
-# File Integrity & Data Access
+## File Integrity & Data Access
 
-## 16. Mass File Access / Staging for Exfiltration
+### 16. Mass File Access / Staging for Exfiltration
 
 ```spl
 index=* sourcetype=auditd OR (EventCode=4663 OR EventCode=4656)
@@ -151,7 +153,7 @@ index=* sourcetype=auditd OR (EventCode=4663 OR EventCode=4656)
 | sort -access_count
 ```
 
-## 17. Ransomware Indicators — Rapid File Encryption
+### 17. Ransomware Indicators — Rapid File Encryption
 
 ```spl
 index=* sourcetype=auditd OR (EventCode=4663)
@@ -162,16 +164,16 @@ index=* sourcetype=auditd OR (EventCode=4663)
 | sort -file_ops
 ```
 
-## 18. Suspicious File Creation in Startup Folder
+### 18. Suspicious File Creation in Startup Folder
 
 ```spl
 index=* EventCode=11 (TargetFilename="*\\Start Menu\\Programs\\Startup\\*")
 | table _time, host, user, TargetFilename, Image
 ```
 
-# Privilege Escalation
+## Privilege Escalation
 
-## 19. User Added to Privileged Group
+### 19. User Added to Privileged Group
 
 ```spl
 index=* (EventCode=4728 OR EventCode=4732 OR EventCode=4756)
@@ -179,16 +181,16 @@ index=* (EventCode=4728 OR EventCode=4732 OR EventCode=4756)
 | table _time, host, user, member, group_name
 ```
 
-## 20. Clearing Security Logs (Anti-Forensics)
+### 20. Clearing Security Logs (Anti-Forensics)
 
 ```spl
 index=* (EventCode=1102 OR EventCode=104)
 | table _time, host, user, source
 ```
 
-# EDR / AV & Threat Detection
+## EDR / AV & Threat Detection
 
-## 21. AV Alert Trends Over Time
+### 21. AV Alert Trends Over Time
 
 ```spl
 index=* sourcetype=WinEventLog:System (EventCode=1116 OR EventCode=1117)
@@ -196,7 +198,7 @@ index=* sourcetype=WinEventLog:System (EventCode=1116 OR EventCode=1117)
 | sort -_time
 ```
 
-## 22. Suspicious Command Line Executions (Generic)
+### 22. Suspicious Command Line Executions (Generic)
 
 ```spl
 index=* EventCode=4688
@@ -204,9 +206,9 @@ index=* EventCode=4688
 | table _time, host, user, CommandLine, process_name, parent_process
 ```
 
-# General Security Posture
+## General Security Posture
 
-## 23. Error Rate Spike by Host (Possible Attack Indicator)
+### 23. Error Rate Spike by Host (Possible Attack Indicator)
 
 ```spl
 index=* sourcetype=* (level=ERROR OR level=error OR severity=high)
@@ -216,7 +218,7 @@ index=* sourcetype=* (level=ERROR OR level=error OR severity=high)
 | where count > threshold
 ```
 
-## 24. Top 10 Hosts by Security Events
+### 24. Top 10 Hosts by Security Events
 
 ```spl
 index=* (tag=security OR eventtype=security)
@@ -225,7 +227,7 @@ index=* (tag=security OR eventtype=security)
 | head 10
 ```
 
-## 25. MITRE ATT&CK Technique Correlation
+### 25. MITRE ATT&CK Technique Correlation
 
 ```spl
 | tstats count from datamodel=Endpoint.Processes
