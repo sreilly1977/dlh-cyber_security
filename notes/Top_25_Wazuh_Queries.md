@@ -371,16 +371,6 @@ Useful for DLP (Data Loss Prevention) and insider threat monitoring.
 
 Indexer query to catch VPN connections originating from unexpected external IPs, helping detect unauthorized remote access.
 
-## Quick Reference Summary
-###	Category	Risk Level	Technique
-1–5	Authentication	L5–L12	Brute force, root login, new accounts
-6–8	Privilege Escalation	L5–L12	Sudo, SUID abuse
-9–11	File Integrity	L10–L12	Critical file changes, web shells
-12–15	Network	L7–L14	Reverse shells, DNS exfil, suspicious ports
-16–18	Malware/IOC	L12	Hashes, suspicious processes, encoded PS
-19–21	Anti-Forensics & Persistence	L9–L11	History clearing, cron, SSH keys
-22–25	Compliance & SOC	L6–L10	Group changes, kernel modules, USB, VPN
-
 These are starting points, Steve — each should be tuned to your specific environment (whitelisting known-good IPs, adjusting frequency/timeframe windows, and integrating with your threat intel feeds).
 
 Happy hunting!
