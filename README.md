@@ -27,6 +27,7 @@ The [Security Policy Analysis](https://github.com/sreilly1977/dlh-cyber_security
 | [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/learning_objectives) | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
 | [`linux_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/linux_security) | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
 | [`network_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/network_security) | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
+| [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | A collection of notes outside the scope of the course | N/A |
 | [`scripting_cyber/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/scripting_cyber) | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
 | [`security_policy_analysis/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/security_policy_analysis) | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
 | [`threat-modeling-fundamentals/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat-modeling-fundamentals) | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
