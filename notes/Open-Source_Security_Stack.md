@@ -1,6 +1,6 @@
 # Open-Source Security Stack Blueprint
 
-## Firewal/WAFl — OPNsense
+## Firewal/WAF — OPNsense
 
 OPNsense is the standout recommendation here. It's a fork of pfSense, built on FreeBSD, and offers stateful packet inspection, VLANs, WireGuard/IPsec VPNs, traffic shaping, GeoIP filtering, and a built-in Suricata IDS/IPS plugin. It has a modern web UI, truly open-source licensing (unlike pfSense Plus which has some commercial elements), and releases on a quarterly cadence — currently at version 26.1. It's widely favored for home labs, SMBs, and even enterprise edge deployments.
 
@@ -74,7 +74,7 @@ Here's a conceptual data flow for the stack:
 ```mermaid
 graph TD
     subgraph Edge["Edge / Network Perimeter"]
-        OPN["**OPNsense**FirewallSPI · VLANs · VPN · GeoIP"]
+        OPN["**OPNsense**FirewallSPI · VLANs · VPN · GeoIP - WAF"]
         SON["**Security Onion**Suricata + ZeekNIDS/IPS · Protocol Analysis"]
     end
 
