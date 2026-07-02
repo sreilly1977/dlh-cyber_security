@@ -64,6 +64,9 @@ cd dlh-cyber_security
 # Explore individual module documentation
 ls -la
 ```
+
+---
+
 ### Cheat Sheets
 [Nishtman's Cyber Study Hub](https://nishtman-k.github.io/cyber-study-hub/)
 
@@ -72,6 +75,8 @@ ls -la
 [Python Security Cheat Sheet for Developers](https://www.aptori.com/blog/python-security-cheat-sheet-for-developers)
 
 [Python Cheat Sheet for Ethical Hackers](https://www.comparitech.com/net-admin/python-cheat-sheet-for-ethical-hackers/)
+
+---
 
 ### Online Training
 [Learn Cybersecurity Step by Step](https://cyber-stride-learn.vercel.app/)
