@@ -58,17 +58,17 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 
 ```mermaid
 flowchart TB
-    OPN["🛡️ OPNsense<br>(Firewall / WAF)"]
+    OPN["OPNsense<br>(Firewall / WAF)"]
 
     subgraph SO["Security Onion"]
-        SUR["🔴 Suricata<br>(NIDS)"]
-        ZEEK["📊 Zeek<br>(Network Analytics)"]
-        WAZ["🟠 Wazuh<br>(SIEM / HIDS)"]
-        HIVE["🐝 TheHive<br>(Case Management)"]
-        CORTEX["⚙️ Cortex<br>(Enrichment / Response)"]
+        SUR["Suricata<br>(NIDS)"]
+        ZEEK["Zeek<br>(Network Analytics)"]
+        WAZ["Wazuh<br>(SIEM / HIDS)"]
+        HIVE["TheHive<br>(Case Management)"]
+        CORTEX["Cortex<br>(Enrichment / Response)"]
     end
 
-    ERA["📋 Eramba<br>(GRC)"]
+    ERA["Eramba<br>(GRC)"]
 
     OPN -->|"Inspected Traffic"| SO
 
