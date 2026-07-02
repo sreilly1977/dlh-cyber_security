@@ -45,7 +45,7 @@ A Shuffle + TheHive combination is a popular pattern — TheHive for case manage
 
 ### Option A — Wazuh as primary SIEM
 
-Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. You could feed Suricata/Zeek logs from Security Onion into Wazuh's ingestion pipeline and use Wazuh as the central pane.
+Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. We could feed Suricata/Zeek logs from Security Onion into Wazuh's ingestion pipeline and use Wazuh as the central pane.
 
 ### Option B — UTMStack as central SIEM/SOAR
 
@@ -68,8 +68,6 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 ---
 
 ## How It All Fits Together
-
-Here's a conceptual data flow for the stack:
 
 ```mermaid
 graph TD
