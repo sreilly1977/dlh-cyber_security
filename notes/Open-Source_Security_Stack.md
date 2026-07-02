@@ -14,7 +14,7 @@ Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi
 
 ---
 
-## HIDS — Wazuh
+## HIDS — Wazuh (via Security Onion)
 
 Wazuh is the clear leader here. As we discussed earlier, its agent-based approach covers Windows, Linux, and macOS with:
 
@@ -41,7 +41,7 @@ A Shuffle + TheHive combination is a popular pattern — TheHive for case manage
 
 ---
 
-## SIEM — Wazuh + Security Onion
+## SIEM — Wazuh (via Security Onion)
 
 Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. We could feed Suricata/Zeek logs from Security Onion into Wazuh's ingestion pipeline and use Wazuh as the central pane.
 
