@@ -82,10 +82,8 @@ flowchart TB
 
 ## Key Considerations
 
-**Infrastructure sizing** is going to be our biggest challenge. Running Elasticsearch at scale across Wazuh, Security Onion, and potentially UTMStack simultaneously is resource-intensive. We'll want to think about whether to consolidate ELK instances or keep them separate for blast-radius isolation.
+**Infrastructure sizing** is going to be our biggest challenge. Running Elasticsearch on Security Onion is resource-intensive. Lots of CPU, memory and storage.
 
-**Log pipeline architecture** — Decide early whether we're using syslog, Filebeat/Winlogbeat, or a message broker (Kafka/Redis) as our transport layer. This affects everything downstream.
+**Tuning burden** — Every detection engine (Suricata, Wazuh rules, Zeek) will generate noise initially. Budget time for baselining and tuning — this is where the "free software ≠ free operations" reality bites hardest.
 
-**Tuning burden** — Every detection engine (Suricata, Wazuh rules, UTMStack correlations) will generate noise initially. Budget time for baselining and tuning — this is where the "free software ≠ free operations" reality bites hardest.
-
-**Integration gaps** — There's no single vendor stitching this together for us. Expect to write custom configuration for log forwarding, API integrations between SOAR and SIEM, and GRC evidence collection pipelines.
+**Integration gaps** — There's no single vendor stitching this together for us. Expect to write custom configuration for log forwarding, API integrations between SOAR/SIEM and GRC evidence collection pipelines.
