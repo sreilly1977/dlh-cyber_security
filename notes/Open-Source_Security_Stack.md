@@ -10,7 +10,7 @@ OPNsense is the standout recommendation here. It's a fork of pfSense, built on F
 
 Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi-threaded, with signature-based detection (Emerging Threats ruleset) and protocol analysis. Zeek (formerly Bro) pairs beautifully alongside it for network behavior analytics and metadata logging.
 
-**Deployment approach:** Security Onion bundles both Suricata and Zeek with Elasticsearch, Kibana, and OSSEC/Wazuh integration out of the box. This gives you a turnkey NSM platform with dashboards, alerting, and hunt capabilities. Alternatively, you can deploy Suricata/Zeek standalone and forward logs to your SIEM of choice.
+**Deployment approach:** Security Onion bundles both Suricata and Zeek with Elasticsearch, Kibana, and OSSEC/Wazuh integration out of the box. This gives us a turnkey NSM platform with dashboards, alerting, and hunt capabilities. Alternatively, we can deploy Suricata/Zeek standalone and forward logs to your SIEM of choice.
 
 ---
 
