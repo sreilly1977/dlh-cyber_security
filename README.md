@@ -96,4 +96,4 @@ ls -la
 
 [UTMStack - SIEM, XDR, SOAR, GRC](https://utmstack.com/)
 
-[Eramba - GRC]((https://www.eramba.org/))
+[Eramba - GRC](https://www.eramba.org/)
