@@ -72,33 +72,33 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 ```mermaid
 graph TD
     subgraph Edge["Edge / Network Perimeter"]
-        OPN["**OPNsense**FirewallSPI · VLANs · VPN · GeoIP - WAF"]
-        SON["**Security Onion**Suricata + ZeekNIDS/IPS · Protocol Analysis"]
+        OPN["**OPNsense** FirewallSPI · VLANs · VPN · GeoIP - WAF"]
+        SON["**Security Onion** Suricata + ZeekNIDS/IPS · Protocol Analysis"]
     end
 
     OPN -- "Syslog/Beats forwarding" --> WAZ
     SON -- "Syslog/Beats forwarding" --> WAZ
 
     subgraph Endpoint["Endpoint Layer"]
-        WAZ["**Wazuh Agents**HIDS / FIM / Vuln / SCA / EDR"]
+        WAZ["**Wazuh Agents** HIDS / FIM / Vuln / SCA / EDR"]
     end
 
     WAZ --> UTM
 
     subgraph Central["Central Correlation"]
-        UTM["**UTMStack**Central SIEM SOAR / Correlation · Enrichment · Alerting"]
+        UTM["**UTMStack** Central SIEM SOAR / Correlation · Enrichment · Alerting"]
     end
 
     UTM --> ERA
 
     subgraph Governance["Governance"]
-        ERA["**Eramba**GRC Platform / Policy · Risk · Audit · Compliance Mapping"]
+        ERA["**Eramba** GRC Platform / Policy · Risk · Audit · Compliance Mapping"]
     end
 
     ERA --> SOAR
 
     subgraph Response["Response & Automation"]
-        SOAR["**Shuffle + TheHive**SOAR / Case Management & Automated Response · Playbooks · IR"]
+        SOAR["**Shuffle + TheHive** SOAR / Case Management & Automated Response · Playbooks · IR"]
     end
 
     classDef edgeNode fill:#1a1a2e,stroke:#00b894,color:#fff
