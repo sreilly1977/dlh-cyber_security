@@ -52,7 +52,7 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 
 ```mermaid
 flowchart TB
-    OPN["OPNsense<br>(Firewall / WAF /VPN)"]
+    OPN["OPNsense<br>(Firewall / WAF / VPN)"]
 
     subgraph SO["Security Onion"]
         SUR["Suricata<br>(NIDS)"]
