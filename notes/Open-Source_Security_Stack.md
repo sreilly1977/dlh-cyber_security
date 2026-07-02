@@ -85,7 +85,7 @@ graph TD
     ERA --> SOAR
 
     subgraph Response["Response & Automation"]
-        SOAR["**Shuffle + TheHive** SOAR / Case Management & Automated Response · Playbooks · IR"]
+        SOAR["**Cortex + TheHive** SOAR / Case Management & Automated Response · Playbooks · IR"]
     end
 
     classDef edgeNode fill:#1a1a2e,stroke:#00b894,color:#fff
