@@ -6,7 +6,7 @@ A collection of practical detection queries and architecture guidance for SIEM, 
 
 | File | Topic | Description |
 |------|-------|-------------|
-| [`Open-Source_Security_Stack.md`](Open-Source_Security_Stack.md) | Architecture | Blueprint for building an open-source security stack covering SIEM (Wazuh, Security Onion), SOAR (Shuffle), NIDS (Suricata, Zeek), HIDS (Wazuh), and firewall/WAF (OPNsense). Includes key infrastructure and tuning considerations. |
+| [`Open-Source_Security_Stack.md`](Open-Source_Security_Stack.md) | Architecture | Blueprint for building an open-source security stack covering SIEM (Wazuh, Security Onion), SOAR (TheHive/Cortex), NIDS (Suricata, Zeek), HIDS (Wazuh), GRC (Eramba) and firewall/WAF (OPNsense). Includes key infrastructure and tuning considerations. |
 | [`Top_25_SPL_Queries.md`](Top_25_SPL_Queries.md) | Splunk | 25 SPL queries for threat detection across authentication, endpoint monitoring, network security, file integrity, privilege escalation, and more. |
 | [`Top_25_Wazuh_Queries.md`](Top_25_Wazuh_Queries.md) | Wazuh | 25 Wazuh detection rules covering brute-force detection, privilege escalation, persistence techniques, malware/IOC detection, and SOC compliance auditing. |
 
