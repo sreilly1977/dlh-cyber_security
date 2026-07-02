@@ -6,7 +6,7 @@ OPNsense is the standout recommendation here. It's a fork of pfSense, built on F
 
 ---
 
-## NIDS — Suricata (via Security Onion or standalone)
+## NIDS — Suricata (via Security Onion)
 
 Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi-threaded, with signature-based detection (Emerging Threats ruleset) and protocol analysis. Zeek (formerly Bro) pairs beautifully alongside it for network behavior analytics and metadata logging.
 
@@ -41,17 +41,9 @@ A Shuffle + TheHive combination is a popular pattern — TheHive for case manage
 
 ---
 
-## SIEM — Wazuh + Security Onion (or UTMStack)
-
-### Option A — Wazuh as primary SIEM
+## SIEM — Wazuh + Security Onion
 
 Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. We could feed Suricata/Zeek logs from Security Onion into Wazuh's ingestion pipeline and use Wazuh as the central pane.
-
-### Option B — UTMStack as central SIEM/SOAR
-
-UTMStack explicitly maps to compliance frameworks (CMMC, HIPAA, SOC 2, ISO 27001, PCI), does real-time correlation, and has integrated LLM-based alert analysis. We'd forward logs from Wazuh (HIDS telemetry) and Security Onion (network telemetry) into UTMStack for centralized correlation and compliance reporting.
-
-Option B (UTMStack as the central hub) gives us the best compliance story, while Option A (Wazuh-centered) gives us the deepest endpoint visibility.
 
 ---
 
@@ -83,13 +75,13 @@ graph TD
         WAZ["**Wazuh Agents** HIDS / FIM / Vuln / SCA / EDR"]
     end
 
-    WAZ --> UTM
+    WAZ --> SOW
 
     subgraph Central["Central Correlation"]
-        UTM["**UTMStack** Central SIEM SOAR / Correlation · Enrichment · Alerting"]
+        SOW["**Seurity Onion/Wazuh** Central SIEM SOAR / Correlation · Enrichment · Alerting"]
     end
 
-    UTM --> ERA
+    SOW --> ERA
 
     subgraph Governance["Governance"]
         ERA["**Eramba** GRC Platform / Policy · Risk · Audit · Compliance Mapping"]
