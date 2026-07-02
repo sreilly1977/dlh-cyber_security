@@ -75,12 +75,10 @@ Here's a conceptual data flow for the stack:
 graph TD
     subgraph Edge["Edge / Network Perimeter"]
         OPN["**OPNsense**FirewallSPI · VLANs · VPN · GeoIP"]
-        COR["**Coraza**WAFOWASP CRS v4 · SecLang"]
         SON["**Security Onion**Suricata + ZeekNIDS/IPS · Protocol Analysis"]
     end
 
     OPN -- "Syslog/Beats forwarding" --> WAZ
-    COR -- "Syslog/Beats forwarding" --> WAZ
     SON -- "Syslog/Beats forwarding" --> WAZ
 
     subgraph Endpoint["Endpoint Layer"]
