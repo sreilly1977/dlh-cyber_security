@@ -49,7 +49,7 @@ Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backen
 
 ### Option B — UTMStack as central SIEM/SOAR
 
-UTMStack explicitly maps to compliance frameworks (CMMC, HIPAA, SOC 2, ISO 27001, PCI), does real-time correlation, and has integrated LLM-based alert analysis. You'd forward logs from Wazuh (HIDS telemetry) and Security Onion (network telemetry) into UTMStack for centralized correlation and compliance reporting.
+UTMStack explicitly maps to compliance frameworks (CMMC, HIPAA, SOC 2, ISO 27001, PCI), does real-time correlation, and has integrated LLM-based alert analysis. We'd forward logs from Wazuh (HIDS telemetry) and Security Onion (network telemetry) into UTMStack for centralized correlation and compliance reporting.
 
 Option B (UTMStack as the central hub) gives you the best compliance story, while Option A (Wazuh-centered) gives you the deepest endpoint visibility.
 
