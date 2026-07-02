@@ -28,16 +28,11 @@ Wazuh is the clear leader here. As we discussed earlier, its agent-based approac
 
 ---
 
-## SOAR — Shuffle
+## SOAR — The Hive/Cortex (via Security Onion)
 
-Shuffle is the leading open-source SOAR platform — Apache 2.0 licensed, with a visual no-code workflow builder for alert triage, incident response, and threat remediation. It has native integrations with TheHive, Cortex, MISP, Splunk, ticketing systems, and increasingly AI-assisted enrichment via LLM integrations. Can be deployed on-prem or in any cloud container in under a minute.
+TheHive serves as the case management and incident response hub. Security Onion can automatically forward alerts to TheHive, where they're converted into cases with full context — observables, timelines, assigned analysts, task tracking, and custom fields.
 
-**Alternatives to consider:**
-
-- **TheHive** — Excellent for case management and incident response orchestration; pairs naturally with Cortex for automated analysis
-- **Tracecat** — Newer, low-code, focused on compliance-driven playbooks
-
-A Shuffle + TheHive combination is a popular pattern — TheHive for case management, Shuffle for workflow automation, and both feeding back into our SIEM.
+Cortex runs alongside TheHive and handles automated enrichment and analysis of observables — IPs, domains, URLs, file hashes, filenames, etc. It does this through "analyzers" (for investigation) and "responders" (for taking action). There's a large library of analyzers covering threat intel feeds, sandboxes, reputation services, and more.
 
 ---
 
