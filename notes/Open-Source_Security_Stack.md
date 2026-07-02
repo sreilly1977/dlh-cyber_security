@@ -57,48 +57,84 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 ## How It All Fits Together
 
 ```mermaid
-graph TD
-    subgraph Edge["Edge / Network Perimeter"]
-        OPN["**OPNsense** FirewallSPI · VLANs · VPN · GeoIP - WAF"]
-        SON["**Security Onion** Suricata + ZeekNIDS/IPS · Protocol Analysis"]
+graph TB
+    %% ── External Network ──
+    NET([Internet / External Traffic])
+
+    %% ── Firewall / WAF Layer ──
+    subgraph FW["🔥 Firewall / WAF"]
+        OPN["<b>OPNsense v26.1</b><br/>━━━━━━━━━━━━━━<br/>• Stateful Packet Inspection<br/>• VLANs<br/>• WireGuard / IPsec VPNs<br/>• Traffic Shaping<br/>• GeoIP Filtering<br/>• Built-in Suricata IDS/IPS Plugin<br/><br/>Built on FreeBSD | Fork of pfSense<br/>Quarterly Releases | Truly Open Source"]
     end
 
-    OPN -- "Syslog/Beats forwarding" --> WAZ
-    SON -- "Syslog/Beats forwarding" --> WAZ
+    %% ── Security Onion Platform ──
+    subgraph SO["🧅 Security Onion — Turnkey NSM Platform"]
+        direction TB
 
-    subgraph Endpoint["Endpoint Layer"]
-        WAZ["**Wazuh Agents** HIDS / FIM / Vuln / SCA / EDR"]
+        subgraph NIDS_LAYER["📡 NIDS"]
+            SUR["<b>Suricata</b><br/>━━━━━━━━━━━━━━<br/>• Signature-based Detection<br/>• Emerging Threats Ruleset<br/>• Protocol Analysis<br/>• High-Performance / Multi-threaded"]
+            ZEEK["<b>Zeek</b> (formerly Bro)<br/>━━━━━━━━━━━━━━<br/>• Network Behavior Analytics<br/>• Metadata Logging"]
+        end
+
+        subgraph HIDS_LAYER["🖥️ HIDS"]
+            WAZ["<b>Wazuh</b><br/>━━━━━━━━━━━━━━<br/>• File Integrity Monitoring (FIM)<br/>• SCA — CIS Benchmarks<br/>• Vulnerability Detection (CVE)<br/>• Rootcheck — Rootkit / Malware<br/>• System Inventory & Asset Visibility<br/>• Active Response Automation<br/>• MITRE ATT&CK Mapping + Threat Intel"]
+            AGENT["Wazuh Agents<br/>━━━━━━━━━━━━━━<br/>🪟 Windows&nbsp;&nbsp;🐧 Linux&nbsp;&nbsp;🍎 macOS"]
+        end
+
+        subgraph SIEM_LAYER["📊 SIEM / XDR"]
+            ELASTIC["<b>Wazuh + Elastic Stack</b><br/>━━━━━━━━━━━━━━<br/>• Log Aggregation & Correlation<br/>• Alerting<br/>• Dashboards"]
+            KB["<b>Kibana</b><br/>Visualization & Hunting"]
+        end
+
+        subgraph SOAR_LAYER["🔁 SOAR"]
+            HIVE["<b>TheHive</b><br/>━━━━━━━━━━━━━━<br/>• Case Management<br/>• Observables & Timelines<br/>• Assigned Analysts<br/>• Task Tracking<br/>• Custom Fields"]
+            CORTEX["<b>Cortex</b><br/>━━━━━━━━━━━━━━<br/>• Automated Enrichment<br/>• Analyzers — Investigation<br/>  (Threat Intel, Sandboxes, Reputation)<br/>• Responders — Take Action"]
+        end
     end
 
-    WAZ --> SOW
-
-    subgraph Central["Central Correlation"]
-        SOW["**Seurity Onion/Wazuh** Central SIEM SOAR / Correlation · Enrichment · Alerting"]
+    %% ── GRC Layer ──
+    subgraph GRC_LAYER["📋 GRC — Governance, Risk & Compliance"]
+        ERAMBA["<b>Eramba</b><br/>━━━━━━━━━━━━━━<br/>• Policy Management<br/>• Risk Assessment<br/>• Audit Management<br/>• RBAC<br/>• Automated Evidence Collection<br/>• Multi-framework Mapping<br/>• Audit-ready Reporting"]
     end
 
-    SOW --> ERA
+    %% ── Traffic Flow ──
+    NET -->|"Ingress / Egress"| OPN
+    OPN -->|"SPAN / Mirror Port"| SUR
+    OPN -.->|"Inline IPS Block"| NET
 
-    subgraph Governance["Governance"]
-        ERA["**Eramba** GRC Platform / Policy · Risk · Audit · Compliance Mapping"]
-    end
+    SUR <-->|"Telemetry"| ZEEK
+    SUR -->|"Logs & Alerts"| ELASTIC
+    ZEEK -->|"Metadata & Logs"| ELASTIC
 
-    ERA --> SOAR
+    AGENT -->|"Agent Telemetry"| WAZ
+    WAZ -->|"HIDS Alerts"| ELASTIC
+    WAZ -.->|"Active Response<br/>Quarantine · Block IP · Script"| AGENT
 
-    subgraph Response["Response & Automation"]
-        SOAR["**Cortex + TheHive** SOAR / Case Management & Automated Response · Playbooks · IR"]
-    end
+    ELASTIC <-->|"Query / Visualize"| KB
+    ELASTIC -->|"Forward Alerts"| HIVE
 
-    classDef edgeNode fill:#1a1a2e,stroke:#00b894,color:#fff
-    classDef endpointNode fill:#1a1a2e,stroke:#6c5ce7,color:#fff
-    classDef centralNode fill:#1a1a2e,stroke:#fdcb6e,color:#fff
-    classDef govNode fill:#1a1a2e,stroke:#e17055,color:#fff
-    classDef respNode fill:#1a1a2e,stroke:#0984e3,color:#fff
+    HIVE <-->|"Observable Enrichment"| CORTEX
+    CORTEX -.->|"Responder Actions"| OPN
+    CORTEX -.->|"Responder Actions"| AGENT
 
-    class OPN,COR,SON edgeNode
-    class WAZ endpointNode
-    class UTM centralNode
-    class ERA govNode
-    class SOAR respNode
+    ERAMBA -.->|"Compliance Context"| ELASTIC
+    ERAMBA -.->|"Audit Evidence"| HIVE
+
+    %% ── Styling ──
+    classDef fw fill:#FF6B35,color:#fff,stroke:#E55A2B,stroke-width:2px
+    classDef nids fill:#2196F3,color:#fff,stroke:#1976D2,stroke-width:2px
+    classDef hids fill:#4CAF50,color:#fff,stroke:#388E3C,stroke-width:2px
+    classDef siem fill:#9C27B0,color:#fff,stroke:#7B1FA2,stroke-width:2px
+    classDef soar fill:#FF9800,color:#fff,stroke:#F57C00,stroke-width:2px
+    classDef grc fill:#607D8B,color:#fff,stroke:#546E7A,stroke-width:2px
+    classDef agent fill:#81C784,color:#fff,stroke:#66BB6A,stroke-width:1px
+
+    class OPN fw
+    class SUR,ZEEK nids
+    class WAZ hids
+    class AGENT agent
+    class ELASTIC,KB siem
+    class HIVE,CORTEX soar
+    class ERAMBA grc
 ```
 
 ## Key Considerations
