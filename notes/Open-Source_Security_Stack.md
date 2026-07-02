@@ -37,7 +37,7 @@ Shuffle is the leading open-source SOAR platform — Apache 2.0 licensed, with a
 - **TheHive** — Excellent for case management and incident response orchestration; pairs naturally with Cortex for automated analysis
 - **Tracecat** — Newer, low-code, focused on compliance-driven playbooks
 
-A Shuffle + TheHive combination is a popular pattern — TheHive for case management, Shuffle for workflow automation, and both feeding back into your SIEM.
+A Shuffle + TheHive combination is a popular pattern — TheHive for case management, Shuffle for workflow automation, and both feeding back into our SIEM.
 
 ---
 
