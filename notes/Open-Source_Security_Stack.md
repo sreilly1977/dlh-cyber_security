@@ -57,84 +57,27 @@ Eramba is the strongest open-source GRC option, offering policy management, risk
 ## How It All Fits Together
 
 ```mermaid
-graph TB
-    %% ── External Network ──
-    NET([Internet / External Traffic])
+flowchart TB
+    OPN["🛡️ OPNsense<br>(Firewall / WAF)"]
 
-    %% ── Firewall / WAF Layer ──
-    subgraph FW["🔥 Firewall / WAF"]
-        OPN["<b>OPNsense v26.1</b><br/>━━━━━━━━━━━━━━<br/>• Stateful Packet Inspection<br/>• VLANs<br/>• WireGuard / IPsec VPNs<br/>• Traffic Shaping<br/>• GeoIP Filtering<br/>• Built-in Suricata IDS/IPS Plugin<br/><br/>Built on FreeBSD | Fork of pfSense<br/>Quarterly Releases | Truly Open Source"]
+    subgraph SO["Security Onion"]
+        SUR["🔴 Suricata<br>(NIDS)"]
+        ZEEK["📊 Zeek<br>(Network Analytics)"]
+        WAZ["🟠 Wazuh<br>(SIEM / HIDS)"]
+        HIVE["🐝 TheHive<br>(Case Management)"]
+        CORTEX["⚙️ Cortex<br>(Enrichment / Response)"]
     end
 
-    %% ── Security Onion Platform ──
-    subgraph SO["🧅 Security Onion — Turnkey NSM Platform"]
-        direction TB
+    ERA["📋 Eramba<br>(GRC)"]
 
-        subgraph NIDS_LAYER["📡 NIDS"]
-            SUR["<b>Suricata</b><br/>━━━━━━━━━━━━━━<br/>• Signature-based Detection<br/>• Emerging Threats Ruleset<br/>• Protocol Analysis<br/>• High-Performance / Multi-threaded"]
-            ZEEK["<b>Zeek</b> (formerly Bro)<br/>━━━━━━━━━━━━━━<br/>• Network Behavior Analytics<br/>• Metadata Logging"]
-        end
+    OPN -->|"Inspected Traffic"| SO
 
-        subgraph HIDS_LAYER["🖥️ HIDS"]
-            WAZ["<b>Wazuh</b><br/>━━━━━━━━━━━━━━<br/>• File Integrity Monitoring (FIM)<br/>• SCA — CIS Benchmarks<br/>• Vulnerability Detection (CVE)<br/>• Rootcheck — Rootkit / Malware<br/>• System Inventory & Asset Visibility<br/>• Active Response Automation<br/>• MITRE ATT&CK Mapping + Threat Intel"]
-            AGENT["Wazuh Agents<br/>━━━━━━━━━━━━━━<br/>🪟 Windows&nbsp;&nbsp;🐧 Linux&nbsp;&nbsp;🍎 macOS"]
-        end
+    SUR -.->|"Logs"| WAZ
+    ZEEK -.->|"Metadata"| WAZ
+    WAZ -->|"Alerts"| HIVE
+    HIVE <-->|"Observables"| CORTEX
 
-        subgraph SIEM_LAYER["📊 SIEM / XDR"]
-            ELASTIC["<b>Wazuh + Elastic Stack</b><br/>━━━━━━━━━━━━━━<br/>• Log Aggregation & Correlation<br/>• Alerting<br/>• Dashboards"]
-            KB["<b>Kibana</b><br/>Visualization & Hunting"]
-        end
-
-        subgraph SOAR_LAYER["🔁 SOAR"]
-            HIVE["<b>TheHive</b><br/>━━━━━━━━━━━━━━<br/>• Case Management<br/>• Observables & Timelines<br/>• Assigned Analysts<br/>• Task Tracking<br/>• Custom Fields"]
-            CORTEX["<b>Cortex</b><br/>━━━━━━━━━━━━━━<br/>• Automated Enrichment<br/>• Analyzers — Investigation<br/>  (Threat Intel, Sandboxes, Reputation)<br/>• Responders — Take Action"]
-        end
-    end
-
-    %% ── GRC Layer ──
-    subgraph GRC_LAYER["📋 GRC — Governance, Risk & Compliance"]
-        ERAMBA["<b>Eramba</b><br/>━━━━━━━━━━━━━━<br/>• Policy Management<br/>• Risk Assessment<br/>• Audit Management<br/>• RBAC<br/>• Automated Evidence Collection<br/>• Multi-framework Mapping<br/>• Audit-ready Reporting"]
-    end
-
-    %% ── Traffic Flow ──
-    NET -->|"Ingress / Egress"| OPN
-    OPN -->|"SPAN / Mirror Port"| SUR
-    OPN -.->|"Inline IPS Block"| NET
-
-    SUR <-->|"Telemetry"| ZEEK
-    SUR -->|"Logs & Alerts"| ELASTIC
-    ZEEK -->|"Metadata & Logs"| ELASTIC
-
-    AGENT -->|"Agent Telemetry"| WAZ
-    WAZ -->|"HIDS Alerts"| ELASTIC
-    WAZ -.->|"Active Response<br/>Quarantine · Block IP · Script"| AGENT
-
-    ELASTIC <-->|"Query / Visualize"| KB
-    ELASTIC -->|"Forward Alerts"| HIVE
-
-    HIVE <-->|"Observable Enrichment"| CORTEX
-    CORTEX -.->|"Responder Actions"| OPN
-    CORTEX -.->|"Responder Actions"| AGENT
-
-    ERAMBA -.->|"Compliance Context"| ELASTIC
-    ERAMBA -.->|"Audit Evidence"| HIVE
-
-    %% ── Styling ──
-    classDef fw fill:#FF6B35,color:#fff,stroke:#E55A2B,stroke-width:2px
-    classDef nids fill:#2196F3,color:#fff,stroke:#1976D2,stroke-width:2px
-    classDef hids fill:#4CAF50,color:#fff,stroke:#388E3C,stroke-width:2px
-    classDef siem fill:#9C27B0,color:#fff,stroke:#7B1FA2,stroke-width:2px
-    classDef soar fill:#FF9800,color:#fff,stroke:#F57C00,stroke-width:2px
-    classDef grc fill:#607D8B,color:#fff,stroke:#546E7A,stroke-width:2px
-    classDef agent fill:#81C784,color:#fff,stroke:#66BB6A,stroke-width:1px
-
-    class OPN fw
-    class SUR,ZEEK nids
-    class WAZ hids
-    class AGENT agent
-    class ELASTIC,KB siem
-    class HIVE,CORTEX soar
-    class ERAMBA grc
+    WAZ -.->|"Evidence / Reporting"| ERA
 ```
 
 ## Key Considerations
