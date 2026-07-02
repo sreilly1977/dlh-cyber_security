@@ -84,6 +84,6 @@ flowchart TB
 
 **Infrastructure sizing** is going to be our biggest challenge. Running Elasticsearch on Security Onion is resource-intensive. Lots of CPU, memory and storage.
 
-**Tuning burden** — Every detection engine (Suricata, Wazuh rules, Zeek) will generate noise initially. Budget time for baselining and tuning — this is where the "free software ≠ free operations" reality bites hardest.
+**Tuning burden** — Every detection engine (Suricata, Wazuh rules, Zeek, OPNsense) will generate noise initially. Budget time for baselining and tuning — this is where the "free software ≠ free operations" reality bites hardest.
 
 **Integration gaps** — There's no single vendor stitching this together for us. Expect to write custom configuration for log forwarding, API integrations between SOAR/SIEM and GRC evidence collection pipelines.
