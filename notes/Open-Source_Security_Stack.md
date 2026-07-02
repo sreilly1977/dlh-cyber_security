@@ -46,12 +46,6 @@ Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backen
 
 Eramba is the strongest open-source GRC option, offering policy management, risk assessment, audit management, and compliance modules with role-based access control and automated evidence collection. It supports multi-framework mapping and audit-ready reporting.
 
-**Alternatives:**
-
-- **SimpleRisk** — Lightweight, risk-focused with scoring and mitigation tracking; extensible with add-ons for ISO 27001 and GDPR
-- **Baserow GRC** — Low-code, spreadsheet-style database for building custom risk registers and policy libraries
-- **OpenGRC** — Community-driven framework mapping controls to NIST CSF, SOC 2, and ISO 27001
-
 ---
 
 ## How It All Fits Together
