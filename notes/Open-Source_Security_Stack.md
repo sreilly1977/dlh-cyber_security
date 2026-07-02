@@ -86,13 +86,13 @@ graph TD
     WAZ --> UTM
 
     subgraph Central["Central Correlation"]
-        UTM["**UTMStack**Central SIEM / SOARCorrelation · Enrichment · Alerting"]
+        UTM["**UTMStack**Central SIEM SOAR / Correlation · Enrichment · Alerting"]
     end
 
     UTM --> ERA
 
     subgraph Governance["Governance"]
-        ERA["**Eramba**GRC PlatformPolicy · Risk · Audit · Compliance Mapping"]
+        ERA["**Eramba**GRC Platform / Policy · Risk · Audit · Compliance Mapping"]
     end
 
     ERA --> SOAR
