@@ -92,8 +92,8 @@ ls -la
 ### Opensource Infrastructure
 [OPNsense - FW, IPD/IDS, VPN, WAF](https://opnsense.org/)
 
-[Security Onion - NIDS/HIDS. IPD/IDS,Netflow, SIEM](https://securityonionsolutions.com/)
+[Security Onion - NIDS/HIDS. IPD/IDS, Netflow, SIEM](https://securityonionsolutions.com/)
 
 [UTMStack - SIEM, XDR, SOAR, GRC](https://utmstack.com/)
 
-[Wazuh - SIEM, HIDS, GRC](https://wazuh.com/)
+[Eramba - GRC]((https://www.eramba.org/))
