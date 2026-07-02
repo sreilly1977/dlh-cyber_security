@@ -16,7 +16,7 @@ Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi
 
 ## HIDS — Wazuh (via Security Onion)
 
-Wazuh is the clear leader here. As we discussed earlier, its agent-based approach covers Windows, Linux, and macOS with:
+Wazuh, with it's agent-based approach covering Windows, Linux and MacOS,  is the clear leader here, especially as it's integrated in Security Onion:
 
 - File Integrity Monitoring (FIM)
 - Security Configuration Assessment (SCA) against CIS benchmarks
