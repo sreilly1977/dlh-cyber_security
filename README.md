@@ -90,9 +90,9 @@ ls -la
 ---
 
 ### Opensource Infrastructure
-[OPNsense - FW, IPD/IDS, VPN, WAF](https://opnsense.org/)
+[OPNsense - FW, IPD/IDS, Netflow, VPN, WAF](https://opnsense.org/)
 
-[Security Onion - NIDS/HIDS. IDS/IPS, Netflow, SIEM, XDR](https://securityonionsolutions.com/)
+[Security Onion - NIDS/HIDS, Netflow, SIEM, XDR](https://securityonionsolutions.com/)
 
 [Shuffle Automation - SOAR](https://shuffler.io/)
 
