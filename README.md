@@ -98,6 +98,12 @@ ls -la
 
 [Eramba - GRC](https://www.eramba.org/)
 
-### Config sources
+### Windows Client Configs
 
 [**Swift**On**Security** SysMon config](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
+
+Enable Windows Client DNS Logging:
+
+```cmd
+wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
+```
