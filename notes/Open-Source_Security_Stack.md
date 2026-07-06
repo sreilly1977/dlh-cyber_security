@@ -69,7 +69,7 @@ Security Onion (version 3.x, released March 2026) is a free, open-source platfor
 | File Analysis | Strelka | File extraction and analysis for files observed traversing the network |
 | Host Visibility | Elastic Agent + osquery + SysMon (Windows/Linux) | Provides log collection, live queries via osquery, deep system ispection via SysMon, and centralised management through Elastic Fleet |
 | Log Management & SIEM | Elastic Stack (Elasticsearch, Logstash, Kibana) | Ingests and indexes all telemetry |
-| Case Management | Native SO Cases Module | Create cases, assign analysts, attach alerts and hunt findings as evidence, track investigation status |
+| Case Management | Native Security Onion Cases Module | Create cases, assign analysts, attach alerts and hunt findings as evidence, track investigation status |
 | Dashboards & Hunting | SO Custom Interface | Purpose-built web UI for alert review, threat hunting, and grid management |
 
 > **Deployment notes:** Supports standalone, distributed, and air-gap deployments. Storage remains the biggest concern: NSM data (especially full packet capture) is storage-hungry. Budget for terabyte-class NVMe or SSD on sensor and search nodes.
