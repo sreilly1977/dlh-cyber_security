@@ -45,5 +45,4 @@ Both SPL and Wazuh query sets cover:
 
 ---
 
-*Built for practical security operations. Always test and tailor detections to your environment.*# Cybersecurity Notes
-Detection queries can be copied and adapted to match your environment's index names, sourcetypes, and rule IDs. Review and test each query before deploying in production. The architecture guide serves as a reference for designing and sizing an open-source security operations stack.
+*Built for practical security operations. Always test and tailor detections to your environment.*
