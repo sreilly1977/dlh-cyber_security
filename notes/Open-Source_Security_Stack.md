@@ -250,7 +250,7 @@ flowchart TD
 
 - Two-factor authentication on all administrative interfaces (OPNsense, Security Onion, Shuffle, Eramba).
 - Certificate-based mutual TLS for API communication between tools (particularly important for Shuffle↔OPNsense automated actions).
-- Deploy Elastic Agents on the OPNsense appliance and the Eramba server for host-level monitoring — Security Onion can watch the security infrastructure itself.
+- Deploy Elastic Agents on the OPNsense appliance and the Eramba server for host-level monitoring.
 - Automate OPNsense config backups using the 26.1 SFTP backup plugin to an off-box, encrypted destination.
 - Restrict Shuffle webhook URLs to authenticated sources where possible; implement rate limiting on webhook endpoints.
 
