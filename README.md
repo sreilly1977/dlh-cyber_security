@@ -100,7 +100,11 @@ ls -la
 
 ---
 
-### Windows Client Configs
+### Client Endpoint Configs
+
+[SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
+
+[SysMon for Linux](https://github.com/microsoft/SysmonForLinux)
 
 [**Swift**On**Security** SysMon config](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
 
