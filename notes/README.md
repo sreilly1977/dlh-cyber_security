@@ -8,9 +8,9 @@ A practical collection of security monitoring queries, detection rules, and open
 
 | File | Purpose | Platform |
 |------|---------|----------|
-| `Open-Source_Security_Stack.md` | Reference architecture for a complete open-source security platform | Infrastructure |
-| `Top_25_SPL_Queries.md` | Essential Splunk search queries for threat detection | Splunk SIEM |
-| `Top_25_Wazuh_Queries.md` | Core detection rules for security monitoring | Wazuh SIEM |
+| [`Open-Source_Security_Stack.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md) | Reference architecture for a complete open-source security platform | Infrastructure |
+| [`Top_25_SPL_Queries.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Top_25_SPL_Queries.md) | Essential Splunk search queries for threat detection | Splunk SIEM |
+| [`Top_25_Wazuh_Queries.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Top_25_Wazuh_Queries.md) | Core detection rules for security monitoring | Wazuh SIEM |
 
 ## Open-Source Security Stack Architecture
 
