@@ -100,7 +100,7 @@ ls -la
 
 ---
 
-### Client Endpoint Configs
+### SysMon & Configs
 
 [SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
 
