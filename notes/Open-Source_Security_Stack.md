@@ -8,7 +8,7 @@ OPNsense is the standout open-source firewall. It's a fork of pfSense, built on 
 
 ## NIDS — Suricata (via Security Onion)
 
-Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi-threaded, with signature-based detection (Emerging Threats ruleset) and protocol analysis. Zeek (formerly Bro) pairs beautifully alongside it for network behavior analytics and metadata logging.
+Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi-threaded, with signature-based detection and protocol analysis. Zeek pairs beautifully alongside it for network behavior analytics and metadata logging.
 
 **Deployment approach:** Security Onion bundles both Suricata and Zeek with Elasticsearch, Kibana, and OSSEC/Wazuh integration out of the box. This gives us a turnkey NSM platform with dashboards, alerting, and hunt capabilities.
 
@@ -16,7 +16,7 @@ Suricata is the de facto open-source NIDS/IPS engine — high-performance, multi
 
 ## HIDS — Wazuh (via Security Onion)
 
-Wazuh, with it's agent-based approach covering Windows, Linux and MacOS,  is the clear leader here, especially as it's integrated in Security Onion:
+Wazuh, with it's agent-based approach covering Windows, Linux and MacOS. It's integrated in Security Onion:
 
 - File Integrity Monitoring (FIM)
 - Security Configuration Assessment (SCA) against CIS benchmarks
@@ -32,7 +32,7 @@ Wazuh, with it's agent-based approach covering Windows, Linux and MacOS,  is the
 
 TheHive serves as the case management and incident response hub. Security Onion can automatically forward alerts to TheHive, where they're converted into cases with full context — observables, timelines, assigned analysts, task tracking, and custom fields.
 
-Cortex runs alongside TheHive and handles automated enrichment and analysis of observables — IPs, domains, URLs, file hashes, filenames, etc. It does this through "analyzers" (for investigation) and "responders" (for taking action). There's a large library of analyzers covering threat intel feeds, sandboxes, reputation services, and more.
+Cortex runs alongside TheHive and handles automated enrichment and analysis of observables — IPs, domains, URLs, file hashes, filenames, etc. It does this through "analyzers" for investigation, and "responders" for taking action. There's a large library of analyzers covering threat intel feeds, sandboxes, reputation services, and more.
 
 ---
 
