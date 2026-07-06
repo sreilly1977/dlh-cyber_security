@@ -208,7 +208,7 @@ flowchart TD
 
     PHASE5["PHASE 5: TECHNICAL CASE TRACKING<br/>Shuffle creates case in Security Onion Cases module<br/>Title: C2 Beacon from 203.0.113.50<br/>Severity: High<br/>Evidence: Suricata JSON, Zeek logs, enriched IOCs<br/>Assign: SOC Analyst on shift"]
 
-    PHASE6["PHASE 6: GOVERNANCE RECORDING (If Eramba Deployed)<br/>Shuffle POSTs to Eramba /api/v1/incidents<br/>Title: External Malware Communication Incident<br/>Severity: HIGH<br/>Compliance Impact: ISO 27001 A.13.1.3<br/>Eramba logs incident, assigns owner, triggers email"]
+    PHASE6["PHASE 6: GOVERNANCE RECORDING<br/>Shuffle POSTs to Eramba /api/v1/incidents<br/>Title: External Malware Communication Incident<br/>Severity: HIGH<br/>Compliance Impact: ISO 27001 A.13.1.3<br/>Eramba logs incident, assigns owner, triggers email"]
 
     PHASE7["PHASE 7: NOTIFICATION & HANDOFF<br/>Slack/Teams message to SOC channel<br/>Email to incident commander with SO case link<br/>SMS to on-call analyst if severity = CRITICAL"]
 
