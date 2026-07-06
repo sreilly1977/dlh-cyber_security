@@ -100,7 +100,9 @@ ls -la
 
 ---
 
-### SysMon & Configs
+### AuditD & SysMon Configs
+
+[AuditD Best Practices Config](https://github.com/neo23x0/auditd)
 
 [SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
 
