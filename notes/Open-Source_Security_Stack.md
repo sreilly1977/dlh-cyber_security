@@ -38,13 +38,13 @@ Cortex runs alongside TheHive and handles automated enrichment and analysis of o
 
 ## SIEM — Wazuh (via Security Onion)
 
-Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. We could feed Suricata/Zeek logs from Security Onion into Wazuh's ingestion pipeline and use Wazuh as the central pane.
+Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backend handles log aggregation, correlation, alerting, and dashboards. As it's integrated into Security Onion, we can use it as the glass pane for all alerts.
 
 ---
 
 ## GRC — Eramba
 
-Eramba is the strongest open-source GRC option, offering policy management, risk assessment, audit management, and compliance modules with role-based access control and automated evidence collection. It supports multi-framework mapping and audit-ready reporting.
+**Still under review** Eramba is the strongest open-source GRC option, offering policy management, risk assessment, audit management, and compliance modules with role-based access control and automated evidence collection. It supports multi-framework mapping and audit-ready reporting.
 
 ---
 
