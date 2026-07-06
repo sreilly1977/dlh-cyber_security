@@ -94,7 +94,7 @@ ls -la
 
 [Security Onion - NIDS/HIDS. IDS/IPS, Netflow, SIEM, XDR](https://securityonionsolutions.com/)
 
-[UTMStack - SIEM, XDR, SOAR, GRC](https://utmstack.com/)
+[Shuffle Automation - SOAR](https://shuffler.io/)
 
 [Eramba - GRC](https://www.eramba.org/)
 
