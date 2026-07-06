@@ -44,7 +44,7 @@ Wazuh already unifies SIEM + XDR capabilities. Its built-in Elastic Stack backen
 
 ## GRC — Eramba
 
-**Still under review** Eramba is the strongest open-source GRC option, offering policy management, risk assessment, audit management, and compliance modules with role-based access control and automated evidence collection. It supports multi-framework mapping and audit-ready reporting.
+**Still under review** - Eramba is the strongest open-source GRC option, offering policy management, risk assessment, audit management, and compliance modules with role-based access control and automated evidence collection. It supports multi-framework mapping and audit-ready reporting.
 
 ---
 
