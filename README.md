@@ -97,3 +97,7 @@ ls -la
 [UTMStack - SIEM, XDR, SOAR, GRC](https://utmstack.com/)
 
 [Eramba - GRC](https://www.eramba.org/)
+
+### Config sources
+
+[**Swift**On**Security** SysMon config](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
