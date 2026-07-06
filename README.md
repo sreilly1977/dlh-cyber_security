@@ -104,7 +104,9 @@ ls -la
 
 [**Swift**On**Security** SysMon config](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
 
-Enable Windows Client DNS Logging: *remeber to enable an add blocker*
+Enable Windows Client DNS Logging: 
+
+*Remeber to enable browser add blockers*
 
 ```cmd
 wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
