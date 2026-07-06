@@ -110,8 +110,8 @@ ls -la
 
 Enable Windows Client DNS Logging: 
 
-*Remeber to enable browser add blockers, and exclude local/own DNS*
-
 ```cmd
 wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 ```
+
+*Remeber to enable browser add blockers, and exclude local/own DNS*
