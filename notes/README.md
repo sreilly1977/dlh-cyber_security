@@ -2,9 +2,7 @@
 
 A practical collection of security monitoring queries, detection rules, and open-source security stack documentation for SOC operations and incident response.
 
-## Repository Structure
-
-### `/notes` Directory
+## Directory Structure
 
 | File | Purpose | Platform |
 |------|---------|----------|
