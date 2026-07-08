@@ -116,4 +116,4 @@ Enable Windows Client DNS Logging:
 wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 ```
 
-*Remeber to enable browser add blockers, and exclude local/own DNS*
+*Remember to enable browser ad blockers, and exclude local/own DNS*
