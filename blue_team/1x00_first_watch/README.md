@@ -122,7 +122,7 @@ Analyze the following 6 incidents from Marcus's log. For each one, identify:
 3. If a **secondary pillar** is also impacted, identify it and explain the connection
 4. Produce a **formatted incident classification table**
 
-## 2. The Symptom Trap
+# [2. The Symptom Trap](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/2-root_cause_analysis.md)
 
 **Goal:** Develop the analytical reflex to look beyond visible symptoms and identify root causes in security events.
 
@@ -136,7 +136,7 @@ James Chen is not convinced. Neither was Marcus. James asks you to take a closer
 
 ---
 
-### Excerpt from the Diagnostics File
+## Excerpt from the Diagnostics File
 
 ```bash
 top - 14:22:07 up 12 days, 3:47, 2 users
@@ -154,7 +154,7 @@ tcp    10.10.2.15:45901   91.121.87.10:8080      ESTABLISHED
 tcp    10.10.2.15:80      10.10.1.0/24:*         LISTEN
 ```
 
-### Instructions
+## Instructions
 
 The sysadmin says this is a hardware capacity problem. You need to determine what is actually happening and why the sysadmin's diagnosis is wrong.
 
