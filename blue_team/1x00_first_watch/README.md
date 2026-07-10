@@ -45,3 +45,40 @@ On your first morning, James meets you at reception. He walks you to your desk, 
 > "I need you to assess our current security posture from scratch. What assets do we have, how critical are they, what controls are in place, where are the gaps and what should we fix first. I need a professional document I can put in front of the Board. Not a list of problems. A structured assessment with clear priorities."
 >
 > "Welcome to MedDefense. The clock is ticking."
+
+# 0. The Onboarding Packet
+
+**Goal:** Extract a structured understanding of an organization from incomplete and disorganized documentation.
+
+## Context
+
+James Chen hands you a folder labeled "MedDefense, Security Documentation." It contains everything the organization has:
+
+- A partial IT asset list exported from the ticketing system
+- An outdated network diagram that Marcus started but never finished
+- A one-page org chart
+- Site descriptions from the HR onboarding guide
+- Notes Marcus left in a text file on the shared drive
+- A summary of IT service contracts
+
+None of it is complete. Some of it contradicts itself. Welcome to reality.
+
+## Provided Files
+
+`onboarding_packet.txt`
+
+## Instructions
+
+Your first task is to make sense of this information. Read the entire onboarding packet carefully. Then produce a **Structured Environment Summary** organized into the following four sections:
+
+1. **Organization Overview:** Sites (name, location type, function, approximate headcount), departments, and reporting structure relevant to security.
+
+2. **IT Infrastructure Identified:** Every system, server, network device, and endpoint category mentioned or implied in the documentation. For each: name/type, function, location (which site), and any technical details available.
+
+3. **Data and Services:** What types of data does MedDefense handle? What critical services depend on IT infrastructure? Who uses them?
+
+4. **Known Unknowns:** What information is missing, incomplete, or contradictory in the documentation? List specific gaps. This section is as important as the others — knowing what you do not know is the first step toward a complete assessment.
+
+---
+
+*Be precise. Do not invent information that is not in the packet. If something is ambiguous, flag it in the Known Unknowns section.*
