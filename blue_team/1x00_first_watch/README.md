@@ -46,6 +46,8 @@ On your first morning, James meets you at reception. He walks you to your desk, 
 >
 > "Welcome to MedDefense. The clock is ticking."
 
+---
+
 # [0. The Onboarding Packet](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/0-environment_summary.md)
 
 **Goal:** Extract a structured understanding of an organization from incomplete and disorganized documentation.
@@ -77,9 +79,9 @@ Your first task is to make sense of this information. Read the entire onboarding
 
 4. **Known Unknowns:** What information is missing, incomplete, or contradictory in the documentation? List specific gaps. This section is as important as the others — knowing what you do not know is the first step toward a complete assessment.
 
----
-
 *Be precise. Do not invent information that is not in the packet. If something is ambiguous, flag it in the Known Unknowns section.*
+
+---
 
 # [1. The First Incidents](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/1-incident_classification.md)
 
@@ -118,6 +120,8 @@ Analyze the following 6 incidents from Marcus's log. For each one, identify:
 3. If a **secondary pillar** is also impacted, identify it and explain the connection
 4. Produce a **formatted incident classification table**
 
+---
+
 # [2. The Symptom Trap](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/2-root_cause_analysis.md)
 
 **Goal:** Develop the analytical reflex to look beyond visible symptoms and identify root causes in security events.
@@ -129,8 +133,6 @@ The IT team has flagged `billing-srv-01` three times in the last two months for 
 James Chen is not convinced. Neither was Marcus. James asks you to take a closer look.
 
 **Provided Files:** [`billing-srv-01_diagnostics.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/billing-srv-01_diagnostics.txt) (contains a top output snapshot and a netstat excerpt from the server)
-
----
 
 ## Excerpt from the Diagnostics File
 
