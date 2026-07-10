@@ -83,7 +83,7 @@ Your first task is to make sense of this information. Read the entire onboarding
 
 *Be precise. Do not invent information that is not in the packet. If something is ambiguous, flag it in the Known Unknowns section.*
 
-# 1. The First Incidents
+# [1. The First Incidents](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x00_first_watch)
 
 **Goal:** Learn to classify security events using the CIA Triad as an analytical framework.
 
