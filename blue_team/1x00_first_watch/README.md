@@ -22,9 +22,7 @@ The report you produce at the end of this project is not an exercise. It is the 
 
 Get this right, and everything that follows has a solid foundation. Get this wrong, and you are building on sand.
 
-## Context
-
-You are starting your first day as Junior Security Analyst at **MedDefense Health Systems**.
+**Context:** You are starting your first day as Junior Security Analyst at **MedDefense Health Systems**.
 
 MedDefense is a regional hospital group operating 3 sites:
 
@@ -50,9 +48,7 @@ On your first morning, James meets you at reception. He walks you to your desk, 
 
 **Goal:** Extract a structured understanding of an organization from incomplete and disorganized documentation.
 
-## Context
-
-James Chen hands you a folder labeled "MedDefense, Security Documentation." It contains everything the organization has:
+**Context:** James Chen hands you a folder labeled "MedDefense, Security Documentation." It contains everything the organization has:
 
 - A partial IT asset list exported from the ticketing system
 - An outdated network diagram that Marcus started but never finished
@@ -87,9 +83,7 @@ Your first task is to make sense of this information. Read the entire onboarding
 
 **Goal:** Learn to classify security events using the CIA Triad as an analytical framework.
 
-## Context
-
-While reading Marcus's notes from the onboarding packet, you find a section titled "Incident Log, Last 6 Months." It is a rough list of security-relevant events that occurred at MedDefense. Some were handled. Some were not. None were formally classified.
+**Context:**: While reading Marcus's notes from the onboarding packet, you find a section titled "Incident Log, Last 6 Months." It is a rough list of security-relevant events that occurred at MedDefense. Some were handled. Some were not. None were formally classified.
 
 Before you can assess the security posture, you need to understand what has already gone wrong. More importantly, you need a framework to describe how it went wrong. That framework is the **CIA Triad**:
 
