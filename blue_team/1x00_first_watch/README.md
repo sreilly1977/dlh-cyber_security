@@ -65,7 +65,7 @@ None of it is complete. Some of it contradicts itself. Welcome to reality.
 
 ## Provided Files
 
-`onboarding_packet.txt`
+[`onboarding_packet.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/onboarding_packet.txt)
 
 ## Instructions
 
