@@ -22,6 +22,8 @@ The report you produce at the end of this project is not an exercise. It is the 
 
 Get this right, and everything that follows has a solid foundation. Get this wrong, and you are building on sand.
 
+---
+
 **Context:** You are starting your first day as Junior Security Analyst at **MedDefense Health Systems**.
 
 MedDefense is a regional hospital group operating 3 sites:
