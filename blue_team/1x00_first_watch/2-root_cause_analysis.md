@@ -1,4 +1,4 @@
-# Incident Analysis: billing-srv-01 — The Symptom Trap
+# Incident Analysis: billing-srv-01; The Symptom Trap
 
 ## Executive Summary
 
