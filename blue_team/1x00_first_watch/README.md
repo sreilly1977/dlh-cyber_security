@@ -223,6 +223,8 @@ Observation [N]:
   Severity: [Critical / High / Medium / Low - justified in one sentence]
 ```
 
+---
+
 ## [4. The Control Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/4-control_inventory.md)
 
 **Goal:** Identify, classify and document existing security controls using the professional dual-axis taxonomy: category (Technical / Administrative / Physical) and function (Preventive / Detective / Corrective).
@@ -294,6 +296,8 @@ After listing all controls, produce a Control Summary Matrix in table format:
 
 Place the Control ID of each control in the appropriate cell. Cells that remain empty after your inventory represent potential gaps.
 
+---
+
 ## [5. The Missing Pieces](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/5-control_gaps.md)
 
 **Goal:** Identify systemic gaps in a control framework by analyzing what is absent, not just what is present.
@@ -331,6 +335,8 @@ At the end, answer this question in **2-3 sentences**:
 
 > Looking at your gaps as a whole, what pattern do you see? Is MedDefense's security posture more prevention-oriented or detection-oriented? What does this imply about their ability to respond to an incident that bypasses preventive controls?
 
+---
+
 ## [6. The Legacy Dilemma](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/6-compensating_controls.md)
 
 **Goal:** Design a compensating control strategy for a system that cannot be patched, upgraded or replaced, under real operational constraints.
@@ -362,6 +368,8 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
    - Identify any limitations or residual risk
 
 3. **Implementation Priority:** If MedDefense could only implement **ONE** of your proposed controls immediately (budget constraint), which one provides the greatest risk reduction? Justify your choice.
+
+---
 
 ## [7. The Asset Registry](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/7-asset_registry.md)
 
@@ -414,6 +422,8 @@ After the registry, provide a **Reconciliation Notes** section that documents:
 2. **Assets mentioned in documentation that do NOT appear in the network scan** (decommissioned? offline? different network?)
 3. **Any discrepancies or contradictions between sources**
 
+---
+
 ## [8. The Criticality Assessment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/8-criticality_assessment.md)
 
 **Goal:** Evaluate the criticality of each asset category using CIA-based analysis, calibrated to the specific operational context of a healthcare organization.
@@ -458,6 +468,8 @@ Produce an Asset Criticality Matrix in the following format:
 ### Top 5 Most Critical Assets
 
 After the matrix, identify and rank the **Top 5 Most Critical Assets** with a brief paragraph for each explaining why it holds that position.
+
+---
 
 ## [9. The Data Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/9-data_map.md)
 
@@ -505,3 +517,67 @@ Identify the major data categories present at MedDefense. For each, document:
 After the table, write a **Data Risk Summary** (one paragraph) answering:
 
 > What is MedDefense's most significant data protection weakness? Consider which data category, in which state, has the widest protection gap relative to its classification level.
+
+---
+
+## [10. The Complete Control Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/10-complete_control_matrix.md)
+
+**Goal:** Produce a consolidated, authoritative control inventory that integrates all controls identified throughout the project, mapped against the assets they protect.
+
+**Context:** You now have controls from multiple sources: the artifact analysis (Task 4), the physical observations (Task 3), the compensating controls you designed (Task 6) and various mentions throughout the incident analysis and data mapping. James Chen needs a single, definitive document.
+
+*"When the Board asks 'What security do we have?' I need to hand them one page. Not five documents."*
+
+---
+
+### Instructions
+
+Produce a **Complete Control Matrix** that consolidates every security control identified across the entire project. This is the authoritative reference document.
+
+---
+
+### Part 1: Control Registry (Updated)
+
+Update your control inventory from Task 4 with any additional controls you identified in subsequent tasks. Each control entry must include:
+
+| Control ID | Control Name | Category | Function | Asset(s) Protected | Effectiveness (Strong/Adequate/Weak) | Evidence/Source |
+|------------|--------------|----------|----------|--------------------|--------------------------------------|-----------------|
+| | | | | | | |
+
+#### Effectiveness Rating Criteria
+
+- **Strong:** Properly configured, covering the right scope, actively maintained
+- **Adequate:** In place but with limitations (e.g., coverage gaps, outdated rules)
+- **Weak:** Exists on paper but poorly implemented or easily bypassed
+
+---
+
+### Part 2: Updated Control Summary Matrix
+
+Reproduce the Category × Function matrix from Task 4, now including all controls identified throughout the project. Mark each cell with the **count of controls** and their **average effectiveness**.
+
+|              | Preventive | Detective | Corrective | Compensating | Deterrent |
+|--------------|------------|-----------|------------|--------------|-----------|
+| **Technical** | | | | | |
+| **Administrative** | | | | | |
+| **Physical** | | | | | |
+
+---
+
+### Part 3: Control Coverage Map
+
+For each of your **Top 5 Critical Assets** (Task 8), list the controls that protect it and identify which control categories/functions are missing.
+
+| Critical Asset | Preventive | Detective | Corrective | Compensating | Coverage Assessment |
+|----------------|------------|-----------|------------|--------------|---------------------|
+| | | | | | |
+
+#### Coverage Assessment Options
+
+- **Well-Protected:** Multiple controls across functions with strong effectiveness
+- **Partially Protected:** Some coverage but notable gaps in function or category
+- **Under-Protected:** Minimal protection, critical functions missing
+- **Unprotected:** No controls identified for this asset
+
+---
+
