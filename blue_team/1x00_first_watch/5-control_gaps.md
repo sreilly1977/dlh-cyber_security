@@ -13,7 +13,7 @@
 
 **Category x Function Missing:** Administrative / Detective
 
-**Affected Asset(s) or Zone:** Organization-wide — all systems, users, permissions, and access rights
+**Affected Asset(s) or Zone:** Organization-wide. All systems, users, permissions, and access rights
 
 **Risk if Unaddressed:** Permission creep, orphaned accounts, unauthorized access, and policy violations accumulate undetected. A former employee whose access wasn't revoked could exfiltrate PHI months after departure, or an insider could escalate privileges gradually without triggering any detection. Both **Confidentiality** and **Integrity** risks increase over time through undetected drift.
 
@@ -27,9 +27,9 @@
 
 **Category x Function Missing:** Administrative / Corrective
 
-**Affected Asset(s) or Zone:** Organization-wide — all assets during and after security incidents
+**Affected Asset(s) or Zone:** Organization-wide. All assets during and after security incidents
 
-**Risk if Unaddressed:** When incidents occur (and they have — January ransomware, current cryptominer), response is improvised with no structured approach. This leads to longer recovery times, incomplete remediation, evidence destruction, repeated vulnerabilities, and inability to learn from incidents. The January ransomware required 4 days to recover because no tested restoration procedure existed. This directly impacts **Availability** (slow recovery) and **Integrity** (incomplete remediation allows recurrence).
+**Risk if Unaddressed:** When incidents occur (and they have: January ransomware, current cryptominer), response is improvised with no structured approach. This leads to longer recovery times, incomplete remediation, evidence destruction, repeated vulnerabilities, and inability to learn from incidents. The January ransomware required 4 days to recover because no tested restoration procedure existed. This directly impacts **Availability** (slow recovery) and **Integrity** (incomplete remediation allows recurrence).
 
 **Evidence:** Control Summary Matrix shows empty cell for Administrative/Corrective. Artifact 5 states "Full DR test: Never performed." Artifact 8 states logs are checked "manually if something breaks" with no alerting. Marcus's notes document "No formal incident response plan exists."
 
@@ -41,11 +41,11 @@
 
 **Category x Function Missing:** Technical Preventive (endpoint protection specifically)
 
-**Affected Asset(s) or Zone:** All Linux servers — billing-srv-01, ehr-srv-01, ehr-db-01, backup-srv-01, web-srv-01 (Ubuntu-based systems documented in Artifact 2)
+**Affected Asset(s) or Zone:** All Linux servers. billing-srv-01, ehr-srv-01, ehr-db-01, backup-srv-01, web-srv-01 (Ubuntu-based systems documented in Artifact 2)
 
 **Risk if Unaddressed:** Malware, ransomware, cryptominers, and attackers operating on Linux systems go undetected in real-time. The current cryptominer compromise demonstrates this gap directly — it consumed 96% CPU for two weeks before manual discovery. This enables prolonged **Confidentiality** exposure (attacker foothold), **Integrity** compromise (malicious code execution), and **Availability** degradation (resource exhaustion).
 
-**Evidence:** Artifact 4 explicitly states "Linux servers: 0 (NOT covered -- not supported by current Sophos tier)." Artifact from billing-srv-01 diagnostics shows cryptominer running for 14 days before detection by sysadmin noticing performance issues, not by antivirus.
+**Evidence:** Artifact 4 explicitly states "Linux servers: 0 (NOT covered as not supported by current Sophos tier)." Artifact from billing-srv-01 diagnostics shows cryptominer running for 14 days before detection by sysadmin noticing performance issues, not by antivirus.
 
 ---
 
@@ -55,7 +55,7 @@
 
 **Category x Function Missing:** Technical Detective (centralized monitoring)
 
-**Affected Asset(s) or Zone:** All systems — firewall, servers, applications, network devices
+**Affected Asset(s) or Zone:** All systems. Firewall, servers, applications, network devices
 
 **Risk if Unaddressed:** Security events remain siloed and invisible until manually discovered after significant damage. The cryptominer made 3 outbound connections to mining pools that appeared in netstat but weren't flagged by any system. An attacker moving laterally across the flat network could establish multiple footholds across servers without triggering any centralized alert. This severely impairs timely detection, increasing dwell time and the magnitude of **Confidentiality**, **Integrity**, and **Availability** impacts.
 
@@ -123,4 +123,4 @@
 
 Looking at these gaps as a whole, MedDefense's security posture is overwhelmingly **prevention-oriented** with critically weak detection and corrective capabilities. Seven of the eight empty cells in the Control Summary Matrix represent detective, corrective, or compensating functions, and the gaps confirm this bias. The organization invests in locks, firewalls, and policies to stop incidents, but has virtually no ability to detect when those preventive controls fail (no SIEM, no centralized logging, no administrative oversight) and almost no capacity to recover when failures occur (untested backups, no IR/DR plans, no compensating controls for legacy systems).
 
-This implies that **when preventive controls are bypassed** — which happens constantly, as evidenced by the January ransomware, the current cryptominer, the compromised billing server, and the five physical security observations — MedDefense is essentially flying blind. Incidents linger undetected for weeks (14-day cryptominer run-time), recovery takes days instead of hours (January ransomware), and the same vulnerabilities allow repeat compromises (billing server hit twice through the same Apache vulnerability). The organization operates in a state of **reactive crisis** rather than proactive security management, relying on luck and heroic individual effort (James Chen, Marcus Webb) rather than systemic resilience.
+This implies that **when preventive controls are bypassed**, which happens constantly, as evidenced by the January ransomware, the current cryptominer, the compromised billing server, and the five physical security observations, MedDefense is essentially flying blind. Incidents linger undetected for weeks (14-day cryptominer run-time), recovery takes days instead of hours (January ransomware), and the same vulnerabilities allow repeat compromises (billing server hit twice through the same Apache vulnerability). The organization operates in a state of **reactive crisis** rather than proactive security management, relying on luck and heroic individual effort (James Chen, Marcus Webb) rather than systemic resilience.
