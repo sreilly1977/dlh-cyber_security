@@ -331,7 +331,7 @@ At the end, answer this question in **2-3 sentences**:
 
 > Looking at your gaps as a whole, what pattern do you see? Is MedDefense's security posture more prevention-oriented or detection-oriented? What does this imply about their ability to respond to an incident that bypasses preventive controls?
 
-# 6. The Legacy Dilemma
+# [6. The Legacy Dilemma](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/6-compensating_controls.md)
 
 **Goal:** Design a compensating control strategy for a system that cannot be patched, upgraded or replaced, under real operational constraints.
 
