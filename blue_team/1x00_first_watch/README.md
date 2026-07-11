@@ -803,7 +803,7 @@ The document is incomplete. Marcus clearly intended to finish it but ran out of 
 
 ### Provided Files
 
-`marcus-draft-assessment.txt`
+[`marcus-draft-assessment.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/marcus-draft-assessment.txt)
 
 ---
 
