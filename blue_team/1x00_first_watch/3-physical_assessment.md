@@ -5,16 +5,16 @@
 
 ### Observation 1: Server Room Access
 
-**Vulnerability:** Server room access is controlled by the same generic badge issued to all employees (~2,000 people, including non-clinical and custodial staff). There is no camera surveillance on the door and no visitor log. The room is on the ground floor accessible from a public cafeteria corridor, meaning anyone with a badge — or anyone tailgating through the door — can enter the server room unobserved.
+**Vulnerability:** Server room access is controlled by the same generic badge issued to all employees (~2,000 people, including non-clinical and custodial staff). There is no camera surveillance on the door and no visitor log. The room is on the ground floor accessible from a public cafeteria corridor, meaning anyone with a badge, or anyone tailgating through the door, can enter the server room unobserved.
 
 **Threat:** A disgruntled employee, contractor, or social engineering adversary gains physical access to the server room undetected. They attach a rogue device (USB rubber ducky, network tap, Kali live USB) to a server, clone a hard drive, or directly interact with console ports on the domain controllers, backup server, or database server. With no camera and no log, the access is unattributable after the fact.
 
 **Impact:**
 - **Integrity:** Attacker can modify server configurations, plant malware, alter backups, or tamper with domain controller settings to create persistent backdoor accounts
-- **Confidentiality:** Physical access enables disk cloning, memory extraction, or direct database queries — exposing PHI, credentials, and encryption keys stored on disk or in memory
+- **Confidentiality:** Physical access enables disk cloning, memory extraction, or direct database queries, exposing PHI, credentials, and encryption keys stored on disk or in memory
 - **Availability:** Attacker can physically damage equipment, pull drives, disconnect network cables, or power off servers, causing immediate clinical service disruption
 
-**Severity: Critical** — All CIA pillars are compromised through a single access point that is protected by a credential shared with approximately 2,000 people and has zero audit trail. This is the organization's most concentrated asset in its least-protected physical location.
+**Severity: Critical**: All CIA pillars are compromised through a single access point that is protected by a credential shared with approximately 2,000 people and has zero audit trail. This is the organization's most concentrated asset in its least-protected physical location.
 
 ---
 
@@ -22,7 +22,7 @@
 
 **Vulnerability:** The second-floor network closet containing switches and patch panels has no lock, the door is physically ajar, and administrative credentials for switch management are taped to the wall in plain text. Anyone walking the second-floor corridor can enter the closet, and anyone who enters has immediate access to privileged network infrastructure credentials without any effort.
 
-**Threat:** An opportunistic or targeted adversary — potentially a visitor, vendor, or employee with no IT role — enters the unlocked closet, photographs or notes the credentials, and later accesses the switch management interface remotely. Alternatively, they connect a personal device directly to a switch port or patch panel, gaining direct network access at the infrastructure layer. The laminated credential sheet also means anyone who has ever entered this closet — cleaning staff, maintenance workers, delivery personnel — may already have these credentials.
+**Threat:** An opportunistic or targeted adversary, potentially a visitor, vendor, or employee with no IT role, enters the unlocked closet, photographs or notes the credentials, and later accesses the switch management interface remotely. Alternatively, they connect a personal device directly to a switch port or patch panel, gaining direct network access at the infrastructure layer. The laminated credential sheet also means anyone who has ever entered this closet, cleaning staff, maintenance workers, delivery personnel, may already have these credentials.
 
 **Impact:**
 - **Integrity:** With switch admin access, an attacker can reconfigure VLANs (if any existed), redirect traffic, disable port security, mirror traffic to a capture port, or alter network topology to facilitate man-in-the-middle attacks
