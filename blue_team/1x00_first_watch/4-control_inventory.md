@@ -8,11 +8,17 @@
 ---
 
 **Control ID:** C-001
+
 **Control Name:** FortiGate 100F Perimeter Firewall with Policy Rules
+
 **Description:** Fortinet FortiGate 100F deployed at Central as the perimeter firewall. Policy includes an explicit inbound allow rule for HTTP/HTTPS to web-srv-01 in the DMZ, outbound NAT for internal traffic, and a Deny-All catch-all rule (Rule 5) that blocks all traffic not explicitly permitted. All rules have logging enabled (logtraffic all or utm).
+
 **Category:** Technical
+
 **Function:** Preventive
+
 **Asset(s) Protected:** Entire Central network perimeter; DMZ (web-srv-01); internal server segment
+
 **Source:** Artifact 1 (Firewall Configuration Extract)
 
 ---
