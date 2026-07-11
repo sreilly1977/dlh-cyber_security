@@ -294,7 +294,7 @@ After listing all controls, produce a Control Summary Matrix in table format:
 
 Place the Control ID of each control in the appropriate cell. Cells that remain empty after your inventory represent potential gaps.
 
-# 5. The Missing Pieces
+# [5. The Missing Pieces](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/5-control_gaps.md)
 
 **Goal:** Identify systemic gaps in a control framework by analyzing what is absent, not just what is present.
 
