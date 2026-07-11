@@ -14,8 +14,7 @@
 - **Confidentiality:** Physical access enables disk cloning, memory extraction, or direct database queries, exposing PHI, credentials, and encryption keys stored on disk or in memory
 - **Availability:** Attacker can physically damage equipment, pull drives, disconnect network cables, or power off servers, causing immediate clinical service disruption
 
-**Severity: Critical**
-All CIA pillars are compromised through a single access point that is protected by a credential shared with approximately 2,000 people and has zero audit trail. This is the organization's most concentrated asset in its least-protected physical location.
+**Severity: Critical** - All CIA pillars are compromised through a single access point that is protected by a credential shared with approximately 2,000 people and has zero audit trail. This is the organization's most concentrated asset in its least-protected physical location.
 
 ---
 
@@ -30,8 +29,7 @@ All CIA pillars are compromised through a single access point that is protected 
 - **Confidentiality:** Switch-level access enables traffic mirroring/spanning to capture all network traffic on affected segments, including PHI transmitted between workstations, servers, and medical devices on the flat 10.10.0.0/16 network
 - **Availability:** Attacker can disable switch ports, reconfigure spanning tree, or shut down the switch entirely, causing network outages to entire floors of the hospital
 
-**Severity: Critical** 
-The combination of physical access (unlocked, ajar) and credential exposure (plaintext, prominently displayed) means the network infrastructure is effectively uncontrolled. The flat network topology documented by Marcus amplifies the blast radius of any switch-level compromise to the entire organization.
+**Severity: Critical** - The combination of physical access (unlocked, ajar) and credential exposure (plaintext, prominently displayed) means the network infrastructure is effectively uncontrolled. The flat network topology documented by Marcus amplifies the blast radius of any switch-level compromise to the entire organization.
 
 ---
 
@@ -47,8 +45,7 @@ The combination of physical access (unlocked, ajar) and credential exposure (pla
 - **Confidentiality:** Direct unauthorized access to patient PHI, the specific record on screen plus any additional records accessible through the authenticated session. This constitutes a reportable HIPAA breach.
 - **Integrity:** An attacker could modify medication orders, allergy information, or clinical notes in the patient's record, creating a patient safety risk with potentially lethal consequences. Modifications would appear to originate from the legitimate clinician.
 
-**Severity: High** 
-While the physical access window is limited compared to the server room, the combination of unattended PHI, normalized culture of non-logout, apparent absence of screen lock policy, and attribution ambiguity makes this a routine, repeating exposure with direct patient safety implications.
+**Severity: High** - While the physical access window is limited compared to the server room, the combination of unattended PHI, normalized culture of non-logout, apparent absence of screen lock policy, and attribution ambiguity makes this a routine, repeating exposure with direct patient safety implications.
 
 ---
 
@@ -65,8 +62,7 @@ While the physical access window is limited compared to the server room, the com
 - **Integrity:** Falsified vital signs readings could lead to inappropriate clinical interventions, administering medication based on fabricated hypertension, or failing to respond to a cardiac event because the monitor was altered to show normal readings
 - **Availability:** Device can be crashed or rendered non-functional, losing real-time patient monitoring capability
 
-**Severity: Critical** 
-The convergence of unpatched medical firmware, flat network topology, and publicly displayed device information creates a direct path from any network compromise to patient safety impact. This is not theoretical, the parameters displayed on screen are an attacker's targeting information.
+**Severity: Critical** - The convergence of unpatched medical firmware, flat network topology, and publicly displayed device information creates a direct path from any network compromise to patient safety impact. This is not theoretical, the parameters displayed on screen are an attacker's targeting information.
 
 ---
 
@@ -83,8 +79,7 @@ The convergence of unpatched medical firmware, flat network topology, and public
 - **Confidentiality:** Access to IT staff workspace may expose printed credentials, network documentation, or unlocked workstations containing administrative access to critical systems
 - **Availability:** Physical access to IT infrastructure (patch panels, desktop hardware, documentation) enables sabotage or theft of critical IT resources
 
-**Severity: High** 
-The door creates a direct unauthenticated path from a public area to IT infrastructure and security leadership offices. The organizational normalization ("staff passage" sign) means this vulnerability is persistent and unlikely to self-correct. While slightly lower than the server room or network closet (less concentrated critical assets behind this specific door), the pathway it enables makes every downstream vulnerability easier to exploit.
+**Severity: High** - The door creates a direct unauthenticated path from a public area to IT infrastructure and security leadership offices. The organizational normalization ("staff passage" sign) means this vulnerability is persistent and unlikely to self-correct. While slightly lower than the server room or network closet (less concentrated critical assets behind this specific door), the pathway it enables makes every downstream vulnerability easier to exploit.
 
 ---
 
