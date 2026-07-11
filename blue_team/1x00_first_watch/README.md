@@ -690,7 +690,7 @@ After the gap list, produce a **Gap Distribution Summary** showing:
 
 ---
 
-## 13. The Reality Check
+## [13. The Reality Check](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/13-reality_check.md)
 
 **Goal:** Validate internal gap analysis findings against real-world healthcare breach data to calibrate risk priorities and identify blind spots.
 
