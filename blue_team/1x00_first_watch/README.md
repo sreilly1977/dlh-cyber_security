@@ -362,3 +362,54 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
    - Identify any limitations or residual risk
 
 3. **Implementation Priority:** If MedDefense could only implement **ONE** of your proposed controls immediately (budget constraint), which one provides the greatest risk reduction? Justify your choice.
+
+# 7. The Asset Registry
+
+**Goal:** Build a comprehensive, structured asset inventory by consolidating information from multiple sources accumulated throughout the project.
+
+**Context:** James Chen needs a single authoritative source of truth for MedDefense assets. Right now, the information is scattered across your Environment Summary (Task 0), the incidents you analyzed (Tasks 1-2), the physical observations (Task 3), the controls you documented (Task 4) and the MRI situation (Task 6).
+
+*"I've also asked Sarah Park to pull a network scan summary,"* James says, handing you a new document. *"Cross-reference everything. If an asset appears in one source but not another, I want to know about it."*
+
+---
+
+## Provided Files
+
+`network-scan-summary.txt` (a simplified Nmap-style scan output covering MedDefense's three sites: IP addresses, hostnames, detected OS, open ports and services)
+
+---
+
+## Instructions
+
+Consolidate **ALL** asset information from every source you have used in this project. Cross-reference the onboarding packet (Task 0), incidents (Tasks 1-2), physical observations (Task 3), control artifacts (Task 4), the MRI situation (Task 6) and the new network scan summary.
+
+### Asset Registry Format
+
+Produce an Asset Registry with the following fields for each asset:
+
+| Field | Description |
+|-------|-------------|
+| **Asset ID** | Unique identifier |
+| **Name** | Descriptive name |
+| **Type** | Server, Endpoint, Network Device, IoT Medical, Data Store, Application, Physical Infrastructure |
+| **Location** | Physical/site location |
+| **Owner (Dept)** | Responsible department |
+| **OS/Platform** | Operating system or platform |
+| **Critical Services** | Key services running on the asset |
+| **Network Segment** | VLAN/subnet |
+| **Status** | Active, Deprecated, Shadow IT (unmanaged), Unknown |
+| **Notes** | Additional context, cross-references, discrepancies |
+
+### Requirements
+
+- Your registry must include a minimum of **20 distinct assets**.
+
+---
+
+## Reconciliation Notes
+
+After the registry, provide a **Reconciliation Notes** section that documents:
+
+1. **Assets found in the network scan that do NOT appear in any documentation** (shadow IT or undocumented systems)
+2. **Assets mentioned in documentation that do NOT appear in the network scan** (decommissioned? offline? different network?)
+3. **Any discrepancies or contradictions between sources**
