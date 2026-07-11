@@ -48,7 +48,7 @@ On your first morning, James meets you at reception. He walks you to your desk, 
 
 ---
 
-# [0. The Onboarding Packet](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/0-environment_summary.md)
+## [0. The Onboarding Packet](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/0-environment_summary.md)
 
 **Goal:** Extract a structured understanding of an organization from incomplete and disorganized documentation.
 
@@ -63,11 +63,11 @@ On your first morning, James meets you at reception. He walks you to your desk, 
 
 None of it is complete. Some of it contradicts itself. Welcome to reality.
 
-## Provided Files
+### Provided Files
 
 [`onboarding_packet.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/onboarding_packet.txt)
 
-## Instructions
+### Instructions
 
 Your first task is to make sense of this information. Read the entire onboarding packet carefully. Then produce a **Structured Environment Summary** organized into the following four sections:
 
@@ -83,7 +83,7 @@ Your first task is to make sense of this information. Read the entire onboarding
 
 ---
 
-# [1. The First Incidents](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/1-incident_classification.md)
+## [1. The First Incidents](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/1-incident_classification.md)
 
 **Goal:** Learn to classify security events using the CIA Triad as an analytical framework.
 
@@ -97,7 +97,7 @@ Before you can assess the security posture, you need to understand what has alre
 
 Every security incident impacts at least one of these pillars. Some impact more than one.
 
-## The Incident Log
+### The Incident Log
 
 **Incident A — January 15:** A ransomware payload encrypted the billing server (`billing-srv-01`) over the weekend. The finance team could not process insurance claims for 4 days. The backup was 3 weeks old due to a misconfigured cron job.
 
@@ -111,7 +111,7 @@ Every security incident impacts at least one of these pillars. Some impact more 
 
 **Incident F — June 10:** An IT intern's personal laptop, which he had connected to the corporate WiFi, was found to be running a torrent client that was sharing files. Network logs showed the laptop had been on the internal network (not the guest network) for 3 weeks. The laptop had access to the same network segment as the HR file share.
 
-## Instructions
+### Instructions
 
 Analyze the following 6 incidents from Marcus's log. For each one, identify:
 
@@ -122,7 +122,7 @@ Analyze the following 6 incidents from Marcus's log. For each one, identify:
 
 ---
 
-# [2. The Symptom Trap](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/2-root_cause_analysis.md)
+## [2. The Symptom Trap](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/2-root_cause_analysis.md)
 
 **Goal:** Develop the analytical reflex to look beyond visible symptoms and identify root causes in security events.
 
@@ -134,7 +134,7 @@ James Chen is not convinced. Neither was Marcus. James asks you to take a closer
 
 **Provided Files:** [`billing-srv-01_diagnostics.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/billing-srv-01_diagnostics.txt) (contains a top output snapshot and a netstat excerpt from the server)
 
-## Excerpt from the Diagnostics File
+### Excerpt from the Diagnostics File
 
 ```bash
 top - 14:22:07 up 12 days, 3:47, 2 users
@@ -152,7 +152,7 @@ tcp    10.10.2.15:45901   91.121.87.10:8080      ESTABLISHED
 tcp    10.10.2.15:80      10.10.1.0/24:*         LISTEN
 ```
 
-## Instructions
+### Instructions
 
 The sysadmin says this is a hardware capacity problem. You need to determine what is actually happening and why the sysadmin's diagnosis is wrong.
 
@@ -166,7 +166,7 @@ The sysadmin says this is a hardware capacity problem. You need to determine wha
 
 ---
 
-# [3. The Walk-Through](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/3-physical_assessment.md)
+## [3. The Walk-Through](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/3-physical_assessment.md)
 
 **Goal:** Apply structured risk reasoning (Vulnerability, Threat, Impact) to physical observations in a real environment.
 
@@ -174,7 +174,7 @@ The sysadmin says this is a hardware capacity problem. You need to determine wha
 
 As you walk the facility, you observe details that a non-security professional would overlook. Each observation represents a potential security weakness. Your job is to decompose each one into its formal risk components.
 
-## Risk Components Framework
+### Risk Components Framework
 
 A risk exists when three elements converge:
 
@@ -186,29 +186,29 @@ A risk exists when three elements converge:
 
 ---
 
-## Observation 1: Server Room Access
+### Observation 1: Server Room Access
 
 The server room is on the ground floor, accessed from a corridor shared with the cafeteria. The door uses the same generic badge that every employee (clinical, administrative, custodial) receives on their first day. There is no camera covering the door. There is no visitor log.
 
-## Observation 2: Network Closet
+### Observation 2: Network Closet
 
 A network closet on the second floor (containing switches and patch panels) has no lock. The door is ajar. Inside, taped to the wall next to the switch stack, is a laminated sheet labeled *"Network Maintenance Credentials"* with a username and password for the switch management interface.
 
-## Observation 3: Nurse Station
+### Observation 3: Nurse Station
 
 At the third-floor nurse station, a workstation is logged into the EHR system with a patient's record visible on screen. No staff member is present. The session appears to have been idle for at least 15 minutes. A sign above the station reads *"For efficiency, please do not log out between shifts."*
 
-## Observation 4: Medical IoT
+### Observation 4: Medical IoT
 
 In a patient room, a connected vital signs monitor displays diagnostic information including the device's IP address (`10.10.3.47`) and firmware version (v2.1.3, last updated 2019). The network cable runs to a wall port labeled `MED-3F-12`. You notice this is the same IP range as the workstations you saw at the nurse station.
 
-## Observation 5: Emergency Exit
+### Observation 5: Emergency Exit
 
 A fire exit door between the public waiting area and the restricted administrative wing is propped open with a wooden wedge. A handwritten sign taped to the door reads: *"Please do not close, staff passage."* Through the open door, you can see the hallway leading to the IT department and James Chen's office.
 
 ---
 
-## Instructions
+### Instructions
 
 You observe the following during your walk-through of MedDefense Central. For each observation, produce a structured risk decomposition.
 
@@ -223,7 +223,7 @@ Observation [N]:
   Severity: [Critical / High / Medium / Low - justified in one sentence]
 ```
 
-# [4. The Control Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/4-control_inventory.md)
+## [4. The Control Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/4-control_inventory.md)
 
 **Goal:** Identify, classify and document existing security controls using the professional dual-axis taxonomy: category (Technical / Administrative / Physical) and function (Preventive / Detective / Corrective).
 
@@ -231,17 +231,17 @@ Observation [N]:
 
 > "Good observations today. Now I need you to do the other half: document what we DO have, not just what's wrong. I've asked Sarah Park to give you access to our existing documentation. She's sending over config extracts, policy documents and anything else she can find. Put together a complete picture of our current security controls."
 
-## Security Controls Taxonomy
+### Security Controls Taxonomy
 
 Security controls are the mechanisms an organization uses to protect its assets. They are classified along two axes:
 
-### Category (what the control is made of):
+#### Category (what the control is made of):
 
 - **Technical:** Implemented through technology. Firewalls, encryption, access control lists, antivirus, log monitoring.
 - **Administrative:** Implemented through policies, procedures and human processes. Security training, background checks, acceptable use policies, incident response plans.
 - **Physical:** Implemented in the physical world. Locks, cameras, fences, fire suppression, badge readers.
 
-### Function (what the control does):
+#### Function (what the control does):
 
 - **Preventive:** Stops an incident from occurring. A firewall blocking unauthorized traffic.
 - **Detective:** Identifies an incident during or after it occurs. An IDS alerting on suspicious traffic.
@@ -254,13 +254,13 @@ Security controls are the mechanisms an organization uses to protect its assets.
 
 ---
 
-## Provided Files
+### Provided Files
 
 [`meddefense-controls-artifacts.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/meddefense-controls-artifacts.txt) (contains extracts from firewall rules, SSH configuration, password policy document, antivirus status report, backup configuration, physical security contract and staff training records)
 
 ---
 
-## Instructions
+### Instructions
 
 Review all provided artifacts. For every security control you can identify, document it in the following format:
 
@@ -282,7 +282,7 @@ Source: [Which artifact you identified it from]
 
 ---
 
-## Control Summary Matrix
+### Control Summary Matrix
 
 After listing all controls, produce a Control Summary Matrix in table format:
 
@@ -294,7 +294,7 @@ After listing all controls, produce a Control Summary Matrix in table format:
 
 Place the Control ID of each control in the appropriate cell. Cells that remain empty after your inventory represent potential gaps.
 
-# [5. The Missing Pieces](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/5-control_gaps.md)
+## [5. The Missing Pieces](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/5-control_gaps.md)
 
 **Goal:** Identify systemic gaps in a control framework by analyzing what is absent, not just what is present.
 
@@ -304,7 +304,7 @@ James Chen looks over your shoulder at the matrix. *"See those gaps? That's what
 
 ---
 
-## Instructions
+### Instructions
 
 Analyze your Control Summary Matrix (Task 4) and identify at minimum **6 significant control gaps**. A gap is significant when:
 
@@ -314,7 +314,7 @@ Analyze your Control Summary Matrix (Task 4) and identify at minimum **6 signifi
 
 ---
 
-## Gap Documentation Format
+### Gap Documentation Format
 
 For each gap, document:
 
@@ -331,13 +331,13 @@ At the end, answer this question in **2-3 sentences**:
 
 > Looking at your gaps as a whole, what pattern do you see? Is MedDefense's security posture more prevention-oriented or detection-oriented? What does this imply about their ability to respond to an incident that bypasses preventive controls?
 
-# [6. The Legacy Dilemma](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/6-compensating_controls.md)
+## [6. The Legacy Dilemma](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/6-compensating_controls.md)
 
 **Goal:** Design a compensating control strategy for a system that cannot be patched, upgraded or replaced, under real operational constraints.
 
 **Context:** While building your asset inventory, you visit the Radiology department at MedDefense Central. The department runs an MRI scanner manufactured by a company that has since been acquired. The MRI's control software runs on Windows XP Embedded. The manufacturer's certification only covers this specific OS version. Any OS change voids the medical device certification and potentially violates regulatory requirements.
 
-## Key Facts
+### Key Facts
 
 - The MRI scanner cost **$2.1 million** and is 6 years into a 12-year expected operational lifespan.
 - Windows XP has not received security patches since **April 2014**.
@@ -349,7 +349,7 @@ Marcus left a sticky note in the MRI's file folder: *"CRITICAL: this has been on
 
 ---
 
-## Instructions
+### Instructions
 
 You cannot patch the system. You cannot upgrade the OS. You cannot replace the device (budget). You cannot disconnect it from the network (clinical need). Every obvious solution is blocked by a real constraint.
 
@@ -363,7 +363,7 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
 
 3. **Implementation Priority:** If MedDefense could only implement **ONE** of your proposed controls immediately (budget constraint), which one provides the greatest risk reduction? Justify your choice.
 
-# [7. The Asset Registry](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/7-asset_registry.md)
+## [7. The Asset Registry](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/7-asset_registry.md)
 
 **Goal:** Build a comprehensive, structured asset inventory by consolidating information from multiple sources accumulated throughout the project.
 
@@ -373,17 +373,17 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
 
 ---
 
-## Provided Files
+### Provided Files
 
 [`network-scan-summary.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/network-scan-summary.txt) (a simplified Nmap-style scan output covering MedDefense's three sites: IP addresses, hostnames, detected OS, open ports and services)
 
 ---
 
-## Instructions
+### Instructions
 
 Consolidate **ALL** asset information from every source you have used in this project. Cross-reference the onboarding packet (Task 0), incidents (Tasks 1-2), physical observations (Task 3), control artifacts (Task 4), the MRI situation (Task 6) and the new network scan summary.
 
-### Asset Registry Format
+#### Asset Registry Format
 
 Produce an Asset Registry with the following fields for each asset:
 
@@ -400,13 +400,13 @@ Produce an Asset Registry with the following fields for each asset:
 | **Status** | Active, Deprecated, Shadow IT (unmanaged), Unknown |
 | **Notes** | Additional context, cross-references, discrepancies |
 
-### Requirements
+#### Requirements
 
 - Your registry must include a minimum of **20 distinct assets**.
 
 ---
 
-## Reconciliation Notes
+### Reconciliation Notes
 
 After the registry, provide a **Reconciliation Notes** section that documents:
 
@@ -414,7 +414,7 @@ After the registry, provide a **Reconciliation Notes** section that documents:
 2. **Assets mentioned in documentation that do NOT appear in the network scan** (decommissioned? offline? different network?)
 3. **Any discrepancies or contradictions between sources**
 
-# [8. The Criticality Assessment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/8-criticality_assessment.md)
+## [8. The Criticality Assessment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/8-criticality_assessment.md)
 
 **Goal:** Evaluate the criticality of each asset category using CIA-based analysis, calibrated to the specific operational context of a healthcare organization.
 
@@ -422,11 +422,11 @@ After the registry, provide a **Reconciliation Notes** section that documents:
 
 ---
 
-## Instructions
+### Instructions
 
 Using your Asset Registry (Task 7), group assets into logical categories (e.g., EHR System, PACS/Imaging, Billing Infrastructure, Network Core, Medical IoT, Endpoints Clinical, Endpoints Administrative, Physical Security Systems). You should have **8-10 categories**.
 
-## CIA Criticality Scale
+### CIA Criticality Scale
 
 For each category, evaluate criticality on each CIA pillar using a **4-level scale**:
 
@@ -439,7 +439,7 @@ For each category, evaluate criticality on each CIA pillar using a **4-level sca
 
 ---
 
-## Asset Criticality Matrix
+### Asset Criticality Matrix
 
 Produce an Asset Criticality Matrix in the following format:
 
@@ -447,7 +447,7 @@ Produce an Asset Criticality Matrix in the following format:
 |----------------|-----------------|-----------|--------------|---------------------|---------------|
 | | | | | | |
 
-### Scoring Rules
+#### Scoring Rules
 
 - The **Overall Criticality** is the **highest rating** across the three pillars.
 - The **Justification** must explain the rating in the context of MedDefense's operations.
@@ -455,6 +455,53 @@ Produce an Asset Criticality Matrix in the following format:
 
 ---
 
-## Top 5 Most Critical Assets
+### Top 5 Most Critical Assets
 
 After the matrix, identify and rank the **Top 5 Most Critical Assets** with a brief paragraph for each explaining why it holds that position.
+
+## [9. The Data Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/9-data_map.md)
+
+**Goal:** Identify, classify and trace the flow of sensitive data across its lifecycle states to identify protection gaps.
+
+**Context:** James Chen comes back from a meeting with the hospital's legal counsel. *"Legal just reminded me that we handle protected health information for over 50,000 patients, plus financial data, plus employee records. They want to know: where exactly does our sensitive data live, how does it move, and is it protected at every step?"*
+
+Data does not stay in one place. A patient's medical record is:
+- **At rest** in the EHR database,
+- **In transit** when a physician accesses it from the nurse station over the network,
+- **In use** when it is displayed on the screen.
+
+Each state requires different protections, and a gap in any state is a gap in the entire chain.
+
+---
+
+### Data Classification Levels
+
+| Level | Definition | Example |
+|-------|------------|---------|
+| **Restricted** | Highest sensitivity. Unauthorized access causes severe harm. Regulatory penalties. | Patient medical records, SSNs, credit card numbers |
+| **Confidential** | Sensitive internal information. Unauthorized access causes significant harm. | Employee salaries, strategic plans, vendor contracts |
+| **Internal** | Not for public disclosure but limited impact if exposed. | Internal memos, org charts, meeting notes |
+| **Public** | Intended for public consumption. No harm if disclosed. | Website content, public phone numbers |
+
+---
+
+### Instructions
+
+Identify the major data categories present at MedDefense. For each, document:
+
+| Data Category | Classification | At Rest (where) | In Transit (how) | In Use (by whom, on what) | Current Protection | Protection Gaps |
+|---------------|----------------|-----------------|------------------|---------------------------|--------------------|-----------------|
+| | | | | | | |
+
+#### Requirements
+
+- Cover a **minimum of 7 data categories** (examples: patient medical records, medical imaging data, financial/billing data, employee HR records, system credentials, audit logs, research/clinical trial data).
+- For the **Protection Gaps** column, identify specific weaknesses in how data is protected in each state. Reference your earlier findings where relevant (e.g., the nurse station with the unlocked EHR session from Task 3 is a gap in *"data in use"* protection for patient records).
+
+---
+
+### Data Risk Summary
+
+After the table, write a **Data Risk Summary** (one paragraph) answering:
+
+> What is MedDefense's most significant data protection weakness? Consider which data category, in which state, has the widest protection gap relative to its classification level.
