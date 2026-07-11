@@ -188,7 +188,7 @@ Based on real-world breach data validation, the following adjustments are made t
 | **Low** | 0 | — |
 | **Total** | **16** | — |
 
-**Key Insight:** The gap count increased from 13 to 16, with two new Critical-level gaps identified. The percentage of Critical gaps rose from 69% (9/13) to **69%** (11/16)—indicating that the initial assessment was conservative. The real-world data confirms that the original prioritization was appropriately calibrated.
+**Key Insight:** The gap count increased from 13 to 16, with two new Critical-level gaps identified. Critical gaps rose from 9/13 to **11/16**, indicating that the initial assessment was conservative. The real-world data confirms that the original prioritization was appropriately calibrated.
 
 ---
 
