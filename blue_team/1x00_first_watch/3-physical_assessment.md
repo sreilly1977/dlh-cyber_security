@@ -29,7 +29,7 @@
 - **Confidentiality:** Switch-level access enables traffic mirroring/spanning to capture all network traffic on affected segments, including PHI transmitted between workstations, servers, and medical devices on the flat 10.10.0.0/16 network
 - **Availability:** Attacker can disable switch ports, reconfigure spanning tree, or shut down the switch entirely, causing network outages to entire floors of the hospital
 
-**Severity: Critical** — The combination of physical access (unlocked, ajar) and credential exposure (plaintext, prominently displayed) means the network infrastructure is effectively uncontrolled. The flat network topology documented by Marcus amplifies the blast radius of any switch-level compromise to the entire organization.
+**Severity: Critical**: The combination of physical access (unlocked, ajar) and credential exposure (plaintext, prominently displayed) means the network infrastructure is effectively uncontrolled. The flat network topology documented by Marcus amplifies the blast radius of any switch-level compromise to the entire organization.
 
 ---
 
@@ -37,15 +37,15 @@
 
 **Vulnerability:** A workstation is logged into the EHR system with a patient's record visible on screen, unattended for at least 15 minutes. The posted signage instructing staff not to log out between shifts creates an organizational culture that normalizes this behavior. No automatic screen lock policy appears to be enforced (session remained active after 15+ minutes of idle time).
 
-**Threat:** A visitor, patient, contractor, or unauthorized staff member approaches the unattended workstation during the idle window and views, photographs, or modifies the patient's record. They could also navigate to other patient records, export data to a USB device, print records, or send data via email from the authenticated session. Because the workstation is logged in under a legitimate clinical credential, all actions are attributed to that clinician — not the actual perpetrator.
+**Threat:** A visitor, patient, contractor, or unauthorized staff member approaches the unattended workstation during the idle window and views, photographs, or modifies the patient's record. They could also navigate to other patient records, export data to a USB device, print records, or send data via email from the authenticated session. Because the workstation is logged in under a legitimate clinical credential, all actions are attributed to that clinician, not the actual perpetrator.
 
 **Threat Actor Variant:** A targeted adversary (insider or outsider) could use this recurring pattern to systematically harvest patient data over multiple visits, each time using a different clinician's session to obscure the pattern.
 
 **Impact:**
-- **Confidentiality:** Direct unauthorized access to patient PHI — the specific record on screen plus any additional records accessible through the authenticated session. This constitutes a reportable HIPAA breach.
+- **Confidentiality:** Direct unauthorized access to patient PHI, the specific record on screen plus any additional records accessible through the authenticated session. This constitutes a reportable HIPAA breach.
 - **Integrity:** An attacker could modify medication orders, allergy information, or clinical notes in the patient's record, creating a patient safety risk with potentially lethal consequences. Modifications would appear to originate from the legitimate clinician.
 
-**Severity: High** — While the physical access window is limited compared to the server room, the combination of unattended PHI, normalized culture of non-logout, apparent absence of screen lock policy, and attribution ambiguity makes this a routine, repeating exposure with direct patient safety implications.
+**Severity: High**: While the physical access window is limited compared to the server room, the combination of unattended PHI, normalized culture of non-logout, apparent absence of screen lock policy, and attribution ambiguity makes this a routine, repeating exposure with direct patient safety implications.
 
 ---
 
