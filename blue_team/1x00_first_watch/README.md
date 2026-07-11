@@ -363,7 +363,7 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
 
 3. **Implementation Priority:** If MedDefense could only implement **ONE** of your proposed controls immediately (budget constraint), which one provides the greatest risk reduction? Justify your choice.
 
-# 7. The Asset Registry
+# [7. The Asset Registry](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/7-asset_registry.md)
 
 **Goal:** Build a comprehensive, structured asset inventory by consolidating information from multiple sources accumulated throughout the project.
 
@@ -375,7 +375,7 @@ You cannot patch the system. You cannot upgrade the OS. You cannot replace the d
 
 ## Provided Files
 
-`network-scan-summary.txt` (a simplified Nmap-style scan output covering MedDefense's three sites: IP addresses, hostnames, detected OS, open ports and services)
+[`network-scan-summary.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/network-scan-summary.txt) (a simplified Nmap-style scan output covering MedDefense's three sites: IP addresses, hostnames, detected OS, open ports and services)
 
 ---
 
