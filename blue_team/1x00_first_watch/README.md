@@ -223,7 +223,7 @@ Observation [N]:
   Severity: [Critical / High / Medium / Low - justified in one sentence]
 ```
 
-# 4. The Control Landscape
+# [4. The Control Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/4-control_inventory.md)
 
 **Goal:** Identify, classify and document existing security controls using the professional dual-axis taxonomy: category (Technical / Administrative / Physical) and function (Preventive / Detective / Corrective).
 
