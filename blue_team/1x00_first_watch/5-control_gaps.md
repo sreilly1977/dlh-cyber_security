@@ -93,7 +93,7 @@
 
 ### Gap ID: G-007
 
-**Gap Description:** No physical security detective controls in critical areas. The server room, network closets, and administrative wing have no cameras. Westside's server closet has no lock and no alternative monitoring. Only 4 cameras cover main entrance, ER entrance, and parking garage — none near IT infrastructure.
+**Gap Description:** No physical security detective controls in critical areas. The server room, network closets, and administrative wing have no cameras. Westside's server closet has no lock and no alternative monitoring. Only 4 cameras cover main entrance, ER entrance, and parking garage; none near IT infrastructure.
 
 **Category x Function Missing:** Physical Detective
 
