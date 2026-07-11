@@ -726,7 +726,7 @@ Read the **three breach summaries** carefully. For each breach:
 
 ---
 
-## 14. The Risk Decisions
+## [14. The Risk Decisions](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/14-risk_decisions.md)
 
 **Goal:** Apply risk treatment strategies to prioritized gaps under realistic budget and operational constraints.
 
@@ -788,3 +788,5 @@ Trade-offs: [What are the downsides of your chosen strategy ?]
 ### Budget Summary
 
 At the end, produce a **Budget Summary** showing how your mitigation recommendations fit within the **$120,000 annual budget**. If they exceed the budget, explain what you would defer to the next fiscal year and why.
+
+---
