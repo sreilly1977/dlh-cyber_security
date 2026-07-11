@@ -53,16 +53,16 @@
 
 **Vulnerability:** A connected vital signs monitor (Philips IntelliVue, firmware v2.1.3, last updated 2019) displays its IP address (10.10.3.47) and firmware version on the diagnostic screen — accessible to anyone in the patient room. The device sits on the same IP range (10.10.0.0/16) as clinical workstations, servers, and all other networked systems. Firmware has not been updated in approximately 5 years, meaning known vulnerabilities patched in subsequent firmware releases remain exploitable.
 
-**Threat:** An adversary with any network access on the flat 10.10.0.0/16 segment — whether through the compromised billing server, the unlocked network closet, an infected USB, or a rogue wireless device — can directly reach this medical device at 10.10.3.47. They can exploit known firmware vulnerabilities to intercept patient vitals data, alter displayed readings, or potentially disrupt device functionality. The exposed firmware version on-screen serves as reconnaissance — an attacker in the room can determine exactly which exploits apply without scanning.
+**Threat:** An adversary with any network access on the flat 10.10.0.0/16 segment — whether through the compromised billing server, the unlocked network closet, an infected USB, or a rogue wireless device — can directly reach this medical device at 10.10.3.47. They can exploit known firmware vulnerabilities to intercept patient vitals data, alter displayed readings, or potentially disrupt device functionality. The exposed firmware version on-screen serves as reconnaissance, an attacker in the room can determine exactly which exploits apply without scanning.
 
 **Threat Actor Variant:** A patient or visitor with a smartphone on the guest WiFi (if isolation is not properly configured) could potentially reach the medical device network and enumerate these devices.
 
 **Impact:**
 - **Confidentiality:** Patient vitals and diagnostic data can be intercepted or exfiltrated, constituting PHI exposure
-- **Integrity:** Falsified vital signs readings could lead to inappropriate clinical interventions — administering medication based on fabricated hypertension, or failing to respond to a cardiac event because the monitor was altered to show normal readings
+- **Integrity:** Falsified vital signs readings could lead to inappropriate clinical interventions, administering medication based on fabricated hypertension, or failing to respond to a cardiac event because the monitor was altered to show normal readings
 - **Availability:** Device can be crashed or rendered non-functional, losing real-time patient monitoring capability
 
-**Severity: Critical** — The convergence of unpatched medical firmware, flat network topology, and publicly displayed device information creates a direct path from any network compromise to patient safety impact. This is not theoretical — the parameters displayed on screen are an attacker's targeting information.
+**Severity: Critical**: The convergence of unpatched medical firmware, flat network topology, and publicly displayed device information creates a direct path from any network compromise to patient safety impact. This is not theoretical, the parameters displayed on screen are an attacker's targeting information.
 
 ---
 
@@ -70,10 +70,26 @@
 
 **Vulnerability:** A fire exit door separating the public waiting area from the restricted administrative wing is propped open with a wooden wedge, defeating the physical access control boundary. A handwritten sign institutionalizes this bypass ("Please do not close, staff passage"). The open door provides direct line-of-sight and physical pathway to the IT department and the Deputy CISO's office. The wedge defeats any badge reader, alarm, or door logging that may exist on this door.
 
-**Threat:** Any person in the public waiting area — visitors, patients, delivery drivers, or a targeted adversary posing as any of these — walks through the propped-open door into the administrative wing with no authentication, no badge, and no log entry. From there, they have physical access to the IT department, potentially including workstations, IT staff devices, documentation, and the path to James Chen's office. If IT workstations are similarly unprotected (given the organizational culture observed in Observation 3), an attacker could pivot from physical access to digital access within minutes.
+**Threat:** Any person in the public waiting area, visitors, patients, delivery drivers, or a targeted adversary posing as any of these, walks through the propped-open door into the administrative wing with no authentication, no badge, and no log entry. From there, they have physical access to the IT department, potentially including workstations, IT staff devices, documentation, and the path to James Chen's office. If IT workstations are similarly unprotected (given the organizational culture observed in Observation 3), an attacker could pivot from physical access to digital access within minutes.
 
-**Threat Actor Variant:** A social engineer exploits the cultural norm — walking confidently through the open door carrying a clipboard or wearing a lanyard. Staff who see the person assume they belong, because the door is "supposed to be open."
+**Threat Actor Variant:** A social engineer exploits the cultural norm, walking confidently through the open door carrying a clipboard or wearing a lanyard. Staff who see the person assume they belong, because the door is "supposed to be open."
 
 **Impact:**
 - **Integrity:** Physical access to IT department enables tampering with IT workstations, stealing documentation (network diagrams, credentials, asset lists), or planting devices
-- **Confidentiality:** Access to IT staff workspace may expose printed credentials, network documentation,
+- **Confidentiality:** Access to IT staff workspace may expose printed credentials, network documentation,+
+
+**Severity: High**: The door creates a direct unauthenticated path from a public area to IT infrastructure and security leadership offices. The organizational normalization ("staff passage" sign) means this vulnerability is persistent and unlikely to self-correct. While slightly lower than the server room or network closet (less concentrated critical assets behind this specific door), the pathway it enables makes every downstream vulnerability easier to exploit.
+
+---
+
+## Walk-Through Summary Matrix
+
+| # | Observation | Vulnerability Type | CIA Impact | Severity |
+|---|-------------|-------------------|------------|----------|
+| 1 | Server Room Access | Physical access control failure | C, I, A | **Critical** |
+| 2 | Network Closet | Physical + credential exposure | C, I, A | **Critical** |
+| 3 | Nurse Station | Logical access control failure + policy | C, I | **High** |
+| 4 | Medical IoT | Network segmentation + unpatched firmware | C, I, A | **Critical** |
+| 5 | Emergency Exit | Physical access control bypass | C, I, A | **High** |
+
+**Pattern Observation:** Four of five findings involve physical access control failures (either broken or absent). Three of five involve organizational culture or policy that normalizes insecure behavior. This is not a technology problem — it is a governance and accountability problem. Marcus escalated these issues to Sarah Park, who deprioritized them. The systemic root cause is the authority gap between security (James) and IT operations (Sarah) documented in the org chart.
