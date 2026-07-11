@@ -927,7 +927,7 @@ Produce a complete **MedDefense Health Systems Security Posture Assessment** doc
 
 ---
 
-## 17. The CISO Briefing
+## [17. The CISO Briefing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/17-ciso_briefing.md)
 
 **Goal:** Synthesize a complex report into a concise, persuasive executive briefing under strict format constraints.
 
