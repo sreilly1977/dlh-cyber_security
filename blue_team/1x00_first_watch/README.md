@@ -166,7 +166,7 @@ The sysadmin says this is a hardware capacity problem. You need to determine wha
 
 ---
 
-## 3. The Walk-Through
+# [3. The Walk-Through](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x00_first_watch/3-physical_assessment.md)
 
 **Goal:** Apply structured risk reasoning (Vulnerability, Threat, Impact) to physical observations in a real environment.
 
@@ -174,7 +174,7 @@ The sysadmin says this is a hardware capacity problem. You need to determine wha
 
 As you walk the facility, you observe details that a non-security professional would overlook. Each observation represents a potential security weakness. Your job is to decompose each one into its formal risk components.
 
-### Risk Components Framework
+## Risk Components Framework
 
 A risk exists when three elements converge:
 
@@ -186,29 +186,29 @@ A risk exists when three elements converge:
 
 ---
 
-### Observation 1: Server Room Access
+## Observation 1: Server Room Access
 
 The server room is on the ground floor, accessed from a corridor shared with the cafeteria. The door uses the same generic badge that every employee (clinical, administrative, custodial) receives on their first day. There is no camera covering the door. There is no visitor log.
 
-### Observation 2: Network Closet
+## Observation 2: Network Closet
 
 A network closet on the second floor (containing switches and patch panels) has no lock. The door is ajar. Inside, taped to the wall next to the switch stack, is a laminated sheet labeled *"Network Maintenance Credentials"* with a username and password for the switch management interface.
 
-### Observation 3: Nurse Station
+## Observation 3: Nurse Station
 
 At the third-floor nurse station, a workstation is logged into the EHR system with a patient's record visible on screen. No staff member is present. The session appears to have been idle for at least 15 minutes. A sign above the station reads *"For efficiency, please do not log out between shifts."*
 
-### Observation 4: Medical IoT
+## Observation 4: Medical IoT
 
 In a patient room, a connected vital signs monitor displays diagnostic information including the device's IP address (`10.10.3.47`) and firmware version (v2.1.3, last updated 2019). The network cable runs to a wall port labeled `MED-3F-12`. You notice this is the same IP range as the workstations you saw at the nurse station.
 
-### Observation 5: Emergency Exit
+## Observation 5: Emergency Exit
 
 A fire exit door between the public waiting area and the restricted administrative wing is propped open with a wooden wedge. A handwritten sign taped to the door reads: *"Please do not close, staff passage."* Through the open door, you can see the hallway leading to the IT department and James Chen's office.
 
 ---
 
-### Instructions
+## Instructions
 
 You observe the following during your walk-through of MedDefense Central. For each observation, produce a structured risk decomposition.
 
@@ -222,3 +222,44 @@ Observation [N]:
   Impact: [What happens if the threat materializes - specify CIA pillar(s)]
   Severity: [Critical / High / Medium / Low - justified in one sentence]
 ```
+
+# 4. The Control Landscape
+
+**Goal:** Identify, classify and document existing security controls using the professional dual-axis taxonomy: category (Technical / Administrative / Physical) and function (Preventive / Detective / Corrective).
+
+**Context:** James Chen sends you an email after the walk-through:
+
+> "Good observations today. Now I need you to do the other half: document what we DO have, not just what's wrong. I've asked Sarah Park to give you access to our existing documentation. She's sending over config extracts, policy documents and anything else she can find. Put together a complete picture of our current security controls."
+
+### Security Controls Taxonomy
+
+Security controls are the mechanisms an organization uses to protect its assets. They are classified along two axes:
+
+#### Category (what the control is made of):
+
+- **Technical:** Implemented through technology. Firewalls, encryption, access control lists, antivirus, log monitoring.
+- **Administrative:** Implemented through policies, procedures and human processes. Security training, background checks, acceptable use policies, incident response plans.
+- **Physical:** Implemented in the physical world. Locks, cameras, fences, fire suppression, badge readers.
+
+#### Function (what the control does):
+
+- **Preventive:** Stops an incident from occurring. A firewall blocking unauthorized traffic.
+- **Detective:** Identifies an incident during or after it occurs. An IDS alerting on suspicious traffic.
+- **Corrective:** Repairs damage or restores operations after an incident. A backup restoration procedure.
+
+**Two additional functions you will encounter:**
+
+- **Deterrent:** Discourages an attacker from attempting an action. A "Premises Under Surveillance" sign.
+- **Compensating:** An alternative control used when the ideal control is not feasible. Network isolation for a system that cannot be patched.
+
+---
+
+### Provided Files
+
+[`meddefense-controls-artifacts.txt`]() (contains extracts from firewall rules, SSH configuration, password policy document, antivirus status report, backup configuration, physical security contract and staff training records)
+
+---
+
+### Instructions
+
+Review all provided artifacts. For every security control you can identify, document it in the following format:
