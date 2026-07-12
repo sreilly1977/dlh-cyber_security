@@ -41,3 +41,36 @@ For each actor category, write **one sentence** assessing whether this type of a
 - 2,000 staff
 - No research programs
 - Regulated patient data
+
+# 1. The Threat Actor Taxonomy
+
+## Goal
+Classify threat actors by type, attributes and motivation from observed behavior alone.
+
+## Context
+Intelligence analysts rarely know who attacked an organization at the time of investigation. What they have is behavior: what the attacker did, how they did it, what they targeted and what they left behind. From behavior, you infer the actor type. From the actor type, you predict their next move.
+
+Frameworks define six threat actor categories:
+
+1. **Nation-state**
+2. **Organized crime**
+3. **Hacktivist**
+4. **Insider threat**
+5. **Unskilled attacker**
+6. **Shadow IT**
+
+Each has characteristic attributes:
+
+- **Internal vs External:** Does the actor operate from inside or outside the organization?
+- **Resources and Funding:** Does the actor have significant financial backing, or are they working with freely available tools?
+- **Sophistication:** Does the actor develop custom tools and techniques, or rely on publicly available exploits?
+
+Motivations vary: data exfiltration, espionage, service disruption, blackmail, financial gain, philosophical or political beliefs, ethical motivations, revenge, chaos, war.
+
+## Provided Files
+- [`threat-actor-reports.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/threat-actor-reports.txt) (8 anonymized intelligence reports, each 3–4 sentences describing an attack)
+
+## Instructions
+For each of the 8 reports, produce a structured classification:
+
+> For Report G, which is deliberately ambiguous, explain why multiple actor types could fit and which evidence would help you distinguish between them.
