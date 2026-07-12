@@ -73,4 +73,14 @@ Motivations vary: data exfiltration, espionage, service disruption, blackmail, f
 ## Instructions
 For each of the 8 reports, produce a structured classification:
 
+```
+Report [Letter]:
+  Actor Type: [One of the 6 categories]
+  Internal/External: [Internal / External / Could be either - justify]
+  Resources: [High / Medium / Low - justify]
+  Sophistication: [High / Medium / Low - justify]
+  Primary Motivation: [One from the Sec+ motivation list - justify]
+  Confidence Level: [How certain are you? High/Medium/Low and why]
+```
+
 > For Report G, which is deliberately ambiguous, explain why multiple actor types could fit and which evidence would help you distinguish between them.
