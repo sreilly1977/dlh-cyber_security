@@ -1,4 +1,4 @@
-# 0. The Intelligence Briefing
+# [0. The Intelligence Briefing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/0-threat_landscape_summary.md)
 
 ## Goal
 Extract a structured threat landscape overview from raw intelligence sources specific to the healthcare sector.
