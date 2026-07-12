@@ -12,7 +12,7 @@ Your job is to turn raw intelligence into structured analysis. Read everything. 
 3. What does the data tell us about trends?
 
 ## Provided Files
-- [`marcus-intelligence-dossier.txt`]()
+- [`marcus-intelligence-dossier.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/0-threat_landscape_summary.md)
 
 ## Instructions
 Review the entire intelligence dossier. Produce a **Healthcare Threat Landscape Summary** organized into:
