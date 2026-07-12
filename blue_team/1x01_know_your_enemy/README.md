@@ -42,6 +42,8 @@ For each actor category, write **one sentence** assessing whether this type of a
 - No research programs
 - Regulated patient data
 
+---
+
 # 1. The Threat Actor Taxonomy
 
 ## Goal
@@ -72,6 +74,7 @@ Motivations vary: data exfiltration, espionage, service disruption, blackmail, f
 
 ## Instructions
 For each of the 8 reports, produce a structured classification:
+
 
 ```
 Report [Letter]:
