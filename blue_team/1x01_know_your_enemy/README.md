@@ -178,7 +178,7 @@ After completing the 5 individual analyses, write a **Pattern Assessment** answe
 
 Connect your answer to at least **2 findings from Project 1x00**. Explain how existing control gaps create an environment where insider threats can flourish undetected.
 
-# 4. The Human Vector
+# [4. The Human Vector](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/4-social_engineering_analysis.md)
 
 ## Goal
 Identify, classify and analyze social engineering attack vectors in a healthcare context, including red flags and countermeasures.
