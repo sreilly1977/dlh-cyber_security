@@ -309,7 +309,7 @@ Provide a concise paragraph with clear justification for both answers based on a
 
 ---
 
-# 6. The MedDefense Threat Actor Matrix
+# [6. The MedDefense Threat Actor Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/6-threat_actor_matrix.md)
 
 ## Goal
 Consolidate all threat actor analysis into a single prioritized reference matrix.
