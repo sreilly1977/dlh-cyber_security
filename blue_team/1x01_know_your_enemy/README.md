@@ -347,3 +347,78 @@ For each actor, assess across the following dimensions:
 After the matrix, produce a **Top 3 Priority Ranking** with a justification paragraph for each: the three actor types that represent the greatest threat to MedDefense, ranked.
 
 The ranking must account for **both likelihood and potential impact**.
+
+---
+
+# [7. The Attack Surface](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/7-attack_surface_map.md)
+
+## Goal
+Systematically map MedDefense's attack surface across three dimensions: **external**, **internal**, and **human**.
+
+## Context
+An attack surface is every point where an attacker could attempt to interact with your systems, your data, or your people. It is not the same as a vulnerability. A locked door is part of the attack surface. A locked door with a broken lock is a vulnerability on that surface. Understanding the surface tells you where to look. Finding the vulnerabilities tells you what to fix.
+
+This task uses your **Network Scan Summary** and **Asset Registry** from Project 1x00 extensively. Have them open.
+
+## Instructions
+Produce a **MedDefense Attack Surface Map** organized in three sections:
+
+### Section 1: External Surface (Accessible from the Internet)
+
+For each entry point, document:
+- What it is
+- What asset sits behind it
+- What protection exists (reference 1x00 controls)
+- What gap is documented (reference 1x00 gaps)
+
+**Cover at minimum:**
+- Patient Portal (web-srv-01)
+- VPN Endpoints
+- Email Infrastructure (O365)
+- Public Website
+- DNS
+- Any other externally-reachable service identified in the network scan
+
+---
+
+### Section 2: Internal Surface (Accessible Once Inside the Network)
+
+This section should reference the **flat network finding from 1x00** prominently. Document:
+
+- **Exposed Services:** MySQL on billing-srv-01, PostgreSQL on ehr-db-01, both accessible network-wide
+- **Management Interfaces:** NAS, FortiGate admin, IoT web interfaces
+- **Legacy Systems:** Windows XP, Server 2012 R2
+- **Default Credentials:** PACS, medical IoT
+- **Absence of Network Segmentation**
+
+For each entry, document:
+1. The asset
+2. The exposure (port/service from network scan)
+3. Why this matters in a flat network
+
+---
+
+### Section 3: Human Surface (People Who Can Be Targeted)
+
+Map the human targets by role, access level, and social engineering vulnerability. Cover:
+
+- **Clinical Staff:** EHR access, low security training completion
+- **Reception:** Physical access point, first contact
+- **IT Staff:** Elevated privileges, small team = fatigue
+- **Executives:** BEC targets, strategic information
+- **External Contractors:** Access beyond MedDefense's direct control
+
+For each role, document:
+1. What they can access
+2. Why they are targetable
+3. What training or control gap (from 1x00) increases their risk
+
+---
+
+## Surface Assessment Summary (One Paragraph)
+
+At the end, write a **Surface Assessment Summary** answering:
+
+**Which of the three surfaces represents the greatest risk for MedDefense today, and why?**
+
+Provide a concise paragraph justifying your choice based on exposure level, exploitability, and potential impact if compromised.
