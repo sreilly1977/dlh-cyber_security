@@ -87,17 +87,17 @@
 
 ## Report F
 
-**Actor Type:** Shadow IT (primary), with exploitation by Unskilled Attacker (secondary)
+**Actor Type:** Unskilled Attacker
 
-**Internal/External:** Internal (shadow IT created the vulnerability), External (attacker exploited it). A biomedical engineering employee connected an unmanaged Raspberry Pi to the medical device network for a personal project, inadvertently exposing it to the internet with default credentials. An external attacker then exploited the exposure.
+**Internal/External:** External. The employee who connected the Raspberry Pi had no malicious intent and did not attack anything. The actual attack was carried out by an external actor who discovered the internet-exposed device, logged in with default credentials, and pivoted to the nurse call system.
 
-**Resources:** Low (both the shadow IT creator and the attacker). The employee used a cheap Raspberry Pi with free software. The attacker used default credentials and discovered the device through an exposed internet port, requiring no specialized tools.
+**Resources:** Low. The attacker used no custom tools, no exploits, and no specialized malware. They discovered an exposed port through automated scanning, used vendor default credentials (pi/raspberry), and pivoted to an adjacent system. All tools and techniques were freely available.
 
-**Sophistication:** Low. The employee used default credentials (pi/raspberry) and inadvertently exposed a port to the internet. The attacker simply discovered the exposed device and used default credentials to log in. Neither party demonstrated advanced technical skills.
+**Sophistication:** Low. Default credential exploitation on an internet-exposed consumer device requires minimal technical skill. The attacker did not deploy persistence mechanisms, did not attempt data exfiltration, and did not escalate privileges beyond the initial access. The pivot to the nurse call system suggests basic network reconnaissance but no advanced technique.
 
-**Primary Motivation:** The shadow IT activity was motivated by curiosity/convenience (personal project). The external attacker's motivation is unclear from the report—pivoting to the nurse call system could indicate reconnaissance for a larger attack or simply opportunistic exploration.
+**Primary Motivation:** Chaos. The report does not describe data theft, ransom demands, or financial gain. The attacker discovered an exposed device, explored the network, and disrupted the nurse call system. The lack of clear financial motive and the absence of data exfiltration suggest the actor was exploring and disrupting for its own sake rather than pursuing a specific objective.
 
-**Confidence Level:** Medium. The shadow IT classification is high confidence—the employee's personal Raspberry Pi on the medical device network is a clear shadow IT incident. The secondary actor (external attacker) could be an unskilled opportunist, but the lack of detail on what they did after pivoting to the nurse call system leaves their classification less certain. They could have been conducting reconnaissance for a more sophisticated operation.
+**Confidence Level:** Medium. The default credential exploitation and lack of sophisticated technique clearly indicate an unskilled attacker. However, the motivation is inferred from the absence of financial indicators rather than positive evidence. If the attacker was conducting reconnaissance for a larger operation, the motivation could be financial gain with this being the initial foothold. The employee's inadvertent shadow IT activity is the root cause of the vulnerability but is not itself an attack classification.
 
 ---
 
@@ -151,9 +151,9 @@ While the primary classification is Organized Crime at Medium confidence, the re
 | **C** | Hacktivist | External | Low | Low | Philosophical/political | High |
 | **D** | Insider Threat | Internal | Low | Medium | Revenge | High |
 | **E** | Unskilled Attacker | External | Low | Low | Financial gain | High |
-| **F** | Shadow IT + Unskilled | Int+Ext | Low | Low | Curiosity/exploitation | Medium |
-| **G** | Organized Crime | External | Medium | Medium | Financial gain | Low |
-| **H** | Organized Crime | External | Medium | Medium-High | Financial gain (blackmail) | Medium-High |
+| **F** | Unskilled Attacker | External | Low | Low | Chaos | Medium |
+| **G** | Organized Crime | External | Medium | Medium | Financial gain | Medium |
+| **H** | Organized Crime | External | Medium | Medium-High | Financial gain | Medium-High |
 
 ---
 
