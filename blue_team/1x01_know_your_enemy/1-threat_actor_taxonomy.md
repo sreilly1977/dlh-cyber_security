@@ -31,7 +31,7 @@
 
 **Primary Motivation:** Financial gain. The 40 Bitcoin ransom demand ($1.6 million) and explicit threat to publish patient data within 72 hours are clear financial extortion motives. Data exfiltration before encryption demonstrates the double extortion tactic typical of organized ransomware operations.
 
-**Confiliary Level:** High. Double extortion ransomware with a specific ransom demand, timeline threat, and commercial tooling is the signature of ransomware-as-a-service operations. The targeting of a regional hospital also aligns with organized crime's preference for healthcare targets with clinical urgency and insurance coverage.
+**Confidence Level:** High. Double extortion ransomware with a specific ransom demand, timeline threat, and commercial tooling is the signature of ransomware-as-a-service operations. The targeting of a regional hospital also aligns with organized crime's preference for healthcare targets with clinical urgency and insurance coverage.
 
 ---
 
