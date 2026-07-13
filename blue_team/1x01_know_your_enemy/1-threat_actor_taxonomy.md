@@ -121,7 +121,7 @@
 
 ---
 
-## Supplementary Analysis: Ambiguity Considerations
+## Supplementary Analysis: 
 
 While the primary classification is Organized Crime at Medium confidence, the report acknowledges this is ambiguous. Multiple actor types could fit the observed behavior, and the following analysis explains why and what evidence would resolve the ambiguity.
 
@@ -152,7 +152,7 @@ While the primary classification is Organized Crime at Medium confidence, the re
 | **D** | Insider Threat | Internal | Low | Medium | Revenge | High |
 | **E** | Unskilled Attacker | External | Low | Low | Financial gain | High |
 | **F** | Shadow IT + Unskilled | Int+Ext | Low | Low | Curiosity/exploitation | Medium |
-| **G** | Ambiguous (See analysis) | External | Medium | Medium | Financial gain | Low |
+| **G** | Organized Crime | External | Medium | Medium | Financial gain | Low |
 | **H** | Organized Crime | External | Medium | Medium-High | Financial gain (blackmail) | Medium-High |
 
 ---
