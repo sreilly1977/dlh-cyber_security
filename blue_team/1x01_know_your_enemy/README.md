@@ -489,3 +489,57 @@ Gap Reference: [Which gap from 1x00 enables this vector?]
 - No USB restriction GPO
 - Unmanaged iPads
 - Shadow IT devices (e.g., personal NAS)
+
+---
+
+# [9. The Vector-to-Asset Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/9-vector_asset_matrix.md)
+
+## Goal
+Produce a systematic cross-reference showing which attack vectors can reach which critical assets, creating a complete threat exposure map.
+
+## Context
+Individual vectors are data points. Cross-referenced vectors are intelligence. A phishing email alone is a nuisance. A phishing email that delivers credentials for the flat network that reaches the EHR database that contains 50,000 patient records—that is a kill chain waiting to happen.
+
+## Instructions
+Produce a **Vector-to-Asset Matrix** that crosses attack vectors (rows) with critical assets (columns).
+
+### Columns (Assets)
+Use your **Top 5 Critical Assets from 1x00 Task 8**, plus **Medical IoT** and **Active Directory** (7 columns total):
+
+1. [Top Asset #1 from 1x00]
+2. [Top Asset #2 from 1x00]
+3. [Top Asset #3 from 1x00]
+4. [Top Asset #4 from 1x00]
+5. [Top Asset #5 from 1x00]
+6. Medical IoT
+7. Active Directory
+
+### Rows (Vectors)
+Use at minimum these **8 vectors**:
+
+1. Phishing / Spear Phishing
+2. VPN Exploit
+3. Default / Shared Credentials
+4. Vulnerable Software Exploit
+5. Supply Chain Compromise
+6. Insider (Malicious)
+7. Insider (Negligent)
+8. Physical Access
+
+### Matrix Format
+For each cell where a viable path exists, write a **one-sentence attack path** describing how that vector reaches that asset.
+
+**Example:** "Phishing → clinician credentials → flat network → PostgreSQL 5432 open → ehr-db-01 patient data."
+
+Leave cells empty where no viable direct or indirect path exists. You should fill a **minimum of 20 cells**.
+
+---
+
+## Post-Matrix Analysis
+
+After the matrix, identify:
+
+1. **The 3 most connected assets** (assets reachable by the most vectors)
+2. **The 3 most versatile vectors** (vectors that reach the most assets)
+
+Explain in **one sentence each** why these represent the highest-priority intersections for MedDefense.
