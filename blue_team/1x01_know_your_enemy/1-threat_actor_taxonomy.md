@@ -95,9 +95,9 @@
 
 **Sophistication:** Low. Default credential exploitation on an internet-exposed consumer device requires minimal technical skill. The attacker did not deploy persistence mechanisms, did not attempt data exfiltration, and did not escalate privileges beyond the initial access. The pivot to the nurse call system suggests basic network reconnaissance but no advanced technique.
 
-**Primary Motivation:** Chaos. The report does not describe data theft, ransom demands, or financial gain. The attacker discovered an exposed device, explored the network, and disrupted the nurse call system. The lack of clear financial motive and the absence of data exfiltration suggest the actor was exploring and disrupting for its own sake rather than pursuing a specific objective.
+**Primary Motivation:** Curiosity. The attacker discovered an exposed device, explored the network, and inadvertently disrupted the nurse call system. The absence of data theft, ransom demands, or persistent backdoors indicates no financial or strategic objective. The behavior pattern is consistent with an opportunistic actor probing an accessible system to see what they could reach rather than pursuing a deliberate goal.
 
-**Confidence Level:** Medium. The default credential exploitation and lack of sophisticated technique clearly indicate an unskilled attacker. However, the motivation is inferred from the absence of financial indicators rather than positive evidence. If the attacker was conducting reconnaissance for a larger operation, the motivation could be financial gain with this being the initial foothold. The employee's inadvertent shadow IT activity is the root cause of the vulnerability but is not itself an attack classification.
+**Confidence Level:** Medium. The default credential exploitation and lack of sophisticated technique clearly indicate an unskilled attacker. Curiosity is inferred from the absence of financial indicators and the exploratory nature of the activity. If the attacker was conducting reconnaissance for a larger operation, the motivation could shift to financial gain with this being the initial foothold.
 
 ---
 
@@ -151,7 +151,7 @@ While the primary classification is Organized Crime at Medium confidence, the re
 | **C** | Hacktivist | External | Low | Low | Philosophical/political | High |
 | **D** | Insider Threat | Internal | Low | Medium | Revenge | High |
 | **E** | Unskilled Attacker | External | Low | Low | Financial gain | High |
-| **F** | Unskilled Attacker | External | Low | Low | Chaos | Medium |
+| **F** | Unskilled Attacker | External | Low | Low | Curiosity | Medium |
 | **G** | Organized Crime | External | Medium | Medium | Financial gain | Medium |
 | **H** | Organized Crime | External | Medium | Medium-High | Financial gain | Medium-High |
 
