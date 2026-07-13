@@ -44,7 +44,7 @@ For each actor category, write **one sentence** assessing whether this type of a
 
 ---
 
-# 1. The Threat Actor Taxonomy
+# [1. The Threat Actor Taxonomy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/1-threat_actor_taxonomy.md)
 
 ## Goal
 Classify threat actors by type, attributes and motivation from observed behavior alone.
