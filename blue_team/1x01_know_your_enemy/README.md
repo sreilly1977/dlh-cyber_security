@@ -234,3 +234,67 @@ Someone registers the domain `meddefence-portal.com` (note: "defence" instead of
 
 ### Scenario 7 - Physical Impersonation / Tailgating
 A person in scrubs carrying a stethoscope and a hospital-branded coffee cup approaches the restricted corridor leading to the IT department. They follow a staff member through the badge-controlled door, saying warmly: *"Thanks! My badge is in my locker, I'm just running back to grab something from my desk."* Their visitor badge, partially hidden by the stethoscope, expired two days ago.
+
+# 5. [The Supply Chain Question](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/5-supply_chain_assessment.md)
+
+## Goal
+Map and evaluate third-party risk exposure across MedDefense's vendor ecosystem.
+
+## Context
+In December 2020, SolarWinds taught the world a lesson that most organizations still have not fully internalized: your security is only as strong as your least secure vendor. MedDefense does not operate in isolation. It depends on a network of technology providers, service contractors and building managers, each with some level of access to MedDefense's environment or data. If any of them is compromised, MedDefense inherits the consequences.
+
+James Chen's question is specific:
+
+> "If MedTech Solutions gets breached tomorrow, what happens to us? They have maintenance access to our EHR server. What exactly can they reach?"
+
+## Instructions
+Using your onboarding packet (1x00 T0), vendor contracts and Asset Registry (1x00 T7), map the third-party risk exposure for **5 critical vendors**. For each one:
+
+
+```
+Vendor: [Name]
+Service: [What they provide]
+Access Type: [Network / Data / Physical / Application - be specific]
+Access Scope: [What exactly can they reach? Which systems, which data?]
+Compromise Scenario: [If this vendor is breached, what is the attack path to MedDefense? Be specific.]
+Existing Controls: [What limits this vendor's access? Reference 1x00 Control Matrix]
+Risk Assessment: [Critical / High / Medium / Low - justify]
+```
+
+## The 5 Vendors to Assess
+
+### 1. MedTech Solutions
+- **Role:** EHR maintenance provider
+- **Contract:** $145,000 annually
+- **SLA:** 4-hour response
+- **Access:** Direct server access for maintenance
+
+### 2. Microsoft
+- **Role:** O365 E3 provider
+- **Scope:** Organization-wide email, SharePoint, OneDrive
+- **Identity:** Manages identity if Entra ID is used
+
+### 3. Sophos
+- **Role:** Endpoint protection
+- **Scope:** Agent installed on all managed endpoints
+- **Capability:** Can push updates and configurations
+
+### 4. Siemens
+- **Role:** MRI scanner manufacturer
+- **Scope:** Periodic maintenance of Windows XP workstation, firmware updates
+
+### 5. Greenfield Building Management
+- **Role:** HQ office building management
+- **Scope:** Manages network infrastructure in the building
+- **Network:** MedDefense has a VLAN on their network
+
+---
+
+## Supply Chain Risk Summary (One Paragraph)
+
+After the 5 individual assessments, produce a **Supply Chain Risk Summary** answering:
+
+1. **Which single vendor compromise would cause the most damage to MedDefense, and why?**
+2. **What is the one control MedDefense should implement first to reduce supply chain risk across all vendors?**
+
+Provide a concise paragraph with clear justification for both answers based on access scope, data sensitivity, and potential blast radius of compromise.
