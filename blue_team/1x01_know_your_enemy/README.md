@@ -88,6 +88,8 @@ Report [Letter]:
 
 > For Report G, which is deliberately ambiguous, explain why multiple actor types could fit and which evidence would help you distinguish between them.
 
+---
+
 # [2. The Ransomware Dossier](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/2-ransomware_assessment.md)
 
 ## Goal
@@ -125,6 +127,8 @@ Reference your Gap Analysis from Project 0x00 directly. Identify the **4 gaps** 
 On a scale of **Critical / High / Medium / Low**, how likely is it that MedDefense faces a ransomware attack within the next 12 months? Justify your assessment using:
 - Sector statistics (from the dossier)
 - MedDefense-specific factors (from your posture assessment)
+
+---
 
 # [3. The Insider File](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/3-insider_assessment.md)
 
@@ -177,6 +181,8 @@ After completing the 5 individual analyses, write a **Pattern Assessment** answe
 **What systemic weakness at MedDefense makes insider threats particularly dangerous?**
 
 Connect your answer to at least **2 findings from Project 1x00**. Explain how existing control gaps create an environment where insider threats can flourish undetected.
+
+---
 
 # [4. The Human Vector](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/4-social_engineering_analysis.md)
 
@@ -234,6 +240,8 @@ Someone registers the domain `meddefence-portal.com` (note: "defence" instead of
 
 ### Scenario 7 - Physical Impersonation / Tailgating
 A person in scrubs carrying a stethoscope and a hospital-branded coffee cup approaches the restricted corridor leading to the IT department. They follow a staff member through the badge-controlled door, saying warmly: *"Thanks! My badge is in my locker, I'm just running back to grab something from my desk."* Their visitor badge, partially hidden by the stethoscope, expired two days ago.
+
+---
 
 # 5. [The Supply Chain Question](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/5-supply_chain_assessment.md)
 
@@ -298,3 +306,44 @@ After the 5 individual assessments, produce a **Supply Chain Risk Summary** answ
 2. **What is the one control MedDefense should implement first to reduce supply chain risk across all vendors?**
 
 Provide a concise paragraph with clear justification for both answers based on access scope, data sensitivity, and potential blast radius of compromise.
+
+---
+
+# 6. The MedDefense Threat Actor Matrix
+
+## Goal
+Consolidate all threat actor analysis into a single prioritized reference matrix.
+
+## Context
+You have profiled the adversaries individually: ransomware operators in depth, insiders from five angles, social engineers across seven vectors, supply chain risk across five vendors. Now bring it together into one authoritative reference that answers the Board's original question:
+
+> Who threatens MedDefense, and how much should we worry about each one?
+
+## Instructions
+Produce a **Threat Actor Matrix** for MedDefense covering **6 actor types**:
+
+1. Ransomware Groups (Organized Crime)
+2. Nation-State APT
+3. Insider (Malicious)
+4. Insider (Negligent)
+5. Hacktivist
+6. Unskilled / Opportunistic Attacker
+
+For each actor, assess across the following dimensions:
+
+| Dimension | What to Assess |
+|-----------|----------------|
+| **Likelihood** | Probability this actor targets MedDefense specifically. Justify with sector data (T0) and MedDefense profile. |
+| **Capability** | Resources and sophistication. Reference T1 attributes. |
+| **Primary Motivation** | What drives this actor to target healthcare. |
+| **Preferred Vector** | Most likely entry method into MedDefense. Reference T4 / T5 / T8. |
+| **Primary Target** | Which MedDefense asset they would pursue. Reference Top 5 from 1x00. |
+| **MedDefense Exposure** | Which specific gaps from 1x00 this actor would exploit. Reference Gap IDs. |
+
+---
+
+## Top 3 Priority Ranking
+
+After the matrix, produce a **Top 3 Priority Ranking** with a justification paragraph for each: the three actor types that represent the greatest threat to MedDefense, ranked.
+
+The ranking must account for **both likelihood and potential impact**.
