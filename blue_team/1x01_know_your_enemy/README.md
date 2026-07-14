@@ -687,7 +687,7 @@ Top Threat: [Which one is most dangerous for this system and why?]
 
 ---
 
-# 13. The ATT&CK Mapping
+# [13. The ATT&CK Mapping](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/13-attck_mapping.md)
 
 ## Goal
 Map realistic attack sequences to MITRE ATT&CK tactics, building fluency with the framework that every SOC uses daily.
