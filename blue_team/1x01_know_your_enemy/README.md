@@ -592,7 +592,7 @@ The **Break Points** section is critical. It connects the threat analysis to def
 
 ---
 
-# [11. STRIDE on the EHR](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/11-stride_ehr.md)
+# [11. STRIDE on the EHR](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/11-stride_ehr.md)
 
 ## Goal
 Apply the STRIDE threat model in depth to MedDefense's most critical system to systematically identify every category of threat.
