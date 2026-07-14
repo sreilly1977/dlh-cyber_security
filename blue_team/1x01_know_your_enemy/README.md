@@ -746,7 +746,7 @@ Provide a concise paragraph with clear justification based on the pattern analys
 
 ---
 
-# 14. The Three Scenarios
+# [14. The Three Scenarios](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/14-threat_scenarios.md)
 
 ## Goal
 Construct 3 complete, realistic threat scenarios integrating all elements produced in this project.
