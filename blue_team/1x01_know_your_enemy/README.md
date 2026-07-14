@@ -877,7 +877,7 @@ Provide a concise paragraph with clear justification for the two selected initia
 
 ---
 
-# 17. The What-If
+# [17. The What-If](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/17-threat_evolution.md)
 
 ## Goal
 Demonstrate deep understanding of threat landscape dynamics by analyzing how specific business changes would reshape MedDefense's threat profile.
