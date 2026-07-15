@@ -1,4 +1,4 @@
-``` mermaid
+```mermaid
 flowchart TB
     subgraph Perimeter["Perimeter Defense"]
         OPN["OPNsense<br/>Firewall + Suricata IPS<br/>VPN + NetFlow"]
