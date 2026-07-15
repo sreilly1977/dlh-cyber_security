@@ -1,7 +1,7 @@
 # DLH Cyber Security Academy Repository
 
-![Security+ Badge](https://img.shields.io/badge/CompTIA-Security%2B%20SY0--701-red)
-![Academy Badge](https://img.shields.io/badge-DLH-Cyber%20Security%20Academy-blue)
+![Security+ Badge](https://img.shields.io/badge/Certification-CompTIA_Security%2B-blue)
+![Academy Badge](https://img.shields.io/badge/Academy-Luxembourg_Academy_of_Cybersecurity-green)
 
 ## Overview
 
@@ -18,11 +18,7 @@ The repository is organized into two primary tracks:
 
 ## Repository Structure
 
-```
-dlh-cyber_security/ ├── blue_team/ │ ├── 1x00_first_watch/ │ ├── 1x01_know_your_enemy/ │ ├── HIPA/ │ ├── Knowbe4/ │ ├── Microsoft/ │ ├── NIST_Special_Publications/ │ ├── learning_objectives/ │ └── README.md ├── common_core/ │ ├── cybersecurity_basics/ │ ├── learning_objectives/ │ ├── linux_security/ │ ├── network_security/ │ ├── scripting_cyber/ │ ├── threat-modeling-fundamentals/ │ ├── understanding_vulnerabilities/ │ └── web_application_security/ ├── notes/ ├── .gitignore ├── LICENSE └── README.md
-```
-
-### blue_team/
+### [blue_team/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team)
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -34,7 +30,7 @@ dlh-cyber_security/ ├── blue_team/ │ ├── 1x00_first_watch/ │ ├
 | `NIST_Special_Publications/` | Reference materials from NIST SP series | Domain 5.0: Governance, Risk, and Compliance |
 | `learning_objectives/` | Blue team course and module learning objectives | Domains 1.0 - 5.0 |
 
-### common_core/
+### [common_core/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core)
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -66,8 +62,6 @@ This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 | Governance, Risk, & Compliance | 10% | `blue_team/NIST_Special_Publications`, `blue_team/HIPA` |
 
 _Domain weights based on CompTIA Security+ SY0-701 official exam outline._
-
-## Setup Instructions
 
 ### Cheat Sheets
 
