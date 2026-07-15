@@ -43,7 +43,7 @@ The repository is organized into two primary tracks:
 | `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
 | `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
 
-### notes/
+### [notes/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes)
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
