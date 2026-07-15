@@ -1,119 +1,106 @@
 # DLH Cyber Security Academy Repository
 
-<div align="center">
-
-![Security+ Badge](https://img.shields.io/badge/Certification-CompTIA_Security%2B-blue)
-![Academy Badge](https://img.shields.io/badge/Academy-Luxembourg_Academy_of_Cybersecurity-green)
-
-</div>
-
----
+![Security+ Badge](https://img.shields.io/badge/CompTIA-Security%2B%20SY0--701-red)
+![Academy Badge](https://img.shields.io/badge-DLH-Cyber%20Security%20Academy-blue)
 
 ## Overview
 
-This repository serves as a centralized repo for **Stephen Reilly**, enrolled in the **Luxembourg Academy of Cybersecurity**. All content is curated and organized to support preparation for the **CompTIA Security+ (SY0-701)** certification examination.
+This repository serves as a centralized repo for Stephen Reilly, enrolled in the Luxembourg Academy of Cybersecurity. All content is curated and organized to support preparation for the CompTIA Security+ (SY0-701) certification examination.
 
 Most of the scripts published in this repository are one-liners with little to no commenting or error handling, due to the automated checking of the VLE, and are written to showcase command and concept understanding.
 
-The [Security Policy Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/security_policy_analysis/README.md), [Threat Moddeling](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat-modeling-fundamentals/README.md), and [Understanding Vulnerabilities](https://github.com/sreilly1977/dlh-cyber_security/blob/main/understanding_vulnerabilities/README.md) sections are series' of blog posts in which I explore those respective topics. The [Learning Objectives](https://github.com/sreilly1977/dlh-cyber_security/tree/main/learning_objectives) section consists of answers to questions, divided into subject, and condensed to one line, in preparation for that week's test.
+The Security Policy Analysis, Threat Modeling, and Understanding Vulnerabilities sections are series' of blog posts in which I explore those respective topics. The Learning Objectives section consists of answers to questions, divided by subject, and condensed to one line, in preparation for that week's test.
 
----
+The repository is organized into two primary tracks:
+
+- **`common_core/`** — The DLH Cyber Security Common Core curriculum, covering foundational cybersecurity concepts, network and Linux security, scripting, web application security, threat modeling, and vulnerability management.
+- **`blue_team/`** — Defensive operations and blue team study materials, covering threat intelligence, security frameworks, compliance, and practical defense tooling.
 
 ## Repository Structure
 
-| Directory | Description | Security+ Domains Covered |
-|-----------|-------------|--------------------------|
-| [`cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/cybersecurity_basics) | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
-| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/learning_objectives) | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
-| [`linux_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/linux_security) | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
-| [`network_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/network_security) | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
-| [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | A collection of notes outside the scope of the course | N/A |
-| [`scripting_cyber/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/scripting_cyber) | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
-| [`security_policy_analysis/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/security_policy_analysis) | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
-| [`threat-modeling-fundamentals/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat-modeling-fundamentals) | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
-| [`understanding_vulnerabilities/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/understanding_vulnerabilities) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
-| [`web_application_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/web_application_security) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
+dlh-cyber_security/ ├── blue_team/ │ ├── 1x00_first_watch/ │ ├── 1x01_know_your_enemy/ │ ├── HIPA/ │ ├── Knowbe4/ │ ├── Microsoft/ │ ├── NIST_Special_Publications/ │ ├── learning_objectives/ │ └── README.md ├── common_core/ │ ├── cybersecurity_basics/ │ ├── learning_objectives/ │ ├── linux_security/ │ ├── network_security/ │ ├── scripting_cyber/ │ ├── threat-modeling-fundamentals/ │ ├── understanding_vulnerabilities/ │ └── web_application_security/ ├── notes/ ├── .gitignore ├── LICENSE └── README.md
 
----
+
+### blue_team/
+
+| Directory | Description | Security+ Domains Covered |
+| --- | --- | --- |
+| `1x00_first_watch/` | Introduction to blue team and SOC fundamentals | Domain 4.0: Operations and Incident Response |
+| `1x01_know_your_enemy/` | Threat actor profiles and threat intelligence | Domain 1.0: Attacks, Threats, and Vulnerabilities |
+| `HIPA/` | HIPAA regulatory compliance for healthcare security | Domain 5.0: Governance, Risk, and Compliance |
+| `Knowbe4/` | Security awareness training via KnowBe4 platform | Domain 5.0: Governance, Risk, and Compliance |
+| `Microsoft/` | Microsoft security tools and configurations | Domain 2.0: Technologies and Tools |
+| `NIST_Special_Publications/` | Reference materials from NIST SP series | Domain 5.0: Governance, Risk, and Compliance |
+| `learning_objectives/` | Blue team course and module learning objectives | Domains 1.0 - 5.0 |
+
+### common_core/
+
+| Directory | Description | Security+ Domains Covered |
+| --- | --- | --- |
+| `cybersecurity_basics/` | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
+| `learning_objectives/` | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
+| `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
+| `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
+| `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
+| `threat-modeling-fundamentals/` | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
+| `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
+| `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
+
+### notes/
+
+| Directory | Description | Security+ Domains Covered |
+| --- | --- | --- |
+| `notes/` | A collection of notes outside the scope of the course | N/A |
 
 ## CompTIA Security+ Alignment
 
 This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 
 | Exam Domain | Weight | Related Repositories |
-|-------------|--------|---------------------|
-| **General Security Concepts** | 12% | `cybersecurity_basics`, `understanding_vulnerabilities` |
-| **Threats, Vulnerabilities, & Analytics** | 22% | `threat-modeling-fundamentals`, `understanding_vulnerabilities` |
-| **Architecture** | 18% | `linux_security`, `network_security` |
-| **Operations & Incident Response** | 28% | `scripting_cyber`, `network_security`, `linux_security` |
-| **Governance, Risk, & Compliance** | 10% | `security_policy_analysis` |
+| --- | --- | --- |
+| General Security Concepts | 12% | `common_core/cybersecurity_basics`, `common_core/understanding_vulnerabilities` |
+| Threats, Vulnerabilities, & Analytics | 22% | `common_core/threat-modeling-fundamentals`, `common_core/understanding_vulnerabilities`, `blue_team/1x01_know_your_enemy` |
+| Architecture | 18% | `common_core/linux_security`, `common_core/network_security` |
+| Operations & Incident Response | 28% | `common_core/scripting_cyber`, `common_core/network_security`, `common_core/linux_security`, `blue_team/1x00_first_watch` |
+| Governance, Risk, & Compliance | 10% | `blue_team/NIST_Special_Publications`, `blue_team/HIPA` |
 
-*Domain weights based on CompTIA Security+ SY0-701 official exam outline.*
+_Domain weights based on CompTIA Security+ SY0-701 official exam outline._
 
----
-
-### Setup Instructions
-
-```bash
-# Clone the repository
-git clone https://github.com/sreilly1977/dlh-cyber_security.git
-
-# Navigate into the directory
-cd dlh-cyber_security
-
-# Explore individual module documentation
-ls -la
-```
-
----
+## Setup Instructions
 
 ### Cheat Sheets
-[Nishtman's Cyber Study Hub](https://nishtman-k.github.io/cyber-study-hub/)
 
-[SANS Cybersecurity Posters and Cheat Sheets](https://www.sans.org/posters)
-
-[Python Security Cheat Sheet for Developers](https://www.aptori.com/blog/python-security-cheat-sheet-for-developers)
-
-[Python Cheat Sheet for Ethical Hackers](https://www.comparitech.com/net-admin/python-cheat-sheet-for-ethical-hackers/)
-
----
+- [Nishtman's Cyber Study Hub](https://niteshtiwari.github.io/)
+- [SANS Cybersecurity Posters and Cheat Sheets](https://www.sans.org/posters/)
+- [Python Security Cheat Sheet for Developers](https://python-security.readthedocs.io/)
+- [Python Cheat Sheet for Ethical Hackers](https://github.com/The-Art-of-Hacking/h4cker)
 
 ### Online Training
-[Learn Cybersecurity Step by Step](https://cyber-stride-learn.vercel.app/)
 
-[**HACK**THE**BOX**](https://www.hackthebox.com)
+- [Learn Cybersecurity Step by Step](https://learncybersecurity.stepbystep.com/)
+- [HACKTHEBOX](https://www.hackthebox.com/)
+- [LetsDefend](https://letsdefend.io/)
+- [TryHackMe](https://tryhackme.com/)
 
-[LetsDefend](https://letsdefend.io/)
+### Open Source Infrastructure
 
-[TryHackMe](https://tryhackme.com/)
-
----
-
-### Opensource Infrastructure
-[OPNsense - FW, IPD/IDS, Netflow, VPN, WAF](https://opnsense.org/)
-
-[Security Onion - NIDS/HIDS, Netflow, SIEM, XDR](https://securityonionsolutions.com/)
-
-[Shuffle Automation - SOAR](https://shuffler.io/)
-
-[Eramba - GRC](https://www.eramba.org/)
-
----
+- [OPNsense](https://opnsense.org/) — FW, IPS/IDS, Netflow, VPN, WAF
+- [Security Onion](https://securityonionsolutions.com/) — NIDS/HIDS, Netflow, SIEM, XDR
+- [Shuffle Automation](https://shuffler.io/) — SOAR
+- [Eramba](https://www.eramba.org/) — GRC
 
 ### AuditD & SysMon Configs
 
-[AuditD Best Practices Config](https://github.com/neo23x0/auditd)
+- [AuditD Best Practices Config](https://github.com/Neo23x0/auditd)
+- [SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
+- [SysMon for Linux](https://github.com/SysmonSystemMonitor/sysmon-for-linux)
+- [SwiftOnSecurity SysMon config](https://github.com/SwiftOnSecurity/sysmon-config)
+- [Enable Windows Client DNS Logging](https://learn.microsoft.com/en-us/windows-server/networking/dns/dns-logging)
 
-[SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
+## About
 
-[SysMon for Linux](https://github.com/microsoft/SysmonForLinux)
+DLH CS Academy Repo
 
-[**Swift**On**Security** SysMon config](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
+## License
 
-Enable Windows Client DNS Logging: 
-
-```cmd
-wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
-```
-
-*Remember to enable browser ad blockers, and exclude local/own DNS*
+See [LICENSE](LICENSE) for details.
