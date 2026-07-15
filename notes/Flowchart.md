@@ -5,8 +5,12 @@ flowchart TB
             OPN["OPNsense Firewall + Suricata IPS<br/>VPN + NetFlow"]
         end
 
+        subgraph DMZNet["DMZ Network Segment"]
+            DMZ["Public-facing Services<br/>Reverse Proxy + Bastion"]
+        end
+
         subgraph Detection["Detection & Monitoring"]
-            SO["Security Onion SIEM / NIDS / Host Visibility<br/>Native Cases Module Elastic Stack"]
+            SO["Security Onion SIEM / NIDS<br/>Host Visibility + Elastic Stack"]
         end
 
         subgraph Orchestration["SOAR Layer"]
@@ -14,11 +18,15 @@ flowchart TB
         end
 
         subgraph Governance["Secondary Governance Layer"]
-            ERA["Eramba GRC Platform<br/>Compliance Risk Audit Tracking"]
+            ERA["Eramba<br/>GRC Platform<br/>Compliance Risk Audit"]
         end
 
         subgraph MgmtNet["Management Network"]
             MGMT["Proxmox Host Management<br/>Cluster Admin + Hypervisor Console"]
+        end
+
+        subgraph WinNet["Windows Workstations Segment"]
+            WS["Windows Desktop Clients<br/>Domain-Joined Endpoints"]
         end
 
         subgraph BackupNet["Backup Network Segment"]
@@ -42,9 +50,13 @@ flowchart TB
     ERA -. "webhook: status triggers, risk updates" .-> SHF
 
     OPN -- "segmented routing / VLANs" --> MGMT
+    OPN -- "filtered public access" --> DMZ
     MGMT -- "admin access" --> FN1
     MGMT -- "admin access" --> DC1
     MGMT -- "admin access" --> FN2
+    MGMT -- "admin access" --> WS
+    WS -- "domain auth" --> DC1
+    WS -- "SMB NFS access" --> FN2
     DC1 -- "AD replication" --> DC2
     DC2 -- "AD replication" --> DC1
     FN1 -. "backup targets, AD GPO + SYSVOL" .-> DC1
