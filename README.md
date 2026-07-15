@@ -18,8 +18,9 @@ The repository is organized into two primary tracks:
 
 ## Repository Structure
 
+```
 dlh-cyber_security/ ├── blue_team/ │ ├── 1x00_first_watch/ │ ├── 1x01_know_your_enemy/ │ ├── HIPA/ │ ├── Knowbe4/ │ ├── Microsoft/ │ ├── NIST_Special_Publications/ │ ├── learning_objectives/ │ └── README.md ├── common_core/ │ ├── cybersecurity_basics/ │ ├── learning_objectives/ │ ├── linux_security/ │ ├── network_security/ │ ├── scripting_cyber/ │ ├── threat-modeling-fundamentals/ │ ├── understanding_vulnerabilities/ │ └── web_application_security/ ├── notes/ ├── .gitignore ├── LICENSE └── README.md
-
+```
 
 ### blue_team/
 
