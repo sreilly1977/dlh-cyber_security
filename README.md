@@ -13,12 +13,12 @@ The Security Policy Analysis, Threat Modeling, and Understanding Vulnerabilities
 
 The repository is organized into two primary tracks:
 
-- **`common_core/`** — The DLH Cyber Security Common Core curriculum, covering foundational cybersecurity concepts, network and Linux security, scripting, web application security, threat modeling, and vulnerability management.
-- **`blue_team/`** — Defensive operations and blue team study materials, covering threat intelligence, security frameworks, compliance, and practical defense tooling.
+- **[`common_core/`](common_core/)** — The DLH Cyber Security Common Core curriculum, covering foundational cybersecurity concepts, network and Linux security, scripting, web application security, threat modeling, vulnerability management, and security policy analysis.
+- **[`blue_team/`](blue_team/)** — Defensive operations and blue team study materials, covering threat intelligence, security frameworks, compliance, and practical defense tooling.
 
 ## Repository Structure
 
-### [blue_team/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team)
+### blue_team/
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ The repository is organized into two primary tracks:
 | `NIST_Special_Publications/` | Reference materials from NIST SP series | Domain 5.0: Governance, Risk, and Compliance |
 | `learning_objectives/` | Blue team course and module learning objectives | Domains 1.0 - 5.0 |
 
-### [common_core/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core)
+### common_core/
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -39,11 +39,12 @@ The repository is organized into two primary tracks:
 | `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
 | `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
 | `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
+| `security_policy_analysis/` | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
 | `threat-modeling-fundamentals/` | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
 | `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
 | `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
 
-### [notes/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes)
+### notes/
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -53,13 +54,13 @@ The repository is organized into two primary tracks:
 
 This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
 
-| Exam Domain | Weight | Related Repositories |
+| Exam Domain | Weight | Related Directories |
 | --- | --- | --- |
 | General Security Concepts | 12% | `common_core/cybersecurity_basics`, `common_core/understanding_vulnerabilities` |
 | Threats, Vulnerabilities, & Analytics | 22% | `common_core/threat-modeling-fundamentals`, `common_core/understanding_vulnerabilities`, `blue_team/1x01_know_your_enemy` |
 | Architecture | 18% | `common_core/linux_security`, `common_core/network_security` |
 | Operations & Incident Response | 28% | `common_core/scripting_cyber`, `common_core/network_security`, `common_core/linux_security`, `blue_team/1x00_first_watch` |
-| Governance, Risk, & Compliance | 10% | `blue_team/NIST_Special_Publications`, `blue_team/HIPA` |
+| Governance, Risk, & Compliance | 10% | `common_core/security_policy_analysis`, `blue_team/NIST_Special_Publications`, `blue_team/HIPA`, `blue_team/Knowbe4` |
 
 _Domain weights based on CompTIA Security+ SY0-701 official exam outline._
 
