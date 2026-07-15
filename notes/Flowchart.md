@@ -36,17 +36,18 @@ flowchart TB
     end
 
     OPN -- "syslog / NetFlow" --> SO
-    OPN <-. "API: block rules, rule enforcement" .-> SHF
+    OPN -. "API: block rules, rule enforcement" .-> SHF
     SHF -- "API: query logs, pull alerts, cases" --> SO
     SHF -- "HTTP: create incidents, push governance records" --> ERA
-    ERA <-. "webhook: status triggers, risk updates" .-> SHF
+    ERA -. "webhook: status triggers, risk updates" .-> SHF
 
     OPN -- "segmented routing / VLANs" --> MGMT
     MGMT -- "admin access" --> FN1
     MGMT -- "admin access" --> DC1
     MGMT -- "admin access" --> FN2
-    DC1 <--> AD replication DC2
-    FN1 -- "backup targets, AD GPO + SYSVOL" -.-> DC1
-    FN1 -- "backup targets, SMB shares + datasets" -.-> FN2
-    SO -- "HIDS agents / flow collection" -.-> MGMT
+    DC1 -- "AD replication" --> DC2
+    DC2 -- "AD replication" --> DC1
+    FN1 -. "backup targets, AD GPO + SYSVOL" .-> DC1
+    FN1 -. "backup targets, SMB shares + datasets" .-> FN2
+    SO -. "HIDS agents / flow collection" .-> MGMT
 ```
