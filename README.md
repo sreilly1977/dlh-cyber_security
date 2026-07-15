@@ -18,8 +18,7 @@ The repository is organized into two primary tracks:
 
 ## Repository Structure
 
-### blue_team/
-
+### [blue_team/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team)
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
 | `1x00_first_watch/` | Introduction to blue team and SOC fundamentals | Domain 4.0: Operations and Incident Response |
@@ -30,7 +29,7 @@ The repository is organized into two primary tracks:
 | `NIST_Special_Publications/` | Reference materials from NIST SP series | Domain 5.0: Governance, Risk, and Compliance |
 | `learning_objectives/` | Blue team course and module learning objectives | Domains 1.0 - 5.0 |
 
-### common_core/
+### [common_core/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core)
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
@@ -44,11 +43,11 @@ The repository is organized into two primary tracks:
 | `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
 | `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
 
-### notes/
+### [notes/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes)
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
-| `notes/` | A collection of notes outside the scope of the course | N/A |
+| [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | A collection of notes outside the scope of the course | N/A |
 
 ## CompTIA Security+ Alignment
 
@@ -91,7 +90,12 @@ _Domain weights based on CompTIA Security+ SY0-701 official exam outline._
 - [SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
 - [SysMon for Linux](https://github.com/SysmonSystemMonitor/sysmon-for-linux)
 - [SwiftOnSecurity SysMon config](https://github.com/SwiftOnSecurity/sysmon-config)
-- [Enable Windows Client DNS Logging](https://learn.microsoft.com/en-us/windows-server/networking/dns/dns-logging)
+- Enable Windows Client DNS Logging: 
+
+```cmd
+wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
+```
+*Remember to enable browser ad blockers, and exclude local/own DNS*
 
 ## About
 
