@@ -11,6 +11,7 @@ Foundational coursework from the DLH Cyber Security Academy, covering the core c
 | `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
 | `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
 | `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
+| `security_policy_analysis/` | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
 | `threat-modeling-fundamentals/` | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
 | `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
 | `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
@@ -19,7 +20,7 @@ Foundational coursework from the DLH Cyber Security Academy, covering the core c
 
 Most scripts in this repository are one-liners with little to no commenting or error handling, due to the automated checking of the VLE. They are written to showcase command and concept understanding rather than production readiness.
 
-The Threat Modeling Fundamentals and Understanding Vulnerabilities sections are series of blog posts exploring those respective topics. The Learning Objectives section consists of answers to questions, divided by subject, and condensed to one line, in preparation for that week's test.
+The Security Policy Analysis, Threat Modeling Fundamentals, and Understanding Vulnerabilities sections are series of blog posts exploring those respective topics. The Learning Objectives section consists of answers to questions, divided by subject, and condensed to one line, in preparation for that week's test.
 
 ## CompTIA Security+ Alignment
 
@@ -29,6 +30,6 @@ The Threat Modeling Fundamentals and Understanding Vulnerabilities sections are 
 | Threats, Vulnerabilities, & Analytics | 22% | `threat-modeling-fundamentals`, `understanding_vulnerabilities` |
 | Architecture | 18% | `linux_security`, `network_security` |
 | Operations & Incident Response | 28% | `scripting_cyber`, `network_security`, `linux_security` |
-| Governance, Risk, & Compliance | 10% | _See [`../blue_team`](../blue_team)_ |
+| Governance, Risk, & Compliance | 10% | `security_policy_analysis` |
 
 _Domain weights based on CompTIA Security+ SY0-701 official exam outline._
