@@ -1,22 +1,22 @@
 ```mermaid
 flowchart TB
-    subgraph Perimeter["Perimeter Defense"]
-        OPN["OPNsense Firewall + Suricata IPS<br/>VPN + NetFlow"]
-    end
-
-    subgraph Detection["Detection & Monitoring"]
-        SO["Security Onion SIEM / NIDS / Host Visibility<br/>Native Cases Module Elastic Stack"]
-    end
-
-    subgraph Orchestration["SOAR Layer"]
-        SHF["Shuffle Workflow Automation<br/>Cross-Tool Orchestration"]
-    end
-
-    subgraph Governance["Secondary Governance Layer"]
-        ERA["Eramba GRC Platform<br/>Compliance Risk Audit Tracking"]
-    end
-
     subgraph Proxmox["Proxmox VE Instance"]
+        subgraph Perimeter["Perimeter Defense"]
+            OPN["OPNsense Firewall + Suricata IPS<br/>VPN + NetFlow"]
+        end
+
+        subgraph Detection["Detection & Monitoring"]
+            SO["Security Onion SIEM / NIDS / Host Visibility<br/>Native Cases Module Elastic Stack"]
+        end
+
+        subgraph Orchestration["SOAR Layer"]
+            SHF["Shuffle Workflow Automation<br/>Cross-Tool Orchestration"]
+        end
+
+        subgraph Governance["Secondary Governance Layer"]
+            ERA["Eramba GRC Platform<br/>Compliance Risk Audit Tracking"]
+        end
+
         subgraph MgmtNet["Management Network"]
             MGMT["Proxmox Host Management<br/>Cluster Admin + Hypervisor Console"]
         end
