@@ -20,26 +20,26 @@
 | **CVSS v3.1 Vector String** | CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H |
 | **CVSS Base Score** | 9.8 (Critical) |
 | **CWE** | CWE-787: Out-of-bounds Write |
-| **References** | 1. http://httpd.apache.org/security/vulnerabilities_24.html — **Vendor Advisory**<br>2. http://seclists.org/fulldisclosure/2022/May/33 — **Third Party Advisory**<br>3. https://www.oracle.security-alerts/cpuapr2022.html — **Patch/Update Information** |
+| **References** | 1. http://httpd.apache.org/security/vulnerabilities_24.html — **Vendor Advisory**<br>2. http://seclists.org/fulldisclosure/2022/May/33 — **Third Party Advisory**<br>3. https://www.oracle.com/security-alerts/cpuapr2022.html — **Patch/Update Information** |
 | **Published Date** | December 20, 2021 |
 | **Last Modified** | June 17, 2026 |
 
 ---
 
-### CVE 2: High Severity
+### CVE 2: High Severity (Medical Device)
 
 | Field | Value |
 |-------|-------|
-| **CVE ID** | CVE-2011-3389 |
-| **NVD URL** | https://nvd.nist.gov/vuln/detail/CVE-2011-3389 |
-| **Description** | BEAST (Browser Exploit Against SSL/TLS) vulnerability affecting TLS 1.0 implementation. Allows man-in-the-middle attackers to decrypt portions of HTTPS traffic by exploiting CBC cipher mode weaknesses using crafted JavaScript code. |
-| **Affected Products** | 1. Google Chrome (prior to v16)<br>2. Microsoft Internet Explorer (all versions supporting TLS 1.0)<br>3. Mozilla Firefox (prior to v7) |
-| **CVSS v3.1 Vector String** | N/A (Older CVE predates v3.1 scoring) |
-| **CVSS Base Score** | N/A |
-| **CWE** | CWE-326: Inadequate Encryption Strength |
-| **References** | 1. http://googlechromereleases.blogspot.com/2011/10/chrome-stable-release.html — **Vendor Advisory**<br>2. http://www.kb.cert.org/vuls/id/864643 — **Third Party Advisory (CERT)**<br>3. http://marc.info/?l=bugtraq&m=132750579901589&w=2 — **Issue Tracker/Discussion** |
-| **Published Date** | September 06, 2011 |
-| **Last Modified** | June 16, 2026 |
+| **CVE ID** | CVE-2020-25165 |
+| **NVD URL** | https://nvd.nist.gov/vuln/detail/CVE-2020-25165 |
+| **Description** | Network session vulnerability in BD Alaris infusion pumps allowing an attacker to cause a denial of service condition. An unauthenticated attacker could send malformed network packets to disrupt device operation without requiring credentials. |
+| **Affected Products** | 1. BD Alaris Infusion Pump System Firmware 12.1.2<br>2. BD Alaris TC Module (various firmware versions)<br>3. BD Alaris PC Unit (various firmware versions) |
+| **CVSS v3.1 Vector String** | CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H |
+| **CVSS Base Score** | 7.5 (High) |
+| **CWE** | CWE-400: Uncontrolled Resource Consumption |
+| **References** | 1. https://www.bd.com/en-us/products-and-solutions/products/product-page/pump-alaris-pcs — **Vendor Product Page**<br>2. BD Security Bulletin (2022) — **Vendor Security Advisory**<br>3. https://www.fda.gov/medical-devices/medical-device-safety — **FDA Medical Device Safety Notice** |
+| **Published Date** | August 24, 2020 |
+| **Last Modified** | June 17, 2026 |
 
 ---
 
@@ -114,16 +114,20 @@ Without CNAs, the CVE system would lack centralized governance and duplicate ide
 
 ## Key Takeaways for MedDefense
 
-1. **CVSS Scores Vary by Environment:** CVE-2023-38408 shows a 9.8 CVSS score in the NVD, but our scan rated it Medium because specific conditions (ssh-agent forwarding to attacker-controlled systems) may not apply in our environment. This reinforces Task 22's lesson that threat context matters more than raw scores.
+1. **Medical Devices Have Unique Risks:** CVE-2020-25165 (BD Alaris infusion pumps) has a CVSS 7.5 but the **Impact category is Availability only (A:H)**. This means the attack doesn't steal data (C:N) or modify data (I:N)—it just crashes the device. For a hospital, crashing an infusion pump can directly harm patients. Medical device CVEs must be evaluated differently than server CVEs because patient safety is on the line, not just IT risk.
 
-2. **Reference Quality Varies:** Vendor advisories are most trustworthy; third-party write-ups may contain errors; PoCs confirm exploitability but shouldn't be executed in production environments.
+2. **Vendor Patching May Not Exist:** The BD Alaris pumps in our scan (Finding 010) run firmware version 12.1.2. Unlike server software, medical device vendors may not release patches—they recommend network isolation instead. This reinforces the urgency of **GAP-007 (Medical Device Exposure)** and implementing the IoT VLAN recommended in Task 16.
 
-3. **Older CVEs May Lack Modern Scoring:** CVE-2011-3389 has no CVSS v3.1 vector because it predates the current scoring system. Legacy systems (like our TLS 1.0 patient portal) may harbor vulnerabilities without modern risk metrics.
+3. **CVSS Scores Vary by Environment:** CVE-2023-38408 shows a 9.8 CVSS score in the NVD, but our scan rated it Medium because specific conditions (ssh-agent forwarding to attacker-controlled systems) may not apply in our environment. This reinforces Task 22's lesson that threat context matters more than raw scores.
 
-4. **Duplicate Management Is Active:** The CVE system continuously consolidates duplicates (as shown by CVE-2004-2770 rejection). When researching vulnerabilities, verify we're looking at the canonical CVE ID.
+4. **Reference Quality Varies:** Vendor advisories are most trustworthy; third-party write-ups may contain errors; PoCs confirm exploitability but shouldn't be executed in production environments.
+
+5. **Older CVEs May Lack Modern Scoring:** Some legacy findings predate CVSS v3.1 and won't have consistent scoring across all databases.
+
+6. **Duplicate Management Is Active:** The CVE system continuously consolidates duplicates (as shown by CVE-2004-2770 rejection). When researching vulnerabilities, verify we're looking at the canonical CVE ID.
 
 ---
 
 *Prepared by: Security Department*  
-*References: NVD.nist.gov, CVE.org, CISA Known Exploited Vulnerabilities Catalog*  
+*References: NVD.nist.gov, CVE.org, CISA Known Exploited Vulnerabilities Catalog, BD Security Bulletins, FDA Medical Device Safety Notices*  
 *Classification: CONFIDENTIAL — INTERNAL USE ONLY*
