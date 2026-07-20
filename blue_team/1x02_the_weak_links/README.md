@@ -371,3 +371,200 @@ After the 6 analyses, answer in one paragraph:
 
 ---
 
+# 7. The Vulnerability Taxonomy
+
+## Goal
+Classify all scan findings into the **Sec+ 2.3 vulnerability taxonomy** to identify the organization's vulnerability profile.
+
+## Context
+Security+ 2.3 defines **11 vulnerability categories**. Your scan report contains examples of most of them. Classifying every finding reveals **MedDefense's vulnerability profile**, not just individual weaknesses, but the systemic pattern of what types of vulnerabilities dominate and what that says about the organization's security maturity.
+
+---
+
+## Instructions
+
+Classify every finding in the scan report (all 31) into the following **Sec+ 2.3 categories**:
+
+| Category | Sec+ Definition |
+|----------|----------------|
+| Application | Memory injection, buffer overflow, race conditions, malicious update |
+| OS-based | Vulnerabilities in operating system components |
+| Web-based | SQLi, XSS, broken access control, security misconfig |
+| Hardware/Firmware/EOL | Firmware vulnerabilities, end-of-life, legacy systems |
+| Virtualization | VM escape, resource reuse |
+| Cloud-specific | Cloud misconfigurations, shared responsibility failures |
+| Supply chain | Third-party component vulnerabilities |
+| Cryptographic | Weak algorithms, protocol downgrade, certificate issues |
+| Misconfiguration | Human error in system configuration |
+| Mobile device | Side loading, jailbreaking, unmanaged devices |
+| Zero-day | No patch available at time of disclosure |
+
+---
+
+## Produce
+
+1. ### Classification Table
+
+| Finding ID | Category | Justification |
+|------------|----------|---------------|
+| Finding 001 | [Category] | [One sentence justification] |
+| Finding 002 | [Category] | [One sentence justification] |
+| ... | ... | ... |
+| Finding 031 | [Category] | [One sentence justification] |
+
+2. ### Category Count
+
+| Category | Count |
+|----------|-------|
+| Application | [X] |
+| OS-based | [X] |
+| Web-based | [X] |
+| Hardware/Firmware/EOL | [X] |
+| Virtualization | [X] |
+| Cloud-specific | [X] |
+| Supply chain | [X] |
+| Cryptographic | [X] |
+| Misconfiguration | [X] |
+| Mobile device | [X] |
+| Zero-day | [X] |
+
+3. ### Profile Analysis
+
+Write **one paragraph** answering:
+
+- Which categories dominate?
+- What does this tell you about MedDefense's security maturity?
+- Which categories are absent, and is that because MedDefense has no exposure or because the scan did not cover them?
+
+---
+
+# 8. The Self-Audit
+
+## Goal
+Run a real security audit tool on your own machine, interpret the results, and project the findings onto the MedDefense environment.
+
+## Context
+You have been reading a scan report someone else produced. Now you **generate your own**. **Lynis** is an open-source security auditing tool that checks your system against hundreds of security best practices:
+
+- Kernel hardening
+- Authentication
+- File permissions
+- Networking
+- Logging
+- Malware detection
+- And more
+
+Running it on your own machine teaches you:
+
+1. What a scanner actually checks
+2. How to read raw audit output
+3. How to distinguish important findings from noise
+
+Then you will **project that understanding onto MedDefense**.
+
+---
+
+## Instructions
+
+### Part 1: Install and Run
+
+On your Linux machine or VM:
+
+```
+# Install Lynis
+sudo apt update && sudo apt install lynis -y
+# OR clone from GitHub for the latest version
+# git clone https://github.com/CISOfy/lynis && cd lynis
+
+# Run a full system audit
+sudo lynis audit system
+```
+
+---
+
+### Part 2: Analyze Results
+
+After the audit completes, document:
+
+| Metric | Documentation Required |
+|--------|----------------------|
+| **Hardening Index** | What score did your machine receive? |
+| **Top 5 Warnings** | For each:<br>- What Lynis checks<br>- Why it matters<br>- What the remediation would be |
+| **Top 5 Suggestions** | From the "Suggestions" section. For each:<br>- Explain what security improvement it recommends |
+| **Category Breakdown** | Lynis organizes checks by category (Kernel, Authentication, Networking, etc.):<br>- Which categories scored highest?<br>- Which scored lowest?<br>- What does this tell you about your system's security posture? |
+
+---
+
+### Part 3: MedDefense Projection
+
+Without access to MedDefense's servers, **project what Lynis would likely find** on `billing-srv-01`:
+
+**Server Profile:**
+- Ubuntu 18.04
+- Apache 2.4.29
+- MySQL
+- Crypto-miner compromise history
+- SSH password auth enabled
+
+**Task:** List **5 specific findings** you would expect Lynis to flag on this server, with your reasoning for each prediction.
+
+---
+
+# 9. The OSINT Hunt
+
+## Goal
+Use open-source intelligence to identify vulnerabilities affecting MedDefense that the automated scan missed.
+
+## Context
+Automated scanners are **not omniscient**. They check what they are configured to check, against the databases they have. They miss:
+
+| Limitation | What Scanners Miss |
+|------------|-------------------|
+| Outdated plugins | Vulnerabilities disclosed after their plugin database was last updated |
+| Unfingerprinted services | Vulnerabilities in services they cannot fingerprint |
+| Logical gaps | Logical vulnerabilities that require context to identify |
+| Authenticated limits | Weaknesses in configurations they do not have authenticated access to assess |
+
+A complete vulnerability assessment **supplements the scan with manual OSINT research**.
+
+---
+
+## Instructions
+
+Using **public sources** (vendor security advisories, CISA alerts, security blogs, NVD), research vulnerabilities that affect MedDefense's technology stack but were **NOT identified in the scan report**.
+
+### Focus Areas
+
+#### 1. FortiGate FortiOS Vulnerabilities
+- **MedDefense uses:** FortiGate 100F
+- **Task:** Search NVD for recent FortiOS CVEs
+- **Requirement:** Identify at least **1 critical or high CVE** that could affect this device (the scan may not have checked the firewall's own firmware)
+
+#### 2. Microsoft Office 365 / Entra ID Vulnerabilities
+- **MedDefense uses:** O365 E3 for the entire organization
+- **Context:** The scan did not cover cloud services
+- **Task:** Research at least **1 recent vulnerability or attack technique** targeting O365 environments
+
+#### 3. Synology DSM Vulnerabilities
+- **MedDefense uses:** Backup NAS runs Synology DSM 7
+- **Task:** Search NVD for DSM 7 CVEs
+- **Requirement:** Identify at least **1**
+
+---
+
+## For Each Vulnerability Found, Document:
+
+```
+Source: [Where you found it, NVD URL, CISA advisory, vendor page]
+CVE: [If applicable]
+Affected Product: [MedDefense asset]
+Why the Scan Missed It: [Was it out of scope? Unauthenticated scan? Plugin not available?]
+CVSS / Severity: [If available]
+MedDefense Impact: [What would exploitation mean for MedDefense specifically?]
+Recommendation: [What should MedDefense do about this?]
+```
+
+---
+
+
+
