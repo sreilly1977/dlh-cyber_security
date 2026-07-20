@@ -33,11 +33,9 @@
 
 **Modified Vector String:**
 
-
 ```
 CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 ```
-
 
 Using the NIST CVSS Calculator:
 
@@ -55,8 +53,8 @@ Using the NIST CVSS Calculator:
 | Metric | Result |
 |--------|--------|
 | **Original Score** | 9.8 |
-| **Modified Score** | **8.8** |
-| **Change** | **-1.0 points** |
+| **Modified Score** | **8.4** |
+| **Change** | **-1.4 points** |
 
 **Why the score changes:**
 
@@ -81,11 +79,9 @@ Changing from Network to Local dramatically reduces exploitability because the a
 
 ### Constructed Vector String
 
-
 ```
 CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:U/C:H/I:N/A:N
 ```
-
 
 ### Calculated Results (NIST CVSS Calculator)
 
@@ -190,6 +186,19 @@ This is why CVSS scores drive remediation prioritization—they translate techni
 | **Complexity and Privileges act as dampeners** | Finding 005 scores 7.5 because it requires TLS decryption skills (complex) and only exposes headers (limited confidentiality). Not all high-severity vulnerabilities are equally dangerous. |
 | **Scores must be contextualized** | A 9.8 score assumes the vulnerability is actively exploitable. CVE-2023-38408 (9.8 CVSS) was rated Medium in our scan because the specific conditions (ssh-agent forwarding) don't apply. |
 | **Adjacent network access matters** | Medical device vulnerabilities (CVE-2020-25165, 7.5) are Adjacent (LAN only). Isolating the IoT VLAN (GAP-007) makes these vulnerabilities harder to reach. |
+
+### CVSS Calculator Quick Reference
+
+| Metric | Abbreviation | Scale | Effect on Score |
+|--------|-------------|-------|-----------------|
+| **Attack Vector** | AV | P < L < A < N | Network is highest risk |
+| **Attack Complexity** | AC | H < L | Low complexity is easier to exploit |
+| **Privileges Required** | PR | H < L < N | No auth is highest risk |
+| **User Interaction** | UI | R < N | No user action is higher risk |
+| **Scope** | S | U < C | Changed scope expands attack surface |
+| **Confidentiality** | C | N < L < H | High is maximum damage |
+| **Integrity** | I | N < L < H | High is maximum damage |
+| **Availability** | A | N < L < H | High is maximum damage |
 
 ---
 
