@@ -16,43 +16,51 @@
 
 | Component | Abbreviation | Selected Value | Meaning | Other Possible Values | Why This Value Was Selected |
 |-----------|--------------|----------------|---------|----------------------|----------------------------|
-| **Attack Vector (AV)** | Attack Vector | **N (Network)** | Vulnerability is exploitable over a network (Internet/intranet) without physical or local access | A (Adjacent), L (Local), P (Physical) | Apache server is publicly accessible on port 80/443. Any remote attacker can send crafted HTTP requests without needing local system access. |
-| **Attack Complexity (AC)** | Attack Complexity | **L (Low)** | Specialized conditions not required; exploitation is straightforward | H (High) | The vulnerability can be weaponized by sending a specially crafted request body. No specific timing, race conditions, or privileged setup needed. |
-| **Privileges Required (PR)** | Privileges Required | **N (None)** | No authentication or privileges needed to exploit | L (Low), H (High) | Remote code execution can be triggered by unauthenticated HTTP requests. No login required. |
-| **User Interaction (UI)** | User Interaction | **N (None)** | Exploitation does not require any user action | R (Required) | Attacker sends malicious HTTP request directly; no victim clicks, no user involvement. |
-| **Scope (S)** | Scope | **U (Unchanged)** | Vulnerability affects only resources managed by the vulnerable component | C (Changed) | The bug exists in Apache mod_lua itself. Successful exploitation doesn't expand attack beyond the web server's privilege context. |
-| **Confidentiality (C)** | Confidentiality | **H (High)** | Complete information disclosure possible | L (Low), N (None) | RCE allows attacker to read any file on the server including configuration files, database credentials, and logs. |
-| **Integrity (I)** | Integrity | **H (High)** | Complete modification/destruction of data possible | L (Low), N (None) | RCE allows attacker to modify any file, install backdoors, or alter system configuration. |
-| **Availability (A)** | Availability | **H (High)** | Complete denial of service possible | L (Low), N (None) | Buffer overflow can crash the Apache process entirely, taking the server offline. |
+| **Attack Vector** | AV | **N (Network)** | Vulnerability is exploitable over a network (Internet/intranet) without physical or local access | A (Adjacent), L (Local), P (Physical) | Apache server is publicly accessible on port 80/443. Any remote attacker can send crafted HTTP requests without needing local system access. |
+| **Attack Complexity** | AC | **L (Low)** | Specialized conditions not required; exploitation is straightforward | H (High) | The vulnerability can be weaponized by sending a specially crafted request body. No specific timing, race conditions, or privileged setup needed. |
+| **Privileges Required** | PR | **N (None)** | No authentication or privileges needed to exploit | L (Low), H (High) | Remote code execution can be triggered by unauthenticated HTTP requests. No login required. |
+| **User Interaction** | UI | **N (None)** | Exploitation does not require any user action | R (Required) | Attacker sends malicious HTTP request directly; no victim clicks, no user involvement. |
+| **Scope** | S | **U (Unchanged)** | Vulnerability affects only resources managed by the vulnerable component | C (Changed) | The bug exists in Apache mod_lua itself. Successful exploitation doesn't expand attack beyond the web server's privilege context. |
+| **Confidentiality** | C | **H (High)** | Complete information disclosure possible | L (Low), N (None) | RCE allows attacker to read any file on the server including configuration files, database credentials, and logs. |
+| **Integrity** | I | **H (High)** | Complete modification/destruction of data possible | L (Low), N (None) | RCE allows attacker to modify any file, install backdoors, or alter system configuration. |
+| **Availability** | A | **H (High)** | Complete denial of service possible | L (Low), N (None) | Buffer overflow can crash the Apache process entirely, taking the server offline. |
 
 ### CVSS Score Analysis
 
 **Base Score:** 9.8 (Critical)
 
-**What happens if Attack Vector changes from Network (N) to Local (L)?**
+### What if Attack Vector changes from Network (N) to Local (L)?
+
+**Modified Vector String:**
+
+
+```
+CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+```
+
 
 Using the NIST CVSS Calculator:
 
-| Vector Modification | Original | Modified |
-|---------------------|----------|----------|
-| Attack Vector | N (Network) | **L (Local)** |
-| Attack Complexity | L (Low) | L (Low) |
-| Privileges Required | N (None) | N (None) |
-| User Interaction | N (None) | N (None) |
-| Scope | U (Unchanged) | U (Unchanged) |
-| Confidentiality | H (High) | H (High) |
-| Integrity | H (High) | H (High) |
-| Availability | H (High) | H (High) |
+| Component | Original | Modified |
+|-----------|----------|----------|
+| AV | N (Network) | **L (Local)** |
+| AC | L (Low) | L (Low) |
+| PR | N (None) | N (None) |
+| UI | N (None) | N (None) |
+| S | U (Unchanged) | U (Unchanged) |
+| C | H (High) | H (High) |
+| I | H (High) | H (High) |
+| A | H (High) | H (High) |
 
 | Metric | Result |
 |--------|--------|
 | **Original Score** | 9.8 |
-| **Modified Score** | 8.8 |
+| **Modified Score** | **8.8** |
 | **Change** | **-1.0 points** |
 
 **Why the score changes:**
 
-Changing from Network to Local dramatically reduces exploitability because the attacker must already have local shell access to the system. If someone already has local shell access on billing-srv-01, they likely already have the ability to compromise the system directly. The Network vector means anyone on the Internet can trigger this—no prior access needed. That's why the score drops: the barrier to entry becomes much higher, making the vulnerability less dangerous despite identical impacts (C/I/H/A all remaining high).
+Changing from Network to Local dramatically reduces exploitability because the attacker must already have local shell access to the system. If someone already has local shell access on billing-srv-01, they likely already have the ability to compromise the system directly. The Network vector means anyone on the Internet can trigger this—no prior access needed. That's why the score drops: the barrier to entry becomes much higher, making the vulnerability less dangerous despite identical impacts (C/I/A all remaining high).
 
 ---
 
@@ -62,14 +70,14 @@ Changing from Network to Local dramatically reduces exploitability because the a
 
 | Characteristic | CVSS Translation | Value Selected |
 |----------------|------------------|----------------|
-| Exploitable only from the local network (not Internet) | Attack Vector | **A (Adjacent)** |
-| Exploitation is complex and requires specific conditions | Attack Complexity | **H (High)** |
-| Attacker needs low-level privileges | Privileges Required | **L (Low)** |
-| No user interaction is needed | User Interaction | **N (None)** |
-| Vulnerability only affects targeted system (scope unchanged) | Scope | **U (Unchanged)** |
-| Compromises confidentiality completely | Confidentiality | **H (High)** |
-| No impact on integrity | Integrity | **N (None)** |
-| No impact on availability | Availability | **N (None)** |
+| Exploitable only from the local network (not Internet) | AV | **A (Adjacent)** |
+| Exploitation is complex and requires specific conditions | AC | **H (High)** |
+| Attacker needs low-level privileges | PR | **L (Low)** |
+| No user interaction is needed | UI | **N (None)** |
+| Vulnerability only affects targeted system (scope unchanged) | S | **U (Unchanged)** |
+| Compromises confidentiality completely | C | **H (High)** |
+| No impact on integrity | I | **N (None)** |
+| No impact on availability | A | **N (None)** |
 
 ### Constructed Vector String
 
@@ -119,14 +127,14 @@ Despite Complete Confidentiality impact (C:H), the combination of Adjacent acces
 
 | Component | Finding 001 (9.8) | Finding 005 (7.5) | Difference |
 |-----------|-------------------|-------------------|------------|
-| **Attack Vector (AV)** | N (Network) | N (Network) | Same |
-| **Attack Complexity (AC)** | L (Low) | L (Low) | Same |
-| **Privileges Required (PR)** | N (None) | N (None) | Same |
-| **User Interaction (UI)** | N (None) | N (None) | Same |
-| **Scope (S)** | U (Unchanged) | U (Unchanged) | Same |
-| **Confidentiality (C)** | H (High) | H (High) | Same |
-| **Integrity (I)** | **H (High)** | **N (None)** | **DIFFERENCE** |
-| **Availability (A)** | **H (High)** | **N (None)** | **DIFFERENCE** |
+| **AV** | N (Network) | N (Network) | Same |
+| **AC** | L (Low) | L (Low) | Same |
+| **PR** | N (None) | N (None) | Same |
+| **UI** | N (None) | N (None) | Same |
+| **S** | U (Unchanged) | U (Unchanged) | Same |
+| **C** | H (High) | H (High) | Same |
+| **I** | **H (High)** | **N (None)** | **DIFFERENCE** |
+| **A** | **H (High)** | **N (None)** | **DIFFERENCE** |
 
 ### Key Differences Analysis
 
@@ -141,14 +149,14 @@ Despite Complete Confidentiality impact (C:H), the combination of Adjacent acces
 ### Components with Biggest Impact on Final Score
 
 **1. Availability (A) Impact** - Highest Influence  
-- Finding 001: A:H (+3.5 points contribution)
+- Finding 001: A:H (+contribution to higher score)
 - Finding 005: A:N (0 points)
-- **Difference:** ~3.5 points
+- **Difference:** significant
 
 **2. Integrity (I) Impact** - Second Highest Influence  
-- Finding 001: I:H (+3.5 points contribution)
+- Finding 001: I:H (+contribution to higher score)
 - Finding 005: I:N (0 points)
-- **Difference:** ~3.5 points
+- **Difference:** significant
 
 **Combined Effect:** These two differences account for nearly the entire 2.3-point gap between 9.8 and 7.5.
 
@@ -177,7 +185,7 @@ This is why CVSS scores drive remediation prioritization—they translate techni
 
 | Lesson | Application to MedDefense |
 |--------|--------------------------|
-| **Attack Vector (AV) has enormous score impact** | A CVSS score can drop 2+ points just by changing from Network to Local. This is why network segmentation (GAP-001) is so valuable—it effectively converts "Network" vulnerabilities into "Local" ones. |
+| **AV has enormous score impact** | A CVSS score can drop 1+ points just by changing from Network to Local. This is why network segmentation (GAP-001) is so valuable—it effectively converts "Network" vulnerabilities into "Local" ones. |
 | **Impact categories (C/I/A) drive severity** | CVE-2021-44790 scores 9.8 because it has High impact across all three CIA categories. Understanding which vulnerabilities affect C vs I vs A helps prioritize based on business needs. |
 | **Complexity and Privileges act as dampeners** | Finding 005 scores 7.5 because it requires TLS decryption skills (complex) and only exposes headers (limited confidentiality). Not all high-severity vulnerabilities are equally dangerous. |
 | **Scores must be contextualized** | A 9.8 score assumes the vulnerability is actively exploitable. CVE-2023-38408 (9.8 CVSS) was rated Medium in our scan because the specific conditions (ssh-agent forwarding) don't apply. |
@@ -185,14 +193,16 @@ This is why CVSS scores drive remediation prioritization—they translate techni
 
 ### CVSS Calculator Quick Reference
 
-| Metric | Scale | Effect on Score |
-|--------|-------|-----------------|
-| **Attack Vector** | P < L < A < N | Network is highest risk |
-| **Attack Complexity** | H < L | Low complexity is easier to exploit |
-| **Privileges Required** | H < L < N | No auth is highest risk |
-| **User Interaction** | R < N | No user action is higher risk |
-| **Scope** | U < C | Changed scope expands attack surface |
-| **CIA Impact** | N < L < H | High is maximum damage |
+| Metric | Abbreviation | Scale | Effect on Score |
+|--------|-------------|-------|-----------------|
+| **Attack Vector** | AV | P < L < A < N | Network is highest risk |
+| **Attack Complexity** | AC | H < L | Low complexity is easier to exploit |
+| **Privileges Required** | PR | H < L < N | No auth is highest risk |
+| **User Interaction** | UI | R < N | No user action is higher risk |
+| **Scope** | S | U < C | Changed scope expands attack surface |
+| **Confidentiality** | C | N < L < H | High is maximum damage |
+| **Integrity** | I | N < L < H | High is maximum damage |
+| **Availability** | A | N < L < H | High is maximum damage |
 
 ---
 
