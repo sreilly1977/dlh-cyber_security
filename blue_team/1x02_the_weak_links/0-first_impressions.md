@@ -106,8 +106,6 @@ Finding 010 explicitly states all 7 BD Alaris infusion pumps use unchanged defau
 
 This scan report confirms **billing-srv-01 is the critical focal point** for immediate remediation—it hosts 6 findings including 2 Critical and represents the primary entry point identified in Kill Chain #1 (Apache RCE → Ransomware). The **flat network topology** functions as a force multiplier, ensuring that any single compromise provides unrestricted access to all vulnerable systems including Domain Controllers, EHR database, and backup infrastructure. The scan limitations mean we still lack visibility into cloud, mobile, and physical security layers—which could account for additional attack paths not visible in this dataset.
 
-**Next Step:** Proceed to individual finding investigation (Task 1) starting with the 4 Critical findings, prioritizing billing-srv-01 (001/002) before exploring the EHR Ghostcat finding (031).
-
 ---
 
 *Prepared by: Security Department*  
