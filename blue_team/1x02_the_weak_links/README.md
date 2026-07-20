@@ -612,4 +612,145 @@ Justification: [Why this priority, referencing all evidence above]
 
 ---
 
+# 11. The False Positive Hunt
+
+## Goal
+Identify and document **false positives** in the scan report, and understand why validation before action is essential.
+
+## Context
+Acting on a false positive **wastes resources**. Ignoring a true positive **creates risk**. Telling the difference is one of the most underrated skills in vulnerability management.
+
+The scan report contains **2-3 findings** that, upon investigation, are not actual vulnerabilities in MedDefense's specific context. The scanner noted them for investigation by SecurePoint, who flagged at least one explicitly. Your job is to **find them all** and prove why they are false positives.
+
+---
+
+## Instructions
+
+Review the scan report for findings that may be **false positives**. Identify at least **2** and for each:
+
+
+```
+Finding ID: [From scan report]
+Reported Vulnerability: [What the scanner claimed]
+Why It Is a False Positive: [Technical explanation]
+Validation Method: [How would you confirm this is a FP? What test or check?]
+Risk of Acting on This FP: [What resources would be wasted if you treated this as a real finding?]
+Risk of Not Validating: [What would happen if this were NOT a FP and you dismissed it?]
+```
+
+---
+
+## Hint
+
+> Read the scan report carefully. SecurePoint flagged at least one finding with a note about potential false positive status. There are others that require your own analysis.
+
+---
+
+## Critical Reflection Question
+
+After the FP analysis, answer:
+
+> In a scan report of 31 findings, what is a reasonable expected **false positive rate** for an automated scanner? Why is **manual validation essential** before committing remediation resources?
+
+---
+
+
+# 12. The Legacy Systems
+
+## Goal
+Assess the **unique risk profile** of end-of-life systems that will never receive another security patch.
+
+## Context
+An end-of-life system is not just **"another vulnerability."** It is a system that is **permanently vulnerable**. Every CVE disclosed from this point forward that affects this OS version will remain **unpatched. Forever.**
+
+The MRI workstation running **Windows XP** has accumulated over a decade of unpatched critical vulnerabilities. The question is not **whether** it is vulnerable. The question is **how many ways**.
+
+---
+
+## Instructions
+
+The scan report identifies **3 end-of-life systems** at MedDefense. For each:
+
+| System | IP Address | Role | Operating System |
+|--------|------------|------|------------------|
+| System 1 | 10.10.1.70 | MRI Workstation | Windows XP SP3 |
+| System 2 | 10.10.2.31 | Print Server | Windows Server 2012 R2 |
+| System 3 | 10.10.2.15 | Billing Server | Ubuntu 18.04 LTS without ESM |
+
+### For Each System, Complete:
+
+#### 1. EOL Research
+Go to **NVD** and search for critical CVEs affecting this OS version published in the **last 2 years**.
+- How many results?
+- Note the **2 most critical** CVEs (you do not need to document all of them, just count and note the top 2).
+
+#### 2. Permanent Exposure
+Explain in **2-3 sentences**:
+- Why **EOL is categorically different** from "unpatched"
+- Why you can **never close this risk** through patching alone
+
+#### 3. Scan Findings
+List all findings from the scan report that affect this **specific system**:
+- Are any of them exploitable specifically because the OS is EOL?
+- Which vulnerabilities would have been patched if the OS were still supported?
+
+#### 4. Compensating Controls
+What compensating controls were proposed in **1x00 (T6 for the MRI)**?
+- Do those controls adequately address the vulnerabilities found in the scan?
+- If not, what additional controls would you recommend?
+
+#### 5. Business Decision
+If MedDefense can only migrate **ONE** of these three systems off EOL in the next quarter (budget constraint):
+- **Which one should it be?**
+- Justify using **asset criticality** (from 1x00) and **threat exposure** (from 1x01).
+
+---
+
+# 13. The Web Exposure
+
+## Goal
+Analyze web-facing vulnerabilities with specific attention to **internet-exposed vs internal-only exposure**.
+
+## Context
+A vulnerability on an internet-facing system and the same vulnerability on an internal-only system are **not the same risk**. The scan report has web-related findings on:
+
+| Host | Exposure Level | Description |
+|------|---------------|-------------|
+| Patient Portal | Internet-facing | Exposed to the public internet |
+| NAS Management Interface | Internal | Internal network only |
+| EHR Application Server | Internal (flat network) | Internal but on the flat network |
+
+Each requires **different analysis**.
+
+---
+
+## Instructions
+
+Identify **all web-related findings** from the scan report:
+
+- Security headers
+- TLS configuration
+- Information disclosure
+- Application vulnerabilities
+
+**Group them by host** and analyze.
+
+---
+
+### For Each Host With Web Findings
+
+```
+Host: [Name and IP]
+Exposure: [Internet-facing / Internal-only / Internal but flat network accessible]
+Findings: [List all web-related findings affecting this host]
+Combined Risk: [Considering all findings together, what is the aggregate risk?]
+Attack Scenario: [How would an attacker chain these findings? Reference 1x01 kill chains if applicable]
+Priority: [Relative to the other web hosts, which should be fixed first?]
+```
+
+After the per-host analysis, answer:
+
+> **Finding 017** (Tomcat information disclosure) led SecurePoint to manually discover **Finding 031** (Ghostcat, CVSS 9.8). What does this tell you about the value of investigating **"Medium" findings** that reveal version information?
+
+---
 
