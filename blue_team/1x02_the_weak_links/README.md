@@ -266,3 +266,108 @@ Use this template to document your findings for each of the 5 CVEs:
 
 ---
 
+# 5. The Exploit Research Script
+
+## Goal
+Write a **bash script** that automates searchsploit queries for a list of services and produces a structured report.
+
+## Context
+In the real world, you do not run searchsploit five times manually. You **script it**. An analyst who receives a scan report with 200 services writes a script that queries all of them and formats the results for triage. This is your first **automation task** in this project.
+
+---
+
+## Instructions
+
+Write a bash script **`5-exploit_check.sh`** that:
+
+1. **Takes a text file as input.** The file contains one service per line in the format: `service_name version` (e.g., `apache 2.4.29`)
+
+2. **For each line, runs `searchsploit`** with the service name and version
+
+3. **Outputs a formatted report** showing:
+   - The service queried
+   - The number of exploits found
+   - The exploit titles (if any)
+   - A summary line: `"Services with exploits: X / Total: Y"`
+
+**Input file format** (provided as services.txt):
+
+```
+apache 2.4.29
+postgresql 14
+openssh 8.9
+tomcat 9.0
+windows xp smb
+grafana 8.2
+```
+
+**Expected output format:**
+
+```
+[1] apache 2.4.29
+    Exploits found: 3
+    - Apache 2.4.29 - mod_lua Buffer Overflow | ...
+    - Apache 2.4.17-2.4.38 - Privilege Escalation | ...
+    [...]
+
+[2] postgresql 14
+    Exploits found: 0
+
+[...]
+
+Services with known exploits: X / 6
+```
+
+---
+
+# 6. The Misconfiguration Findings
+
+## Goal
+Analyze vulnerabilities that have **no CVE identifier** and understand why they are equally dangerous.
+
+## Context
+The scan report contains findings marked as **"Misconfiguration"** with no CVE. No CVE means:
+
+| Missing Element | Consequence |
+|-----------------|-------------|
+| No CVE | No CVSS score |
+| No NVD page | No official vulnerability database entry |
+| No Exploit-DB entry | No public exploit research available |
+| No automated prioritization | Most tools will ignore them |
+
+That is exactly the problem.
+
+### Historical Precedents
+
+> **The MongoDB Ransomware Wave of 2017** affected **28,000 databases**. Not one had a CVE. Every single compromise was a misconfiguration: databases exposed to the internet with no authentication.
+
+> **The Capital One Breach of 2019** that exposed **100 million records** was a misconfiguration. Not a software bug. A misconfigured AWS WAF rule.
+
+---
+
+## Instructions
+
+Identify **6 misconfiguration findings** from the scan report (findings with `"N/A"` for CVE). For each one:
+
+
+```
+Finding ID: [From scan report]
+Host: [Affected system]
+Misconfiguration: [What is wrong, specifically]
+Why No CVE: [Explain why this is a configuration error, not a software bug]
+Severity Assessment: [Critical/High/Medium/Low - your judgment, justified]
+Cross-Reference 1x00: [Does this correspond to an observation from your walk-through (1x00 T3), a control gap (1x00 T5), or a network scan finding (1x00 T7)? Be specific.]
+Comparable CVE Risk: [Name a CVE from the scan that has a similar real-world risk level, and explain why the misconfiguration is equally or more dangerous despite having no CVSS score]
+```
+
+
+---
+
+## Critical Reflection Question
+
+After the 6 analyses, answer in one paragraph:
+
+> Why does the statement *"Our CVE scan shows nothing critical, we are secure"* provide dangerous false assurance?
+
+---
+
