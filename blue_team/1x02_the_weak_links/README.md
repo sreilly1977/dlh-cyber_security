@@ -797,3 +797,104 @@ After the 3 analyses, produce a summary (one paragraph):
 
 ---
 
+# 15. The Medical IoT
+
+## Goal
+Assess vulnerabilities in connected medical devices with specific attention to patient safety implications.
+
+A vulnerability on a workstation and a vulnerability on an infusion pump are not the same category of problem. One can steal data. The other can affect dosing. The scan report found findings on both Philips monitors and BD Alaris pumps. The BD bulletin is real. The risk is real.
+
+## Instructions
+Analyze the medical IoT findings from the scan report (Findings 010, 016, 024 and any related findings).
+
+1. **BD Alaris Assessment:** Research the BD Alaris security bulletin for firmware 12.1.2. (Search for "BD Alaris security bulletin" or check bd.com.) Document: what vulnerability is described, what the vendor recommends as mitigation and whether MedDefense has implemented the recommendation.
+
+2. **Philips IntelliVue Assessment:** The monitors expose unauthenticated web interfaces and HL7 ports on the flat network. What data flows through these interfaces? What would an attacker with network access be able to see or do?
+
+3. **Patient Safety Dimension:** In 3-4 sentences, explain why medical device vulnerabilities are in a different risk category than IT system vulnerabilities. What is the worst-case scenario for a compromised infusion pump vs a compromised workstation?
+
+4. **Remediation Challenge:** Why is patching medical devices harder than patching IT systems? Identify at least 3 factors specific to medical devices (regulatory, operational, vendor dependency).
+
+---
+
+# 16. The Noise Filter
+
+## Goal
+Triage every finding in the scan report into action categories to separate signal from noise.
+
+## Context
+Thirty-one findings. You have investigated many of them individually. Now step back and sort the entire report. This is the daily discipline of vulnerability management: every scan produces more findings than you can act on. The triage determines what gets fixed, what gets monitored and what gets filed.
+
+## Instructions
+Classify every finding (all 31) from the scan report into one of 4 categories:
+
+| Category | Definition | Action Required |
+|----------|------------|-----------------|
+| Actionable Critical | Exploitable, on critical asset, high impact | Immediate remediation (24-48h) |
+| Actionable Standard | Real vulnerability, requires planned remediation | Scheduled remediation (7-30 days) |
+| Informational | Real observation, low risk or no direct action needed | Document and monitor |
+| False Positive | Not a real vulnerability in this context | Document and dismiss |
+
+### Format
+
+```
+Finding [ID] | [CVSS or Severity] | [Host] | Category: [AC/AS/I/FP] | Reason: [one sentence]
+```
+
+After the full triage, produce:
+
+1. **Triage Summary:** Count per category
+
+2. **Actionable Findings List:** The AC and AS findings, sorted by priority within each category
+
+---
+
+# 17. The CVSS Contextualizer
+
+## Goal
+Recalculate CVSS scores with environmental metrics to produce threat-informed, business-contextualized priorities.
+
+## Context
+This is the keystone task of the project. Everything converges here: CVSS technical scoring, asset criticality from 1x00, kill chain positioning from 1x01 and exploit availability from earlier in this project.
+
+Open the NIST CVSS Calculator one more time.
+
+## Instructions
+For the 8 most important "Actionable" findings from your triage (T16), recalculate the priority using 4 contextual factors:
+
+For each finding:
+
+```
+Finding [ID] - [CVE or description]
+CVSS Base Score: [From scan/NVD]
+
+Factor 1 - Asset Criticality (from 1x00):
+  Asset: [Name]
+  CIA Rating: [From 1x00 Criticality Matrix]
+  Criticality Impact on Priority: [Does the asset's importance raise or lower the urgency?]
+
+Factor 2 - Kill Chain Position (from 1x01):
+  Appears in Kill Chain(s): [Which ones from 1x01 T10? Or "None identified"]
+  Chain Role: [Is this the initial access point, a lateral movement enabler, or a final target?]
+  Kill Chain Impact on Priority: [Does the chain position raise or lower urgency?]
+
+Factor 3 - Exploitability (from T4):
+  Exploitability Score: [1-5 from T4]
+  CISA KEV: [Yes/No]
+  Exploit Impact on Priority: [Does exploit availability raise or lower urgency?]
+
+Factor 4 - Compensating Controls (from 1x00):
+  Existing Controls: [From 1x00 Control Matrix - does anything partially mitigate this?]
+  Control Impact on Priority: [Do existing controls lower the urgency?]
+
+Environmental CVSS (recalculated):
+  Environmental Metrics Applied: [What adjustments did you make on the NIST Calculator?]
+  Adjusted Score: [New score]
+
+Final Priority: [Critical/High/Medium/Low]
+Final Justification: [One paragraph synthesizing all 4 factors]
+```
+
+After all 8, produce a Priority Comparison Table showing: Finding | CVSS Base | Adjusted Priority | Change Direction (higher/same/lower). Highlight any finding where the adjusted priority differs significantly from the base CVSS.
+
+---
