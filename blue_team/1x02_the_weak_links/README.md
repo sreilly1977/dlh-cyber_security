@@ -146,3 +146,123 @@ Select two findings from the scan report:
 
 ---
 
+# 3. The Weakness Beneath
+
+## Goal
+Use the **CWE taxonomy** to identify weakness patterns behind individual CVEs.
+
+## Context
+CVE tells you **"what is broken."** CWE tells you **"why it keeps breaking."** If three different CVEs on three different products all trace back to **CWE-787 (Out-of-bounds Write)**, that is not a coincidence, it is a pattern. Understanding the pattern lets you predict where the next vulnerability will appear, not just react to the current one.
+
+---
+
+## Instructions
+
+### Go to cwe.mitre.org
+
+---
+
+## Part 1: Tracing CVEs to CWEs
+
+Select **3 CVEs** from the scan report that have CWE assignments on their NVD page. For each:
+
+1. **Identify the CWE** (ID + name)
+2. **Go to the CWE page** and read the description
+3. **Find the CWE's position in the hierarchy** (is it a child of a broader weakness? which parent?)
+4. **Check:** Is this CWE in the **CWE Top 25 Most Dangerous Software Weaknesses**?
+
+---
+
+## Part 2: Pattern Analysis
+
+Look across **all 31 findings** in the scan report:
+
+| Question | Action |
+|----------|--------|
+| How many distinct CWEs can you identify? | Count unique CWE IDs across findings |
+| Are there findings that share the same underlying CWE even though they are different CVEs? | Look for repeated CWE patterns |
+| Identify at least one such pattern. | Document the CWE and affected findings |
+
+---
+
+## Part 3: Recommendation
+
+Based on the CWE patterns you found in the MedDefense scan:
+
+> If MedDefense were developing software internally, which **one CWE category** should their developers be trained to avoid first, and why?
+
+Document your recommendation with supporting evidence from your analysis.
+
+---
+
+## Why This Matters for Security+
+
+*Understanding CWE helps you:*
+
+- Move beyond reactive patching to proactive prevention
+- Recognize developer training gaps before they become CVEs
+- Speak the language of secure development lifecycle (SDL) practices
+- Connect individual vulnerabilities to organizational risk patterns
+
+---
+
+# 4. The Exploit Hunt
+
+## Goal
+Assess exploit availability for critical vulnerabilities using **searchsploit**, **Exploit-DB** and the **CISA KEV catalog**.
+
+## Context
+A vulnerability with no known exploit is a theoretical risk. A vulnerability with a weaponized exploit in the **CISA KEV catalog** is an active emergency. The distance between the two determines your response timeline. This task teaches you to measure that distance.
+
+---
+
+## Instructions
+
+For the **5 most critical CVEs** in the scan report, conduct a three-stage exploit research:
+
+---
+
+## Stage 1: searchspolit (Command Line)
+
+Run searchsploit queries for each service and version:
+
+```bash
+searchsploit apache 2.4.29
+searchsploit postgresql
+searchsploit openssh 8.9
+searchsploit "windows xp" smb
+searchsploit tomcat 9.0
+```
+For each CVE, produce an **Exploitability Score (1-5)**:
+
+| Score | Meaning |
+|-------|---------|
+| 5 | Weaponized, in CISA KEV, actively exploited |
+| 4 | Working PoC public, minor adaptation needed |
+| 3 | PoC exists but complex or unreliable |
+| 2 | Vulnerability confirmed, no public exploit |
+| 1 | Theoretical, no known exploitation method |
+
+---
+
+## Deliverables Template
+
+Use this template to document your findings for each of the 5 CVEs:
+
+### CVE #1: [Insert CVE Number]
+
+| Stage | Finding |
+|-------|---------|
+| **searchsploit Command** | `searchsploit [exact command]` |
+| **searchsploit Output** | `[paste output]` |
+| **Exploit-DB Status** | PoC / Weaponized / Metasploit Module |
+| **Publication Date** | [DD Month YYYY] |
+| **Verified by Exploit-DB** | Yes / No |
+| **CISA KEV Listed** | Yes / No |
+| **Date Added (if applicable)** | [DD Month YYYY] |
+| **Patch Due Date (if applicable)** | [DD Month YYYY] |
+| **Exploitability Score** | [1-5] |
+| **Notes** | [Additional observations] |
+
+---
+
