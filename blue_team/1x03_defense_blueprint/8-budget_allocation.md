@@ -10,6 +10,17 @@
 
 ## Part 1 — The Selection
 
+### Budget Summary
+
+| Line Item | Amount |
+|-----------|--------|
+| Annual Security Budget | 120000 |
+| Total Spend | 120000 |
+| Budget Remaining | 0 |
+| Budget Utilization | 100% |
+
+The total spend equals the annual budget of 120000, leaving zero remaining for additional controls.
+
 ### Funded Controls
 
 | Control | Annual Cost | ALE Reduction | Net Value |
@@ -19,17 +30,6 @@
 | **Offsite Backup Replication** (AWS S3 Glacier immutable) | $25,000 | $150,000 | $125,000 |
 | **Network Segmentation** (core VLAN implementation, phased scope) | $65,000 | $1,200,000 | $1,135,000 |
 | **Total Spend** | **$120,000** | **$2,023,000** | **$1,903,000** |
-
-### Budget Ledger
-
-| Line Item | Amount |
-|-----------|--------|
-| Annual Security Budget | 120000 |
-| Total Spend | 120000 |
-| Budget Remaining | 0 |
-| Budget Utilization | 100% |
-
-There is zero remaining after this allocation, which means all available funds are committed.
 
 ### Funded Controls: Justification Summary
 
@@ -109,7 +109,7 @@ An alternative budget allocation prioritizes detection and response over prevent
 
 ### Conclusion
 
-The primary recommendation (Prevention-First with Phased Segmentation) is superior because it achieves **74% more ALE reduction** ($2.02M vs $1.16M) at **$20K less cost** ($120K vs $140K). The fundamental insight is that network segmentation is a force multiplier: it reduces the impact of every other vulnerability simultaneously, whereas detection-only strategies reduce dwell time but do not limit blast radius. On a flat network, faster detection of a ransomware outbreak that can propagate to all 280+ systems in minutes provides marginal benefit. Preventing lateral movement through segmentation fundamentally changes the risk equation.
+The primary recommendation (Prevention-First with Phased Segmentation) is superior because it achieves **74% more ALE reduction** ($2.02M vs $1.16M) at **$20K less spend** ($120K vs $140K). The fundamental insight is that network segmentation is a force multiplier: it reduces the impact of every other vulnerability simultaneously, whereas detection-only strategies reduce dwell time but do not limit blast radius. On a flat network, faster detection of a ransomware outbreak that can propagate to all 280+ systems in minutes provides marginal benefit. Preventing lateral movement through segmentation fundamentally changes the risk equation.
 
 The alternative does highlight a legitimate gap: the primary recommendation defers all detection capability, leaving MedDefense blind to incidents that bypass preventive controls. The recommended mitigation is to use the Security Analyst's existing skills to deploy a **minimal Wazuh agent** on billing-srv-01 and ehr-srv-01 at zero software cost during the first 90 days, providing basic log aggregation for the two highest-risk servers while full SIEM deployment awaits next fiscal year funding.
 
