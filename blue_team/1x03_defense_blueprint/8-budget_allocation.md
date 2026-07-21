@@ -18,7 +18,7 @@
 | **Westside Clinic Firewall** (enterprise-grade replacement) | $12,000 | $88,000 | $76,000 |
 | **Offsite Backup Replication** (AWS S3 Glacier immutable) | $25,000 | $150,000 | $125,000 |
 | **Network Segmentation** (core VLAN implementation, phased scope) | $65,000 | $1,200,000 | $1,135,000 |
-| **Totals** | **$120,000** | **$2,023,000** | **$1,903,000** |
+| **Total Expenditure** | **$120,000** | **$2,023,000** | **$1,903,000** |
 
 ### Budget Ledger
 
@@ -96,7 +96,7 @@ An alternative budget allocation prioritizes detection and response over prevent
 
 | Metric | Primary Recommendation | Alternative (Detection-First) |
 |--------|------------------------|-------------------------------|
-| Total Cost | $120,000 | $140,000 (over budget) |
+| Total Expenditure | $120,000 | $140,000 (over budget) |
 | ALE Reduction | $2,023,000 | $1,163,000 |
 | Net Value | $1,903,000 | $1,023,000 |
 | Flat Network Addressed | Yes (phased segmentation) | No (deferred) |
