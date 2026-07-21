@@ -898,3 +898,23 @@ Final Justification: [One paragraph synthesizing all 4 factors]
 After all 8, produce a Priority Comparison Table showing: Finding | CVSS Base | Adjusted Priority | Change Direction (higher/same/lower). Highlight any finding where the adjusted priority differs significantly from the base CVSS.
 
 ---
+
+# 18. The Threat-Vulnerability Correlation
+
+## Goal
+Connect every prioritized vulnerability to the specific threat actors and attack scenarios that would exploit it.
+
+## Context
+A vulnerability in isolation is a technical fact. A vulnerability connected to a threat actor with a known preference for exploiting it is an intelligence product. This task completes the three-project synthesis.
+
+## Instructions
+For your 8 prioritized findings from T17, produce a Threat-Vulnerability Correlation Matrix:
+
+```
+Finding [ID] | Threat Actor(s) [from 1x01 T6] | Vector [from 1x01] | Kill Chain [from 1x01 T10] | Scenario [from 1x01 T14] | Gap [from 1x00]
+```
+
+After the matrix, answer in one paragraph: Which single vulnerability, if exploited, would cause the most damage when considering the full threat context (actor capability + attack path + asset criticality)? Why?
+
+---
+
