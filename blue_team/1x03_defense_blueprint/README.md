@@ -287,7 +287,7 @@ After all 5, produce a **Risk Prioritization by ALE table** ranking the risks fr
 
 ---
 
-# [7. The Cost-Benefit Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/7-cost_benefit_analysis.md)
+# [7. The Cost-Benefit Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/7-cost_benefit_analysis.md)
 
 ## Goal
 Evaluate 8 proposed security controls using formal cost-benefit analysis to determine which investments are financially justified.
@@ -331,7 +331,7 @@ After all 8, produce a **Cost-Benefit Summary Table** ranked by Net Value (highe
 
 ---
 
-# [8. The Budget Game](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/8-budget_allocation.md)
+# [8. The Budget Game](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/8-budget_allocation.md)
 
 ## Goal
 Make binding resource allocation decisions under realistic budget constraints, demonstrating that every dollar has a reason behind it.
