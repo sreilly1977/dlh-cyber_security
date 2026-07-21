@@ -287,7 +287,7 @@ After all 5, produce a **Risk Prioritization by ALE table** ranking the risks fr
 
 ---
 
-# 7. The Cost-Benefit Analysis
+# [7. The Cost-Benefit Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/7-cost_benefit_analysis.md)
 
 ## Goal
 Evaluate 8 proposed security controls using formal cost-benefit analysis to determine which investments are financially justified.
