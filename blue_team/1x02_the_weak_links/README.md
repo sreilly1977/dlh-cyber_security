@@ -1025,3 +1025,29 @@ Produce a complete **MedDefense Health Systems, Vulnerability Assessment Summary
 
 ---
 
+# 22. The Patch Briefing
+
+## Goal
+Compress the assessment into an executive briefing focused on urgent action items.
+
+## Context
+James Chen has his routine now. Board meeting Monday. Five minutes. Three hundred words. This time, the message is about what needs to happen this week, not this quarter.
+
+> "The Board approved our security budget last week based on your threat landscape. Now they want to see us moving. Give me the 3 things we patch this week and what happens if we do not."
+
+## Instructions
+Write a Patch Briefing of **300 words maximum**.
+
+### Contents:
+
+1. **The 3 vulnerabilities requiring immediate action (24-48h)**
+
+2. **For each:**
+   - What it is (no jargon)
+   - What happens if exploited (business impact)
+   - What the fix costs (time and money)
+
+3. **One sentence:** What has MedDefense already accomplished in 3 weeks of security work (the arc from posture assessment to threat landscape to vulnerability assessment)
+
+---
+
