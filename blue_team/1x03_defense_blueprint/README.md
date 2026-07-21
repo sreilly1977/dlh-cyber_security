@@ -207,7 +207,7 @@ MedDefense currently has no CISO (the position is vacant, James is Deputy). What
 
 ---
 
-# 5. The Risk Equation
+# [5. The Risk Equation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/5-risk_equation.md)
 
 ## Goal
 Master quantitative risk analysis by calculating SLE, ARO and ALE for concrete MedDefense scenarios.
