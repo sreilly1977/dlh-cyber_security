@@ -29,6 +29,8 @@
 | Budget Remaining | 0 |
 | Budget Utilization | 100% |
 
+There is zero remaining after this allocation, which means all available funds are committed.
+
 ### Funded Controls: Justification Summary
 
 **MFA Deployment ($18K):** Selected first because it leverages existing O365 E3 licenses, producing the highest ROI of any control ($567K net value). Addresses the number one initial access vector (credential theft via VPN) identified in 1x01. Eliminates the authentication weakness exploited in Kill Chain #1 and Kill Chain #4. Implementable within 30 days with minimal infrastructure changes.
