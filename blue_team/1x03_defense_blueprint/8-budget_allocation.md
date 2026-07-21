@@ -18,15 +18,15 @@
 | **Westside Clinic Firewall** (enterprise-grade replacement) | $12,000 | $88,000 | $76,000 |
 | **Offsite Backup Replication** (AWS S3 Glacier immutable) | $25,000 | $150,000 | $125,000 |
 | **Network Segmentation** (core VLAN implementation, phased scope) | $65,000 | $1,200,000 | $1,135,000 |
-| **Total Expenditure** | **$120,000** | **$2,023,000** | **$1,903,000** |
+| **Total Spend** | **$120,000** | **$2,023,000** | **$1,903,000** |
 
 ### Budget Ledger
 
 | Line Item | Amount |
 |-----------|--------|
-| Annual Security Budget | $120,000 |
-| Total Committed Spend | $120,000 |
-| Budget Remaining | $0 |
+| Annual Security Budget | 120000 |
+| Total Spend | 120000 |
+| Budget Remaining | 0 |
 | Budget Utilization | 100% |
 
 ### Funded Controls: Justification Summary
@@ -88,15 +88,15 @@ An alternative budget allocation prioritizes detection and response over prevent
 | Westside Clinic Firewall | $12,000 | $88,000 | $76,000 |
 | Enterprise SIEM (Wazuh) | $75,000 | $350,000 | $275,000 |
 | EDR Upgrade (reduced scope: servers only) | $35,000 | $140,000 | $105,000 |
-| **Total Expenditure** | **$140,000** | **$1,163,000** | **$1,023,000** |
+| **Total Spend** | **$140,000** | **$1,163,000** | **$1,023,000** |
 
-**Problem:** This combination exceeds the $120K budget by $20K and achieves only $1.16M in ALE reduction compared to the primary recommendation's $2.02M. The detection-first strategy leaves the flat network unsegmented, meaning every detected incident has maximum blast radius.
+**Problem:** This combination exceeds the budget of 120000 by $20K and achieves only $1.16M in ALE reduction compared to the primary recommendation's $2.02M. The detection-first strategy leaves the flat network unsegmented, meaning every detected incident has maximum blast radius.
 
 ### Comparison
 
 | Metric | Primary Recommendation | Alternative (Detection-First) |
 |--------|------------------------|-------------------------------|
-| Total Expenditure | $120,000 | $140,000 (over budget) |
+| Total Spend | 120000 | 140000 (over budget) |
 | ALE Reduction | $2,023,000 | $1,163,000 |
 | Net Value | $1,903,000 | $1,023,000 |
 | Flat Network Addressed | Yes (phased segmentation) | No (deferred) |
