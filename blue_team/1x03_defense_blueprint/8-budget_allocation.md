@@ -88,7 +88,7 @@ An alternative budget allocation prioritizes detection and response over prevent
 | Westside Clinic Firewall | $12,000 | $88,000 | $76,000 |
 | Enterprise SIEM (Wazuh) | $75,000 | $350,000 | $275,000 |
 | EDR Upgrade (reduced scope: servers only) | $35,000 | $140,000 | $105,000 |
-| **Totals** | **$140,000** | **$1,163,000** | **$1,023,000** |
+| **Total Expenditure** | **$140,000** | **$1,163,000** | **$1,023,000** |
 
 **Problem:** This combination exceeds the $120K budget by $20K and achieves only $1.16M in ALE reduction compared to the primary recommendation's $2.02M. The detection-first strategy leaves the flat network unsegmented, meaning every detected incident has maximum blast radius.
 
