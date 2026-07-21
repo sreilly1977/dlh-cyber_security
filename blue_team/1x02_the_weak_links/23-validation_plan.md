@@ -93,7 +93,7 @@ flowchart TD
 | Phase | Action | Frequency | Responsible Party | Input Required | Output Produced |
 |-------|--------|-----------|-------------------|----------------|-----------------|
 | **SCAN** | Automated discovery of vulnerabilities, misconfigurations, and exposed services | Weekly (Critical), Monthly (All) | Security Analyst | Scanner credentials, asset list | Raw scan report |
-| **TRIALGE** | Sort findings into Actionable Critical, Standard, Informational, False Positive | Daily | Security Department | Raw scan report | Triage classification |
+| **TRIAGE** | Sort findings into Actionable Critical, Standard, Informational, False Positive | Daily | Security Department | Raw scan report | Triage classification |
 | **PRIORITIZE** | Apply environmental CVSS contextualization (Asset Criticality, Kill Chain, Exploitability) | Weekly | Security Manager + IT Director | Triage output, Threat Intel | Priority-ranked list |
 | **REMEDIATE** | Apply patches, change configurations, deploy compensating controls | SLA Dependent (24h-90d) | IT Infrastructure, Biomedical, Vendor | Priority list | Fixed systems |
 | **VALIDATE** | Confirm fix effectiveness via rescan or manual test | Within 48h of Remediation | Security Department | Remediation tickets | Validation report |
