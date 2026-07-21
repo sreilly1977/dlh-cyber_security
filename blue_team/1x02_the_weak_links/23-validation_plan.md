@@ -77,7 +77,7 @@ Vulnerability management must evolve from reactive scanning to proactive threat 
 
 The vulnerability management process is a closed loop, not a linear project. Each phase has designated ownership to ensure accountability.
 
-### Text-Based Lifecycle Flow
+### Chart of Lifecycle Flow
 
 ```mermaid
 flowchart TD
