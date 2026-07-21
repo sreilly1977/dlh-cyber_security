@@ -18,7 +18,7 @@
 | Vulnerability remediation | I | A | R | I | R |
 | Incident response execution | I | A | C | I | R |
 | Security policy approval | A | R | C | C | I |
-| Risk acceptance decisions | A | R | C | C | I |
+| Risk acceptance decisions | A | C | C | C | R |
 | Security awareness training | I | A | C | R | R |
 | Vendor risk assessment | I | A | C | C | R |
 | Audit coordination | I | A | R | C | R |
@@ -31,9 +31,9 @@
 
 **Incident Response Execution:** James is Accountable for IR plan activation and breach notification decisions. Sarah is Consulted for IT infrastructure containment actions. The Security Analyst is Responsible for technical investigation, forensic preservation, and eradication. Department Heads are Informed when clinical operations are impacted.
 
-**Security Awareness Training:** James is Accountable for program delivery. Department Heads are Responsible for ensuring staff attendance and completion within their departments. The Security Analyst is Responsible for content development and phishing simulation execution.
+**Risk Acceptance Decisions:** The CEO is Accountable as the sole risk acceptance authority for the organization. The CEO owns the business decision to accept, mitigate, or transfer risk; this authority cannot be delegated to a security function. James is Consulted, providing risk analysis and quantified impact (ALE, remediation cost) to inform the CEO's decision, but he does not drive the decision itself. Sarah and Department Heads are Consulted when risk acceptance affects their operational domains. The Security Analyst is Responsible for collecting supporting data, calculating ALE figures, and documenting the risk register entry, but holds no decision-making authority. This structure ensures that risk acceptance remains a business accountability, not a security department determination, which preserves the separation between risk identification (security) and risk ownership (business leadership).
 
-**Risk Acceptance Decisions:** The CEO is Accountable as the final risk acceptance authority for the organization. James is Responsible for preparing risk assessments with quantified impact (ALE, remediation cost) to support the decision. Sarah and Department Heads are Consulted when risk acceptance affects their operational domains.
+**Security Awareness Training:** James is Accountable for program delivery. Department Heads are Responsible for ensuring staff attendance and completion within their departments. The Security Analyst is Responsible for content development and phishing simulation execution.
 
 ---
 
@@ -100,13 +100,13 @@ MedDefense should engage a Virtual CISO (vCISO) through a managed security servi
 **Board of Directors** — Approves budget, accepts enterprise risk, receives quarterly CSF reports  
 &nbsp;&nbsp;&nbsp;&nbsp;**|**  
 &nbsp;&nbsp;&nbsp;&nbsp;**v**  
-**CEO** — Accountable for organizational security, delegates execution  
+**CEO** — Accountable for organizational security, owns risk acceptance decisions, delegates execution  
 &nbsp;&nbsp;&nbsp;&nbsp;**|**  
 &nbsp;&nbsp;&nbsp;&nbsp;**v**  
 **Virtual CISO (vCISO)** — Strategic security leadership, Board reporting, HIPAA compliance, cross-departmental authority  
 &nbsp;&nbsp;&nbsp;&nbsp;**|**  
 &nbsp;&nbsp;&nbsp;&nbsp;**v**  
-**Deputy CISO (James Chen)** — Security program execution, risk register maintenance, IR plan activation, vendor risk assessment  
+**Deputy CISO (James Chen)** — Security program execution, risk analysis preparation, IR plan activation, vendor risk assessment  
 &nbsp;&nbsp;&nbsp;&nbsp;**|**  
 &nbsp;&nbsp;&nbsp;&nbsp;**v**  
 **IT Director (Sarah Park)** — Infrastructure security implementation, patch management, account management, backup administration  

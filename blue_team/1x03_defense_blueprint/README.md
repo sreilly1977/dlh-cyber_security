@@ -1,4 +1,4 @@
-# 0. The Framework Landscape
+# [0. The Framework Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/0-framework_landscape.md)
 
 ## Goal
 Understand the purpose, scope and relationship of the three major security frameworks used in enterprise defense.
@@ -43,7 +43,7 @@ Recommend which framework(s) MedDefense should adopt as its strategic backbone a
 
 ---
 
-# 1. The NIST CSF Mapping
+# [1. The NIST CSF Mapping](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/1-nist_csf_mapping.md)
 
 ## Goal
 Apply **NIST CSF 2.0** to MedDefense by mapping the organization's current security posture to each of the six core functions.
@@ -96,7 +96,7 @@ Target Level: [Where should MedDefense be in 6 months? Justify.]
 
 ---
 
-# 2. The CIS Controls Audit
+# [2. The CIS Controls Audit](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/2-cis_controls_audit.md)
 
 ## Goal
 Score MedDefense against the **CIS Top 18 Controls** to produce a concrete, actionable security maturity assessment.
@@ -139,7 +139,7 @@ After scoring all 18, produce:
 
 ---
 
-# 3. The Gap-to-Framework Bridge
+# [3. The Gap-to-Framework Bridge](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/3-gap_framework_bridge.md)
 
 ## Goal
 Connect every significant gap from prior projects to a specific framework control, transforming raw findings into structured, framework-aligned action items.
@@ -168,7 +168,7 @@ After all 8, produce a **Traceability Summary Table** showing the full chain in 
 
 ---
 
-# 4. The Governance Architecture
+# [4. The Governance Architecture](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/4-governance_architecture.md)
 
 ## Goal
 Design the security governance structure that MedDefense needs to execute and sustain a security program.
