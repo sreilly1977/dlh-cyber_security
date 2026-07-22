@@ -6,15 +6,15 @@ Foundational coursework from the DLH Cyber Security Academy, covering the core c
 
 | Directory | Description | Security+ Domains Covered |
 | --- | --- | --- |
-| `cybersecurity_basics/` | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
-| `learning_objectives/` | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
-| `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
-| `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
-| `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
-| `security_policy_analysis/` | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
-| `threat-modeling-fundamentals/` | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
-| `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
-| `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
+| [`cybersecurity_basics/`](cybersecurity_basics/README.md) | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
+| [`learning_objectives/`](learning_objectives/) | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
+| [`linux_security/`](linux_security/README.md) | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
+| [`network_security/`](network_security/README.md) | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
+| [`scripting_cyber/`](scripting_cyber/README.md) | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
+| [`security_policy_analysis/`](security_policy_analysis/README.md) | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
+| [`threat-modeling-fundamentals/`](threat-modeling-fundamentals/README.md) | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
+| [`understanding_vulnerabilities/`](understanding_vulnerabilities/README.md) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
+| [`web_application_security/`](web_application_security/README.md) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
 
 ## Notes
 

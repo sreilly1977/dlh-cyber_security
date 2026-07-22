@@ -34,6 +34,7 @@ Scenario-based curriculum following **MedDefense**, a fictional healthcare organ
 | [`NIST_Special_Publications/`](blue_team/NIST_Special_Publications/) | NIST SP 800-series documents (SP 800-12 r1, SP 800-30 r1, SP 800-53 r5, SP 800-61 r2) |
 | [`learning_objectives/`](blue_team/learning_objectives/) | Weekly learning objectives for the blue team track |
 
+See the [`blue_team/README.md`](blue_team/) for full module details, exercise breakdowns, and the MedDefense case study overview.
 
 ---
 
