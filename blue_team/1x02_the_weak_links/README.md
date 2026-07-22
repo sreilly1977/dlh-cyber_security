@@ -1,4 +1,4 @@
-# 0. The Scan Report
+# [0. The Scan Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/0-first_impressions.md)
 
 ## Goal
 Develop the professional reflex of reading a scan report for structure and context before diving into individual findings.
@@ -28,7 +28,7 @@ Read the entire scan report from beginning to end. Do not research any individua
 
 ---
 
-# 1. The CVE Ecosystem
+# [1. The CVE Ecosystem](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/1-cve_ecosystem.md)
 
 ## Goal
 Navigate the National Vulnerability Database to research specific CVEs and understand the global vulnerability identification system.
@@ -70,7 +70,7 @@ Select **3 CVEs** from the scan report: one Critical, one High, and one Medium. 
 
 ---
 
-# 2. The CVSS Deconstruction
+# [2. The CVSS Deconstruction](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/2-cvss_analysis.md)
 
 ## Goal
 Master the **CVSS v3.1 scoring system** by deconstructing, constructing and comparing scores using the NIST Calculator.
@@ -146,7 +146,7 @@ Select two findings from the scan report:
 
 ---
 
-# 3. The Weakness Beneath
+# [3. The Weakness Beneath](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/3-cwe_analysis.md)
 
 ## Goal
 Use the **CWE taxonomy** to identify weakness patterns behind individual CVEs.
@@ -206,7 +206,7 @@ Document your recommendation with supporting evidence from your analysis.
 
 ---
 
-# 4. The Exploit Hunt
+# [4. The Exploit Hunt](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/4-exploit_hunt.md)
 
 ## Goal
 Assess exploit availability for critical vulnerabilities using **searchsploit**, **Exploit-DB** and the **CISA KEV catalog**.
@@ -266,7 +266,7 @@ Use this template to document your findings for each of the 5 CVEs:
 
 ---
 
-# 5. The Exploit Research Script
+# [5. The Exploit Research Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/5-exploit_check.sh)
 
 ## Goal
 Write a **bash script** that automates searchsploit queries for a list of services and produces a structured report.
@@ -320,7 +320,7 @@ Services with known exploits: X / 6
 
 ---
 
-# 6. The Misconfiguration Findings
+# [6. The Misconfiguration Findings](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/6-misconfiguration_analysis.md)
 
 ## Goal
 Analyze vulnerabilities that have **no CVE identifier** and understand why they are equally dangerous.
@@ -371,7 +371,7 @@ After the 6 analyses, answer in one paragraph:
 
 ---
 
-# 7. The Vulnerability Taxonomy
+# [7. The Vulnerability Taxonomy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/7-vulnerability_taxonomy.md)
 
 ## Goal
 Classify all scan findings into the **Sec+ 2.3 vulnerability taxonomy** to identify the organization's vulnerability profile.
@@ -438,7 +438,7 @@ Write **one paragraph** answering:
 
 ---
 
-# 8. The Self-Audit
+# [8. The Self-Audit](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/8-lynis_audit.md)
 
 ## Goal
 Run a real security audit tool on your own machine, interpret the results, and project the findings onto the MedDefense environment.
@@ -510,7 +510,7 @@ Without access to MedDefense's servers, **project what Lynis would likely find**
 
 ---
 
-# 9. The OSINT Hunt
+# [9. The OSINT Hunt](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/9-osint_hunt.md)
 
 ## Goal
 Use open-source intelligence to identify vulnerabilities affecting MedDefense that the automated scan missed.
@@ -566,7 +566,7 @@ Recommendation: [What should MedDefense do about this?]
 
 ---
 
-# 10. The Deep Dive
+# [10. The Deep Dive](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/10-critical_cves.md)
 
 ## Goal
 Conduct a comprehensive deep analysis of the **5 most critical findings** from the scan report.
@@ -612,7 +612,7 @@ Justification: [Why this priority, referencing all evidence above]
 
 ---
 
-# 11. The False Positive Hunt
+# [11. The False Positive Hunt](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/11-false_positives.md)
 
 ## Goal
 Identify and document **false positives** in the scan report, and understand why validation before action is essential.
@@ -655,7 +655,7 @@ After the FP analysis, answer:
 ---
 
 
-# 12. The Legacy Systems
+# [12. The Legacy Systems](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/12-legacy_systems.md)
 
 ## Goal
 Assess the **unique risk profile** of end-of-life systems that will never receive another security patch.
@@ -706,7 +706,7 @@ If MedDefense can only migrate **ONE** of these three systems off EOL in the nex
 
 ---
 
-# 13. The Web Exposure
+# [13. The Web Exposure](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/13-web_exposure.md)
 
 ## Goal
 Analyze web-facing vulnerabilities with specific attention to **internet-exposed vs internal-only exposure**.
@@ -754,7 +754,7 @@ After the per-host analysis, answer:
 
 ---
 
-# 14. The Network Posture
+# [14. The Network Posture](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/14-network_posture.md)
 
 ## Goal
 Quantify how the **flat network architecture** amplifies the effective risk of every individual vulnerability.
@@ -797,7 +797,7 @@ After the 3 analyses, produce a summary (one paragraph):
 
 ---
 
-# 15. The Medical IoT
+# [15. The Medical IoT](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/15-medical_iot.md)
 
 ## Goal
 Assess vulnerabilities in connected medical devices with specific attention to patient safety implications.
@@ -817,7 +817,7 @@ Analyze the medical IoT findings from the scan report (Findings 010, 016, 024 an
 
 ---
 
-# 16. The Noise Filter
+# [16. The Noise Filter](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/16-triage.md)
 
 ## Goal
 Triage every finding in the scan report into action categories to separate signal from noise.
@@ -849,7 +849,7 @@ After the full triage, produce:
 
 ---
 
-# 17. The CVSS Contextualizer
+# [17. The CVSS Contextualizer](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/17-cvss_contextualizer.md)
 
 ## Goal
 Recalculate CVSS scores with environmental metrics to produce threat-informed, business-contextualized priorities.
@@ -899,7 +899,7 @@ After all 8, produce a Priority Comparison Table showing: Finding | CVSS Base | 
 
 ---
 
-# 18. The Threat-Vulnerability Correlation
+# [18. The Threat-Vulnerability Correlation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/18-threat_vuln_correlation.md)
 
 ## Goal
 Connect every prioritized vulnerability to the specific threat actors and attack scenarios that would exploit it.
@@ -918,7 +918,7 @@ After the matrix, answer in one paragraph: Which single vulnerability, if exploi
 
 ---
 
-# 19. The Remediation Map
+# [19. The Remediation Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/19-remediation_map.md)
 
 ## Goal
 Design specific remediation actions for each prioritized vulnerability, considering operational constraints and risks of the remediation itself.
@@ -959,7 +959,7 @@ Finding [ID]:
 
 ---
 
-# 20. The Priority Matrix
+# [20. The Priority Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/20-priority_matrix.md)
 
 ## Goal
 Produce the definitive vulnerability remediation timeline organized by urgency.
@@ -983,7 +983,7 @@ End with a **Budget Summary:** What is the total estimated cost of all remediati
 
 ---
 
-# 21. The Vulnerability Assessment Summary
+# [21. The Vulnerability Assessment Summary](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/21-vulnerability_assessment.md)
 
 ## Goal
 Produce a professional-grade vulnerability assessment report suitable for executive and technical audiences.
@@ -1025,7 +1025,7 @@ Produce a complete **MedDefense Health Systems, Vulnerability Assessment Summary
 
 ---
 
-# 22. The Patch Briefing
+# [22. The Patch Briefing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/22-patch_briefing.md)
 
 ## Goal
 Compress the assessment into an executive briefing focused on urgent action items.
@@ -1051,7 +1051,7 @@ Write a Patch Briefing of **300 words maximum**.
 
 ---
 
-# 23. The Validation Plan
+# [23. The Validation Plan](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x02_the_weak_links/23-validation_plan.md)
 
 ## Goal
 Design a post-remediation validation and continuous monitoring strategy.
