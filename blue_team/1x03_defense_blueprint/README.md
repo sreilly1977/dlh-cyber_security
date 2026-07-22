@@ -436,7 +436,7 @@ After the register, write a **Risk Register Governance Note** (one paragraph): W
 
 --- 
 
-# [11. The Control Selection]https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/(11-control_selection.md)
+# [11. The Control Selection](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x03_defense_blueprint/11-control_selection.md)
 
 ## Goal
 Select and justify specific security controls for each risk in the register, mapping every choice to CIS Controls and NIST CSF.
