@@ -3,65 +3,98 @@
 ![Security+ Badge](https://img.shields.io/badge/Certification-CompTIA_Security%2B-blue)
 ![Academy Badge](https://img.shields.io/badge/Academy-Luxembourg_Academy_of_Cybersecurity-green)
 
-## Overview
+A comprehensive cybersecurity study repository structured around two primary learning tracks — foundational coursework and applied blue team operations — supplemented by a practical SOC notes collection. Content aligns with the CompTIA Security+ (SY0-701) certification exam domains and NIST/CIS security frameworks.
 
-This repository serves as a centralized repo for Stephen Reilly, enrolled in the Luxembourg Academy of Cybersecurity. All content is curated and organized to support preparation for the CompTIA Security+ (SY0-701) certification examination.
-
-Most of the scripts published in this repository are one-liners with little to no commenting or error handling, due to the automated checking of the VLE, and are written to showcase command and concept understanding.
-
-The Security Policy Analysis, Threat Modeling, and Understanding Vulnerabilities sections are series' of blog posts in which I explore those respective topics. The Learning Objectives section consists of answers to questions, divided by subject, and condensed to one line, in preparation for that week's test.
-
-The repository is organized into two primary tracks:
-
-- **[`common_core/`](common_core/)** — The DLH Cyber Security Common Core curriculum, covering foundational cybersecurity concepts, network and Linux security, scripting, web application security, threat modeling, vulnerability management, and security policy analysis.
-- **[`blue_team/`](blue_team/)** — Defensive operations and blue team study materials, covering threat intelligence, security frameworks, compliance, and practical defense tooling.
+---
 
 ## Repository Structure
 
-### [blue_team/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team)
-| Directory | Description | Security+ Domains Covered |
-| --- | --- | --- |
-| `1x00_first_watch/` | Introduction to blue team and SOC fundamentals | Domain 4.0: Operations and Incident Response |
-| `1x01_know_your_enemy/` | Threat actor profiles and threat intelligence | Domain 1.0: Attacks, Threats, and Vulnerabilities |
-| `HIPA/` | HIPAA regulatory compliance for healthcare security | Domain 5.0: Governance, Risk, and Compliance |
-| `Knowbe4/` | Security awareness training via KnowBe4 platform | Domain 5.0: Governance, Risk, and Compliance |
-| `Microsoft/` | Microsoft security tools and configurations | Domain 2.0: Technologies and Tools |
-| `NIST_Special_Publications/` | Reference materials from NIST SP series | Domain 5.0: Governance, Risk, and Compliance |
-| `learning_objectives/` | Blue team course and module learning objectives | Domains 1.0 - 5.0 |
+| Directory | Description |
+|-----------|-------------|
+| [`blue_team/`](blue_team/) | Applied defensive operations through a scenario-driven case study (MedDefense) |
+| [`common_core/`](common_core/) | Foundational coursework covering all five Security+ domains |
+| [`notes/`](notes/) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
 
-### [common_core/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core)
+---
 
-| Directory | Description | Security+ Domains Covered |
-| --- | --- | --- |
-| `cybersecurity_basics/` | Foundational concepts, terminology, and core principles | Domain 1.0: Attacks, Threats, and Vulnerabilities |
-| `learning_objectives/` | Weekly learning objectives for the DLH Cyber Security Common Core curriculum | Domains 1.0 - 5.0 |
-| `linux_security/` | Linux system hardening, permissions, and secure administration | Domain 3.0: Architecture, Domain 4.0: Operations |
-| `network_security/` | Network protocols, segmentation, firewalls, and monitoring | Domain 1.0, Domain 2.0: Technologies and Tools |
-| `scripting_cyber/` | Automation scripts (Python) for security tasks and analysis | Domain 4.0: Operations and Incident Response |
-| `security_policy_analysis/` | Policy frameworks, compliance requirements, and governance | Domain 5.0: Governance, Risk, and Compliance |
-| `threat-modeling-fundamentals/` | Methodologies for identifying and assessing threats | Domain 1.0: Attack Surface Analysis |
-| `understanding_vulnerabilities/` | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0: Vulnerability Management |
-| `web_application_security/` | OWASP Top 10, secure coding practices, and application defense | Domain 1.0: Application Security |
+## blue_team/
 
-### [notes/](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes)
+Scenario-based curriculum following **MedDefense**, a fictional healthcare organization. Learners progress through four modules as a security analyst handling incidents, threat intelligence, vulnerability management, and defense strategy.
 
-| Directory | Description | Security+ Domains Covered |
-| --- | --- | --- |
-| [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | A collection of notes outside the scope of the course | N/A |
+| Directory | Focus | Exercises |
+|-----------|-------|-----------|
+| [`1x00_first_watch/`](blue_team/1x00_first_watch/) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
+| [`1x01_know_your_enemy/`](blue_team/1x01_know_your_enemy/) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
+| [`1x02_the_weak_links/`](blue_team/1x02_the_weak_links/) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
+| [`1x03_defense_blueprint/`](blue_team/1x03_defense_blueprint/) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
+| [`HIPA/`](blue_team/HIPA/) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
+| [`Knowbe4/`](blue_team/Knowbe4/) | Security awareness training — Social Engineering Red Flags reference |
+| [`Microsoft/`](blue_team/Microsoft/) | STRIDE Threat Model methodology guide |
+| [`NIST_CSF/`](blue_team/NIST_CSF/) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, NIST CSWP.29) |
+| [`NIST_Special_Publications/`](blue_team/NIST_Special_Publications/) | NIST SP 800-series documents (SP 800-12 r1, SP 800-30 r1, SP 800-53 r5, SP 800-61 r2) |
+| [`learning_objectives/`](blue_team/learning_objectives/) | Weekly learning objectives for the blue team track |
 
-## CompTIA Security+ Alignment
+See the [`blue_team/README.md`](blue_team/) for full module details, exercise breakdowns, and the MedDefense case study overview.
 
-This curriculum maps directly to the CompTIA Security+ SY0-701 exam objectives:
+---
 
-| Exam Domain | Weight | Related Directories |
-| --- | --- | --- |
-| General Security Concepts | 12% | `common_core/cybersecurity_basics`, `common_core/understanding_vulnerabilities` |
-| Threats, Vulnerabilities, & Analytics | 22% | `common_core/threat-modeling-fundamentals`, `common_core/understanding_vulnerabilities`, `blue_team/1x01_know_your_enemy` |
-| Architecture | 18% | `common_core/linux_security`, `common_core/network_security` |
-| Operations & Incident Response | 28% | `common_core/scripting_cyber`, `common_core/network_security`, `common_core/linux_security`, `blue_team/1x00_first_watch` |
-| Governance, Risk, & Compliance | 10% | `common_core/security_policy_analysis`, `blue_team/NIST_Special_Publications`, `blue_team/HIPA`, `blue_team/Knowbe4` |
+## common_core/
 
-_Domain weights based on CompTIA Security+ SY0-701 official exam outline._
+Foundational coursework from the DLH Cyber Security Academy covering the core competencies required for the CompTIA Security+ (SY0-701) certification.
+
+| Directory | Description | Security+ Domain |
+|-----------|-------------|------------------|
+| [`cybersecurity_basics/`](common_core/cybersecurity_basics/) | Foundational concepts, terminology, and core principles | Domain 1.0 |
+| [`network_security/`](common_core/network_security/) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
+| [`linux_security/`](common_core/linux_security/) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
+| [`scripting_cyber/`](common_core/scripting_cyber/) | Python automation scripts for security tasks and analysis | Domain 4.0 |
+| [`security_policy_analysis/`](common_core/security_policy_analysis/) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
+| [`threat-modeling-fundamentals/`](common_core/threat-modeling-fundamentals/) | Methodologies for identifying and assessing threats | Domain 1.0 |
+| [`understanding_vulnerabilities/`](common_core/understanding_vulnerabilities/) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
+| [`web_application_security/`](common_core/web_application_security/) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0 |
+| [`learning_objectives/`](common_core/learning_objectives/) | Weekly learning objectives covering all five Security+ domains | Domains 1.0–5.0 |
+
+See the [`common_core/README.md`](common_core/) for the full curriculum map.
+
+---
+
+## notes/
+
+Practical security operations references for SOC analysts and incident response.
+
+| File | Purpose | Platform |
+|------|---------|----------|
+| [`Open-Source_Security_Stack.md`](notes/Open-Source_Security_Stack.md) | Reference architecture for a complete open-source security platform (OPNsense, Security Onion, Shuffle, Eramba) | Infrastructure |
+| [`Top_25_SPL_Queries.md`](notes/Top_25_SPL_Queries.md) | Essential Splunk search queries for threat detection | Splunk SIEM |
+| [`Top_25_Wazuh_Queries.md`](notes/Top_25_Wazuh_Queries.md) | Core detection rules for security monitoring | Wazuh SIEM |
+| [`Flowchart.md`](notes/Flowchart.md) | Process flowchart for incident response procedures | — |
+| `Security+ Security Architecture Domain Presentation.odp` | Presentation deck for the Security Architecture domain | — |
+| `Security Infra Project For CS Academy.odp` | Infrastructure project presentation | — |
+
+See the [`notes/README.md`](notes/) for the full documentation including the open-source security stack architecture and detection query categories.
+
+---
+
+## Certification Alignment
+
+This repository supports preparation for:
+
+- **CompTIA Security+ (SY0-701)** — All five exam domains covered across both tracks
+- **NIST Cybersecurity Framework (CSF 2.0)** — Govern, Identify, Protect, Detect, Respond, Recover
+- **CIS Controls v8** — Implementation Groups 1–3 safeguard mapping
+- **MITRE ATT&CK** — Technique mapping and adversary emulation analysis
+- **HIPAA / HICP** — Healthcare-specific regulatory and cybersecurity practices
+
+---
+
+## Usage
+
+1. Start with [`common_core/`](common_core/) for foundational concepts aligned to Security+ domains
+2. Progress to [`blue_team/`](blue_team/) for applied scenario exercises
+3. Reference [`notes/`](notes/) for practical SOC tooling, queries, and architecture guides
+4. Within `blue_team/`, work modules sequentially (1x00 → 1x03) as later exercises build on earlier findings
+
+---
 
 ### Cheat Sheets
 
