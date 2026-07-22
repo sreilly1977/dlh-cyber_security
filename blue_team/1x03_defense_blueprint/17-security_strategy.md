@@ -251,69 +251,92 @@ The red team exercise (T15) assumed all Year 1 controls were fully implemented a
 
 ---
 
-## 8. IMPLEMENTATION ROADMAP
+## 8. 6 MONTH IMPLEMENTATION ROADMAP
 
-### 8.1 Six-Month Timeline
+### MONTH 1: QUICK WINS PHASE
 
-```mermaid
-flowchart LR
-    subgraph M1["MONTH 1: QUICK WINS PHASE"]
-        direction TB
-        M1W1A["Week 1: Disable public RDP on billing-srv-01"]
-        M1W1B["Week 1: Enforce account lockout via GPO"]
-        M1W2A["Week 2: Enable Windows Firewall on all servers"]
-        M1W2B["Week 2: Disable USB storage via GPO"]
-        M1W3["Week 3: Audit inactive AD accounts"]
-        M1W4["Week 4: Procurement orders placed (EDR, SIEM, MFA)"]
-    end
+| Week | Action | Quick Win ID |
+|------|--------|--------------|
+| Week 1 | Disable public RDP on billing-srv-01 | #1 |
+| Week 1 | Enforce account lockout via GPO | #2 |
+| Week 2 | Enable Windows Firewall on all servers | #3 |
+| Week 2 | Disable USB storage via GPO | #4 |
+| Week 3 | Audit inactive AD accounts | #5 |
+| Week 4 | Procurement orders placed (EDR, SIEM, MFA) | N/A |
 
-    subgraph M2["MONTHS 2-3: CORE CONTROLS DEPLOYMENT"]
-        direction TB
-        M2A["Month 2: EDR agents installed across all endpoints"]
-        M2B["Month 2: SIEM expansion complete, log forwarders operational"]
-        M3A["Month 3: MFA deployed on all systems (users trained)"]
-        M3B["Month 3: Email security gateway activated"]
-        M3C["Month 3: Network segmentation design finalized, hardware ordered"]
-    end
+---
 
-    subgraph M3Z["MONTHS 4-5: SEGMENTATION & HARDENING"]
-        direction TB
-        M4A["Month 4: Perimeter firewall deployed, VLANs configured"]
-        M4B["Month 4: Billing-srv-01 migrated to Server Zone"]
-        M5A["Month 5: Clinical workstations relocated to Clinical WS Zone"]
-        M5B["Month 5: Medical devices isolated to MED-DEVICE VLAN"]
-        M5C["Month 5: Management Zone jump box architecture operational"]
-        M6A["Month 6: Guest/IoT Zone activated, vendor access migrated"]
-    end
+### MONTHS 2-3: CORE CONTROLS DEPLOYMENT
 
-    subgraph M6["MONTH 6: VALIDATION & OPTIMIZATION"]
-        direction TB
-        M6W12["Week 1-2: Penetration testing of new architecture"]
-        M6W23["Week 2-3: False positive tuning on EDR/SIEM"]
-        M6W34["Week 3-4: SOC 2 control validation audit"]
-        M6W4["Week 4: Quarterly review with Board, metrics presentation"]
-    end
+| Month | Action |
+|-------|--------|
+| Month 2 | EDR agents installed across all endpoints |
+| Month 2 | SIEM expansion complete, log forwarders operational |
+| Month 3 | MFA deployed on all systems (users trained) |
+| Month 3 | Email security gateway activated |
+| Month 3 | Network segmentation design finalized, hardware ordered |
 
-    M1 --> M2
-    M2 --> M3Z
-    M3Z --> M6
+---
 
-```
+### MONTHS 4-5: SEGMENTATION & HARDENING
 
-### 8.2 Phase Success Metrics
+| Month | Action |
+|-------|--------|
+| Month 4 | Perimeter firewall deployed, VLANs configured |
+| Month 4 | Billing-srv-01 migrated to Server Zone |
+| Month 5 | Clinical workstations relocated to Clinical WS Zone |
+| Month 5 | Medical devices isolated to MED-DEVICE VLAN |
+| Month 5 | Management Zone jump box architecture operational |
+| Month 6 | Guest/IoT Zone activated, vendor access migrated |
 
-| Phase | Success Metric | Target | Measurement Method |
-|-------|----------------|--------|-------------------|
-| **Phase 1** (Months 1-2) | 100% quick wins completed | 5/5 implemented | Change management logs, verification tests |
-| **Phase 2** (Months 3-4) | Core controls operational | EDR coverage ≥95%, SIEM ingesting ≥10 sources | Agent deployment reports, SIEM log volume |
-| **Phase 3** (Months 5-6) | Segmentation validated | 70%+ lateral movement blocked in pen test | Third-party penetration test report |
-| **Overall** (Month 6) | Risk posture improvement | Inherent risk reduction ≥50% | Re-run risk register with updated scores |
+---
 
-### 8.3 Dependencies and Contingencies
+### MONTH 6: VALIDATION & OPTIMIZATION
 
-**Critical Path:** Asset inventory (existing) → SIEM deployment → Network segmentation → EDR/UEBA correlation. Delay in SIEM deployment cascades to all downstream detection controls.
+| Week | Action |
+|------|--------|
+| Week 1-2 | Penetration testing of new architecture |
+| Week 2-3 | False positive tuning on EDR/SIEM |
+| Week 3-4 | SOC 2 control validation audit |
+| Week 4 | Quarterly review with Board, metrics presentation |
 
-**Contingency Plan:** If segmentation causes service interruption, rollback firewall rules within 1 hour per change management procedure. Emergency contacts: CTO (infrastructure), CISO (security policy), department owners (application validation).
+---
+
+### DEPENDENCIES AND CRITICAL PATH
+
+1. **Quick Wins (Month 1)** → Foundation for all subsequent phases
+2. **Procurement (Week 4, Month 1)** → Must complete before Core Controls (Month 2-3)
+3. **Core Controls (Month 2-3)** → Prerequisites for Segmentation (Month 4-5)
+4. **Segmentation (Month 4-5)** → Required for Validation (Month 6)
+5. **Validation (Month 6)** → Gatekeeper for Board approval and Year 2 planning
+
+---
+
+### SUCCESS METRICS BY PHASE
+
+| Phase | Duration | Success Metric |
+|-------|----------|----------------|
+| **Phase 1** | Month 1 | 5/5 quick wins implemented |
+| **Phase 2** | Months 2-3 | EDR coverage ≥95%, SIEM ingesting ≥10 log sources |
+| **Phase 3** | Months 4-5 | 70%+ lateral movement blocked in penetration test |
+| **Phase 4** | Month 6 | Inherent risk reduction ≥50%, SOC 2 readiness achieved |
+
+---
+
+### CONTINGENCY PLANS
+
+#### If Segmentation Causes Service Interruption
+- Rollback firewall rules within 1 hour
+- Contact emergency chain: CTO → CISO → Department Owners
+
+#### If Procurement Delayed Beyond Week 4
+- Extend Quick Wins monitoring period
+- Increase manual security review cadence
+
+#### If Validation Pen Test Fails
+- Re-tune segmentation rules (Week 3 buffer available)
+- Schedule remediation sprint (2 weeks maximum)
+- Board notification if timeline slip exceeds 2 weeks
 
 ---
 
