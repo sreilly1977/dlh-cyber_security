@@ -11,8 +11,8 @@ A comprehensive cybersecurity study repository structured around two primary lea
 
 | Directory | Description |
 |-----------|-------------|
-| [`blue_team/`](blue_team/) | Applied defensive operations through a scenario-driven case study (MedDefense) |
-| [`common_core/`](common_core/) | Foundational coursework covering all five Security+ domains |
+| [`blue_team/`](blue_team/README.md) | Applied defensive operations through a scenario-driven case study (MedDefense) |
+| [`common_core/`](common_core/README.md) | Foundational coursework covering all five Security+ domains |
 | [`notes/`](notes/) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
 
 ---
@@ -23,10 +23,10 @@ Scenario-based curriculum following **MedDefense**, a fictional healthcare organ
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`1x00_first_watch/`](blue_team/1x00_first_watch/) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
-| [`1x01_know_your_enemy/`](blue_team/1x01_know_your_enemy/) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
-| [`1x02_the_weak_links/`](blue_team/1x02_the_weak_links/) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
-| [`1x03_defense_blueprint/`](blue_team/1x03_defense_blueprint/) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
+| [`1x00_first_watch/`](blue_team/1x00_first_watch/README.md) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
+| [`1x01_know_your_enemy/`](blue_team/1x01_know_your_enemy/README.md) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
+| [`1x02_the_weak_links/`](blue_team/1x02_the_weak_links/README.md) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
+| [`1x03_defense_blueprint/`](blue_team/1x03_defense_blueprint/README.md) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
 | [`HIPA/`](blue_team/HIPA/) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
 | [`Knowbe4/`](blue_team/Knowbe4/) | Security awareness training — Social Engineering Red Flags reference |
 | [`Microsoft/`](blue_team/Microsoft/) | STRIDE Threat Model methodology guide |
@@ -34,7 +34,6 @@ Scenario-based curriculum following **MedDefense**, a fictional healthcare organ
 | [`NIST_Special_Publications/`](blue_team/NIST_Special_Publications/) | NIST SP 800-series documents (SP 800-12 r1, SP 800-30 r1, SP 800-53 r5, SP 800-61 r2) |
 | [`learning_objectives/`](blue_team/learning_objectives/) | Weekly learning objectives for the blue team track |
 
-See the [`blue_team/README.md`](blue_team/) for full module details, exercise breakdowns, and the MedDefense case study overview.
 
 ---
 
@@ -44,14 +43,14 @@ Foundational coursework from the DLH Cyber Security Academy covering the core co
 
 | Directory | Description | Security+ Domain |
 |-----------|-------------|------------------|
-| [`cybersecurity_basics/`](common_core/cybersecurity_basics/) | Foundational concepts, terminology, and core principles | Domain 1.0 |
-| [`network_security/`](common_core/network_security/) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
-| [`linux_security/`](common_core/linux_security/) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
-| [`scripting_cyber/`](common_core/scripting_cyber/) | Python automation scripts for security tasks and analysis | Domain 4.0 |
-| [`security_policy_analysis/`](common_core/security_policy_analysis/) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
-| [`threat-modeling-fundamentals/`](common_core/threat-modeling-fundamentals/) | Methodologies for identifying and assessing threats | Domain 1.0 |
-| [`understanding_vulnerabilities/`](common_core/understanding_vulnerabilities/) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
-| [`web_application_security/`](common_core/web_application_security/) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0 |
+| [`cybersecurity_basics/`](common_core/cybersecurity_basics/README.md) | Foundational concepts, terminology, and core principles | Domain 1.0 |
+| [`network_security/`](common_core/network_security/README.md) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
+| [`linux_security/`](common_core/linux_security/README.md) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
+| [`scripting_cyber/`](common_core/scripting_cyber/README.md) | Python automation scripts for security tasks and analysis | Domain 4.0 |
+| [`security_policy_analysis/`](common_core/security_policy_analysis/README.md) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
+| [`threat-modeling-fundamentals/`](common_core/threat-modeling-fundamentals/README.md) | Methodologies for identifying and assessing threats | Domain 1.0 |
+| [`understanding_vulnerabilities/`](common_core/understanding_vulnerabilities/README.md) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
+| [`web_application_security/`](common_core/web_application_security/README.md) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0 |
 | [`learning_objectives/`](common_core/learning_objectives/) | Weekly learning objectives covering all five Security+ domains | Domains 1.0–5.0 |
 
 See the [`common_core/README.md`](common_core/) for the full curriculum map.
