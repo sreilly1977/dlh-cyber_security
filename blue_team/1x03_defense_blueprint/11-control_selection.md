@@ -433,133 +433,89 @@ The Risk Register tells you WHAT risks exist. Now you decide WHAT to do about ea
 The following text diagram shows the implementation sequence and dependencies between controls across all risk treatments. Controls must be deployed in left-to-right reading order within each tier. Controls in the same tier can be deployed in parallel.
 
 ```mermaid 
-flowchart TD %% Tier 0: Foundational subgraph T0["TIER 0: FOUNDATIONAL"] AI[("Asset Inventory
-(1x00 T7)")] DC[("PHI Discovery &
-Classification
-(RISK-005 C3)")] CAP[("Cloud Account
-Provisioning
-(Prerequisite)")] end
-%% Tier 1: Core Infrastructure
-subgraph T1["TIER 1: CORE INFRASTRUCTURE"]
-    SIEM[("SIEM Platform Expansion<br/>(RISK-010 C1)")]
-    IP[("Identity Provider Setup<br/>(Azure AD / Conditional Access)")]
-end
+flowchart TD
+    subgraph T0["TIER 0: FOUNDATIONAL"]
+        AI["Asset Inventory (1x00 T7)"]
+        DC["PHI Discovery & Classification (RISK-005 C3)"]
+        CAP["Cloud Account Provisioning"]
+    end
 
-%% Tier 2: Access & Encryption
-subgraph T2["TIER 2: ACCESS & ENCRYPTION"]
-    MFA[("MFA Deployment<br/>(RISK-004 C1)")]
-    TLS[("TLS 1.3 Enforcement<br/>(RISK-005 C2)")]
-    FDE[("FDE Enforcement<br/>(RISK-005 C1)")]
-    DMARC[("DMARC / DKIM / SPF<br/>(RISK-004 C2)")]
-end
+    subgraph T1["TIER 1: CORE INFRASTRUCTURE"]
+        SIEM["SIEM Platform Expansion (RISK-010 C1)"]
+        IP["Identity Provider Setup"]
+    end
 
-%% Tier 3: Network Architecture
-subgraph T3["TIER 3: NETWORK ARCHITECTURE"]
-    NS[("Network Segmentation<br/>& Access Zones<br/>(RISK-002 C1)")]
-    JB[("Jump Box<br/>Architecture<br/>(RISK-009 C1)")]
-    VAP[("Vendor Access<br/>Portal<br/>(RISK-002 C2)")]
-    MDI[("Medical Device<br/>VLAN Isolation<br/>(Supports RISK-006)")]
-    DACP[("Default-Deny<br/>IAM Policy<br/>(RISK-008 C3)")]
-    IaC[("IaC Security<br/>Scanning<br/>(RISK-008 C2)")]
-end
+    subgraph T2["TIER 2: ACCESS & ENCRYPTION"]
+        MFA["MFA Deployment (RISK-004 C1)"]
+        TLS["TLS 1.3 Enforcement (RISK-005 C2)"]
+        FDE["FDE Enforcement (RISK-005 C1)"]
+        DMARC["DMARC / DKIM / SPF (RISK-004 C2)"]
+    end
 
-%% Tier 4: Detection & Monitoring
-subgraph T4["TIER 4: DETECTION & MONITORING"]
-    EDR[("EDR / MDR<br/>(RISK-001 C1)")]
-    UEBA[("UEBA Module<br/>(RISK-003 C2)")]
-    CSPM[("CSPM Platform<br/>(RISK-008 C1)")]
-    BF[("Brute Force<br/>Alert Rules<br/>(RISK-009 C3)")]
-    DLP[("DLP Suite<br/>(RISK-003 C1)")]
-end
+    subgraph T3["TIER 3: NETWORK ARCHITECTURE"]
+        NS["Network Segmentation & Access Zones (RISK-002 C1)"]
+        JB["Jump Box Architecture (RISK-009 C1)"]
+        VAP["Vendor Access Portal (RISK-002 C2)"]
+        MDI["Medical Device VLAN Isolation"]
+        DACP["Default-Deny IAM Policy (RISK-008 C3)"]
+        IAC["IaC Security Scanning (RISK-008 C2)"]
+    end
 
-%% Tier 5: Recovery & Response
-subgraph T5["TIER 5: RECOVERY & RESPONSE"]
-    IB[("Immutable Backups<br/>(RISK-001 C2)")]
-    PAM[("PAM with Session<br/>Recording<br/>(RISK-003 C3)")]
-    EC[("Evidence Collection<br/>Platform<br/>(RISK-010 C2)")]
-    SOC[("Annual SOC 2<br/>Audit<br/>(RISK-010 C3)")]
-end
+    subgraph T4["TIER 4: DETECTION & MONITORING"]
+        EDR["EDR / MDR (RISK-001 C1)"]
+        UEBA["UEBA Module (RISK-003 C2)"]
+        CSPM["CSPM Platform (RISK-008 C1)"]
+        BF["Brute Force Alert Rules (RISK-009 C3)"]
+        DLP["DLP Suite (RISK-003 C1)"]
+    end
 
-%% Tier 6: Administrative & Training
-subgraph T6["TIER 6: ADMINISTRATIVE & TRAINING"]
-    PM[("Patch Mgmt SLA<br/>(RISK-001 C3)")]
-    PS[("Phishing<br/>Simulations<br/>(RISK-004 C3)")]
-    DA[("Dual Auth<br/>Payments<br/>(RISK-007 C1)")]
-    FBCT[("Finance Staff<br/>BEC Training<br/>(RISK-007 C3)")]
-    VSP[("Vendor Security<br/>Program<br/>(RISK-002 C3)")]
-    SAP[("Security Awareness<br/>Program<br/>(All Risks)")]
-    ALP[("Account Lockout<br/>Policy<br/>(RISK-009 C3)")]
-end
+    subgraph T5["TIER 5: RECOVERY & RESPONSE"]
+        IB["Immutable Backups (RISK-001 C2)"]
+        PAM["PAM with Session Recording (RISK-003 C3)"]
+        EC["Evidence Collection Platform (RISK-010 C2)"]
+        SOC["Annual SOC 2 Audit (RISK-010 C3)"]
+    end
 
-%% Dependencies - Tier 0 to Tier 1
-AI --> SIEM
-AI --> NS
-DC --> DLP
-CAP --> CSPM
-CAP --> IaC
-CAP --> DACP
+    subgraph T6["TIER 6: ADMINISTRATIVE & TRAINING"]
+        PM["Patch Mgmt SLA (RISK-001 C3)"]
+        PS["Phishing Simulations (RISK-004 C3)"]
+        DA["Dual Auth Payments (RISK-007 C1)"]
+        FBCT["Finance Staff BEC Training (RISK-007 C3)"]
+        VSP["Vendor Security Program (RISK-002 C3)"]
+        SAP["Security Awareness Program"]
+        ALP["Account Lockout Policy (RISK-009 C3)"]
+    end
 
-%% Dependencies - Tier 1 to Tier 2
-SIEM --> UEBA
-SIEM --> EDR
-SIEM --> DLP
-SIEM --> BF
-SIEM --> EC
-IP --> MFA
-IP --> JB
-IP --> ConditionalAccess
+    AI --> SIEM
+    AI --> NS
+    DC --> DLP
+    CAP --> CSPM
+    CAP --> IAC
+    CAP --> DACP
 
-%% Dependencies - Tier 2 to Tier 3
-MFA -.-> JB
-TLS -.-> NS
-FDE -.-> NS
-DMARC -.-> NS
-NS --> JB
-NS --> VAP
-NS --> MDI
-NS --> DACP
+    IP --> MFA
+    IP --> JB
 
-%% Dependencies - Tier 3 to Tier 4
-JB --> BF
-VAP --> UEBA
-MDI -.-> EDR
-IaC --> CSPM
-DACP --> CSPM
-CSPM --> EDR
+    NS --> JB
+    NS --> VAP
+    NS --> MDI
+    NS --> DACP
 
-%% Dependencies - Tier 4 to Tier 5
-EDR --> IB
-UEBA --> PAM
-DLP --> PAM
-EC --> SOC
+    IAC --> CSPM
+    DACP --> CSPM
 
-%% Additional cross-tier dependencies
-SIEM --> EDR
-SIEM --> UEBA
-SIEM --> DLP
-SIEM --> BF
-SIEM --> EC
+    SIEM --> UEBA
+    SIEM --> EDR
+    SIEM --> DLP
+    SIEM --> BF
+    SIEM --> EC
 
-IP --> ConditionalAccess{Conditional Access}
-ConditionalAccess --> JB
-ConditionalAccess --> MFA
+    MFA --> JB
 
-%% Styling
-classDef tier0 fill:#f9f9f9,stroke:#333,stroke-width:2px
-classDef tier1 fill:#e3f2fd,stroke:#333,stroke-width:2px
-classDef tier2 fill:#e8f5e9,stroke:#333,stroke-width:2px
-classDef tier3 fill:#fff3e0,stroke:#333,stroke-width:2px
-classDef tier4 fill:#fce4ec,stroke:#333,stroke-width:2px
-classDef tier5 fill:#f3e5f5,stroke:#333,stroke-width:2px
-classDef tier6 fill:#eeeeee,stroke:#333,stroke-width:2px
-
-class T0 tier0
-class T1 tier1
-class T2 tier2
-class T3 tier3
-class T4 tier4
-class T5 tier5
-class T6 tier6
+    EDR --> IB
+    UEBA --> PAM
+    DLP --> PAM
+    EC --> SOC
 
 ```
 
