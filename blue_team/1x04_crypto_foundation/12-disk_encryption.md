@@ -499,10 +499,10 @@ flowchart TB
     subgraph nas["Physical NAS-01"]
         A["LUKS2 Full-Disk Encryption<br/>Protects entire disk,<br/>boots via initramfs"]
         
-        subgraph "LUKS2 Volume (backup_data)"
+        subgraph vol["LUKS2 Volume (backup_data)"]
             B["LUKS2 Volume<br/>Separate key for backup partition"]
             
-            subgraph "ext4 Filesystem"
+            subgraph fs["ext4 Filesystem"]
                 C["Backup Files"]
                 
                 D["/backups/daily/tar.gz.enc"]
