@@ -134,7 +134,7 @@ Cover: AES (128/192/256), RSA (2048/4096), ECC (P-256/P-384), DES, 3DES, ChaCha2
 
 ---
 
-# 3. [The Hash Laboratory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/ 3-hash_analysis.md)
+# 3. [The Hash Laboratory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/3-hash_analysis.md)
 
 ## Goal
 Explore hashing through experimentation: observe the avalanche effect, crack weak hashes, understand salting and key stretching, and build an integrity verification tool.
