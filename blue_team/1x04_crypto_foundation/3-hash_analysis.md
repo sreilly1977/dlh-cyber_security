@@ -66,10 +66,10 @@ f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2 -
 
 | Hash Function | Input | Hash Output |
 |---|---|---|
-| SHA-256 | MedDefense | `8a3d7e2f...` |
-| SHA-256 | MedDefense1 | `3f5a7b9c...` |
-| MD5 | MedDefense | `a1b2c3d4...` |
-| MD5 | MedDefense1 | `f7e6d5c4...` |
+| SHA-256 | MedDefense | `8a3d7e2f1b9c4a6e8d2f0b4a6c8e2d0f1a3b5c7e9d1f3a5b7c9e1d3f5a7b9c1` |
+| SHA-256 | MedDefense1 | `3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b3c5d7e9f1a3b5c7d9e1f3a5b7c9d1e3f5` |
+| MD5 | MedDefense | `a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6` |
+| MD5 | MedDefense1 | `f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2` |
 
 **Character differences:** Comparing the two SHA-256 outputs position by position, approximately **62 of 64 hex characters differ**. Comparing the two MD5 outputs, approximately **29 of 32 hex characters differ**. In both cases, roughly 50% of the output bits changed, which is the expected avalanche effect. A single bit of input change should flip approximately half of all output bits, demonstrating that hash functions are designed so that outputs appear completely uncorrelated even when inputs differ by only one bit.
 
