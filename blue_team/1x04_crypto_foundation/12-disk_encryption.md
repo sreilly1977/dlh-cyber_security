@@ -387,9 +387,21 @@ NAS-01 currently stores all MedDefense backups in plaintext. This design documen
 
 | Option | Recommendation | Rationale |
 |---|---|---|
-| **Full-Disk Encryption (FDE)** | ✅ **Selected** | Protects all data on NAS-01 including OS, configs, and backups; simplest operational model; no application changes required |
-| **Volume Encryption (LUKS)** | Secondary layer | Use LUKS for individual backup directories as defense-in-depth within FDE |
-| **File-Level Encryption** | ❌ Not recommended | High overhead; complex key management; breaks backup software; unnecessary given FDE+LUKS |
+| **Full-disk encryption (FDE)** | ✅ **Selected** | Protects all data on NAS-01 including OS, configs, and backups; simplest operational model; no application changes required |
+| **Volume encryption (LUKS)** | Secondary layer | Use LUKS for individual backup partitions as defense-in-depth within FDE |
+| **File-level encryption** | ❌ Not recommended | High overhead; complex key management; breaks backup software; unnecessary given FDE+LUKS |
+
+#### Why File-Level Encryption Was Not Chosen
+
+File-level encryption (such as eCryptFS or GPG per-file encryption) introduces several operational challenges that make it unsuitable for MedDefense's backup infrastructure:
+
+1. **Key Management Complexity**: Each file or directory would need separate encryption keys, creating administrative burden across multiple administrators and backup systems
+2. **Performance Overhead**: Encrypting thousands of individual files adds significant latency compared to block-level encryption which operates on contiguous data streams
+3. **Breaks Backup Software**: Many enterprise backup tools expect to read entire volumes sequentially; file-level encryption fragments this workflow
+4. **Metadata Leakage**: Even with file contents encrypted, filenames and directory structures remain visible to attackers with filesystem access
+5. **Snapshot Incompatibility**: Incremental backup solutions struggle with file-level encrypted directories that don't expose clear block changes
+
+Given that we are implementing **full-disk** LUKS2 encryption, file-level encryption provides redundant protection with significant operational cost and no meaningful security benefit for our threat model.
 
 #### Selected Architecture: Layered Encryption
 
