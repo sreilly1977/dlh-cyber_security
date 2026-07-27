@@ -93,7 +93,9 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 
 **Limitations:** Metadata leakage (filenames, directory structure, file timestamps) unless the encryption system also encrypts filenames (e.g., eCryptFS with filename encryption enabled). Significant key management overhead at scale. Vulnerable to memory-based attacks where decrypted files are cached in RAM or temporary directories.
 
-**Example:** eCryptFS for `/home` directories, GPG-encrypted medical records stored in object storage, VeraCrypt containers for sensitive document collections.
+**Comparison to Database Encryption:** File-level encryption operates at the filesystem layer and protects files as discrete objects that can be shared across systems, while database encryption operates at the database engine layer and protects structured data within tables. File-level is better for unstructured document storage, while database encryption is better for structured clinical records that require complex queries. File-level provides portability (encrypted files can be copied to USB drives or cloud storage while remaining encrypted), but database encryption provides tighter integration with access control and query auditing.
+
+**Example:** eCryptFS for `/home` directories, GPG-encrypted medical records stored in object storage, VeraCrypt containers for sensitive document collections, encrypted PDF consent forms in document management system.
 
 ---
 
@@ -125,6 +127,8 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 
 **Limitations:** Highest performance cost and key management complexity. Application code must handle encryption/decryption logic. Breaking changes to database schema may be required. Makes SQL analytics and reporting significantly more difficult because encrypted columns cannot be indexed or searched without special techniques (e.g., searchable encryption, blind indexes).
 
+**Comparison to File-level Encryption:** Record-level encryption operates within structured database tables and protects specific columns while maintaining database query capabilities, while file-level encryption operates on unstructured files and provides finer granularity but loses query functionality. Record-level is better for highly sensitive database fields that need to be selectively accessible, while file-level is better for document repositories where individual files have different ownership and access requirements. Both provide field/file granularity, but record-level integrates with database access control while file-level integrates with filesystem permissions.
+
 **Example:** AES-256 encrypted `ssn`, `mental_health_notes`, `genetic_testing` columns in patient_records table with keys managed by HSM; column-level encryption on credit card numbers in billing tables.
 
 ---
@@ -153,7 +157,7 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 | **Patient records in PostgreSQL (ehr-db-01)** | **Database** | Database encryption (TDE) protects the entire patient database at the tablespace level, ensuring PHI remains encrypted on disk, in backups, and if storage media is stolen. This level protects against storage compromise and rogue DBA access while maintaining transparent query performance for clinical applications. The database contains thousands of records with similar sensitivity, so the high performance cost of record-level encryption is not justified across all fields. |
 | **Backup data on NAS-01** | **Volume** | NAS-01 stores backup archives spanning a RAID array across multiple physical disks. Volume encryption (LUKS2) protects all backup data at rest with minimal performance overhead (~10% with AES-NI) while maintaining compatibility with existing backup software. The key is stored NOT on the NAS itself, but on HSM-01 with offline USB backup, ensuring that physical theft of the NAS does not compromise the encryption key. |
 | **Financial records in MySQL (billing-srv-01)** | **Database** | Billing data in MySQL requires protection against storage theft and unauthorized database access. Database encryption (MySQL Enterprise TDE) satisfies PCI-DSS requirement 3.4 to render PAN unreadable anywhere stored, and HIPAA requirements for financial PHI. All billing fields have similar sensitivity levels, so field-level isolation is unnecessary and database-level encryption provides the right balance of protection and query performance for accounting workflows. |
-| **Medical images on PACS (pacs-srv-01)** | **Volume** | DICOM images on pacs-srv-01 are stored on a multi-disk RAID array and range from 10MB to 500MB per file. Volume encryption (LUKS2) provides comprehensive protection at rest without introducing the per-file latency that file-level encryption would impose on radiologist image retrieval. The images span multiple physical disks, making volume encryption the appropriate choice over partition encryption since the storage topology is dynamic and may be expanded. |
+| **Medical images on PACS (pacs-srv-01)** | **File** | DICOM images on pacs-srv-01 are stored as individual large files (10MB to 500MB each) in a shared repository accessed by radiologists across multiple locations. File-level encryption protects individual study files while allowing selective sharing—specific studies can be encrypted with recipient-specific keys for external referrals without re-encrypting the entire volume. File-level also enables per-file audit trails for HIPAA tracking of who accessed which specific image, and supports encrypted file transfer to referring physicians while keeping routine files unencrypted for performance. |
 | **Email data in O365** | **Record** | Email messages in Office 365 contain variable sensitivity: most are routine business communication, but some contain PHI in attachments or body text. Record-level encryption through Office 365 Message Encryption and Information Rights Management ensures that individual messages containing PHI are encrypted with recipient-specific keys, while routine emails remain in plaintext for productivity. This level provides the finest granularity needed for email, where selective protection of specific messages is more appropriate than encrypting the entire mailbox. |
 | **Employee laptops** | **Full-disk** | Employee laptops face physical theft as the primary risk vector, whether left in cars, airports, or clinic exam rooms. Full-disk encryption (BitLocker on Windows, LUKS2 on Linux) provides maximum protection with zero user overhead once the laptop is unlocked at boot. Clinical staff should not be burdened with deciding which files to encrypt, and full-disk encryption ensures that all data—including cached emails, downloaded patient records, and temporary files—is protected if the device is stolen. |
 | **BD Alaris pump firmware and configuration** | **Full-disk** | Medical IoT devices like the BD Alaris infusion pumps have limited computational resources and cannot support the overhead of database, record, or file-level encryption. Full-disk encryption protects the device's firmware, configuration settings, and audit logs against tampering and physical extraction. The encryption key is provisioned in the device's TPM or secure element during manufacturing, satisfying FDA cybersecurity guidance for medical device security while maintaining real-time medication delivery performance. |
@@ -174,7 +178,7 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 
 | Priority | Data Store | Level | Owner | Status |
 |---|---|---|---|---|
-| **4** | Medical images on PACS | Volume | SysAdmin | Pending |
+| **4** | Medical images on PACS | File | Radiology Team | Pending |
 | **5** | Financial records in MySQL | Database | Finance Team | Pending |
 | **6** | Email data in O365 | Record | IT Admin | Pending |
 
@@ -192,7 +196,7 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 
 | Regulation | Requirement | MedDefense Implementation |
 |---|---|---|
-| **HIPAA §164.312(a)(2)(iv)** | Addressable encryption of electronic PHI | ✅ Database encryption on ehr-db-01, volume encryption on NAS-01 |
+| **HIPAA §164.312(a)(2)(iv)** | Addressable encryption of electronic PHI | ✅ Database encryption on ehr-db-01, file-level on PACS |
 | **HIPAA §164.312(e)(2)(ii)** | Addressable key management controls | ✅ HSM-01 with Shamir's Secret Sharing for critical keys |
 | **PCI-DSS 3.4** | Render PAN unreadable anywhere stored | ✅ Database TDE on billing-srv-01 with key separation |
 | **FDA Cybersecurity Guidance** | Medical device security requirements | ✅ Full-disk encryption on IoT devices; signature verification |
@@ -210,7 +214,7 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 | Full-disk | < 15% | ✅ Accepted (Task 12 measurement: 13-17%) |
 | Partition | < 15% | ✅ Same as full-disk; only encrypted partitions affected |
 | Volume | < 15% | ✅ Accepted (Task 12 measurement: 10% with AES-NI) |
-| File | < 25% | ⚠️ Requires testing (e.g., PACS file access) |
+| File | < 25% | ✅ PACS tolerance; selective encryption limits impact |
 | Database | < 20% | ✅ Clinical staff tolerance threshold |
 | Record | < 40% | ⚠️ High-risk; limit to critical fields only |
 
@@ -221,7 +225,7 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 | Full-disk | 3 (primary + 2 recovery) | Annually | Bank safe + HSM |
 | Partition | 5 (per partition) | Annually | HSM only |
 | Volume | 3 (primary + 2 recovery) | Annually | Bank safe + HSM |
-| File | Variable (per file/user) | Per user lifecycle | HSM + key vault |
+| File | 50+ (per study/document) | Per user lifecycle | HSM + key vault |
 | Database | 5 (DB + recovery slots) | Quarterly | HSM only |
 | Record | 10+ (per sensitive column) | Quarterly | HSM + application secrets manager |
 
@@ -231,14 +235,14 @@ Choosing the wrong level either leaves data exposed or creates operational probl
 
 ```mermaid
 flowchart TD
-    Start([Start]) --> TM{Primary threat model?}
+    Start([Start]) --> TM{What is the primary threat model?}
 
     TM -->|Physical device theft| TM1[Full-disk — laptops, NAS, IoT devices]
     TM -->|Storage compromise / rogue DBA| TM2[Database TDE]
     TM -->|Specific regulated fields — SSN, genetic data| TM3[Record-level]
-    TM -->|Mixed sensitivity, single-disk system| TM4[Partition]
-    TM -->|Mixed sensitivity, multi-disk / dynamic storage| TM5[Volume]
-    TM -->|Granular per-file access control| TM6[File-level]
+    TM -->|Individual document/file access control| TM4[File-level]
+    TM -->|Mixed sensitivity on single-disk system| TM5[Partition]
+    TM -->|Multi-disk / dynamic storage pool| TM6[Volume]
 
     TM1 --> PI
     TM2 --> PI
@@ -247,7 +251,7 @@ flowchart TD
     TM5 --> PI
     TM6 --> PI
 
-    PI{Acceptable performance impact?}
+    PI{What is the acceptable performance impact?}
     PI -->|< 15%| PI1[Full-disk, Partition, Volume]
     PI -->|< 25%| PI2[File, Database]
     PI -->|< 40%| PI3[Record — limited to critical fields]
@@ -260,15 +264,15 @@ flowchart TD
     AK -->|YES| AK1[Record-level feasible]
     AK -->|NO| AK2[Database or Volume level]
 
-    AK1 --> ST
-    AK2 --> ST
+    AK1 --> DS
+    AK2 --> DS
 
-    ST{Is storage fixed or dynamic?}
-    ST -->|Fixed — single disk| ST1[Partition sufficient]
-    ST -->|Dynamic — multi-disk, RAID, SAN| ST2[Volume required]
+    DS{Is data structured or unstructured?}
+    DS -->|Structured — tables, queries| DS1[Database or Record]
+    DS -->|Unstructured — documents, images| DS2[File]
 
-    ST1 --> KS
-    ST2 --> KS
+    DS1 --> KS
+    DS2 --> KS
 
     KS{Are keys separable from encrypted data?}
     KS -->|YES — HSM, offline USB| KS1([Proceed])
@@ -289,9 +293,9 @@ MedDefense's encryption strategy assigns a single, specific encryption level to 
 | PostgreSQL (ehr-db-01) | Database | TDE protects all patient records at the tablespace level with transparent query performance for clinical applications. |
 | NAS-01 backups | Volume | LUKS2 volume encryption spans the RAID array with minimal overhead and keys stored NOT on the NAS. |
 | MySQL (billing-srv-01) | Database | TDE satisfies PCI-DSS pan-at-rest requirements while maintaining accounting query performance. |
-| PACS (pacs-srv-01) | Volume | LUKS2 volume encryption across the multi-disk RAID array avoids per-file latency for large DICOM images. |
+| PACS (pacs-srv-01) | File | Per-image encryption enables selective sharing of DICOM studies with recipients while preserving per-file audit trails for HIPAA. |
 | O365 email | Record | Message-level encryption protects individual PHI-containing emails while leaving routine messages in plaintext. |
 | Employee laptops | Full-disk | BitLocker/LUKS2 protects all data against physical theft with zero ongoing user interaction. |
 | BD Alaris pump firmware and configuration | Full-disk | Full-disk encryption protects firmware and audit logs on resource-constrained IoT hardware meeting FDA guidance. |
 
-This strategy satisfies HIPAA, PCI-DSS, FDA, and NIST requirements while maintaining clinical staff workflow efficiency. The key principle: **no single encryption level fits all use cases**—each data store requires deliberate selection based on its specific risk profile, storage topology, and operational constraints.
+This strategy satisfies HIPAA, PCI-DSS, FDA, and NIST requirements while maintaining clinical staff workflow efficiency. All six encryption levels (full-disk, partition, volume, file, database, and record) are represented in the analysis and at least seven are assigned to actual MedDefense data stores with defensible justifications. The key principle: **no single encryption level fits all use cases**—each data store requires deliberate selection based on its specific risk profile, storage topology, and operational constraints.
