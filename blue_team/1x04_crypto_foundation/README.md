@@ -590,3 +590,44 @@ Design the encryption-at-rest strategy for NAS-01. Address:
 3. Where the encryption key is stored (NOT on the NAS itself, explain why)
 4. What happens if the key is lost (backup recovery implications)
 5. How this integrates with the offsite backup replication control from your 1x03 strategy (must the cloud replica also be encrypted, and with whose key?)
+
+---
+
+# [13. The Encryption Levels](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/13-encryption_levels.md)
+
+## Goal
+
+Compare the six encryption levels defined and recommend the appropriate level for every MedDefense data store.
+
+## Context
+
+"Encrypt the database" sounds simple, but there are at least three ways to do it: encrypt the entire disk the database sits on (full-disk), encrypt the database files (file-level), or encrypt individual fields within the database (record-level). Each has radically different properties: scope of protection, performance impact, key management complexity and what happens when someone with legitimate database access queries the data.
+
+Choosing the wrong level either leaves data exposed or creates operational problems that the clinical staff will not tolerate.
+
+## Instructions
+
+Produce a comparison table of the 6 encryption levels from Sec+ 1.4:
+
+| Level | Scope | Performance Impact | Key Management | Use Case |
+|:------|:------|:--------------------|:----------------|:---------|
+| Full-disk | Entire physical or virtual disk | ? | ? | ? |
+| Partition | One logical partition | ? | ? | ? |
+| Volume | Logical volume (may span disks) | ? | ? | ? |
+| File | Individual files | ? | ? | ? |
+| Database | Entire database or tablespace | ? | ? | ? |
+| Record | Individual fields or records | ? | ? | ? |
+
+For each: fill in all columns and explain in one sentence when this level is the best choice.
+
+Then produce a MedDefense Encryption Level Map: for each data store at MedDefense, recommend the specific encryption level and justify your choice:
+
+- Patient records in PostgreSQL (ehr-db-01)
+- Backup data on NAS-01
+- Financial records in MySQL (billing-srv-01)
+- Medical images on PACS (pacs-srv-01)
+- Email data in O365
+- Employee laptops
+- BD Alaris pump firmware/configuration
+
+---
