@@ -495,14 +495,14 @@ CA submission: June 21, 2027
 
 ---
 
-## Lifecycle Summary
+### Lifecycle Summary
 
 | Phase | Step | Status | Owner | Deadline |
 |---|---|---|---|---|
 | **Preparation** | Key generation | ✅ Complete | Steve | Done |
 | **Preparation** | CSR generation | ✅ Complete | Steve | Done |
 | **CA Selection** | Choose CA (DigiCert OV) | ✅ Complete | Steve | Done |
-| **Submission** | Submit CSR to DigiCert | Pending | Steve | Day 1 |
+| **Submission to CA** | Submit CSR to DigiCert | Pending | Steve | Day 1 |
 | **Validation** | DCV + OV validation | Pending | DigiCert | Days 1-3 |
 | **Issuance** | Download certificate from CertCentral | Pending | Steve | Day 3 |
 | **Installation** | Deploy certificate to web-srv-01 | Pending | Steve + SysAdmin | Day 4 |
