@@ -22,32 +22,24 @@ While ECC P-256 would offer faster handshakes and smaller key sizes, the compati
 
 ### Key Generation Command
 
+- Generate RSA-2048 private key and verify
+
 ```bash
 openssl genrsa -out portal_key.pem 2048
-```
-
-### Verify the key was created and check its properties
-
-```bash
 openssl rsa -in portal_key.pem -text -noout | head -5
 Private-Key: (2048 bit, 2 primes)
 modulus:
-    00:9b:78:65:8d:44:ac:7b:1c:11:49:c2:c3:6f:c5:
-    9a:0b:f8:6f:73:6a:99:ad:2b:67:0d:5a:fd:1c:18:
-    0a:4a:7d:64:b4:76:90:1e:c8:11:f3:ab:96:4b:f3:
+    00:8f:22:96:63:1f:b8:c7:ec:02:d3:2b:44:f7:de:
+    a8:b6:93:08:8c:b1:a2:4b:71:9d:e6:73:58:fa:a5:
+    b5:85:66:65:27:30:c5:06:98:cf:ee:ca:e3:64:bd:
 ```
 
-### Protect the private key
+- Protect the private key and verify permissions
 
 ```bash
 chmod 600 portal_key.pem
-```
-
-### Verify file permissions
-
-```bash
 ls -l portal_key.pem
-.rw------- 1.7k steve 27 Jul 19:41  portal_key.pem
+.rw------- 1.7k steve 27 Jul 20:22  portal_key.pem
 ```
 
 ---
@@ -60,33 +52,33 @@ Rather than passing all parameters on the command line, an `openssl.cnf` file pr
 
 ```bash
 cat > openssl.cnf << '\''EOF'\''
-[req]
-default_bits = 2048
-default_md = sha256
-distinguished_name = req_distinguished_name
-req_extensions = req_ext
-prompt = no
+  [req]
+  default_bits = 2048
+  default_md = sha256
+  distinguished_name = req_distinguished_name
+  req_extensions = req_ext
+  prompt = no
 
-[req_distinguished_name]
-C = US
-ST = California
-L = San Francisco
-O = MedDefense Health Systems
-OU = Information Technology
-CN = portal.meddefense.local
+  [req_distinguished_name]
+  C = US
+  ST = California
+  L = San Francisco
+  O = MedDefense Health Systems
+  OU = Information Technology
+  CN = portal.meddefense.local
 
-[req_ext]
-subjectAltName = @alt_names
-basicConstraints = CA:FALSE
-keyUsage = digitalSignature, keyEncipherment
-extendedKeyUsage = serverAuth
+  [req_ext]
+  subjectAltName = @alt_names
+  basicConstraints = CA:FALSE
+  keyUsage = digitalSignature, keyEncipherment
+  extendedKeyUsage = serverAuth
 
-[alt_names]
-DNS.1 = portal.meddefense.local
-DNS.2 = patient.meddefense.local
-DNS.3 = www.portal.meddefense.local
-DNS.4 = api.meddefense.local
-EOF
+  [alt_names]
+  DNS.1 = portal.meddefense.local
+  DNS.2 = patient.meddefense.local
+  DNS.3 = www.portal.meddefense.local
+  DNS.4 = api.meddefense.local
+  EOF
 ```
 
 ### Field Justifications
@@ -107,17 +99,14 @@ EOF
 | **keyUsage** | digitalSignature, keyEncipherment | Required for TLS server authentication per RFC 5280 |
 | **extendedKeyUsage** | serverAuth | Restricts certificate to TLS server authentication only |
 
-### Generate the CSR
+### Generate the CSR and verify
 
 ```bash
 openssl req -new -key portal_key.pem -out portal.csr -config openssl.cnf
-```
-
-### Verify the CSR was created
-
-```bash
-ls -l portal.csr
-.rw-r--r-- 1.3k steve 27 Jul 19:47  portal.csr
+ll
+.rw-r--r--  566 steve 27 Jul 20:27  openssl.cnf
+.rw-r--r-- 1.3k steve 27 Jul 20:28  portal.csr
+.rw------- 1.7k steve 27 Jul 20:22  portal_key.pem
 ```
 
 ---
@@ -136,24 +125,24 @@ Certificate Request:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)
                 Modulus:
-                    00:9b:78:65:8d:44:ac:7b:1c:11:49:c2:c3:6f:c5:
-                    9a:0b:f8:6f:73:6a:99:ad:2b:67:0d:5a:fd:1c:18:
-                    0a:4a:7d:64:b4:76:90:1e:c8:11:f3:ab:96:4b:f3:
-                    cb:1b:59:bd:9d:36:c1:76:64:ec:46:9e:20:cc:b6:
-                    8a:0e:4b:74:92:e2:38:0a:c8:43:2b:87:1c:f6:11:
-                    34:00:47:65:0b:6e:f5:f4:0c:b4:08:8b:1c:81:45:
-                    c0:52:30:1c:67:52:a5:73:15:c9:d3:4f:7c:f6:20:
-                    47:92:1c:5c:89:99:0d:72:f4:60:cc:27:81:16:ea:
-                    90:0f:60:03:ad:7e:f4:b1:12:d5:15:0b:70:e3:61:
-                    2f:ba:9b:4d:bc:05:06:88:20:68:80:d9:8e:ac:ad:
-                    62:f1:2f:59:40:9b:e3:11:6f:b6:d1:76:21:ab:26:
-                    7f:e2:0a:72:da:04:a8:9d:83:b5:ac:51:7f:18:9e:
-                    45:5b:88:f1:75:89:1d:f7:32:f1:b1:d9:31:2a:dc:
-                    e0:4d:7d:df:4c:e5:71:47:33:31:17:92:5c:2e:d3:
-                    c2:16:23:9b:fb:48:ed:a7:2e:4e:2f:59:75:e2:5b:
-                    9f:37:c5:ee:9a:a1:85:fc:3b:d6:98:bf:b2:c0:02:
-                    3a:0c:e0:aa:90:81:3f:e3:01:5e:15:db:8b:ac:ac:
-                    54:87
+                    00:8f:22:96:63:1f:b8:c7:ec:02:d3:2b:44:f7:de:
+                    a8:b6:93:08:8c:b1:a2:4b:71:9d:e6:73:58:fa:a5:
+                    b5:85:66:65:27:30:c5:06:98:cf:ee:ca:e3:64:bd:
+                    76:1f:a9:11:ba:da:7d:a3:33:6e:19:15:d9:09:24:
+                    7e:29:21:40:e2:7d:51:fa:9d:3e:97:43:2b:90:0a:
+                    3a:46:b3:aa:50:93:41:97:79:d8:b8:48:b4:02:ea:
+                    78:d1:e7:bc:a2:84:33:9b:ca:3a:de:8e:1d:74:29:
+                    9a:69:69:4b:9f:07:ea:0d:68:c6:6e:3f:1b:cc:ba:
+                    fc:bc:46:d9:f7:a4:9a:9a:11:78:14:44:c1:af:a1:
+                    1d:a1:ca:02:1d:15:01:2c:04:89:e4:aa:da:e6:b8:
+                    52:c8:ba:1d:bb:20:bc:91:8d:47:5f:f6:1c:56:de:
+                    70:c8:10:9d:32:ff:9d:50:4b:30:69:dc:fb:1f:cb:
+                    b8:3f:43:05:63:10:e2:00:d4:d3:5e:13:6c:67:fa:
+                    91:38:eb:bb:96:3e:a5:4c:58:57:ed:7e:e6:78:af:
+                    8c:7c:38:1d:39:09:b4:90:2a:0b:f9:91:5a:25:de:
+                    03:aa:56:2c:6e:ce:4d:c1:fd:cf:9f:85:61:e3:30:
+                    9a:cc:5a:09:0b:01:b1:0d:23:68:03:21:af:58:86:
+                    03:d7
                 Exponent: 65537 (0x10001)
         Attributes:
             Requested Extensions:
@@ -167,21 +156,21 @@ Certificate Request:
                     TLS Web Server Authentication
     Signature Algorithm: sha256WithRSAEncryption
     Signature Value:
-        16:20:be:10:fa:b4:23:12:b8:b5:51:88:0c:ca:b7:f9:37:b1:
-        b7:ff:55:60:77:e8:0a:0f:ab:43:2b:74:92:75:b1:1d:69:0b:
-        78:ca:58:52:7e:3c:92:68:80:d9:47:1a:21:74:fd:53:f9:29:
-        e9:be:93:6f:af:e7:14:6c:b1:89:09:78:f0:ff:e0:6f:07:eb:
-        40:84:77:2a:cf:f3:5e:b8:38:d2:18:b7:83:72:bf:08:3c:22:
-        8c:a1:3e:0b:b1:42:9e:e9:43:38:55:79:9c:36:24:e5:0f:18:
-        94:de:32:aa:b5:44:a3:64:13:ec:88:2c:90:4a:56:bf:5c:ce:
-        5f:99:f1:0e:aa:7b:15:2a:8d:2e:87:5c:d3:71:6e:98:61:b8:
-        38:2c:ef:f7:13:cf:65:04:85:cc:74:1d:3a:5b:60:1e:48:d8:
-        d1:33:b0:bf:7a:c3:4b:91:8d:66:22:66:9e:6f:37:51:8e:bc:
-        a2:2e:21:bd:01:d6:98:24:ce:ff:83:63:df:fc:71:58:3a:88:
-        21:90:9a:d4:75:dc:c2:67:d6:5e:29:e7:c6:27:7a:b4:54:50:
-        6a:06:39:a4:2a:9e:67:2b:9a:54:7c:ce:2a:9f:39:be:52:d4:
-        eb:16:a7:b8:90:ca:fb:78:83:e7:67:22:0c:04:37:bb:46:b9:
-        df:fc:43:09
+        51:94:0b:77:50:cb:d3:90:b1:1a:db:ec:eb:06:38:4e:78:03:
+        f1:61:cf:68:85:10:b7:46:ff:76:5b:77:f7:cc:17:61:5d:77:
+        6e:b8:bf:66:d7:6e:1e:45:0f:fb:f0:54:d4:67:e4:5f:4f:76:
+        cb:4d:d6:6c:3c:11:4b:e6:48:36:62:e1:f7:f1:59:2b:8e:0f:
+        a4:2c:da:ac:66:3a:53:3c:6f:8a:33:00:1a:d8:20:ca:9b:a8:
+        be:df:91:fb:48:1b:cc:8b:fd:fa:8b:dc:d7:55:9a:cf:e1:7a:
+        c3:24:05:df:05:e8:6e:69:20:eb:32:01:84:c3:cd:00:6e:a2:
+        72:3c:ac:46:9f:fe:92:8f:1d:8c:69:a1:cf:73:84:b0:49:cc:
+        b9:c1:6f:e4:41:31:54:6d:07:bd:de:e2:5a:78:c5:b7:0b:7e:
+        7b:89:70:94:74:ff:51:26:f3:3c:89:0e:22:a4:de:02:ed:ff:
+        f5:26:c9:21:6b:68:46:c3:4c:71:f4:4b:c2:b3:8e:22:8d:ae:
+        ef:55:5c:41:23:c9:c3:b8:75:5e:d4:e1:60:4f:2f:48:20:98:
+        62:bd:e1:48:03:77:a2:5b:63:e7:13:91:ee:c8:b1:a6:c2:1d:
+        53:8e:15:84:38:47:e8:30:d5:c0:43:be:76:fc:5b:49:76:f2:
+        ef:34:0f:a5
 ```
 
 ### Verification Checklist
@@ -219,10 +208,10 @@ All four SAN entries are present. This confirms that patients using any of the f
 
 ```bash
 openssl rsa -in portal_key.pem -modulus -noout | openssl md5
-MD5(stdin)= b9ad568bd8802f4cec7b215fdc35079f
+MD5(stdin)= 8f4507baca8ec4788baee06fc36c3cbd
 
 openssl req -in portal.csr -modulus -noout | openssl md5
-MD5(stdin)= b9ad568bd8802f4cec7b215fdc35079f
+MD5(stdin)= 8f4507baca8ec4788baee06fc36c3cbd
 ```
 
 Matching MD5 hashes confirm the CSR was generated from the correct private key.
@@ -285,13 +274,25 @@ DigiCert will verify the following before issuing the certificate:
 
 This validation process typically takes 1-3 business days for a new account, or 1-2 hours for an existing DigiCert account with validated organization information on file.
 
-#### Phase 4: Certificate Issuance and Installation
+#### Phase 4: Certificate issuance
 
 **Step 6: Receive Certificate from CA**
-- DigiCert sends an email notification when the certificate is issued
-- Download the certificate from CertCentral in PEM format
-- Download the intermediate certificate bundle
-- Save files as: `portal.crt`, `intermediate.crt`
+
+Upon successful completion of the validation process, DigiCert issues the certificate. The certificate issuance process works as follows:
+
+1. DigiCert's CA system generates the certificate by signing the CSR's public key with the intermediate CA's private key using SHA-256 with RSA
+2. The certificate includes all fields from the CSR (Subject, SANs, Key Usage, Extended Key Usage) plus the CA's additions (serial number, validity dates, issuer information, CA signature)
+3. DigiCert sends an email notification to Steve and the registered contacts when the certificate is issued
+4. The certificate is available for download from the DigiCert CertCentral portal in multiple formats (PEM, DER, PKCS#7)
+5. The intermediate certificate bundle is also available for download to complete the trust chain
+
+Download the following files from CertCentral:
+- `portal.crt` — the issued end-entity certificate in PEM format
+- `intermediate.crt` — the DigiCert intermediate CA certificate bundle in PEM format
+
+The certificate issuance is typically completed within 1-2 hours after validation is confirmed for existing DigiCert accounts.
+
+#### Phase 5: Installation on the web server
 
 **Step 7: Install Certificate on Web Server**
 
@@ -352,7 +353,7 @@ sudo apachectl configtest
 sudo systemctl reload apache2
 ```
 
-### Phase 5: Verification
+#### Phase 6: Verification that the new certificate is serving correctly
 
 **Step 8: Verify the New Certificate Is Serving Correctly**
 
@@ -374,13 +375,23 @@ openssl s_client -connect portal.meddefense.local:443 -servername portal.meddefe
 echo | openssl s_client -connect portal.meddefense.local:443 -servername portal.meddefense.local -status 2>/dev/null | grep "OCSP Response Status"
 ```
 
+- Test with curl (should show no certificate errors)
+
+```bash
+curl -vI https://portal.meddefense.local 2>&1 | grep -E "subject|issuer|SSL"
+```
+
 - Test each SAN entry
 
 ```bash
-for domain in portal.meddefense.local patient.meddefense.local www.portal.meddefense.local api.meddefense.local; do echo "Testing: $domain"; openssl s_client -connect "${domain}:443" -servername "${domain}" </dev/null 2>/dev/null | openssl x509 -noout -subject; done
+for domain in portal.meddefense.local patient.meddefense.local www.portal.meddefense.local api.meddefense.local; do
+    echo "Testing: $domain"
+    openssl s_client -connect "${domain}:443" -servername "${domain}" </dev/null 2>/dev/null |
+    openssl x509 -noout -subject
+done
 ```
 
-#### Phase 6: Decommission
+#### Phase 7: Decommission of the old certificate
 
 **Step 9: Decommission the Old Certificate**
 
@@ -398,7 +409,7 @@ sudo mv /etc/ssl/private/portal.meddefense.local.key.old /etc/ssl/archive/portal
 sudo chmod 700 /etc/ssl/archive/portal.old.$(date +%Y%m%d)/
 ```
 
-- Revoke the old certificate at the CA if the private key is being decommissioned early (Not necessary if the old certificate has already expired naturally)
+-Revoke the old certificate at the CA if the private key is being decommissioned early (Not necessary if the old certificate has already expired naturally)
 
 - Contact DigiCert support with the old certificate serial number if early revocation is required
 
@@ -408,20 +419,21 @@ sudo chmod 700 /etc/ssl/archive/portal.old.$(date +%Y%m%d)/
 rm -f /tmp/portal.crt /tmp/intermediate.crt /tmp/portal_key.pem
 ```
 
-#### Phase 7: Monitoring
+#### Phase 8: Monitoring for the next renewal
 
 **Step 10: Set Up Monitoring for the Next Renewal**
 
 - Create a monitoring script
 
 ```bash
-sudo tee /usr/local/bin/check_cert_expiry.sh > /dev/null << 'EOF'
+sudo tee /usr/local/bin/check_cert_expiry.sh > /dev/null << 'SCRIPT'
 #!/bin/bash
 DOMAIN="portal.meddefense.local"
 WARN_DAYS=60
 CRIT_DAYS=14
 ADMIN_EMAIL="steve@meddefense.local"
 
+# Extract expiry date from certificate
 EXPIRY_DATE=$(echo | openssl s_client -connect "${DOMAIN}:443" -servername "${DOMAIN}" 2>/dev/null |
               openssl x509 -noout -enddate 2>/dev/null | sed 's/notAfter=//')
 
@@ -447,18 +459,13 @@ else
     echo "[OK] Certificate for ${DOMAIN} expires in ${DAYS_LEFT} days (${EXPIRY_DATE})"
     exit 0
 fi
-EOF
+SCRIPT
 ```
 
-- Make script executable 
+- Make the script executable and add daily cron job
 
 ```bash
-chmod +x /usr/local/bin/check_cert_expiry.sh
-```
-
-- Add daily cron job
-
-```bash
+sudo chmod +x /usr/local/bin/check_cert_expiry.sh
 echo "0 8 * * * /usr/local/bin/check_cert_expiry.sh" | sudo tee /etc/cron.d/check_cert_expiry
 ```
 
@@ -479,7 +486,7 @@ CA submission: June 21, 2027
 | **CA Selection** | Choose CA (DigiCert OV) | ✅ Complete | Steve | Done |
 | **Submission to CA** | Submit CSR to DigiCert | Pending | Steve | Day 1 |
 | **Validation** | DCV + OV validation | Pending | DigiCert | Days 1-3 |
-| **Issuance** | Download certificate from CertCentral | Pending | Steve | Day 3 |
+| **Certificate issuance** | Download issued certificate | Pending | Steve | Day 3 |
 | **Installation** | Deploy certificate to web-srv-01 | Pending | Steve + SysAdmin | Day 4 |
 | **Verification** | Confirm new cert is live and correct | Pending | Steve | Day 4 |
 | **Decommission** | Archive old certificate | Pending | Steve | Day 4 |
@@ -493,7 +500,7 @@ Phase1 --> Milestone1["Submit CSR to DigiCert<br/>Day 1"]
 
 Milestone1 --> Validation["DigiCert validates<br/>organization & domain<br/>Days 1-3"]
 
-Validation --> Issue["Certificate issued<br/>by DigiCert<br/>Day 3"]
+Validation --> Issue["Certificate issuance<br/>by DigiCert<br/>Day 3"]
 
 Issue --> Deploy["Install certificate,<br/>verify, decommission old<br/>Day 4"]
 
@@ -510,5 +517,9 @@ Escalation --> Alert14["🔴 Alert escalated<br/>(14 days before expiry)"]
 Alert14 --> Expiry[July 28, 2027]
 Expiry --> End(["🛑 Certificate expires<br/>if not renewed"])
 ```
+
+---
+
+A script [`10-generate_csr.sh`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/10-generate_csr.sh) that automates steps 1-3 of the key generation and CSR creation process.
 
 ---
