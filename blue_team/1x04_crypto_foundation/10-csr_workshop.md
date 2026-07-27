@@ -34,19 +34,10 @@ openssl genrsa -out portal_key.pem 2048
 ❯ openssl rsa -in portal_key.pem -text -noout | head -5
 Private-Key: (2048 bit, 2 primes)
 modulus:
-    00:b7:98:ed:9f:be:f9:b2:92:d4:c3:7d:14:30:97:
-    b8:a3:08:17:fd:af:7d:48:2b:5d:e3:88:f5:9b:1e:Field Justifications
-
-| Field | Value | Reasoning |
-|---|---|---|
-| C (Country) | US | MedDefense is headquartered in San Francisco, California, USA |
-| ST (State) | California | Primary facility location |
-| L (Locality) | San Francisco | Corporate office location |
-| O (Organization) | MedDefense Health Syst
-...17851 more characters
-[file_contains] Pattern not found: portal.meddefense.local
-    ca:20:16:14:a2:d5:99:17:77:dc:f7:3e:ca:93:c5:
-```
+    00:8d:59:64:c6:ed:ed:21:09:86:d2:ac:75:27:06:
+    78:d7:a6:e6:83:c1:f1:f9:d4:1d:67:c2:06:ad:67:
+    93:1f:c3:57:71:45:08:61:30:84:75:06:59:d8:1a:
+```    
 
 #### Protect the private key
 
@@ -54,9 +45,10 @@ modulus:
 ~/projects/cert/meddef
 ❯ chmod 600 portal_key.pem
 
+
 ~/projects/cert/meddef
 ❯ ll
-.rw------- 1.7k steve 27 Jul 17:38  portal_key.pem
+.rw------- 1.7k steve 27 Jul 19:18  portal_key.pem
 ```
 
 ---
@@ -69,19 +61,19 @@ Rather than passing all parameters on the command line, an `openssl.cnf` file pr
 
 ```bash
 ~/projects/cert/meddef
-❯cat > openssl.cnf << 'EOF'
+❯cat > openssl.cnf << '\''EOF'\''
 [req]
-default_bits       = 2048
-default_md         = sha256
+default_bits = 2048
+default_md = sha256
 distinguished_name = req_distinguished_name
-req_extensions     = req_ext
-prompt             = no
+req_extensions = req_ext
+prompt = no
 
 [req_distinguished_name]
-C  = US
+C = US
 ST = California
-L  = San Francisco
-O  = MedDefense Health Systems
+L = San Francisco
+O = MedDefense Health Systems
 OU = Information Technology
 CN = portal.meddefense.local
 
@@ -96,8 +88,9 @@ DNS.1 = portal.meddefense.local
 DNS.2 = patient.meddefense.local
 DNS.3 = www.portal.meddefense.local
 DNS.4 = api.meddefense.local
-EOF
+EOF'
 ```
+
 ---
 
 ### Field Justifications
@@ -118,9 +111,8 @@ EOF
 | **keyUsage** | digitalSignature, keyEncipherment | Required for TLS server authentication per RFC 5280 |
 | **extendedKeyUsage** | serverAuth | Restricts certificate to TLS server authentication only |
 
----
-
 ### Generate the CSR
+---
 
 ```bash
 openssl req -new -key portal_key.pem -out portal.csr -config openssl.cnf
@@ -131,9 +123,9 @@ openssl req -new -key portal_key.pem -out portal.csr -config openssl.cnf
 ```bash
 ~/projects/cert/meddef
 ❯ ll
-.rw-r--r--  556 steve 27 Jul 17:45  openssl.cnf
-.rw-r--r-- 1.3k steve 27 Jul 17:47  portal.csr
-.rw------- 1.7k steve 27 Jul 17:38  portal_key.pem
+.rw-r--r--  566 steve 27 Jul 19:24  openssl.cnf
+.rw-r--r-- 1.3k steve 27 Jul 19:27  portal.csr
+.rw------- 1.7k steve 27 Jul 19:18  portal_key.pem
 ```
 
 ---
@@ -153,24 +145,24 @@ Certificate Request:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)
                 Modulus:
-                    00:b7:98:ed:9f:be:f9:b2:92:d4:c3:7d:14:30:97:
-                    b8:a3:08:17:fd:af:7d:48:2b:5d:e3:88:f5:9b:1e:
-                    ca:20:16:14:a2:d5:99:17:77:dc:f7:3e:ca:93:c5:
-                    e5:bd:2f:bf:c7:a6:04:69:f0:db:96:ec:2b:f1:a3:
-                    31:dd:7a:f5:c9:6e:c3:e1:6b:a3:33:31:a2:2b:7a:
-                    61:e6:16:55:6c:f7:d8:c7:e1:33:1a:f8:ea:a7:ea:
-                    16:55:42:e5:35:03:aa:1d:2f:09:2e:08:ea:21:8a:
-                    4f:6d:ad:c6:dd:c6:0c:79:cd:ad:67:57:e4:21:e1:
-                    45:1f:ad:94:8a:4e:59:07:ac:ca:dd:93:77:ca:8f:
-                    2e:b6:aa:9d:f8:c2:af:30:c3:76:3b:42:1d:a2:3d:
-                    aa:7f:19:9e:15:63:5a:ca:06:4a:79:a5:aa:20:53:
-                    bb:31:99:93:53:27:7d:83:b4:63:bf:be:62:6b:fd:
-                    ff:18:f3:05:87:fb:9e:d3:51:d9:93:1d:e2:ad:3b:
-                    18:0b:47:81:16:1b:5f:6e:33:1f:81:56:60:5c:f2:
-                    84:5b:99:39:55:3f:f8:d4:32:d2:9b:e1:c3:32:b0:
-                    60:e5:d1:d8:8c:63:05:3d:0d:cc:6d:ca:14:42:57:
-                    67:fd:1d:9c:3a:4f:bf:e4:42:b5:66:12:0f:d7:8e:
-                    57:e7
+                    00:8d:59:64:c6:ed:ed:21:09:86:d2:ac:75:27:06:
+                    78:d7:a6:e6:83:c1:f1:f9:d4:1d:67:c2:06:ad:67:
+                    93:1f:c3:57:71:45:08:61:30:84:75:06:59:d8:1a:
+                    ea:d9:09:75:2d:e4:30:f6:ab:07:8c:86:36:99:79:
+                    81:67:22:40:17:ed:f0:5f:e9:91:d4:73:c9:a3:92:
+                    c6:22:0e:6a:56:43:c9:ad:8c:57:88:6b:2a:dd:87:
+                    34:a8:61:0d:02:61:a2:20:06:be:9b:4d:3c:35:82:
+                    6e:b0:80:37:d7:b5:f2:a8:1f:3b:7c:0e:af:9f:cf:
+                    23:07:14:8d:10:d6:87:d7:cb:49:99:63:39:a0:bf:
+                    44:51:73:c7:f7:d4:c2:4b:c6:7d:56:8f:b4:ba:6f:
+                    14:68:84:fb:be:06:91:bf:2d:e7:bf:39:88:31:4b:
+                    43:c4:a8:f2:50:e9:5e:d3:60:cf:fd:6d:57:20:af:
+                    8d:1c:c1:38:0e:f3:5e:06:d5:88:2e:2b:f8:d4:e7:
+                    f0:b6:63:96:ff:66:32:e1:cc:9c:ed:e6:76:a1:9c:
+                    9f:9d:80:8b:7f:80:ec:98:ad:ac:87:6e:42:1b:7e:
+                    0a:0a:fd:e0:fc:90:9e:5d:64:63:66:2e:55:4e:ae:
+                    e6:bd:dc:53:c1:21:5b:5e:b0:6b:52:70:ca:af:54:
+                    5d:a7
                 Exponent: 65537 (0x10001)
         Attributes:
             Requested Extensions:
@@ -184,26 +176,26 @@ Certificate Request:
                     TLS Web Server Authentication
     Signature Algorithm: sha256WithRSAEncryption
     Signature Value:
-        0a:71:54:03:e7:46:6e:2e:68:6f:dc:82:a0:10:26:32:7a:fd:
-        7e:79:e7:70:a0:97:12:77:fe:1c:b4:ed:81:9d:d3:ae:6c:89:
-        27:da:ac:25:cc:bb:cb:a6:6f:75:44:d9:3e:41:7f:25:3b:82:
-        c2:f4:92:65:74:c0:e9:8a:7e:6d:d2:f5:a4:41:ed:17:93:c1:
-        57:6b:0f:48:4e:f1:43:d8:bb:6e:8c:65:3d:8a:1d:ab:02:f7:
-        71:46:0b:53:27:e2:64:55:18:b5:56:a5:c4:12:70:51:e4:9e:
-        f3:1d:a4:6a:12:60:98:86:f6:77:89:a0:c6:7d:11:fa:d9:7e:
-        d0:94:0e:8c:6f:f5:0e:d8:a0:ae:1a:4f:23:cf:85:6f:06:25:
-        8a:52:fa:54:ad:fd:91:08:b0:fb:3d:3c:a6:cf:09:ca:9a:8c:
-        fb:f2:8e:a2:e8:3b:87:71:33:fd:8f:a8:55:5a:e9:e9:2d:06:
-        11:37:b2:8f:58:31:1c:2f:2c:df:27:f0:a7:ac:32:c8:c2:6c:
-        22:7e:86:99:27:d0:71:4d:0c:25:e2:ea:92:86:7e:b4:9c:91:
-        bb:8d:d6:3d:ef:6b:1b:69:36:87:12:63:40:3e:86:23:01:64:
-        3b:2c:34:5d:27:ca:c2:23:df:61:05:f3:27:54:10:95:b0:61:
-        b2:67:ac:0b
+        8a:6e:00:37:18:41:c2:dc:c3:9e:33:2e:35:f4:f6:98:82:a1:
+        d9:fa:33:36:6d:b2:ea:3e:6b:a5:3b:26:af:51:ee:79:fc:29:
+        3f:42:cc:f8:c9:45:72:ca:49:d2:49:a1:68:c4:84:3d:5f:08:
+        6f:03:0a:0f:19:bc:bf:db:ed:e5:d6:71:59:2c:9b:6a:bd:1b:
+        af:da:cf:9d:f0:a6:5a:68:f6:2d:5e:70:0e:a0:8a:16:1c:ce:
+        c3:64:40:e2:9a:39:f1:4b:24:5f:a5:20:7c:b3:3f:6a:05:9b:
+        01:22:cc:2d:dd:d9:24:7e:70:b5:02:48:30:e2:9b:4a:9e:dc:
+        a9:d8:8e:7b:dc:de:90:ea:68:90:8c:22:ad:10:6d:b3:05:d5:
+        b5:8b:10:a2:16:a8:d3:22:88:b3:17:dd:15:42:b3:27:9c:b4:
+        67:82:0c:8b:fe:f1:9d:e0:a8:1e:cd:e1:ba:47:ba:5f:0c:73:
+        69:c0:dd:eb:e0:98:aa:3d:be:d9:5b:a0:43:dd:aa:35:9f:4b:
+        d2:f8:73:b9:09:52:f3:64:4f:f2:27:4d:a4:a0:e3:0f:30:7c:
+        db:bd:c8:42:4b:83:ee:a8:39:58:91:f7:f6:e8:07:23:99:ae:
+        f0:50:e6:47:9a:d5:4e:c0:e1:ec:2d:fe:1c:2f:8f:78:50:d5:
+        98:93:ae:94
 ```
 
 ---
 
-### Verification Checklist
+#### Verification Checklist
 
 | Field | Expected Value | Verified |
 |---|---|---|
@@ -243,18 +235,16 @@ All four SAN entries are present. This confirms that patients using any of the f
 ```bash
 ~/projects/cert/meddef
 ❯ openssl rsa -in portal_key.pem -modulus -noout | openssl md5
-MD5(stdin)= 430609bc3750d4dc26862303d575368c
+MD5(stdin)= 5786579cfab9c7d3275e760a37f3f390
 
 ~/projects/cert/meddef
 ❯ openssl req -in portal.csr -modulus -noout | openssl md5
-MD5(stdin)= 430609bc3750d4dc26862303d575368c
-
+MD5(stdin)= 5786579cfab9c7d3275e760a37f3f390
 ```
 
 Matching MD5 hashes confirm the CSR was generated from the correct private key.
 
 ---
-
 ## Part 4 - The Full Lifecycle
 
 ### Certificate Lifecycle Procedure for MedDefense Patient Portal
@@ -288,7 +278,7 @@ MedDefense will use **DigiCert** as the Certificate Authority for the patient po
 
 For a healthcare portal handling PHI, the OV certificate from DigiCert is justified because patients need visual confirmation that the certificate belongs to a verified organization, and the compliance audit trail supports HIPAA and SOC 2 requirements.
 
-**Step 4: Submit CSR to CA**
+**Step 4: Submission to CA**
 - Log in to DigiCert CertCentral portal
 - Upload `portal.csr` file
 - Select certificate product: GeoTrust or DigiCert OV TLS Certificate
