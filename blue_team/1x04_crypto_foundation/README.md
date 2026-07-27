@@ -230,7 +230,7 @@ Describe in 4-5 sentences how a man-in-the-middle attack defeats plain Diffie-He
 
 ---
 
-# 5. Digital Signatures in Practice
+# [5. Digital Signatures in Practice](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/5-sign_verify.sh)
 
 ## Goal
 Sign and verify files with OpenSSL, then connect the cryptographic properties of digital signatures to real-world healthcare requirements where non-repudiation is legally mandated.
@@ -251,8 +251,41 @@ Using your RSA key pair from T2:
 
 ### Part 2 - The Signing Script
 
-Write a script `5-sign_verify.sh` that:
+Write a script [`5-sign_verify.sh`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/5-sign_verify.sh) that:
 
 1. Accepts a mode argument: sign or verify
 2. In sign mode: takes a file path and a private key path, produces a `.sig` signature file
 3. In verify mode: takes a file path, a signature file path and a public key path, outputs the verification result
+
+---
+
+# [6. The Algorithm Landscape](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/6-algorithm_landscape.md)
+
+## Goal
+Build the definitive reference table of cryptographic algorithms, mapped against MedDefense's current and recommended usage, identifying every deprecated algorithm still in production.
+
+## Context
+The Security+ exam expects you to know which algorithms are current, which are deprecated and which are broken. More importantly, it expects you to know WHY certain algorithms are inappropriate for certain uses. This task builds the reference you will carry into the exam and into your career.
+
+Every algorithm in the table connects to something you have already seen in MedDefense.
+
+## Instructions
+Produce an **Algorithm Reference Table** organized by type:
+
+- **Symmetric:** AES-128, AES-192, AES-256, DES, 3DES, ChaCha20-Poly1305, RC4, Blowfish
+- **Asymmetric:** RSA-2048, RSA-4096, ECC P-256, ECC P-384, Diffie-Hellman, ECDHE
+- **Hash:** MD5, SHA-1, SHA-256, SHA-512, SHA-3
+- **Key Derivation:** PBKDF2, bcrypt, Argon2, scrypt
+
+For each algorithm:
+
+| Field | What to document |
+|-------|-----------------|
+| Type | Symmetric / Asymmetric / Hash / KDF |
+| Key/Output Size | In bits |
+| Primary Use Case | What it is designed for |
+| Status | Current / Deprecated / Broken |
+| Why Deprecated/Broken | If applicable, one sentence |
+| MedDefense Usage | Where this algorithm is or should be used at MedDefense |
+
+After the table, produce a **MedDefense Crypto Gap Analysis:** compare what MedDefense currently uses (from T0 and 1x02 findings) against what it should use. Identify at least 4 cases where MedDefense uses a deprecated or broken algorithm and recommend the specific replacement.
