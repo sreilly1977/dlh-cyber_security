@@ -496,21 +496,34 @@ The fundamental principle of encryption at rest is **separation of keys from cip
 
 ```mermaid
 flowchart TB
-    subgraph "Key Management Architecture"
-        NAS["NAS-01<br/>(Encrypted Data)<br/>NO KEYS STORED"]
-        HSM["HSM-01<br/>(Thales Gemalto)<br/>Key Store"]
-        Admin["Admin Workstation"]
-        Recovery["Offline USB<br/>(Recovery)"]
+    subgraph nas["Physical NAS-01"]
+        A["LUKS2 Full-Disk Encryption<br/>Protects entire disk,<br/>boots via initramfs"]
         
-        NAS <-->|TLS| HSM
-        Admin -->|SSH Key Push| NAS
-        Recovery -->|Physical delivery| HSM
+        subgraph "LUKS2 Volume (backup_data)"
+            B["LUKS2 Volume<br/>Separate key for backup partition"]
+            
+            subgraph "ext4 Filesystem"
+                C["Backup Files"]
+                
+                D["/backups/daily/tar.gz.enc"]
+                E["/backups/weekly/tar.gz.enc"]
+                F["/backups/monthly/tar.gz.enc"]
+            end
+        end
     end
     
-    style NAS fill:#ffebee,stroke:#c62828,stroke-width:2px
-    style HSM fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style Admin fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Recovery fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    A --> B
+    B --> C
+    C --> D
+    C --> E
+    C --> F
+    
+    style A fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style B fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style C fill:#fff3e0,stroke:#ff6f00,stroke-width:2px
+    style D fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
+    style E fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
+    style F fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
 ```
 
 #### Operational Flow
