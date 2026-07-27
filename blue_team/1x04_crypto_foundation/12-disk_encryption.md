@@ -224,7 +224,7 @@ grep: strings: No such file or directory
 | No readable patient names in raw file | Attacker cannot extract PHI by stealing the physical disk |
 | No readable MRN numbers in raw file | Database exports remain protected even if NAS is physically compromised |
 | Only LUKS header metadata visible | Attack surface reduced to header-only (master key is encrypted) |
-| `strings` command returns garbage | Even memory-dump analysis yields no usable information |
+| `strings` command returns nothing | Even memory-dump analysis yields no usable information |
 
 This proves **encryption at rest** is effective: the data is cryptographically bound to the passphrase. Without the key, the ciphertext appears as random noise, providing no meaningful information to attackers who gain physical or network access to the storage medium.
 
