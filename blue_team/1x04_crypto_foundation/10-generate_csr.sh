@@ -186,26 +186,55 @@ else
 fi
 
 #---------------------------------------------------------------------------
-# Verify the CSR
+# Verification: Inspect the CSR and confirm all fields
 #---------------------------------------------------------------------------
 
-log_info "CSR verification:"
-openssl req -in "${CSR_PATH}" -text -noout 2>&1 | head -15
+log_info ""
+log_info "=== CSR Inspection ==="
+openssl req -text -noout -in "${CSR_PATH}" 2>&1
 
-#---------------------------------------------------------------------------
+log_info ""
+log_info "=== Verification Checklist ==="
+
+# Extract and verify each field
+SUBJECT=$(openssl req -in "${CSR_PATH}" -noout -subject 2>/dev/null)
+log_info "Subject: ${SUBJECT}"
+
+# Check SAN entries
+SAN_LINE=$(openssl req -in "${CSR_PATH}" -text -noout 2>/dev/null | grep "Subject Alternative Name" -A1)
+log_info "Subject Alternative Names:"
+echo "${SAN_LINE}" | tail -1 | sed 's/^ */  /'
+
+# Verify each SAN is present
+for dns in "${SAN_DNS_1}" "${SAN_DNS_2}" "${SAN_DNS_3}" "${SAN_DNS_4}"; do
+    if echo "${SAN_LINE}" | grep -q "${dns}"; then
+        log_success "SAN present: ${dns}"
+    else
+        die 1 "SAN missing: ${dns}"
+    fi
+done
+
+# Verify key and CSR moduli match
+KEY_MODULUS=$(openssl rsa -in "${KEY_PATH}" -modulus -noout 2>/dev/null | openssl md5)
+CSR_MODULUS=$(openssl req -in "${CSR_PATH}" -modulus -noout 2>/dev/null | openssl md5)
+
+if [[ "${KEY_MODULUS}" == "${CSR_MODULUS}" ]]; then
+    log_success "Key and CSR moduli match: ${KEY_MODULUS}"
+else
+    die 1 "Key modulus (${KEY_MODULUS}) does not match CSR modulus (${CSR_MODULUS})"
+fi
+
 # Summary
-#---------------------------------------------------------------------------
-
-log_success ""
-log_success "=== CSR Generation Complete ==="
-log_success "Private Key: ${KEY_PATH}"
-log_success "CSR: ${CSR_PATH}"
-log_success "Config: ${CONFIG_PATH}"
-log_success ""
+log_info ""
+log_info "=== Summary ==="
+log_success "Private key: ${KEY_PATH}"
+log_success "CSR file: ${CSR_PATH}"
+log_success "Config file: ${CONFIG_PATH}"
+log_info ""
 log_info "Next steps:"
-log_info "  1. Submit ${CSR_FILE} to your Certificate Authority"
-log_info "  2. Wait for certificate issuance"
-log_info "  3. Install the signed certificate on your web server"
+log_info "  1. Submit ${CSR_PATH} to DigiCert CertCentral"
+log_info "  2. Complete organization validation"
+log_info "  3. Download issued certificate"
 log_info "  4. Install on web-srv-01"
 log_info "  5. Verify with: openssl s_client -connect portal.meddefense.local:443"
 log_info ""
