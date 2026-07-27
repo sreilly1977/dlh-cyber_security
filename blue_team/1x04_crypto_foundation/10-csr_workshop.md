@@ -35,7 +35,16 @@ openssl genrsa -out portal_key.pem 2048
 Private-Key: (2048 bit, 2 primes)
 modulus:
     00:b7:98:ed:9f:be:f9:b2:92:d4:c3:7d:14:30:97:
-    b8:a3:08:17:fd:af:7d:48:2b:5d:e3:88:f5:9b:1e:
+    b8:a3:08:17:fd:af:7d:48:2b:5d:e3:88:f5:9b:1e:Field Justifications
+
+| Field | Value | Reasoning |
+|---|---|---|
+| C (Country) | US | MedDefense is headquartered in San Francisco, California, USA |
+| ST (State) | California | Primary facility location |
+| L (Locality) | San Francisco | Corporate office location |
+| O (Organization) | MedDefense Health Syst
+...17851 more characters
+[file_contains] Pattern not found: portal.meddefense.local
     ca:20:16:14:a2:d5:99:17:77:dc:f7:3e:ca:93:c5:
 ```
 
@@ -60,35 +69,36 @@ Rather than passing all parameters on the command line, an `openssl.cnf` file pr
 
 ```bash
 ~/projects/cert/meddef
-❯ bash -c "cat > openssl.cnf << 'EOF'
-  [req]
-  default_bits = 2048
-  default_md = sha256
-  distinguished_name = req_distinguished_name
-  req_extensions = req_ext
-  prompt = no
+❯cat > openssl.cnf << 'EOF'
+[req]
+default_bits       = 2048
+default_md         = sha256
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
 
-  [req_distinguished_name]
-  C = US
-  ST = California
-  L = San Francisco
-  O = MedDefense Health Systems
-  OU = Information Technology
-  CN = portal.meddefense.org
+[req_distinguished_name]
+C  = US
+ST = California
+L  = San Francisco
+O  = MedDefense Health Systems
+OU = Information Technology
+CN = portal.meddefense.local
 
-  [req_ext]
-  subjectAltName = @alt_names
-  basicConstraints = CA:FALSE
-  keyUsage = digitalSignature, keyEncipherment
-  extendedKeyUsage = serverAuth
+[req_ext]
+subjectAltName = @alt_names
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
 
-  [alt_names]
-  DNS.1 = portal.meddefense.org
-  DNS.2 = patient.meddefense.org
-  DNS.3 = www.portal.meddefense.org
-  DNS.4 = api.meddefense.org
-  EOF"
+[alt_names]
+DNS.1 = portal.meddefense.local
+DNS.2 = patient.meddefense.local
+DNS.3 = www.portal.meddefense.local
+DNS.4 = api.meddefense.local
+EOF
 ```
+---
 
 ### Field Justifications
 
@@ -99,14 +109,16 @@ Rather than passing all parameters on the command line, an `openssl.cnf` file pr
 | **L (Locality)** | San Francisco | Corporate office location |
 | **O (Organization)** | MedDefense Health Systems | Legal entity name as registered with the CA; must match business registration records for OV validation |
 | **OU (Organizational Unit)** | Information Technology | Department responsible for the portal; provides internal organizational context |
-| **CN (Common Name)** | portal.meddefense.org | Primary FQDN patients use to access the portal; the URL printed on patient materials and appointment reminders |
-| **SAN DNS.1** | portal.meddefense.org | Primary domain (mirrors CN) |
-| **SAN DNS.2** | patient.meddefense.org | Alternate URL some patients use based on marketing campaigns referencing "patient portal" |
-| **SAN DNS.3** | www.portal.meddefense.org | Handles patients who prepend www. out of habit |
-| **SAN DNS.4** | api.meddefense.org | Backend API endpoint used by the mobile responsive portal for AJAX calls; must be covered by the same certificate to avoid mixed-content warnings |
+| **CN (Common Name)** | portal.meddefense.local | Primary FQDN patients use to access the portal; the URL printed on patient materials and appointment reminders |
+| **SAN DNS.1** | portal.meddefense.local | Primary domain (mirrors CN) |
+| **SAN DNS.2** | patient.meddefense.local | Alternate URL some patients use based on marketing campaigns referencing "patient portal" |
+| **SAN DNS.3** | www.portal.meddefense.local | Handles patients who prepend www. out of habit |
+| **SAN DNS.4** | api.meddefense.local | Backend API endpoint used by the mobile responsive portal for AJAX calls; must be covered by the same certificate to avoid mixed-content warnings |
 | **basicConstraints** | CA:FALSE | This is an end-entity certificate, not a CA certificate |
 | **keyUsage** | digitalSignature, keyEncipherment | Required for TLS server authentication per RFC 5280 |
 | **extendedKeyUsage** | serverAuth | Restricts certificate to TLS server authentication only |
+
+---
 
 ### Generate the CSR
 
@@ -136,7 +148,7 @@ openssl req -new -key portal_key.pem -out portal.csr -config openssl.cnf
 Certificate Request:
     Data:
         Version: 1 (0x0)
-        Subject: C=US, ST=California, L=San Francisco, O=MedDefense Health Systems, OU=Information Technology, CN=portal.meddefense.org
+        Subject: C=US, ST=California, L=San Francisco, O=MedDefense Health Systems, OU=Information Technology, CN=portal.meddefense.local
         Subject Public Key Info:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)
@@ -163,7 +175,7 @@ Certificate Request:
         Attributes:
             Requested Extensions:
                 X509v3 Subject Alternative Name: 
-                    DNS:portal.meddefense.org, DNS:patient.meddefense.org, DNS:www.portal.meddefense.org, DNS:api.meddefense.org
+                    DNS:portal.meddefense.local, DNS:patient.meddefense.local, DNS:www.portal.meddefense.local, DNS:api.meddefense.local
                 X509v3 Basic Constraints: 
                     CA:FALSE
                 X509v3 Key Usage: 
@@ -172,22 +184,24 @@ Certificate Request:
                     TLS Web Server Authentication
     Signature Algorithm: sha256WithRSAEncryption
     Signature Value:
-        2c:26:7a:82:fe:61:d7:30:7d:0d:1b:1e:e2:4d:cc:d0:6e:6d:
-        18:ad:19:c6:1a:e5:04:3d:42:ea:c1:83:99:41:d3:43:02:5d:
-        2a:a5:94:6d:dd:35:86:85:b2:d4:05:6d:78:05:8a:d5:96:7f:
-        0e:75:2a:fe:ef:8d:4c:5a:9d:82:9a:09:92:5f:81:59:90:3d:
-        16:dd:ac:d5:21:92:5d:59:a3:eb:74:51:4f:cb:f7:3b:09:b7:
-        e5:bf:2c:ec:cc:7d:29:7a:a2:74:8b:d6:81:22:e0:2c:b7:1e:
-        df:66:28:15:aa:10:4e:b5:14:c0:05:fe:8b:77:67:82:8a:9e:
-        10:f3:ef:ed:c6:ea:b7:6c:f5:72:bf:d9:e1:ab:58:5a:e2:41:
-        10:40:c3:e2:da:62:39:34:ea:53:f6:0a:60:51:83:e7:f4:cd:
-        9e:b7:0a:7f:7d:0e:03:d9:bf:bb:78:ef:99:c7:eb:79:54:2d:
-        fa:b4:92:76:57:59:31:44:7c:16:06:7a:59:3e:f3:4f:b4:61:
-        19:92:7f:01:d3:0f:05:36:ec:a7:fd:cf:fa:da:e1:b2:6b:1e:
-        2f:06:80:f8:01:d4:f3:95:d7:c1:7a:01:f9:4c:e1:67:dd:fb:
-        fa:ee:fe:c0:b0:70:e2:2a:ec:4c:5c:6c:b3:07:fb:c3:37:95:
-        21:a8:d3:a3
+        0a:71:54:03:e7:46:6e:2e:68:6f:dc:82:a0:10:26:32:7a:fd:
+        7e:79:e7:70:a0:97:12:77:fe:1c:b4:ed:81:9d:d3:ae:6c:89:
+        27:da:ac:25:cc:bb:cb:a6:6f:75:44:d9:3e:41:7f:25:3b:82:
+        c2:f4:92:65:74:c0:e9:8a:7e:6d:d2:f5:a4:41:ed:17:93:c1:
+        57:6b:0f:48:4e:f1:43:d8:bb:6e:8c:65:3d:8a:1d:ab:02:f7:
+        71:46:0b:53:27:e2:64:55:18:b5:56:a5:c4:12:70:51:e4:9e:
+        f3:1d:a4:6a:12:60:98:86:f6:77:89:a0:c6:7d:11:fa:d9:7e:
+        d0:94:0e:8c:6f:f5:0e:d8:a0:ae:1a:4f:23:cf:85:6f:06:25:
+        8a:52:fa:54:ad:fd:91:08:b0:fb:3d:3c:a6:cf:09:ca:9a:8c:
+        fb:f2:8e:a2:e8:3b:87:71:33:fd:8f:a8:55:5a:e9:e9:2d:06:
+        11:37:b2:8f:58:31:1c:2f:2c:df:27:f0:a7:ac:32:c8:c2:6c:
+        22:7e:86:99:27:d0:71:4d:0c:25:e2:ea:92:86:7e:b4:9c:91:
+        bb:8d:d6:3d:ef:6b:1b:69:36:87:12:63:40:3e:86:23:01:64:
+        3b:2c:34:5d:27:ca:c2:23:df:61:05:f3:27:54:10:95:b0:61:
+        b2:67:ac:0b
 ```
+
+---
 
 ### Verification Checklist
 
@@ -198,13 +212,13 @@ Certificate Request:
 | Subject L | San Francisco | ✅ |
 | Subject O | MedDefense Health Systems | ✅ |
 | Subject OU | Information Technology | ✅ |
-| Subject CN | portal.meddefense.org | ✅ |
+| Subject CN | portal.meddefense.local | ✅ |
 | Public Key Algorithm | RSA | ✅ |
 | Key Size | 2048 bits | ✅ |
-| SAN DNS.1 | portal.meddefense.org | ✅ |
-| SAN DNS.2 | patient.meddefense.org | ✅ |
-| SAN DNS.3 | www.portal.meddefense.org | ✅ |
-| SAN DNS.4 | api.meddefense.org | ✅ |
+| SAN DNS.1 | portal.meddefense.local | ✅ |
+| SAN DNS.2 | patient.meddefense.local | ✅ |
+| SAN DNS.3 | www.portal.meddefense.local | ✅ |
+| SAN DNS.4 | api.meddefense.local | ✅ |
 | Basic Constraints | CA:FALSE | ✅ |
 | Key Usage | Digital Signature, Key Encipherment | ✅ |
 | Extended Key Usage | TLS Web Server Authentication | ✅ |
@@ -218,7 +232,7 @@ Certificate Request:
 ~/projects/cert/meddef
 ❯ openssl req -text -noout -in portal.csr | grep -A1 "Subject Alternative Name"
                 X509v3 Subject Alternative Name: 
-                    DNS:portal.meddefense.org, DNS:patient.meddefense.org, DNS:www.portal.meddefense.org, DNS:api.meddefense.org
+                    DNS:portal.meddefense.local, DNS:patient.meddefense.local, DNS:www.portal.meddefense.local, DNS:api.meddefense.local
 ```
 
 All four SAN entries are present. This confirms that patients using any of the four portal URLs will be served a valid certificate without browser warnings.
@@ -257,8 +271,6 @@ Matching MD5 hashes confirm the CSR was generated from the correct private key.
 - SAN entries verified
 - Key-to-CSR modulus match confirmed
 
----
-
 #### Phase 2: CA Selection and Submission
 
 **Step 3: Select Certificate Authority**
@@ -283,8 +295,6 @@ For a healthcare portal handling PHI, the OV certificate from DigiCert is justif
 - Select validity period: 1 year (398 days)
 - Submit organization validation documents if not already on file (Articles of Incorporation, business license, phone verification via callback to published business number)
 
----
-
 #### Phase 3: Validation Process
 
 **Step 5: CA Validation (DigiCert performs)**
@@ -293,15 +303,13 @@ DigiCert will verify the following before issuing the certificate:
 
 | Validation Step | What the CA Verifies | How |
 |---|---|---|
-| **Domain Control Validation (DCV)** | MedDefense controls portal.meddefense.org | DNS TXT record, email to admin@meddefense.org, or HTTP file upload to /.well-known/pki-validation/ |
+| **Domain Control Validation (DCV)** | MedDefense controls portal.meddefense.local | DNS TXT record, email to admin@meddefense.local, or HTTP file upload to /.well-known/pki-validation/ |
 | **Organization Validation (OV)** | MedDefense Health Systems is a legitimate registered business | Dun & Bradstreet lookup, Secretary of State business registry, or Articles of Incorporation |
 | **Address Validation** | 1234 Healthcare Blvd, San Francisco, CA is a real business address | Utility bill, lease agreement, or government registration |
 | **Telephone Validation** | MedDefense's phone number is a valid business line | Callback to the phone number listed in the business registry |
 | **Order Verification** | The person submitting the CSR is authorized to act for MedDefense | Phone call to a verified MedDefense contact, employment verification |
 
 This validation process typically takes 1-3 business days for a new account, or 1-2 hours for an existing DigiCert account with validated organization information on file.
-
----
 
 #### Phase 4: Certificate Issuance and Installation
 
@@ -328,17 +336,17 @@ ssh admin@web-srv-01
 - Move files to correct locations
 
 ```bash
-sudo mv portal.crt /etc/ssl/certs/portal.meddefense.org.crt 
-sudo mv intermediate.crt /etc/ssl/certs/portal.meddefense.org.intermediate.crt 
-sudo mv portal_key.pem /etc/ssl/private/portal.meddefense.org.key 
-sudo chmod 600 /etc/ssl/private/portal.meddefense.org.key 
-sudo chown root:root /etc/ssl/private/portal.meddefense.org.key
+sudo mv portal.crt /etc/ssl/certs/portal.meddefense.local.crt 
+sudo mv intermediate.crt /etc/ssl/certs/portal.meddefense.local.intermediate.crt 
+sudo mv portal_key.pem /etc/ssl/private/portal.meddefense.local.key 
+sudo chmod 600 /etc/ssl/private/portal.meddefense.local.key 
+sudo chown root:root /etc/ssl/private/portal.meddefense.local.key
 ```
 
 - Combine leaf and intermediate for full chain file
 
 ```bash
-sudo cat /etc/ssl/certs/portal.meddefense.org.crt /etc/ssl/certs/portal.meddefense.org.intermediate.crt > /etc/ssl/certs/portal.meddefense.org.fullchain.crt
+sudo cat /etc/ssl/certs/portal.meddefense.local.crt /etc/ssl/certs/portal.meddefense.local.intermediate.crt > /etc/ssl/certs/portal.meddefense.local.fullchain.crt
 ```
 
 - Back up the current Apache configuration
@@ -350,9 +358,8 @@ sudo cp /etc/apache2/sites-available/meddefense-ssl.conf /etc/apache2/sites-avai
 - Update Apache configuration
 
 ```
-Edit /etc/apache2/sites-available/meddefense-ssl.conf:
-SSLCertificateFile /etc/ssl/certs/portal.meddefense.org.fullchain.crt
-SSLCertificateKeyFile /etc/ssl/private/portal.meddefense.org.key
+SSLCertificateFile /etc/ssl/certs/portal.meddefense.local.fullchain.crt
+SSLCertificateKeyFile /etc/ssl/private/portal.meddefense.local.key
 SSLUseStapling On
 SSLStaplingCache shmcb:/var/run/ocsp(128000)
 ```
@@ -378,32 +385,31 @@ sudo systemctl reload apache2
 - Test from an external machine
 
 ```bash
-openssl s_client -connect portal.meddefense.org:443 -servername portal.meddefense.org </dev/null 2>/dev/null | openssl x509 -noout -subject -issuer -dates -serial
+openssl s_client -connect portal.meddefense.local:443 -servername portal.meddefense.local </dev/null 2>/dev/null | openssl x509 -noout -subject -issuer -dates -serial
 ```
 
 - Verify the full chain
 
 ```bash
-openssl s_client -connect portal.meddefense.org:443 -servername portal.meddefense.org -showcerts </dev/null 2>/dev/null | grep -E "depth|verify"
+openssl s_client -connect portal.meddefense.local:443 -servername portal.meddefense.local -showcerts </dev/null 2>/dev/null | grep -E "depth|verify"
 ```
 
 - Check OCSP Stapling
 
 ```bash
-echo | openssl s_client -connect portal.meddefense.org:443 -servername portal.meddefense.org -status 2>/dev/null | grep "OCSP Response Status"
+echo | openssl s_client -connect portal.meddefense.local:443 -servername portal.meddefense.local -status 2>/dev/null | grep "OCSP Response Status"
 ```
 
 - Test with curl
 
 ```bash
-curl -vI https://portal.meddefense.org 2>&1 | grep -E "subject|issuer|SSL"
+curl -vI https://portal.meddefense.local 2>&1 | grep -E "subject|issuer|SSL"
 ```
 
 - Test each SAN entry
 
 ```bash
-for domain in portal.meddefense.org patient.meddefense.org www.portal.meddefense.org api.meddefense.org; do echo "Testing: $domain" openssl s_client -connect "domain:443"−servername"{domain}" </dev/null 2>/dev/null |
-openssl x509 -noout -subject done
+for domain in portal.meddefense.local patient.meddefense.local www.portal.meddefense.local api.meddefense.local; do echo "Testing: $domain" openssl s_client -connect "domain:443"−servername"{domain}" </dev/null 2>/dev/null | openssl x509 -noout -subject done
 ```
 
 ---
@@ -416,8 +422,8 @@ openssl x509 -noout -subject done
 
 ```bash
 sudo mkdir -p /etc/ssl/archive/portal.old.$(date +%Y%m%d) 
-sudo mv /etc/ssl/certs/portal.meddefense.org.crt.old /etc/ssl/archive/portal.old.$(date +%Y%m%d)/ 
-sudo mv /etc/ssl/private/portal.meddefense.org.key.old /etc/ssl/archive/portal.old.$(date +%Y%m%d)/
+sudo mv /etc/ssl/certs/portal.meddefense.local.crt.old /etc/ssl/archive/portal.old.$(date +%Y%m%d)/ 
+sudo mv /etc/ssl/private/portal.meddefense.local.key.old /etc/ssl/archive/portal.old.$(date +%Y%m%d)/
 ```
 
 - Retain the old certificate for signature verification of historical documents (Records signed with the old certificate may need verification during audit)
@@ -446,10 +452,10 @@ rm -f /tmp/portal.crt /tmp/intermediate.crt /tmp/portal_key.pem
 
 ```bash
 #!/bin/bash
-DOMAIN="portal.meddefense.org"
+DOMAIN="portal.meddefense.local"
 WARN_DAYS=60
 CRIT_DAYS=14
-ADMIN_EMAIL="steve@meddefense.org"
+ADMIN_EMAIL="steve@meddefense.local"
 
 # Extract expiry date from certificate
 EXPIRY_DATE=$(echo | openssl s_client -connect "${DOMAIN}:443" -servername "${DOMAIN}" 2>/dev/null |
@@ -499,7 +505,7 @@ CA submission: June 21, 2027
 
 ---
 
-### Lifecycle Summary
+## Lifecycle Summary
 
 | Phase | Step | Status | Owner | Deadline |
 |---|---|---|---|---|
