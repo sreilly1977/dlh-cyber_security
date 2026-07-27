@@ -523,4 +523,4 @@ Both roots follow the same pattern: decades-long validity, same key size, self-s
 
 #### Conclusion
 
-The 22.5-year validity period does **not** surprise me in the context of root CA certificates, as we established in Part 4 of Task 9 that root CAs operate under fundamentally different constraints than end-entity certificates. However, the sheer scale of this commitment warrants active monitoring: MedDefense should track Amazon Root CA 1's expiration as part of its certificate inventory management, with alerts at 10 years, 5 years, and 2 years before expiry to prepare for potential migration to Amazon's successor root CA.
+The 22.5-year validity period does **not** surprise me in the context of root CA certificates, as we established in Part 4 of Task 9 that root CAs operate under fundamentally different constraints than end-entity certificates.
