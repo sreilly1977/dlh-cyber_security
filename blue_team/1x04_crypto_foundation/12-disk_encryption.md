@@ -377,17 +377,17 @@ This is confidential medical record data for testing purposes.
 
 ---
 
-## Part 4 - MedDefense Backup Encryption Design
+# Part 4 - MedDefense Backup Encryption Design
 
-### Executive Summary
+## Executive Summary
 
 NAS-01 currently stores all MedDefense backups in plaintext. This design document outlines the encryption-at-rest strategy using LUKS2 with appropriate key management, performance considerations, and offsite replication integration.
 
 ### 1. Encryption Level Selection
 
 | Option | Recommendation | Rationale |
-|---|---|---|
-| **Full-disk encryption (FDE)** | ✅ **Selected** | Protects all data on NAS-01 including OS, configs, and backups; simplest operational model; no application changes required |
+|--------|----------------|-----------|
+| **Full-disk encryption (FDE)** | ✅ Selected | Protects all data on NAS-01 including OS, configs, and backups; simplest operational model; no application changes required |
 | **Volume encryption (LUKS)** | Secondary layer | Use LUKS for individual backup partitions as defense-in-depth within FDE |
 | **File-level encryption** | ❌ Not recommended | High overhead; complex key management; breaks backup software; unnecessary given FDE+LUKS |
 
@@ -395,20 +395,24 @@ NAS-01 currently stores all MedDefense backups in plaintext. This design documen
 
 File-level encryption (such as eCryptFS or GPG per-file encryption) introduces several operational challenges that make it unsuitable for MedDefense's backup infrastructure:
 
-1. **Key Management Complexity**: Each file or directory would need separate encryption keys, creating administrative burden across multiple administrators and backup systems
-2. **Performance Overhead**: Encrypting thousands of individual files adds significant latency compared to block-level encryption which operates on contiguous data streams
-3. **Breaks Backup Software**: Many enterprise backup tools expect to read entire volumes sequentially; file-level encryption fragments this workflow
-4. **Metadata Leakage**: Even with file contents encrypted, filenames and directory structures remain visible to attackers with filesystem access
-5. **Snapshot Incompatibility**: Incremental backup solutions struggle with file-level encrypted directories that don't expose clear block changes
+1. **Key Management Complexity:** Each file or directory would need separate encryption keys, creating administrative burden across multiple administrators and backup systems
 
-Given that we are implementing **full-disk** LUKS2 encryption, file-level encryption provides redundant protection with significant operational cost and no meaningful security benefit for our threat model.
+2. **Performance Overhead:** Encrypting thousands of individual files adds significant latency compared to block-level encryption which operates on contiguous data streams
+
+3. **Breaks Backup Software:** Many enterprise backup tools expect to read entire volumes sequentially; file-level encryption fragments this workflow
+
+4. **Metadata Leakage:** Even with file contents encrypted, filenames and directory structures remain visible to attackers with filesystem access
+
+5. **Snapshot Incompatibility:** Incremental backup solutions struggle with file-level encrypted directories that don't expose clear block changes
+
+Given that we are implementing full-disk LUKS2 encryption, file-level encryption provides redundant protection with significant operational cost and no meaningful security benefit for our threat model.
 
 #### Selected Architecture: Layered Encryption
 
 ```mermaid
 flowchart TB
     subgraph "Physical NAS-01"
-        A["LUKS2 Full-Disk Encryption<br/>Protects entire disk, boots via initramfs"]
+        A["LUKS2 Full-Disk Encryption<br/>Protects entire disk,<br/>boots via initramfs"]
         
         subgraph "LUKS2 Volume (backup_data)"
             B["LUKS2 Volume<br/>Separate key for backup partition"]
@@ -438,43 +442,187 @@ flowchart TB
     style F fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
 ```
 
+### 2. Performance Overhead Estimate
+
+Based on T1 performance measurements for AES-NI hardware acceleration:
+
+| Metric | Baseline (No Encryption) | With LUKS AES-256-GCM | Overhead |
+|--------|--------------------------|----------------------|----------|
+| Sequential Read | 550 MB/s | 480 MB/s | -13% |
+| Sequential Write | 520 MB/s | 450 MB/s | -14% |
+| Random Read (4K) | 45,000 IOPS | 38,000 IOPS | -16% |
+| Random Write (4K) | 35,000 IOPS | 29,000 IOPS | -17% |
+| CPU Utilization | 2-3% | 8-10% | +6% |
+
+#### Analysis
+
+The performance overhead is negligible for backup workloads because:
+
+1. **Backups are sequential I/O, not random access**
+2. **AES-NI hardware acceleration** is enabled on Intel/AMD CPUs
+3. **Backup windows are wide:** Nightly backups run 8-hour windows, not real-time requirements
+4. **Network bandwidth is limiting factor,** not disk throughput (1GbE = 125 MB/s maximum)
+
+**Recommendation:** Accept the ~15% disk performance penalty. The security benefit far outweighs the minimal impact on backup duration.
+
+### 3. Key Storage Location
+
+| Option | Recommended? | Reasoning |
+|--------|--------------|-----------|
+| **Store key on NAS itself** | ❌ **NEVER** | Defeats purpose—if NAS is stolen, key goes with data |
+| **Store key in config file on NAS** | ❌ **NEVER** | Same weakness; plaintext key accessible via network |
+| **Store key in initramfs on NAS** | ❌ No | Still on the compromised system; can be extracted |
+| **Store key on separate HSM server** | ✅ **YES** | Network-separated; hardware-protected; audit logs |
+| **Store key with offline cold storage** | ✅ **YES** | USB drive in safe; used only for disaster recovery |
+| **Split key across multiple admins** | ✅ **YES** | Shamir's Secret Sharing; requires 3-of-5 for recovery |
+
+#### CRITICAL RULE: The encryption key must NOT be stored on the NAS itself
+
+If the NAS is physically stolen or compromised, an attacker would have both the encrypted data AND the key needed to decrypt it—defeating the entire purpose of encryption at rest. The key must be stored separately from the encrypted volume.
+
+#### Why the Key Cannot Be on the NAS
+
+1. **Physical Theft Scenario:** If an attacker steals NAS-01 and the key is stored locally (even in `/etc/crypttab`), they can simply boot the drive and unlock the volume without any additional credentials
+
+2. **Network Compromise Scenario:** If the flat network breach from 1x01 allows an attacker to SSH into NAS-01, they can extract any locally-stored key files and decrypt the backups remotely
+
+3. **Insider Threat:** A malicious administrator with root access to NAS-01 could extract locally-stored keys and exfiltrate PHI without triggering any alerts
+
+4. **Forensic Recovery:** Even if the NAS is wiped, a forensic analyst could recover key material from swap files, memory dumps, or backup directories on the same system
+
+The fundamental principle of encryption at rest is **separation of keys from ciphertext**. This is why industry standards (NIST SP 800-111, HIPAA §164.312) require cryptographic key management systems (KMS) that are logically and physically separated from the encrypted data stores.
+
+#### Selected Key Management Strategy
+
+```mermaid
+flowchart TB
+    subgraph "Key Management Architecture"
+        direction LR
+        
+        NAS["NAS-01<br/>(Encrypted Data)<br/>❌ NO KEYS"]
+        HSM["HSM-01<br/>(Thales Gemalto)<br/>Key Store"]
+        
+        Admin["Admin Workstation"]
+        Recovery["Offline USB<br/>(Recovery)"]
+        
+        NAS <-->|TLS| HSM
+        Admin -->|SSH Key Push| NAS
+        Recovery -->|Physical delivery| HSM
+    end
+    
+    style NAS fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style HSM fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Admin fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Recovery fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+```
+
+#### Operational Flow
+
+1. On boot, NAS-01 prompts for network key unlock via HSM (key NOT stored locally)
+2. Admin enters passphrase on HSM console (separate physical device)
+3. HSM decrypts volume master key and sends to NAS via mTLS
+4. NAS mounts backup volume transparently
+5. Offsite recovery uses offline USB key (air-gapped, NOT on NAS)
+
+### 4. Key Loss Recovery Implications
+
+| Scenario | Mitigation | Recovery Time |
+|----------|------------|---------------|
+| **Primary passphrase forgotten** | 3-of-5 Shamir secret shares distributed to CISO, IT Director, Compliance Officer | 24-48 hours |
+| **HSM hardware failure** | Offline USB recovery key stored in bank safety deposit box | 48-72 hours |
+| **All keys lost simultaneously** | Rebuild NAS-01 from scratch; restore from last offsite (cloud) replica | 7-14 days |
+| **Volume corruption** | LUKS header backup stored offline; restores key slots without data loss | 12-24 hours |
+
+#### Critical Requirements
+
+```
+# Key slot redundancy (store multiple key copies)
+cryptsetup luksAddKey /dev/nas01_backup
+
+# Export LUKS header backup (stored OFFSITE, NOT on NAS)
+sudo cryptsetup luksHeaderBackup /dev/nas01_backup --header-backup-file /mnt/offsite_backup/luk-header-nas01.img
+
+# Store header backup in:
+# 1. Bank safety deposit box (offline)
+# 2. Offsite cloud storage (encrypted with separate key)
+# 3. Paper QR code in fireproof safe at HQ
+
+# Key share distribution (Shamir's Secret Sharing)
+# Split master key into 5 shares; store with:
+#   Share 1: CISO (physical USB)
+#   Share 2: IT Director (physical USB)
+#   Share 3: Compliance Officer (physical USB)
+#   Share 4: External auditor (sealed envelope)
+#   Share 5: Board chair (sealed envelope)
+# Require 3-of-5 for reconstruction
+```
+
+> **Warning:** Losing all keys means losing all data. LUKS provides no backdoor. This is a feature, not a bug—it ensures adversaries cannot recover data without the key.
+
+### 5. Offsite Replication Integration
+
+#### Cloud Replica Encryption Strategy
+
+| Question | Answer |
+|----------|--------|
+| **Must the cloud replica also be encrypted?** | YES — Defense-in-depth; cloud provider could be subpoenaed or breached |
+| **Who controls the cloud encryption key?** | MedDefense — Never give cloud provider decryption capability |
+| **How does replication work?** | Encrypted LUKS volume → tar → GPG encrypt → upload to AWS S3 |
+| **Where are cloud keys stored?** | AWS KMS with customer-managed key (CMK); MedDefense holds root key |
+
+#### Data Flow Diagram
+
+```mermaid
+flowchart LR
+    subgraph "Backup Pipeline"
+        EHR["EHR DB<br/>(Plaintext)"]
+        Backup["Backup Script"]
+        LUKS["LUKS<br/>NAS-01"]
+        GPG["GPG<br/>Encrypt"]
+        S3["AWS S3<br/>(Encrypted)"]
+        
+        EHR --> Backup
+        Backup --> LUKS
+        LUKS --> GPG
+        GPG --> S3
+    end
+    
+    subgraph "Key Locations"
+        HSM["LUKS Master Key → HSM-01<br/>(on-prem)"]
+        AIR["GPG Key → Air-gapped laptop<br/>(offline)"]
+        KMS["AWS KMS CMK → MedDefense<br/>holds root key"]
+    end
+    
+    style EHR fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style Backup fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    style LUKS fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style GPG fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style S3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+```
+
 #### Implementation Commands
 
-- 1. Create backup tarball from mounted LUKS volume
-
-```bash
+```
+# 1. Create backup tarball from mounted LUKS volume
 sudo tar -czf - /mnt/backup_storage/daily/* | gpg --symmetric --cipher-algo AES256 -o /mnt/staging/backup-2026-07-27.tar.gz.gpg
-```
 
-- 2. Upload to encrypted S3 bucket
-
-```bash
+# 2. Upload to encrypted S3 bucket
 aws s3 cp /mnt/staging/backup-2026-07-27.tar.gz.gpg s3://meddefense-offsite-backups/ --sse aws:kms --kms-key-id alias/meddefense-backup-key
-```
 
-- 3. Delete staging file after successful upload
-
-```bash
+# 3. Delete staging file after successful upload
 rm /mnt/staging/backup-2026-07-27.tar.gz.gpg
-```
 
-- 4. Verify S3 object is encrypted
-
-```bash
+# 4. Verify S3 object is encrypted
 aws s3api head-object --bucket meddefense-offsite-backups --key backup-2026-07-27.tar.gz.gpg | grep SSE
-```
 
-- 5. Enable S3 Object Lock (WORM compliance)
-
-```bash
+# 5. Enable S3 Object Lock (WORM compliance)
 aws s3api put-object-lock-configuration --bucket meddefense-offsite-backups --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"GOVERNANCE","Years":7}}}'}
 ```
-
 
 ### 6. Operational Runbook
 
 | Task | Frequency | Owner | Command/Procedure |
-|---|---|---|---|
+|------|-----------|-------|-------------------|
 | Boot NAS-01 from HSM | Daily | System Admin | Enter HSM passphrase; NAS auto-mounts volume |
 | Create daily backup | 02:00 AM | Backup Script | `./backup_daily.sh` (automated via cron) |
 | Verify backup integrity | 03:00 AM | Backup Script | SHA-256 checksum + GPG signature verify |
@@ -487,7 +635,7 @@ aws s3api put-object-lock-configuration --bucket meddefense-offsite-backups --ob
 ### 7. Risk Assessment
 
 | Risk | Probability | Impact | Mitigation |
-|---|---|---|---|
+|------|-------------|--------|------------|
 | NAS theft with unencrypted data | Low (but non-zero) | Critical | LUKS2 full-disk encryption |
 | Key loss from admin turnover | Medium | Catastrophic | Shamir secret sharing, offline backups |
 | Cloud breach exposes backups | Low | High | End-to-end encryption, customer-managed KMS |
@@ -498,28 +646,26 @@ aws s3api put-object-lock-configuration --bucket meddefense-offsite-backups --ob
 ### 8. Compliance Mapping
 
 | Requirement | Standard | Implementation |
-|---|---|---|
-| **Data at Rest Encryption** | HIPAA §164.312(a)(2)(iv) | LUKS2 AES-256-GCM on NAS-01 |
-| **Encryption Key Management** | HIPAA §164.312(e)(2)(ii) | HSM + Shamir secret sharing + offline USB |
-| **Audit Controls** | HIPAA §164.312(b) | HSM access logs, S3 CloudTrail, NAS syslog |
-| **Transmission Encryption** | HIPAA §164.312(e)(1) | mTLS for HSM, S3 TLS, GPG before upload |
-| **Backup and Restoration** | HIPAA §164.308(a)(7) | Offsite S3, quarterly drills, WORM retention |
-| **Physical Safeguards** | HIPAA §164.310 | NAS in locked server room, USB keys in bank safe |
-| **Encryption Strength** | NIST SP 800-111 | AES-256, RSA-4096, SHA-384 |
-
----
+|-------------|----------|----------------|
+| Data at Rest Encryption | HIPAA §164.312(a)(2)(iv) | LUKS2 AES-256-GCM on NAS-01 |
+| Encryption Key Management | HIPAA §164.312(e)(2)(ii) | HSM + Shamir secret sharing + offline USB |
+| Audit Controls | HIPAA §164.312(b) | HSM access logs, S3 CloudTrail, NAS syslog |
+| Transmission Encryption | HIPAA §164.312(e)(1) | mTLS for HSM, S3 TLS, GPG before upload |
+| Backup and Restoration | HIPAA §164.308(a)(7) | Offsite S3, quarterly drills, WORM retention |
+| Physical Safeguards | HIPAA §164.310 | NAS in locked server room, USB keys in bank safe |
+| Encryption Strength | NIST SP 800-111 | AES-256, RSA-4096, SHA-384 |
 
 ## Summary
 
 By completing the LUKS lab and designing this encryption architecture, MedDefense achieves:
 
-1. ✅ **PHI protection at rest** — Backups unreadable without proper authorization
-2. ✅ **HIPAA compliance** — Meets encryption and key management requirements
-3. ✅ **Offsite resilience** — Cloud replicas encrypted with separate keys
-4. ✅ **Operational continuity** — Minimal performance impact, documented recovery procedures
-5. ✅ **Defense-in-depth** — Multiple encryption layers prevent single point of failure
+- ✅ PHI protection at rest — Backups unreadable without proper authorization
+- ✅ HIPAA compliance — Meets encryption and key management requirements
+- ✅ Offsite resilience — Cloud replicas encrypted with separate keys
+- ✅ Operational continuity — Minimal performance impact, documented recovery procedures
+- ✅ Defense-in-depth — Multiple encryption layers prevent single point of failure
 
-Next step: Implement LUKS on NAS-01 during scheduled maintenance window with rollback plan to plaintext in case of critical failure.
+**Next Step:** Implement LUKS on NAS-01 during scheduled maintenance window with rollback plan to plaintext in case of critical failure.
 
 ---
 
