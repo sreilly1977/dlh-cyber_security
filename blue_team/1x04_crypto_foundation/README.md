@@ -85,7 +85,7 @@ Write a script `1-symmetric_encrypt.sh` that takes three arguments: an input fil
 
 ---
 
-# 2. The Asymmetric Engine
+# [2. The Asymmetric Engine](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/2-asymmetric_analysis.md)
 
 ## Goal
 Generate RSA and ECC key pairs, discover the size limitation of asymmetric encryption through experimentation, and understand why the hybrid model exists.
