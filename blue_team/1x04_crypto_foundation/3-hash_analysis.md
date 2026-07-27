@@ -84,9 +84,32 @@ f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2 -
 | MD5 | 128 bits | 2^128 (approximately 3.4 × 10^38) |
 | SHA-256 | 256 bits | 2^256 (approximately 1.16 × 10^77) |
 
-### Collision Susceptibility and the Birthday Problem
+### Collision Attacks and the Birthday Paradox
 
-A shorter hash has fewer possible output values, meaning the probability of two different inputs producing the same hash (a collision) increases dramatically as the hash space shrinks. The birthday paradox demonstrates that collisions become likely after evaluating approximately 2^(n/2) inputs, so MD5 reaches a 50% collision probability after only 2^64 computations (about 1.8 × 10^19), while SHA-256 requires 2^128 computations (about 3.4 × 10^38)—a difference of roughly 18 orders of magnitude. For MedDefense, Finding 018 from 1x02 confirmed that RC4 is still enabled for Kerberos, and RC4 relies on MD4/MD5 internally for service ticket encryption. This means an attacker who captures Kerberos service tickets can perform offline Kerberoasting attacks, cracking the RC4-encrypted tickets using rainbow tables or GPU-accelerated brute force, because the underlying MD4/MD5 hash is fast to compute and vulnerable to collision-based techniques that weaken the overall cryptographic strength of the authentication exchange.
+A hash collision occurs when two different inputs produce the same hash output. In a brute-force search, you would need to try approximately 2^n inputs to find a collision for an n-bit hash. However, the birthday paradox shows that you only need to evaluate approximately 2^(n/2) random inputs before finding a collision with 50% probability—because each new input can collide with any of the previous inputs, not just a specific target.
+
+This means MD5 reaches collision probability after about 2^64 (~1.8 × 10^19) evaluations, while SHA-256 requires 2^128 (~3.4 × 10^38) evaluations—a difference of roughly 18 orders of magnitude. Shorter hashes are more susceptible to collision attacks because the birthday bound (2^(n/2)) is dramatically closer to feasible computation: 2^64 operations might be achievable by well-resourced attackers using distributed computing, whereas 2^128 is effectively impossible with current or foreseeable technology.
+
+### Birthday Attack Mechanism
+
+A birthday attack works by generating many variations of two different documents—one legitimate and one malicious—until a collision is found. Once the attacker has both documents with the same hash, they can:
+
+1. Get the victim to sign the legitimate document (e.g., approve a contract)
+2. Transfer the digital signature from the legitimate document to the malicious document
+3. The signature validates because both documents share the same hash
+
+For MedDefense, Finding 018 from 1x02 confirmed that RC4 is still enabled for Kerberos authentication, and RC4 internally uses MD4 (a related broken hash to MD5). While this particular finding relates more to offline password cracking than collision attacks, it illustrates that MedDefense's Active Directory relies on cryptographically weak hash functions. If any certificates or signed artifacts at MedDefense use MD5-based signatures, those are vulnerable to birthday attacks where an adversary could forge signatures for malicious software updates or configuration changes without detection.
+
+### Practical Implications for MedDefense
+
+| Risk | MD5 | SHA-256 |
+|---|---|---|
+| **Collision feasibility** | Theoretical attacks demonstrated since 2004; practical collision attacks now take hours on commodity hardware | No practical collision attacks; would require energy equivalent to burning stars |
+| **Digital signatures** | Do not use for code signing, certificates, or document authentication | Required for all digital signatures per NIST SP 800-131A |
+| **Password storage** | Unsuitable (also unsalted in AD's NTHash implementation) | Acceptable when combined with salt and key stretching (bcrypt, Argon2, PBKDF2) |
+| **File integrity** | Insufficient (collisions too easy to engineer) | Sufficient for verifying backup integrity, patch downloads, configuration files |
+
+Recommendation: Disable MD5 entirely at MedDefense. Replace MD5-based certificate signatures with SHA-256. Use SHA-256 (or stronger) for all file integrity verification, including EHR database dumps, firmware images for medical devices, and configuration snapshots.
 
 ---
 
