@@ -4,10 +4,6 @@
 
 Build the definitive reference table of cryptographic algorithms, mapped against MedDefense's current and recommended usage, identifying every deprecated algorithm still in production.
 
-## Context
-
-The Security+ exam expects you to know which algorithms are current, which are deprecated, and which are broken. More importantly, it expects you to know WHY certain algorithms are inappropriate for certain uses. This task builds the reference you will carry into the exam and into your career. Every algorithm in the table connects to something you have already seen in MedDefense.
-
 ---
 
 ## Algorithm Reference Table
