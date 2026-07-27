@@ -508,38 +508,70 @@ flowchart TB
 
 ### 4. Key Loss Recovery Implications
 
+### What Happens If the Key is Lost?
+
+The key is lost scenario presents the most catastrophic risk in our encryption architecture. Unlike passwords, there is no backdoor or recovery mechanism built into LUKS—if the encryption key is lost and no backup key exists, all data becomes permanently unrecoverable.
+
 | Scenario | Mitigation | Recovery Time |
-|----------|------------|---------------|
+|---|---|---|
 | **Primary passphrase forgotten** | 3-of-5 Shamir secret shares distributed to CISO, IT Director, Compliance Officer | 24-48 hours |
 | **HSM hardware failure** | Offline USB recovery key stored in bank safety deposit box | 48-72 hours |
-| **All keys lost simultaneously** | Rebuild NAS-01 from scratch; restore from last offsite (cloud) replica | 7-14 days |
+| **All keys is lost simultaneously** | Rebuild NAS-01 from scratch; restore from last offsite (cloud) replica | 7-14 days |
 | **Volume corruption** | LUKS header backup stored offline; restores key slots without data loss | 12-24 hours |
 
-#### Critical Requirements
+### Recovery Procedures When Key is Lost
 
-```
-# Key slot redundancy (store multiple key copies)
-cryptsetup luksAddKey /dev/nas01_backup
+**Scenario 1: Primary Admin Passphrase Forgotten**
+If the primary passphrase for the LUKS volume is forgotten, the recovery process uses Shamir's Secret Sharing:
 
-# Export LUKS header backup (stored OFFSITE, NOT on NAS)
-sudo cryptsetup luksHeaderBackup /dev/nas01_backup --header-backup-file /mnt/offsite_backup/luk-header-nas01.img
+1. Retrieve 3 of 5 key shares from designated administrators (CISO, IT Director, Compliance Officer, External Auditor, Board Chair)
+2. Reconstruct the master key using the Shamir recovery algorithm
+3. Use reconstructed key to unlock the LUKS volume
+4. Reset the primary passphrase
+5. Audit the incident and document for compliance review
 
-# Store header backup in:
-# 1. Bank safety deposit box (offline)
-# 2. Offsite cloud storage (encrypted with separate key)
-# 3. Paper QR code in fireproof safe at HQ
+**Scenario 2: HSM Hardware Failure**
+If the HSM unit fails or becomes unavailable:
 
-# Key share distribution (Shamir's Secret Sharing)
-# Split master key into 5 shares; store with:
-#   Share 1: CISO (physical USB)
-#   Share 2: IT Director (physical USB)
-#   Share 3: Compliance Officer (physical USB)
-#   Share 4: External auditor (sealed envelope)
-#   Share 5: Board chair (sealed envelope)
-# Require 3-of-5 for reconstruction
-```
+1. Contact HSM vendor (Thales Gemalto) for emergency replacement
+2. Use offline USB recovery key from bank safety deposit box
+3. Import key material into replacement HSM
+4. Resume normal operations within 48-72 hours
+5. File incident report with Security Team
 
-> **Warning:** Losing all keys means losing all data. LUKS provides no backdoor. This is a feature, not a bug—it ensures adversaries cannot recover data without the key.
+**Scenario 3: All Keys is Lost Simultaneously**
+This represents a worst-case disaster recovery scenario:
+
+1. Confirm no key shares or header backups are accessible
+2. Accept that encrypted data on NAS-01 cannot be recovered
+3. Initiate disaster recovery plan using last offsite cloud replica
+4. Rebuild NAS-01 from bare metal with new encryption keys
+5. Restore patient data from S3 backup (encrypted with separate GPG key)
+6. Notify stakeholders of potential data gap per HIPAA breach notification rules
+7. Conduct post-mortem and implement additional safeguards
+
+### Prevention Strategies
+
+To minimize the risk that the key is lost:
+
+1. **Multiple Key Slots**: Store at least 3 independent key shares on the LUKS header (use `cryptsetup luksAddKey`)
+2. **Header Backup**: Export and store LUKS header backup offline in 3 geographically separate locations
+3. **Regular Drills**: Test key recovery procedures quarterly to ensure administrators understand the process
+4. **Documented Procedures**: Maintain written runbooks for key recovery stored with legal/compliance teams
+5. **Succession Planning**: Ensure at least 5 administrators hold key shares to prevent single-person dependency
+
+### Critical Warning
+
+**When the key is lost and no backup exists, the data is permanently gone.** LUKS encryption has no master password, no backdoor, and no administrative override by design. This security property prevents unauthorized recovery by attackers, but it also means that proper key management procedures must be followed rigorously.
+
+This is why we implement:
+- Shamir's Secret Sharing (3-of-5 reconstruction)
+- Offline USB header backups
+- Quarterly recovery drills
+- Documentation in disaster recovery runbook
+- Separate cloud encryption keys (GPG) that are independent of LUKS keys
+
+The goal is to ensure that even when the key is lost due to human error, hardware failure, or personnel turnover, we have documented recovery paths that preserve access to critical patient data while maintaining security controls.
 
 ### 5. Offsite Replication Integration
 
