@@ -155,49 +155,37 @@ Change: 2026-07-27 21:39:43.287001224 +0200
 
 **Explanation:** Data is readable while the volume is mounted and unlocked. The file appears normal with correct size and permissions.
 
-### Step 7: Unmount and Close the Volume
+---
+
+## Part 2 - Verification
+
+### Step 1: Close the Volume (from Part 1)
+
+Before inspecting the raw encrypted file, we must ensure the volume is properly closed:
 
 - Unmount the filesystem
 
 ```bash
 sudo umount /mnt/secure_vol
-
-sudo umount /mnt/secure_vol
-
-
-umount: /mnt/secure_vol: not mounted.
-
 ```
 
-**Explanation:** The unmount ensures all pending writes are flushed. The luksClose removes the decrypted mapping, so the volume is now inaccessible without re-entering the passphrase.
+- Close the LUKS mapping
 
-### Step 8: Verify LUKS Status After Closing
+```bash
+sudo cryptsetup luksClose secure_vol
+```
 
-- Check if the mapper device exists
+- Verify the mapper device no longer exists
 
 ```bash
 ls -la /dev/mapper/ | grep secure_vol
 ```
 
-- Check LUKS status
+- Confirm LUKS status
 
 ```bash
 sudo cryptsetup status secure_vol
 /dev/mapper/secure_vol is inactive.
-
-```
-
----
-
-## Part 2 - Verification
-
-### Attempt to Read Raw Encrypted Data (Volume Closed)
-
-- Check file type
-
-```bash
-file encrypted_volume.img
-encrypted_volume.img: LUKS encrypted file, ver 2, header size 16384, ID 3, algo sha256, salt 0x3ac71685633cd3fc..., UUID: cd09aa04-ea87-41c1-9375-aac181c0778e, crc 0xce1dbee67294f8b4..., at 0x1000 {"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},"area":{"type":"raw","offse
 ```
 
 - Try to read strings from the raw file
