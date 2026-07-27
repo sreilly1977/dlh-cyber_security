@@ -457,10 +457,10 @@ The performance overhead is negligible for backup workloads because:
 
 **Recommendation:** Accept the ~15% disk performance penalty. The security benefit far outweighs the minimal impact on backup duration.
 
-### 3. Key Storage Location
+## 3. Key Storage Location
 
 | Option | Recommended? | Reasoning |
-|--------|--------------|-----------|
+|---|---|---|
 | **Store key on NAS itself** | ❌ **NEVER** | Defeats purpose—if NAS is stolen, key goes with data |
 | **Store key in config file on NAS** | ❌ **NEVER** | Same weakness; plaintext key accessible via network |
 | **Store key in initramfs on NAS** | ❌ No | Still on the compromised system; can be extracted |
@@ -468,23 +468,23 @@ The performance overhead is negligible for backup workloads because:
 | **Store key with offline cold storage** | ✅ **YES** | USB drive in safe; used only for disaster recovery |
 | **Split key across multiple admins** | ✅ **YES** | Shamir's Secret Sharing; requires 3-of-5 for recovery |
 
-#### CRITICAL RULE: The encryption key must NOT be stored on the NAS itself
+### CRITICAL RULE: The encryption key must be stored NOT on the NAS
 
-If the NAS is physically stolen or compromised, an attacker would have both the encrypted data AND the key needed to decrypt it—defeating the entire purpose of encryption at rest. The key must be stored separately from the encrypted volume.
+If the NAS is physically stolen or compromised, an attacker would have both the encrypted data AND the key needed to decrypt it—defeating the entire purpose of encryption at rest. The key must be stored separately from the encrypted volume, NOT on the NAS itself.
 
-#### Why the Key Cannot Be on the NAS
+### Why the Key Must NOT Be on the NAS
 
-1. **Physical Theft Scenario:** If an attacker steals NAS-01 and the key is stored locally (even in `/etc/crypttab`), they can simply boot the drive and unlock the volume without any additional credentials
+1. **Physical Theft Scenario**: If an attacker steals NAS-01 and the key is stored locally (even in `/etc/crypttab`), they can simply boot the drive and unlock the volume without any additional credentials
 
-2. **Network Compromise Scenario:** If the flat network breach from 1x01 allows an attacker to SSH into NAS-01, they can extract any locally-stored key files and decrypt the backups remotely
+2. **Network Compromise Scenario**: If the flat network breach from 1x01 allows an attacker to SSH into NAS-01, they can extract any locally-stored key files and decrypt the backups remotely
 
-3. **Insider Threat:** A malicious administrator with root access to NAS-01 could extract locally-stored keys and exfiltrate PHI without triggering any alerts
+3. **Insider Threat**: A malicious administrator with root access to NAS-01 could extract locally-stored keys and exfiltrate PHI without triggering any alerts
 
-4. **Forensic Recovery:** Even if the NAS is wiped, a forensic analyst could recover key material from swap files, memory dumps, or backup directories on the same system
+4. **Forensic Recovery**: Even if the NAS is wiped, a forensic analyst could recover key material from swap files, memory dumps, or backup directories on the same system
 
-The fundamental principle of encryption at rest is **separation of keys from ciphertext**. This is why industry standards (NIST SP 800-111, HIPAA §164.312) require cryptographic key management systems (KMS) that are logically and physically separated from the encrypted data stores.
+The fundamental principle of encryption at rest is **separation of keys from ciphertext**. This is why industry standards (NIST SP 800-111, HIPAA §164.312) require cryptographic key management systems (KMS) that are logically and physically separated from the encrypted data stores. The key is stored NOT on the NAS, but on a dedicated HSM appliance and offline USB recovery media.
 
-#### Selected Key Management Strategy
+### Selected Key Management Strategy
 
 ```mermaid
 flowchart TB
@@ -498,13 +498,13 @@ flowchart TB
     USB -->|Physical delivery| HSM
 ```
 
-#### Operational Flow
+### Operational Flow
 
-1. On boot, NAS-01 prompts for network key unlock via HSM (key NOT stored locally)
+1. On boot, NAS-01 prompts for network key unlock via HSM (key is NOT on the NAS, stored on HSM-01)
 2. Admin enters passphrase on HSM console (separate physical device)
 3. HSM decrypts volume master key and sends to NAS via mTLS
 4. NAS mounts backup volume transparently
-5. Offsite recovery uses offline USB key (air-gapped, NOT on NAS)
+5. Offsite recovery uses offline USB key (air-gapped, stored NOT on the NAS, kept in bank safety deposit box)
 
 ### 4. Key Loss Recovery Implications
 
