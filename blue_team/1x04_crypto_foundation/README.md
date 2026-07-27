@@ -421,7 +421,7 @@ On your Linux machine, find where the system's trusted root certificates are sto
 
 ---
 
-# [10. The CSR Workshop](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/)
+# [10. The CSR Workshop](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/10-csr_workshop.md)
 
 ## Goal
 Generate a Certificate Signing Request for the MedDefense patient portal, making every field decision deliberately and documenting the reasoning.
