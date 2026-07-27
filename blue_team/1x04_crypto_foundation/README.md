@@ -1,4 +1,4 @@
-# 0. The Crypto Inventory
+# [0. The Crypto Inventory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/0-crypto_inventory.md)
 
 ## Goal
 Map every data flow at MedDefense against its current cryptographic protection state, exposing every gap in one document.
