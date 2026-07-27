@@ -116,14 +116,14 @@ X-Ray Report: Normal cardiac silhouette, no pulmonary edema
 - List the contents
 
 ```bash
-/mnt/secure_vol/:
+ ls -la /mnt/secure_vol/
 drwxr-xr-x   - root 27 Jul 21:42  .
 drwxr-xr-x   - root 27 Jul 21:34  ..
 drwxr-xr-x   - root 27 Jul 21:46  lab_results
 drwx------   - root 27 Jul 21:33  lost+found
 .rw-r--r-- 149 root 27 Jul 21:39  test_patient_record.txt
 
-/mnt/secure_vol/lab_results/:
+ls -la /mnt/secure_vol/lab_results/
 drwxr-xr-x  - root 27 Jul 21:46  .
 drwxr-xr-x  - root 27 Jul 21:42  ..
 .rw-r--r-- 59 root 27 Jul 21:43  patient_001.txt
@@ -177,24 +177,14 @@ umount: /mnt/secure_vol: not mounted.
 
 ```bash
 ls -la /dev/mapper/ | grep secure_vol
-lrwxrwxrwx      - root 27 Jul 21:32 󰡯 secure_vol -> ../dm-3
 ```
 
 - Check LUKS status
 
 ```bash
 sudo cryptsetup status secure_vol
-/dev/mapper/secure_vol is active.
-  type:    LUKS2
-  cipher:  aes-xts-plain64
-  keysize: 512 [bits]
-  key location: keyring
-  device:  /dev/loop0
-  loop:    /home/steve/projects/cert/meddef/encrypted_volume.img
-  sector size:  4096 [bytes]
-  offset:  32768 [512-byte units] (16777216 [bytes])
-  size:    991232 [512-byte units] (507510784 [bytes])
-  mode:    read/write
+/dev/mapper/secure_vol is inactive.
+
 ```
 
 ---
@@ -206,15 +196,79 @@ sudo cryptsetup status secure_vol
 - Check file type
 
 ```bash
-ile encrypted_volume.img
+file encrypted_volume.img
 encrypted_volume.img: LUKS encrypted file, ver 2, header size 16384, ID 3, algo sha256, salt 0x3ac71685633cd3fc..., UUID: cd09aa04-ea87-41c1-9375-aac181c0778e, crc 0xce1dbee67294f8b4..., at 0x1000 {"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},"area":{"type":"raw","offse
 ```
 
 - Try to read strings from the raw file
 
 ```bash
+strings encrypted_volume.img | head -50
+LUKS
+sha256
+"!E)cd09aa04-ea87-41c1-9375-aac181c0778e
+=       >g]
+{"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},"area":{"type":"raw","offset":"32768","size":"258048","encryption":"aes-xts-plain64","key_size":64},"kdf":{"type":"argon2id","time":18,"memory":1048576,"cpus":4,"salt":"0fK7HIbYsfOslSor/mvbdSYN3XnUmsec2OPQvcBRFNQ="}}},"tokens":{},"segments":{"0":{"type":"crypt","offset":"16777216","size":"dynamic","iv_tweak":"0","encryption":"aes-xts-plain64","sector_size":4096}},"digests":{"0":{"type":"pbkdf2","keyslots":["0"],"segments":["0"],"hash":"sha256","iterations":436542,"salt":"eL3zFdCHKSmG/zkypiEz8GZrTa7Fqz0maMwgsSElCrU=","digest":"tSAUw0F5JyAqXqO6q+sJKGXq0fk9zvxLr4WOOP5d2sQ="}},"config":{"json_size":"12288","keyslots_size":"16744448"}}
+SKUL
+sha256
+,*?{m
+cd09aa04-ea87-41c1-9375-aac181c0778e
+{"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},"area":{"type":"raw","offset":"32768","size":"258048","encryption":"aes-xts-plain64","key_size":64},"kdf":{"type":"argon2id","time":18,"memory":1048576,"cpus":4,"salt":"0fK7HIbYsfOslSor/mvbdSYN3XnUmsec2OPQvcBRFNQ="}}},"tokens":{},"segments":{"0":{"type":"crypt","offset":"16777216","size":"dynamic","iv_tweak":"0","encryption":"aes-xts-plain64","sector_size":4096}},"digests":{"0":{"type":"pbkdf2","keyslots":["0"],"segments":["0"],"hash":"sha256","iterations":436542,"salt":"eL3zFdCHKSmG/zkypiEz8GZrTa7Fqz0maMwgsSElCrU=","digest":"tSAUw0F5JyAqXqO6q+sJKGXq0fk9zvxLr4WOOP5d2sQ="}},"config":{"json_size":"12288","keyslots_size":"16744448"}}
+Z4Jq
+GIGM+T5
+qfdSs
+Tf3kl
+0wnF\m
+B*`L
+>F`kc
+5F=1
+jcL`9
+r[      E
+rEdUb
+D\W'
+\^e?
+fKT-3T
+Qe{ZIV
+H3\'
+o9yU
+dd,$f
+@Jdr
+#mAa
+gGKF
+UL)g
+KE2|
+hK[h}D]
+/|7{z
+YEp7
+d/Jj]bcR
+*+EX
+5Buu
+;iMJ-<
+o=(a
+LTd
+TH'g\
+6$iz4
+L(GJ
+CYd@
+ngV-h&$@
+XH5+
+*1.Z
++xq!
+```
+
+- Try to grep for our test data
+
+```bash
 strings encrypted_volume.img | grep "Jane Doe" strings encrypted_volume.img | grep "Atrial Fibrillation"
 grep: strings: No such file or directory
+```
+
+- First few lines will show LUKS header metadata - no readable patient data
+
+```bash
+LUKS
+sha256
+"!E)cd09aa04-ea87-41c1-9375-aac181c0778e
 ```
 
 **What Does This Prove About Encryption at Rest?**
@@ -224,7 +278,7 @@ grep: strings: No such file or directory
 | No readable patient names in raw file | Attacker cannot extract PHI by stealing the physical disk |
 | No readable MRN numbers in raw file | Database exports remain protected even if NAS is physically compromised |
 | Only LUKS header metadata visible | Attack surface reduced to header-only (master key is encrypted) |
-| `strings` command returns nothing | Even memory-dump analysis yields no usable information |
+| `strings` command returns garbage | Even memory-dump analysis yields no usable information |
 
 This proves **encryption at rest** is effective: the data is cryptographically bound to the passphrase. Without the key, the ciphertext appears as random noise, providing no meaningful information to attackers who gain physical or network access to the storage medium.
 
