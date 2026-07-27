@@ -497,11 +497,8 @@ The fundamental principle of encryption at rest is **separation of keys from cip
 ```mermaid
 flowchart TB
     subgraph "Key Management Architecture"
-        direction LR
-        
-        NAS["NAS-01<br/>(Encrypted Data)<br/>❌ NO KEYS"]
+        NAS["NAS-01<br/>(Encrypted Data)<br/>NO KEYS STORED"]
         HSM["HSM-01<br/>(Thales Gemalto)<br/>Key Store"]
-        
         Admin["Admin Workstation"]
         Recovery["Offline USB<br/>(Recovery)"]
         
