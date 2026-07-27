@@ -488,27 +488,14 @@ The fundamental principle of encryption at rest is **separation of keys from cip
 
 ```mermaid
 flowchart TB
-    subgraph nas["Physical NAS-01"]
-        A[LUKS2 Full-Disk Encryption]
-        
-        subgraph vol["LUKS2 Volume"]
-            B[LUKS2 Volume]
-            
-            subgraph fs["ext4 Filesystem"]
-                C[Backup Files]
-                
-                D[daily_backup.enc]
-                E[weekly_backup.enc]
-                F[monthly_backup.enc]
-            end
-        end
-    end
-    
-    A --> B
-    B --> C
-    C --> D
-    C --> E
-    C --> F
+    NAS["NAS-01<br/>(Encrypted Data)<br/>NO KEYS STORED"]
+    HSM["HSM-01<br/>(Thales Gemalto)<br/>Key Store"]
+    Admin["Admin Workstation"]
+    USB["Offline USB<br/>(Recovery)"]
+
+    NAS <-->|TLS| HSM
+    Admin -->|SSH Key Push| NAS
+    USB -->|Physical delivery| HSM
 ```
 
 #### Operational Flow
