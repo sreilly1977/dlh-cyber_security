@@ -16,10 +16,10 @@ A certificate is only as trustworthy as the chain behind it. The patient's brows
 
 ```bash
 ~/projects/cert
-❯ openssl s_client -connect github.com:443 -servername github.com -showcerts </dev/null 2>/dev/null > github_chain.txt
+❯ openssl s_client -connect github.com:443 -servername github.com -showcerts </dev/null 2>/dev/null > github_chain.pem
 
 ~/projects/cert
-❯ cat github_chain.txt
+❯ cat github_chain.pem
 CONNECTED(00000003)
 ---
 Certificate chain
@@ -125,57 +125,36 @@ Verify return code: 0 (ok)
 ---
 
 ~/projects/cert
-❯ wc -l github_chain.txt
+❯ wc -l github_chain.pem
 
-103 github_chain.txt
+103 github_chain.pem
 ```
 
 ### Split the chain into individual certificate files
 
 ```bash
 ~/projects/cert
-❯ csplit -z -f cert_ github_chain.txt '/-----BEGIN CERTIFICATE-----/' '{*}' 2>/dev/null
-273
-1715
-1546
-1791
+# Extract leaf certificate only (first certificate block)
+awk '/-----BEGIN CERTIFICATE-----/{n++} n==1' github_chain.pem > leaf_cert.pem
+
+# Extract intermediate (second certificate block)
+awk '/-----BEGIN CERTIFICATE-----/{n++} n==2' github_chain.pem > intermediate_ca.pem
+
+# Extract root (third certificate block, if present)
+awk '/-----BEGIN CERTIFICATE-----/{n++} n==3' github_chain.pem > root_ca.pem
 
 ~/projects/cert
 ❯ ll
-.rw-r--r--  273 steve 27 Jul 16:20 󰡯 cert_00
-.rw-r--r-- 1.7k steve 27 Jul 16:20 󰡯 cert_01
-.rw-r--r-- 1.5k steve 27 Jul 16:20 󰡯 cert_02
-.rw-r--r-- 1.8k steve 27 Jul 16:20 󰡯 cert_03
-.rw-r--r-- 5.3k steve 27 Jul 16:16  github_chain.txt
-```
+.rw-r--r-- 5.3k steve 27 Jul 16:16  github_chain.pem
+.rw-r--r-- 1.5k steve 27 Jul 17:18  intermediate_ca.pem
+.rw-r--r-- 1.7k steve 27 Jul 17:16  leaf_cert.pem
+.rw-r--r-- 1.8k steve 27 Jul 17:18  root_ca.pem
 
-### Rename for clarity
-
-```bash
-~/projects/cert
-❯ mv cert_00 leaf_cert.pem 2>/dev/null
-  mv cert_01 intermediate_cert.pem 2>/dev/null
-
-~/projects/cert
-❯ ll
-.rw-r--r-- 1.5k steve 27 Jul 16:20 󰡯 cert_02
-.rw-r--r-- 1.8k steve 27 Jul 16:20 󰡯 cert_03
-.rw-r--r-- 5.3k steve 27 Jul 16:16  github_chain.txt
-.rw-r--r-- 1.7k steve 27 Jul 16:20  intermediate_cert.pem
-.rw-r--r--  273 steve 27 Jul 16:20  leaf_cert.pem
 ```
 
 #### Display chain summary — Subject, Issuer, and dates for each cert
 
 ```bash
-~/projects/cert
-❯ openssl x509 -in leaf_cert.pem -noout -subject -issuer -dates
-Could not find certificate from leaf_cert.pem
-4027AD80097F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-4027AD80097F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-4027AD80097F0000:error:1E08010C:DECODER routines:OSSL_DECODER_from_bio:unsupported:crypto/encode_decode/decoder_lib.c:104:No supported data to decode. Input structure: Certificate
-4027AD80097F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-
 ~/projects/cert
 ❯ openssl x509 -in intermediate_cert.pem -noout -subject -issuer -dates
 subject=CN=github.com
@@ -189,20 +168,15 @@ notAfter=Sep 30 23:59:59 2026 GMT
 ```bash
 ~/projects/cert
 ❯ echo "Leaf Issuer:      $(openssl x509 -in leaf_cert.pem -noout -issuer | sed 's/issuer=//')"
-Could not find certificate from leaf_cert.pem
-40D70F74687F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40D70F74687F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40D70F74687F0000:error:1E08010C:DECODER routines:OSSL_DECODER_from_bio:unsupported:crypto/encode_decode/decoder_lib.c:104:No supported data to decode. Input structure: Certificate
-40D70F74687F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-Leaf Issuer:      
+Leaf Issuer:      C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication CA DV E36
 
 ~/projects/cert
-❯ echo "Intermediate Subj: $(openssl x509 -in intermediate_cert.pem -noout -subject | sed 's/subject=//')"
-Intermediate Subj: CN=github.com
+❯ echo "Intermediate Subj: $(openssl x509 -in intermediate_ca.pem -noout -subject | sed 's/subject=//')"
+Intermediate Subj: C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication CA DV E36
 
 ~/projects/cert
-❯ echo "Intermediate Iss: $(openssl x509 -in intermediate_cert.pem -noout -issuer | sed 's/issuer=//')"
-Intermediate Iss: C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication CA DV E36
+❯ echo "Intermediate Iss: $(openssl x509 -in intermediate_ca.pem -noout -issuer | sed 's/issuer=//')"
+Intermediate Iss: C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication Root E46
 ```
 
 #### Full text dump of each certificate for documentation
@@ -210,14 +184,6 @@ Intermediate Iss: C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authenticati
 ```bash
 ~/projects/cert
 ❯ openssl x509 -in leaf_cert.pem -text -noout
-Could not find certificate from leaf_cert.pem
-40578A62E67F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40578A62E67F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40578A62E67F0000:error:1E08010C:DECODER routines:OSSL_DECODER_from_bio:unsupported:crypto/encode_decode/decoder_lib.c:104:No supported data to decode. Input structure: Certificate
-40578A62E67F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-
-~/projects/cert
-❯ openssl x509 -in intermediate_cert.pem -text -noout
 Certificate:
     Data:
         Version: 3 (0x2)
@@ -299,48 +265,38 @@ Certificate:
 
 ```bash
 ~/projects/cert
-❯ openssl verify -untrusted intermediate_cert.pem leaf_cert.pem
-  echo "Exit code: $status"
-Could not find certificate file from leaf_cert.pem
-40F7097A247F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40F7097A247F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40F7097A247F0000:error:1E08010C:DECODER routines:OSSL_DECODER_from_bio:unsupported:crypto/encode_decode/decoder_lib.c:104:No supported data to decode. Input structure: Certificate
-40F7097A247F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-Exit code: 2
+❯ openssl verify -CAfile root_ca.pem -untrusted intermediate_ca.pem leaf_cert.pem
+leaf_cert.pem: OK
+
 ```
 
 #### Verify using system trust store directly (no intermediate)
 
 ```bash
 ~/projects/cert
-❯ openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt leaf_cert.pem 2>&1
-  echo "Exit code: $status"
-Could not find certificate file from leaf_cert.pem
-40774A41E17F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40774A41E17F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-40774A41E17F0000:error:1E08010C:DECODER routines:OSSL_DECODER_from_bio:unsupported:crypto/encode_decode/decoder_lib.c:104:No supported data to decode. Input structure: Certificate
-40774A41E17F0000:error:1608010C:STORE routines:ossl_store_handle_load_result:unsupported:crypto/store/store_result.c:160:provider=default
-Exit code: 2
+❯ openssl verify -CAfile root_ca.pem leaf_cert.pem
+CN=github.com
+error 20 at 0 depth lookup: unable to get local issuer certificate
+error leaf_cert.pem: verification failed
+
 ```
 
 #### Verify the intermediate against the system trust store
 
 ```bash
 ~/projects/cert
-❯ openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt intermediate_cert.pem 2>&1
+❯ openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt intermediate_ca.pem 2>&1
   echo "Exit code: $status"
-CN=github.com
-error 20 at 0 depth lookup: unable to get local issuer certificate
-error intermediate_cert.pem: verification failed
-Exit code: 2
+intermediate_ca.pem: OK
+Exit code: 0
 ```
 
 #### Chain order verification — confirm leaf is first, intermediate second
 
 ```bash
 ~/projects/cert
-❯ grep -c "BEGIN CERTIFICATE" github_chain.txt
-  echo "Certificates in chain file: $(grep -c 'BEGIN CERTIFICATE' github_chain.txt)"
+❯ grep -c "BEGIN CERTIFICATE" github_chain.pem
+  echo "Certificates in chain file: $(grep -c 'BEGIN CERTIFICATE' github_chain.pem)"
 3
 Certificates in chain file: 3
 ```
