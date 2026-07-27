@@ -411,18 +411,18 @@ Given that we are implementing full-disk LUKS2 encryption, file-level encryption
 
 ```mermaid
 flowchart TB
-    subgraph "Physical NAS-01"
-        A["LUKS2 Full-Disk Encryption<br/>Protects entire disk,<br/>boots via initramfs"]
+    subgraph nas["Physical NAS-01"]
+        A[LUKS2 Full-Disk Encryption]
         
-        subgraph "LUKS2 Volume (backup_data)"
-            B["LUKS2 Volume<br/>Separate key for backup partition"]
+        subgraph vol["LUKS2 Volume"]
+            B[LUKS2 Volume]
             
-            subgraph "ext4 Filesystem"
-                C["Backup Files"]
+            subgraph fs["ext4 Filesystem"]
+                C[Backup Files]
                 
-                D["/backups/daily/*.tar.gz.enc"]
-                E["/backups/weekly/*.tar.gz.enc"]
-                F["/backups/monthly/*.tar.gz.enc"]
+                D[daily_backup.enc]
+                E[weekly_backup.enc]
+                F[monthly_backup.enc]
             end
         end
     end
@@ -432,14 +432,6 @@ flowchart TB
     C --> D
     C --> E
     C --> F
-    
-    style "Physical NAS-01" fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style A fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    style B fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    style C fill:#fff3e0,stroke:#ff6f00,stroke-width:2px
-    style D fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
-    style E fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
-    style F fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
 ```
 
 ### 2. Performance Overhead Estimate
