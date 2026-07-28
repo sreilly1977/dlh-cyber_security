@@ -30,3 +30,46 @@ Overall Exposure Score: How many of the 7 phases is MedDefense currently EXPOSED
 Critical Finding: In one sentence, what is the single most urgent action MedDefense must take in the next 4 hours based on this analysis ?
 
 ---
+
+# [1. The CVE Deep Dive](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/1-cve_deep_dive.md)
+
+## Goal
+
+Research CVE-2023-27997 on NVD and assess its exploitability using the tools you mastered in Projects 0x02 and 0x04.
+
+## Context
+
+The advisory names CVE-2023-27997 as the initial access vector. You have the tools and the skills to research this CVE with the same rigor you applied to the scan findings in 1x02. This time, the urgency is not academic. This CVE is being actively exploited against hospitals in your region right now.
+
+## Instructions
+
+### Part 1 — NVD Research
+
+Go to nvd.nist.gov and research CVE-2023-27997. Document:
+
+1. **Full description**
+2. **CVSS v3.1 vector string and base score**
+3. **CWE classification**
+4. **Affected products and versions**
+5. **References** (vendor advisory, patches)
+
+### Part 2 — Exploit Assessment
+
+Using searchsploit and Exploit-DB, assess exploit availability:
+
+1. **Is there a public exploit?**
+2. **Is this CVE in the CISA KEV catalog?**
+3. **What is your Exploitability Score (1–5, using the scale from 1x02 T4)?**
+
+### Part 3 — MedDefense CVSS Contextualization
+
+Using the NIST CVSS Calculator, apply Environmental Metrics specific to MedDefense's FortiGate. Consider:
+
+- The FortiGate is the **ONLY perimeter defense** (no redundancy)
+- It **terminates all VPN tunnels** (all 3 sites depend on it)
+- It sits on **kill chain #1, #2 and #3** from 1x01
+- The **support contract has expired** (patching requires renewal first)
+
+What is the adjusted CVSS score for MedDefense? Is it higher or lower than the base score?
+
+---
