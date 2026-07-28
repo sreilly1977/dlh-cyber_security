@@ -31,8 +31,8 @@ The Security Committee recommends the Board approve the emergency budget authori
 **Robert Kim (CFO) — Financial Exposure and ROI**  
 "The cost of inaction is approximately seven point four million dollars per incident, whereas our emergency ask is less than one hundred thousand dollars for immediate protection. The return on investment for patching the primary entry point alone exceeds two thousand to one, making this a fiscally responsible hedge against insolvency risk."
 
-**Dr. Reeves (Board Chair) — Professional Recommendation**  
-"As Security Engineer, I confirm the vulnerability is exploitable and the threat actor is actively targeting facilities identical to ours within this region. My confidence in the mitigation plan is high because it closes the exact gaps the attackers have proven they can exploit in the last week."
+**Dr. Reeves (Board Chair) — Governance and Oversight Responsibility**  
+"As Board Chair, you bear ultimate fiduciary responsibility for authorizing emergency expenditures outside the approved annual budget. Given the documented threat intelligence and validated risk quantification, declining to act within the next twenty-four hours shifts governance from prudent oversight to negligent inaction. Your signature on this approval creates the necessary audit trail demonstrating the Board exercised due diligence in protecting organizational assets and stakeholder interests."
 
 **Thomas Wright (Former Banker) — Industry Comparison**  
 "While the financial sector faces similar threats, we currently lag behind banking maturity standards regarding encryption at rest and 24/7 monitoring capabilities. Implementing this plan brings our defensive posture closer to industry baseline expectations for critical infrastructure operators managing sensitive customer data."
