@@ -12,15 +12,15 @@
 
 ## 1. Executive Summary
 
-MedDefense Health Systems operates a 280-bed acute care hospital with a 120-workstation network, two critical databases (PostgreSQL for EHR, MySQL for billing), a FortiGate 100F perimeter firewall, and a NAS-based backup system. Our security posture was assessed at NIST CSF maturity levels ranging from Partial (Level 2) to Risk-Informed (Level 3), with no function reaching Repeatable (Level 4).
+MedDefense Health Systems operates an acute care hospital facility with clinical information systems including PostgreSQL and MySQL databases for EHR and billing functions respectively, a FortiGate perimeter firewall (SSL VPN enabled), and network-accessible backup storage. Our security posture was assessed at NIST CSF maturity levels ranging from Partial (Level 2) to Risk-Informed (Level 3), with no function reaching Repeatable (Level 4).
 
-On July 28, 2026 at 07:30 EST, we received a threat advisory from Meridian Health ISAC identifying a ransomware campaign dubbed **Crimson Tide** conducted by an organized criminal group designated CT. Five hospitals matching MedDefense's exact infrastructure profile have been compromised in 10 days. Three of those hospitals are in our geographic region. The closest, Hospital C, is 45 miles from MedDefense Central and was compromised 3 days ago.
+On July 28, 2026 at 07:30 EST, we received a threat advisory from Meridian Health ISAC identifying a ransomware campaign dubbed **Crimson Tide** conducted by an organized criminal group designated CT. Five hospitals matching MedDefense's infrastructure profile have been compromised in 10 days. Three of those hospitals are in our geographic region. The closest, Hospital C, is approximately 45 miles from MedDefense Central and was compromised 3 days ago.
 
-The threat actor follows a 7-phase kill chain that maps directly onto our identified vulnerabilities: FortiGate exploitation (CVE-2023-27997, unpatched), flat-network lateral movement, RC4 Kerberoasting, raw copying of unencrypted databases, backup destruction, ransomware deployment, and executive extortion via unencrypted email. Every phase exploits a gap we had previously identified but not yet remediated.
+The threat actor follows a 7-phase kill chain that maps directly onto our identified vulnerabilities: Unpatched FortiGate firewall, flat-network lateral movement, RC4 Kerberoasting, raw copying of unencrypted databases, backup destruction, ransomware deployment, and executive extortion via unencrypted email. Every phase exploits a gap we had previously identified but not yet remediated.
 
 Our ransomware Annualized Loss Expectancy (ALE) has increased from $1.4M to $6.66M, a 376% increase, based on the new attack frequency data. Two controls previously deemed not justified are now justified under the updated ALE. The FortiGate support contract renewal ($2,400) has a benefit-cost ratio of 2,498:1 and pays for itself in under 4 hours of prevented downtime.
 
-We are requesting Board approval for $93,000 in emergency spending beyond the existing $120,000 security budget to execute a 72-Hour Emergency Response Plan. This plan patches the FortiGate, encrypts both databases, isolates backups, disables RC4 Kerberos, and deploys initial EDR coverage. Failure to act within 72 hours places MedDefense at 90% annual probability of a ransomware event costing an estimated $7.4M per incident.
+We are requesting Board approval for $93,000 in emergency spending beyond the existing $120,000 security budget to execute a 72-Hour Emergency Response Plan. This plan patches the FortiGate vulnerability, encrypts both databases, isolates backups, disables RC4 Kerberos, and deploys initial EDR coverage. Failure to act within 72 hours places MedDefense at 90% annual probability of a ransomware event costing an estimated $7.4M per incident.
 
 ---
 
@@ -28,23 +28,23 @@ We are requesting Board approval for $93,000 in emergency spending beyond the ex
 
 ### What the Threat Is, in Plain Language
 
-An organized criminal group is actively hacking hospitals in our region that use the same firewall we use. They exploit a known vulnerability in the FortiGate firewall to gain access without needing any passwords. Once inside, they move through the network, crack our internal passwords, copy patient data directly from our unencrypted databases, destroy our backups so we cannot recover, then lock everything with ransomware and demand payment. After the ransom, they contact our executives personally and threaten to publish patient data if the hospital does not pay more.
+An organized criminal group is actively hacking hospitals in our region that use FortiGate firewalls with SSL VPN enabled. They exploit a known vulnerability in the FortiGate firewall to gain access without needing any passwords. Once inside, they move through the network, crack internal passwords, copy patient data directly from unencrypted databases, destroy backups so we cannot recover, then lock everything with ransomware and demand payment. After the ransom, they contact our executives personally and threaten to publish patient data if the hospital does not pay more.
 
-Five hospitals have been hit in 10 days. Three are in our area. One is 45 miles away. The campaign is ongoing.
+Five hospitals have been hit in 10 days. Three are in our area. One is approximately 45 miles away. The campaign is ongoing.
 
 ### Is MedDefense in the Blast Radius?
 
-**Yes.** MedDefense matches 100% of the victim profile: FortiGate 100F running FortiOS 7.2.3 (vulnerable to CVE-2023-27997), flat network topology allowing lateral movement, unencrypted PostgreSQL and MySQL databases, network-accessible backup storage, and RC4-enabled Kerberos. We are not similar to the targets. We are identical to the targets.
+**Yes.** MedDefense matches the victim profile: FortiGate firewall running a vulnerable version of FortiOS (affected versions: 7.2.0-7.2.4 or 7.0.0-7.0.11, specific version TBD), flat network topology allowing lateral movement, unencrypted PostgreSQL and MySQL databases, network-accessible backup storage, and RC4-enabled Kerberos. We are not similar to the targets. We are identical to the targets.
 
 ### 72-Hour Action Plan Summary
 
 | Window | Action | Cost | Risk Blocked |
 |---|---|---|---|
-| Hours 0-4 | Patch FortiGate to FortiOS 7.2.5 | $2,400 | Phase 1: Initial access |
+| Hours 0-4 | Patch FortiGate to FortiOS 7.2.5+ | $2,400 | Phase 1: Initial access |
 | Hours 0-8 | Enable TDE on PostgreSQL and MySQL | $0 (licensing already included) | Phase 4: Data exfiltration |
 | Hours 0-4 | Physically isolate NAS-01, enable WORM | $0 | Phase 5: Backup destruction |
 | Hours 0-8 | Disable RC4 on Kerberos (dc-01) | $0 | Phase 3: Kerberoasting |
-| Hours 0-24 | Deploy EDR to all 120 workstations | $50,000 | Phase 6: Ransomware deployment |
+| Hours 0-24 | Deploy EDR to all endpoints | $50,000 | Phase 6: Ransomware deployment |
 | Hours 0-48 | Enforce TLS 1.2+ on patient portal | $0 | MITM/downgrade attacks |
 | Hours 0-72 | Deploy MFA on EHR system | $8,000 (hardware tokens) | Phase 3: Credential theft |
 | Hours 0-72 | Activate 24/7 SOC monitoring (3-month bridge) | $45,000 | Detection gap |
@@ -58,12 +58,12 @@ Five hospitals have been hit in 10 days. Three are in our area. One is 45 miles 
 
 | Asset | Type | Criticality | Data Volume |
 |---|---|---|---|
-| FortiGate 100F (fgt-edge-01) | Perimeter firewall, SSL VPN | Critical | N/A (gateway) |
-| EHR system + PostgreSQL (ehr-db-01) | Electronic health records | Critical | 50,000+ patient records |
-| Billing system + MySQL (billing-srv-01) | Financial records | Critical | 50,000+ billing records |
-| Active Directory (dc-01) | Identity, Kerberos | Critical | 200+ accounts |
+| FortiGate firewall (fgt-edge-01) | Perimeter firewall, SSL VPN | Critical | N/A (gateway) |
+| EHR system + PostgreSQL (ehr-db-01) | Electronic health records | Critical | Patient records |
+| Billing system + MySQL (billing-srv-01) | Financial records | Critical | Billing records |
+| Active Directory (dc-01) | Identity, Kerberos | Critical | Account directory |
 | NAS-01 | Backup storage | Critical | All system backups |
-| 120 workstations | Clinical and administrative | High | Varies |
+| Clinical and administrative workstations | Endpoints | High | Varies |
 | Email server | Communications | Medium | Executive contacts |
 | Patient Portal | Web application | Medium | Patient PHI |
 
@@ -120,7 +120,7 @@ Five hospitals have been hit in 10 days. Three are in our area. One is 45 miles 
 
 | # | Vulnerability | Severity | CVSS | Exploited by Crimson Tide? | Status |
 |---|---|---|---|---|---|
-| 1 | FortiGate CVE-2023-27997 (heap overflow RCE on SSL VPN) | Critical | 9.8 | **YES — Phase 1 entry point** | Unpatched; patch scheduled within 4 hours |
+| 1 | FortiGate CVE-2023-27997 (heap overflow RCE on SSL VPN) | Critical | 9.8 | **YES — Phase 1 entry point** | Unpatched; exact version TBD, patch scheduled within 4 hours |
 | 2 | Unencrypted PostgreSQL database (no TDE) | Critical | N/A (config) | **YES — Phase 4 raw file copy** | Unremediated; TDE scheduled within 8 hours |
 | 3 | Unencrypted MySQL database (no TDE) | Critical | N/A (config) | **YES — Phase 4 raw file copy** | Unremediated; TDE scheduled within 8 hours |
 | 4 | Flat network (no VLAN segmentation) | High | N/A (arch) | **YES — Phase 2 lateral movement** | Unremediated; long-term project |
@@ -245,7 +245,7 @@ Five hospitals have been hit in 10 days. Three are in our area. One is 45 miles 
 
 | Priority | Action | Owner | Deadline | Cost | Blocks CT Phase |
 |---|---|---|---|---|---|
-| 1 | Patch FortiGate to FortiOS 7.2.5 | Steve | +4 hours | $2,400 | Phase 1 |
+| 1 | Patch FortiGate to FortiOS 7.2.5+ | Steve | +4 hours | $2,400 | Phase 1 |
 | 2 | Enable TDE on PostgreSQL + MySQL | Steve + DBA | +8 hours | $0 | Phase 4 |
 | 3 | Isolate NAS-01 + enable WORM | Steve + IT Ops | +4 hours | $0 | Phase 5 |
 | 4 | Disable RC4 on Kerberos | Steve | +8 hours | $0 | Phase 3 |
