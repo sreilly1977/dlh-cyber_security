@@ -834,3 +834,44 @@ Cover at minimum:
 For each requirement: what it mandates, what MedDefense currently does (reference your T0 inventory and 1x02 findings), whether it is compliant and what the specific remediation is if not.
 
 After the table, answer in one paragraph: Could MedDefense pass a HIPAA security audit today? What would the auditor cite as the most critical encryption deficiency?
+
+---
+
+# Implementation Playbook - First 5 Cryptographic Changes
+
+## Goal
+
+Produce a step-by-step operational playbook for the first 5 cryptographic changes to be deployed in production.
+
+## Context
+
+This is the document Sarah Park takes to her IT team on Monday morning. It is not a strategy. It is not a report. It is a playbook: do this, then this, then verify, then proceed. Each action has prerequisites, steps, validation criteria and a rollback plan.
+
+## Instructions
+
+Produce an Implementation Playbook for the 5 highest-priority cryptographic changes from your assessment. For each:
+
+```
+Action #[N]: [Descriptive name]
+Priority: [From T15 - Immediate / Phase 1 / Phase 2]
+System Affected: [Specific hostname]
+Prerequisites: [What must be in place before starting]
+
+Steps:
+  1. [Specific command or configuration change]
+  2. [...]
+  3. [...]
+
+Validation:
+  - [How to verify the change was applied correctly]
+  - [How to verify no service disruption occurred]
+
+Rollback:
+  - [How to revert if something goes wrong]
+  - [Maximum acceptable downtime before rollback is triggered]
+
+Maintenance Window: [When to perform this - business hours OK or overnight required?]
+Communication: [Who needs to be notified before and after]
+```
+
+---
