@@ -1,4 +1,4 @@
-[0. The Advisory Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/0-advisory_analysis.md)
+# [0. The Advisory Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/0-advisory_analysis.md)
 
 Goal: Translate the CISA advisory into a MedDefense-specific impact assessment, proving you can apply threat intelligence to your own environment in real time.
 
