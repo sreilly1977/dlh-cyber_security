@@ -334,7 +334,7 @@ flowchart LR
 ```
 
 ```mermaid
-imeline
+timeline
     title 72-Hour Timeline Overview
     section Day 1 (Today)
         00:00 : Firmware Check (Steve)
