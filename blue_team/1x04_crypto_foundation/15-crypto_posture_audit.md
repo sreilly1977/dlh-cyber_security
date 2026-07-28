@@ -312,16 +312,14 @@ Each finding corresponds to a cell in the T0 map marked **Weak** or **Absent**. 
 | ⏳ Pending (Phase 3) | 2 | 15% |
 | No remediation path | 0 | 0% |
 
-### Posture Score
+### Key Performance Indicators
 
-```card-row
-[
-  { "type": "metric", "title": "Remediation Coverage", "value": "100%", "delta": "All 13 findings have clear path", "direction": "up" },
-  { "type": "metric", "title": "Findings Remediated", "value": "4 / 13", "delta": "31% complete", "direction": "up" },
-  { "type": "metric", "title": "Critical Findings Open", "value": "3", "delta": "CRYPTO-001, 003, 009, 011", "direction": "flat" },
-  { "type": "metric", "title": "Total ALE Addressed", "value": "$1.49M", "delta": "Across all 13 findings", "direction": "up" }
-]
-```
+| Metric | Value | Change | Status |
+|---|---|---|---|
+| Remediation Coverage | 100% | All 13 findings have clear path | ✅ Up |
+| Findings Remediated | 4 / 13 | 31% complete | ✅ Up |
+| Critical Findings Open | 3 | CRYPTO-001, 003, 009, 011 | ➡️ Flat |
+| Total ALE Addressed | $1.49M | Across all 13 findings | ✅ Up |
 
 ## Posture Score
 
@@ -333,13 +331,17 @@ The remaining gap is execution, not strategy. No data flow lacks a defined remed
 
 Ranked by combined impact (ALE × severity × breadth of data affected):
 
-### Rank 1: CRYPTO-001 — Patient EHR Database Without Encryption at Rest
+### Finding: CRYPTO-001 — Patient EHR Database Encryption Gap
 
-```card-row
-[ 
- { "type": "finding", "title": "CRYPTO-001: Patient EHR — No At-Rest Encryption", "body": "50,000 patient records stored in plaintext PostgreSQL with no TDE. Any filesystem-level compromise exposes the entire patient population. ALE: $187,500. Remediation: PostgreSQL TDE with AES-256-GCM, HSM-backed key management. Status: In progress (Phase 1).", "severity": "critical" }
-]
-```
+| Field | Value |
+|---|---|
+| **Finding ID** | CRYPTO-001 |
+| **Title** | Patient EHR — No At-Rest Encryption |
+| **Severity** | 🔴 Critical |
+| **Description** | 50,000 patient records stored in plaintext PostgreSQL with no TDE. Any filesystem-level compromise exposes the entire patient population. |
+| **ALE (Annualized Loss Expectancy)** | $187,500 |
+| **Remediation** | PostgreSQL TDE with AES-256-GCM, HSM-backed key management |
+| **Status** | 🔄 In progress (Phase 1) |```
 
 # Part 5 - Top 3 Crypto Risks
 
@@ -398,47 +400,31 @@ The ALE is $135,000, but the blast radius is enormous. If the CA private key is 
 
 ---
 
-## ALE Visualization by Implementation Phase
+## ALE by Implementation Phase
 
-```vega-lite
-{
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": "container",
-  "title": {
-    "text": "Crypto Finding ALE by Implementation Phase",
-    "subtitle": "Phase 1 (complete/in-progress) covers $532.5K ALE; remaining $955.5K in Phases 2-3"
-  },
-  "data": {
-    "values": [
-      { "finding": "CRYPTO-009 Alaris IoT", "ale": 225000, "phase": "Phase 3", "status": "Pending" },
-      { "finding": "CRYPTO-001 EHR DB", "ale": 187500, "phase": "Phase 1", "status": "In Progress" },
-      { "finding": "CRYPTO-008 Laptops FDE", "ale": 150000, "phase": "Phase 1", "status": "Complete" },
-      { "finding": "CRYPTO-011 CA Key", "ale": 135000, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-004 PACS Images", "ale": 112500, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-005 Portal TLS", "ale": 94500, "phase": "Phase 1", "status": "Complete" },
-      { "finding": "CRYPTO-002 NAS Backups", "ale": 75000, "phase": "Phase 1", "status": "Complete" },
-      { "finding": "CRYPTO-006 VPN Tunnels", "ale": 67500, "phase": "Phase 1", "status": "Complete" },
-      { "finding": "CRYPTO-007 Email O365", "ale": 56250, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-013 Session Tokens", "ale": 51000, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-012 DICOM TLS", "ale": 45000, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-003 Billing DB", "ale": 40000, "phase": "Phase 2", "status": "Pending" },
-      { "finding": "CRYPTO-010 Research Repo", "ale": 33750, "phase": "Phase 3", "status": "Pending" }
-    ]
-  },
-  "mark": { "type": "bar" },
-  "encoding": {
-    "x": { "field": "ale", "type": "quantitative", "title": "Annualized Loss Expectancy ($)" },
-    "y": { "field": "finding", "type": "nominal", "sort": "-x", "title": null },
-    "color": { "field": "status", "type": "nominal", "legend": { "title": "Status" } },
-    "tooltip": [
-      { "field": "finding", "title": "Finding" },
-      { "field": "ale", "title": "ALE ($)", "format": ",.0f" },
-      { "field": "phase", "title": "Phase" },
-      { "field": "status", "title": "Status" }
-    ]
-  }
-}
-```
+Phase 1 (complete/in-progress) covers $532.5K ALE; remaining $955.5K in Phases 2-3
+
+| Finding | ALE ($) | Phase | Status |
+|---|---|---|---|
+| CRYPTO-009 Alaris IoT | 225,000 | Phase 3 | Pending |
+| CRYPTO-001 EHR DB | 187,500 | Phase 1 | In Progress |
+| CRYPTO-008 Laptops FDE | 150,000 | Phase 1 | Complete ✅ |
+| CRYPTO-011 CA Key | 135,000 | Phase 2 | Pending |
+| CRYPTO-004 PACS Images | 112,500 | Phase 2 | Pending |
+| CRYPTO-005 Portal TLS | 94,500 | Phase 1 | Complete ✅ |
+| CRYPTO-002 NAS Backups | 75,000 | Phase 1 | Complete ✅ |
+| CRYPTO-006 VPN Tunnels | 67,500 | Phase 1 | Complete ✅ |
+| CRYPTO-007 Email O365 | 56,250 | Phase 2 | Pending |
+| CRYPTO-013 Session Tokens | 51,000 | Phase 2 | Pending |
+| CRYPTO-012 DICOM TLS | 45,000 | Phase 2 | Pending |
+| CRYPTO-003 Billing DB | 40,000 | Phase 2 | Pending |
+| CRYPTO-010 Research Repo | 33,750 | Phase 3 | Pending |
+
+**Summary:**
+- **Phase 1 Total:** $532,500 (4 complete, 1 in progress)
+- **Phase 2 Total:** $384,750 (6 pending)
+- **Phase 3 Total:** $258,750 (2 pending)
+- **Grand Total:** $1,176,000 across all phases
 
 # Crypto Posture Audit Summary
 
@@ -482,11 +468,13 @@ The posture gap is now execution, not strategy.
 
 ---
 
-```card-row
-[
-  { "type": "metric", "title": "Remediation Coverage", "value": "100%", "delta": "All 13 findings have clear path", "direction": "up" },
-  { "type": "metric", "title": "Findings Remediated", "value": "4 / 13", "delta": "31% complete", "direction": "up" },
-  { "type": "metric", "title": "Critical Findings Open", "value": "3", "delta": "CRYPTO-001, 009, 011", "direction": "flat" },
-  { "type": "metric", "title": "Total ALE Addressed", "value": "$1,488,000", "delta": "Across all findings", "direction": "up" }
-]
-```
+## Key Performance Indicators
+
+| Metric | Value | Change | Status |
+|---|---|---|---|
+| Remediation Coverage | 100% | All 13 findings have clear path | ✅ Up |
+| Findings Remediated | 4 / 13 | 31% complete | ✅ Up |
+| Critical Findings Open | 3 | CRYPTO-001, 009, 011 | ➡️ Flat |
+| Total ALE Addressed | $1,488,000 | Across all findings | ✅ Up |
+
+---
