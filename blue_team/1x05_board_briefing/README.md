@@ -82,7 +82,7 @@ Context: You built 5 kill chains for MedDefense in Project 1x01. Crimson Tide's 
 
 Instructions:
 
-Part 1 - The Overlay
+## Part 1 - The Overlay
 
 Take your Kill Chain #1 (ransomware) from 1x01 T10. Lay it alongside the Crimson Tide 7-phase attack chain. For each step, identify:
 
@@ -92,7 +92,7 @@ Take your Kill Chain #1 (ransomware) from 1x01 T10. Lay it alongside the Crimson
 
     Where Crimson Tide does something your model did not anticipate
 
-Part 2 - Control Interception Map
+## Part 2 - Control Interception Map
 
 From your Security Strategy (1x03), identify which planned controls would intercept the Crimson Tide chain and at which phase:
 
@@ -100,7 +100,7 @@ From your Security Strategy (1x03), identify which planned controls would interc
 Phase [N] | Planned Control [from 1x03] | Status [Funded/Not Deployed, Deployed, Not Funded] | Would It Stop This Phase? [Yes/Partially/No]
 ```
 
-Part 3 - The Gap Between Plan and Reality
+## Part 3 - The Gap Between Plan and Reality
 
 In one paragraph, assess: If MedDefense had fully implemented the Security Strategy from 1x03, how many of the 7 Crimson Tide phases would have been blocked ? How many would still succeed ? What does this tell you about the residual risk even after full strategy implementation ?
 
@@ -146,3 +146,33 @@ Risk of Inaction: [What happens if this is not done?]
 ```
 
 End with a **Resource Conflict Assessment**: Are any Tier 1 and Tier 2 actions in conflict (same person needed for multiple tasks, same system needing multiple changes)? How do you resolve the conflicts?
+
+---
+
+# [4. The Crypto Emergency](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/4-crypto_emergency.md)
+
+Goal: Identify the specific cryptographic weaknesses that Crimson Tide exploits and prioritize the crypto remediations from 1x04 that address this attack.
+
+Context: The advisory reveals that Crimson Tide specifically targets unencrypted databases and unencrypted backups. Your Cryptographic Posture Assessment (1x04) identified these exact gaps. The question now is: which crypto fixes from your implementation playbook must be accelerated to counter this specific threat ?
+
+Instructions:
+
+```
+Phase: [Number and name]
+Crypto Weakness: [Specific gap from 1x04 T0 or T15]
+What Crimson Tide Exploits: [How the lack of encryption enables this phase]
+Recommended Crypto Fix: [From 1x04 implementation playbook]
+Emergency Timeline: [Can this be accelerated to 72 hours?]
+```
+
+## Part 1 - Crypto Attack Surface Mapping
+
+For each Crimson Tide phase that exploits a cryptographic weakness:
+
+## Part 2 - Encryption Priority Re-ranking
+
+Your 1x04 implementation playbook had 5 priority actions. Based on the Crimson Tide advisory, should the order change ? Produce an Updated Crypto Priority List with the reasoning for any changes.
+
+## Part 3 - The "What If" Calculation
+
+If MedDefense's patient database had been encrypted at rest (as recommended in 1x04 T13), what would change about Phase 4 of the Crimson Tide attack ? Would the data still be exfiltrable ? Under what conditions ? (Consider: the attacker has domain admin access and the database encryption key is stored on the same server.)
