@@ -74,7 +74,7 @@ What is the adjusted CVSS score for MedDefense? Is it higher or lower than the b
 
 ---
 
-# {2. The Kill Chain Overlay}(https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/2-kill_chain_overlay.md)
+# [2. The Kill Chain Overlay](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/2-kill_chain_overlay.md)
 
 Goal: Overlay the Crimson Tide attack chain onto the kill chains you built in 1x01, identifying where they converge and where MedDefense's planned controls would intercept.
 
