@@ -256,34 +256,42 @@ The Crimson Tide ransomware campaign has compressed MedDefense's security remedi
 ## 72-Hour Timeline Visualization
 
 ```mermaid
-gantt
-    title MedDefense 72-Hour Emergency Response Plan
-    dateFormat HH-mm
-    axisFormat %H:%M
+flowchart TB
+    subgraph Day1[Day 1 - Today 0-12h]
+        D1A[Firmware Check]
+        D1B[Log Audit]
+        D1C[MFA Push]
+        D1D[NAS Disconnect]
+        D1E[Sleep 04-08]
+        D1F[Kerberos RC4]
+    end
     
-    section Tier 1 - Tonight (0-12h)
-    Action 2: Firmware Verification :a1, 00-00, 1h
-    Action 4: Log Audit + IOC Check  :a2, 01-00, 1h
-    Action 3: MFA Policy Push        :a3, 02-00, 1h
-    Action 1: NAS Disconnect         :a4, 03-00, 1h
-    SLEEP BLOCK                      :a5, 04-00, 4h
-    Action 5: Kerberos RC4 Disable   :a6, 08-00, 4h
-    Action 6: IR Retainer            :a7, 08-00, 4h
+    subgraph Day2[Day 2 - Tomorrow 12-36h]
+        D2A[Board Meeting]
+        D2B[Firmware Purchase]
+        D2C[Firmware Install]
+        D2D[EDR Deploy]
+        D2E[Segmentation]
+        D2F[Password Reset]
+    end
     
-    section Tier 2 - Tomorrow (12-36h)
-    Board Meeting                    :b1, 32-00, 1h
-    Action 7: Firmware Purchase      :b2, 33-00, 2h
-    Action 7: Firmware Install       :b3, 35-00, 10m
-    Action 8: EDR Deployment         :b4, 36-00, 2h
-    Action 9: Segmentation Rules     :b5, 38-00, 4h
-    Action 10: Password Reset        :b6, 42-00, 4h
+    subgraph Day3[Day 3-4 - This Week 36-72h]
+        D3A[Database TDE]
+        D3B[WORM Backup]
+        D3C[TLS Enforcement]
+        D3D[Log Retention]
+        D3E[Validation]
+    end
     
-    section Tier 3 - This Week (36-72h)
-    Action 11: Database TDE          :c1, 48-00, 8h
-    Action 12: WORM Backup           :c2, 56-00, 6h
-    Action 13: TLS Enforcement       :c3, 62-00, 6h
-    Action 14: Log Retention         :c4, 68-00, 4h
-    Validation + Briefing            :c5, 72-00, 8h
+    D1A --> D1B --> D1C --> D1D --> D1E
+    D1E --> D1F
+    D1F --> D2A
+    D2A --> D2B --> D2C --> D2D --> D2E --> D2F
+    D2F --> D3A --> D3B --> D3C --> D3D --> D3E
+    
+    style Day1 fill:#ffebee
+    style Day2 fill:#e8f5e9
+    style Day3 fill:#e3f2fd
 ```
 
 ```mermaid
