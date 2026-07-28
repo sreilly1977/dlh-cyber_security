@@ -168,17 +168,17 @@ Lynis reported zero formal warnings. However, the following items from the scan 
 #Edit rsyslog config
 sudo nano /etc/rsyslog.conf
 
-# Add at end:
+#Add at end:
 *.info;mail.none;authpriv.none;cron.none @siem-collector-01:514
 
-# Restart rsyslog
+#Restart rsyslog
 sudo systemctl restart rsyslog
 
 #Verify:
 
 logger "TEST MESSAGE FROM BILLING-SRV-01"
 
-# Check on siem-collector-01 for forwarded message
+#Check on siem-collector-01 for forwarded message
 ```
 
 **Business Justification:**
