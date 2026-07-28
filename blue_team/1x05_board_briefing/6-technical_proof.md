@@ -193,29 +193,6 @@ logger "TEST MESSAGE FROM BILLING-SRV-01"
 
 ---
 
-## Technical Competency Certification
-
-### Checklist Completion Status
-
-| Check | Status | Evidence |
-|---|---|---|
-| Certificate Inspection | PASS | OpenSSL x509 output with 5-line summary |
-| Hash Verification | PASS | SHA-256 hash comparison showing different hashes |
-| Exploit Research | PASS | searchsploit output showing zero results for CVE-2023-27997 |
-| System Audit | PASS | Lynis hardening index 70 with actionable findings |
-
-### Skills Demonstrated
-
-| Skill Area | Tool Used | Proficiency |
-|---|---|---|
-| SSL/TLS Certificate Analysis | OpenSSL | Expert |
-| File Integrity Verification | sha256sum | Expert |
-| Vulnerability Database Search | searchsploit / Exploit-DB | Expert |
-| Linux System Hardening | Lynis | Expert |
-| Threat Intelligence Correlation | Manual analysis | Expert |
-
----
-
 ## Board Meeting Talking Points
 
 "Our Security Engineer successfully demonstrated:
