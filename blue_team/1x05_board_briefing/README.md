@@ -106,7 +106,7 @@ In one paragraph, assess: If MedDefense had fully implemented the Security Strat
 
 ---
 
-# 3. The 72-Hour Plan
+# [3. The 72-Hour Plan](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/3-emergency_plan.md)
 
 ## Goal
 
