@@ -257,42 +257,33 @@ The Crimson Tide ransomware campaign has compressed MedDefense's security remedi
 
 ```mermaid
 gantt
-    title MedDefense 72-Hour Emergency Response Plan - Crimson Tide Defense
-    dateFormat HH:mm
+    title MedDefense 72-Hour Emergency Response Plan
+    dateFormat HH-mm
     axisFormat %H:%M
     
-    section TODAY (Tier 1 - 0-12 hours)
-    Action 2: Firmware Verification + Decision   :a1, 00:00, 1h
-    Action 4: Log Audit + IOC Check              :a2, 01:00, 1h
-    Action 3: MFA Policy Push                    :a3, 02:00, 1h
-    Action 1: NAS Physical Disconnect            :a4, 03:00, 1h
-    SLEEP BLOCK (Mandatory)                      :crit, a5, 04:00, 4h
-    Action 5: Kerberos RC4 Disable               :a6, 08:00, 4h
-    Action 6: IR Retainer Notification           :a7, 08:00, 4h
+    section Tier 1 - Tonight (0-12h)
+    Action 2: Firmware Verification :a1, 00-00, 1h
+    Action 4: Log Audit + IOC Check  :a2, 01-00, 1h
+    Action 3: MFA Policy Push        :a3, 02-00, 1h
+    Action 1: NAS Disconnect         :a4, 03-00, 1h
+    SLEEP BLOCK                      :a5, 04-00, 4h
+    Action 5: Kerberos RC4 Disable   :a6, 08-00, 4h
+    Action 6: IR Retainer            :a7, 08-00, 4h
     
-    section TOMORROW (Tier 2 - 12-36 hours)
-    Board Meeting: Budget Approval (Action 7)    :crit, b1, 08:00, 1h
-    Action 7: Firmware Purchase + Download       :b2, 09:00, 2h
-    Action 7: Firmware Install (10-min window)   :crit, b3, 11:00, 1h
-    Action 8: EDR Deployment (5 Servers)         :b4, 12:00, 2h
-    Action 9: Firewall Segmentation Rules        :b5, 14:00, 4h
-    Action 10: Service Account Password Reset    :b6, 18:00, 4h
+    section Tier 2 - Tomorrow (12-36h)
+    Board Meeting                    :b1, 32-00, 1h
+    Action 7: Firmware Purchase      :b2, 33-00, 2h
+    Action 7: Firmware Install       :b3, 35-00, 10m
+    Action 8: EDR Deployment         :b4, 36-00, 2h
+    Action 9: Segmentation Rules     :b5, 38-00, 4h
+    Action 10: Password Reset        :b6, 42-00, 4h
     
-    section THIS WEEK (Tier 3 - 36-72 hours)
-    Action 11: PostgreSQL + MySQL TDE            :c1, 24h, 8h
-    Action 12: WORM Backup Enablement            :c2, 32h, 6h
-    Action 13: Database TLS Enforcement          :c3, 38h, 6h
-    Action 14: Log Retention to 7 Years          :c4, 44h, 4h
-    Validation Testing + Board Briefing          :c5, 48h, 8h
-    
-    %% Milestones
-    Milestone: Tier 1 Complete                   :milestone, m1, 12h, 0d
-    Milestone: Tier 2 Complete                   :milestone, m2, 36h, 0d
-    Milestone: Tier 3 Complete                   :milestone, m3, 72h, 0d
-    
-    %% Dependencies
-    %% Critical path highlights
-    linkStyle default stroke:#6d4aff,stroke-width:2px
+    section Tier 3 - This Week (36-72h)
+    Action 11: Database TDE          :c1, 48-00, 8h
+    Action 12: WORM Backup           :c2, 56-00, 6h
+    Action 13: TLS Enforcement       :c3, 62-00, 6h
+    Action 14: Log Retention         :c4, 68-00, 4h
+    Validation + Briefing            :c5, 72-00, 8h
 ```
 
 ```mermaid
@@ -333,7 +324,7 @@ flowchart LR
     style A5 fill:#ffd93d
 ```
 
-```mermaid
+```
 timeline
     title 72-Hour Timeline Overview
     section Day 1 (Today)
