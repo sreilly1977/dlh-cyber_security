@@ -708,3 +708,39 @@ After all findings, produce:
 1. **Posture Score**: What percentage of MedDefense's data flows now have a clear remediation path?
 
 2. **Top 3 Crypto Risks**: The three findings with the highest combined impact, ranked
+
+---
+
+# [16. The Cryptographic Attack Surface](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/16-crypto_attack_surface.md)
+
+## Goal
+
+Map the cryptographic attacks to MedDefense's specific weaknesses, showing which attacks are viable today and which controls would neutralize them.
+
+## Context
+
+Downgrade attacks, collision attacks, birthday attacks and more. These are not abstract concepts. Every one of them maps to a real weakness at MedDefense.
+
+## Instructions
+
+For each of the following attack types, produce:
+
+```
+Attack: [Name]
+Mechanism: [How it works, 2-3 sentences]
+MedDefense Vulnerability: [Which specific system/configuration is susceptible?]
+Evidence: [Reference to 1x02 finding or T0/T6 analysis]
+Viable Today: [Yes/No, with reasoning]
+Mitigation: [What specific control or configuration change neutralizes this attack?]
+```
+
+### Attacks to cover:
+
+1. **TLS Downgrade** (forcing TLS 1.0 on the patient portal)
+2. **Collision Attack** (exploiting MD5 in Kerberos tickets)
+3. **Birthday Attack** (theoretical, explain the math and relevance)
+4. **Kerberoasting** (exploiting RC4/DES in Kerberos for offline cracking)
+5. **On-path/MITM on unencrypted channels** (DICOM traffic, unencrypted database connections)
+6. **Key Recovery from Memory** (if an attacker has root on billing-srv-01, can they extract AES keys from RAM?)
+
+---
