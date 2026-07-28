@@ -18,10 +18,10 @@ Sec+ 1.4 identifies three hardware security technologies designed to solve this 
 
 | Technology | What It Is | What It Protects | Typical Cost | Typical Deployment |
 |---|---|---|---|---|
-| **TPM (Trusted Platform Module)** | A dedicated cryptographic processor chip soldered to a motherboard (TPM 2.0) that provides hardware-rooted key storage, measured boot attestation, and sealed storage. Keys never leave the chip in plaintext. | Disk encryption keys (BitLocker/LUKS passphrase wrapping), boot integrity measurements, platform attestation data, small-scale certificate keys | $2-10 per chip (embedded in motherboard); no ongoing licensing cost | Embedded in individual endpoints: laptops, desktops, servers, IoT devices. One TPM per machine. Not network-accessible. |
-| **HSM (Hardware Security Module)** | A purpose-built, FIPS 140-2/140-3 validated cryptographic appliance that generates, stores, and manages encryption keys in tamper-resistant hardware. Provides API access (PKCS#11, KMIP, JCE) for multiple systems over the network. | Database encryption keys (TDE master keys), CA private keys, code-signing keys, SSH CA keys, application secrets at enterprise scale | $10,000-$50,000 for on-premise appliance (Thales Luna, Entrust nShield); $1-5/key/month for cloud HSM (AWS CloudHSM, Azure Dedicated HSM) | Centralized in data center or cloud; serves multiple servers and applications over network via mTLS. Typically deployed in HA pairs. |
-| **Secure Enclave** | An isolated execution environment within a main processor (Intel SGX, ARM TrustZone, Apple Secure Enclave) that provides a protected memory region where code and data are encrypted at rest and decrypted only within the enclave, invisible to the OS and hypervisor. | In-memory cryptographic operations, biometric template data (TouchID/FaceID), DRM keys, application secrets during runtime processing | Included with CPU purchase; no additional hardware cost for Intel SGX or ARM TrustZone; Apple Secure Enclave included in Apple Silicon | Integrated into existing server or mobile processors. No separate deployment. Application must be specifically written to use SGX SDK or TrustZone APIs. |
-| **KMS (Software Key Management Service)** | A software-based key management platform that centralizes key generation, storage, rotation, and access control without dedicated cryptographic hardware. May use software key stores, encrypted databases, or cloud provider KMS (AWS KMS, Azure Key Vault, HashiCorp Vault). | Application encryption keys, API secrets, TLS private keys, database credentials at software layer | $1-3/key/month for cloud KMS (AWS KMS, Azure Key Vault); HashiCorp Vault open-source is free (enterprise ~$5,800/month) | Deployed as software service on VMs or cloud infrastructure. Network-accessible. May integrate with HSM for hardware root of trust. |
+| **TPM (Trusted Platform Module)** | A dedicated cryptographic processor chip soldered to a motherboard that provides secure key generation and storage with physical tamper resistance. Keys are wrapped inside the TPM and cannot be exported in plaintext. | Disk encryption keys (BitLocker VMK, LUKS passphrase wrappers), platform attestation measurements, device identity certificates, firmware signing keys | $2-10 per chip (built into modern motherboards); no ongoing cost | One TPM per endpoint device (laptop, desktop, server, IoT). Local-only; not network-accessible. Bound to specific hardware. |
+| **HSM (Hardware Security Module)** | A dedicated, FIPS 140-2/3 validated cryptographic appliance that generates, stores, and manages encryption keys in tamper-resistant hardware with physical intrusion detection and responsive zeroization. Keys never leave the HSM in plaintext. | Enterprise database encryption keys (TDE master keys), CA private keys, code-signing certificates, TLS private keys, application encryption secrets at centralized scale | $10,000-$50,000 for on-premise appliance; $1-5/key/month for cloud HSM | Centralized in data center or cloud; serves multiple systems over network via PKCS#11/KMIP APIs. Deployed in HA pairs for redundancy. |
+| **Secure Enclave** | An isolated execution environment within the main CPU (Intel SGX, ARM TrustZone, Apple Secure Enclave) that protects data and computations in memory during runtime. Provides encrypted memory regions inaccessible to OS, hypervisor, or other processes. | Biometric template data (FaceID/TouchID), in-memory decryption operations, DRM content keys, confidential computing workloads where data must be processed but not exposed to the host system | Included with CPU purchase; no additional cost for Intel SGX or ARM TrustZone | Integrated into existing server or mobile processors. No separate deployment required. Application code must be specifically written to use enclave SDK. |
+| **KMS (Software Key Management Service)** | A software-based platform that provides centralized key generation, storage, rotation, and access control through APIs. May use software keystores, encrypted databases, or delegate to underlying HSM for hardware root of trust. | Application encryption keys, API secrets, TLS private keys, database credentials, cloud resource access keys managed centrally via software interface | $0 (open-source HashiCorp Vault); $1-3/key/month for cloud KMS (AWS KMS, Azure Key Vault) | Deployed as software service on VMs or cloud infrastructure. Network-accessible via REST/gRPC APIs. Scalable across multiple applications and environments. |
 
 ---
 
@@ -31,27 +31,35 @@ Sec+ 1.4 identifies three hardware security technologies designed to solve this 
 
 **What it is:** TPM 2.0 is an international standard (ISO/IEC 11889) for a secure cryptoprocessor. It is a discrete chip on the motherboard with its own non-volatile storage, random number generator, and cryptographic engine (RSA, ECC, SHA-256). The TPM has a unique Endorsement Key (EK) burned in at manufacture, and can generate Storage Root Keys (SRK) that wrap other keys so they cannot be used outside the TPM.
 
-**What it protects:** TPM primarily protects disk encryption keys—BitLocker stores the Volume Master Key sealed by the TPM, meaning the disk cannot be decrypted on a different machine even with the same password. It also provides Platform Configuration Registers (PCRs) that measure boot integrity, enabling attestation that the system has not been tampered with before releasing keys.
+**What it protects:** TPM primarily protects keys at rest—disk encryption keys like BitLocker's Volume Master Key or LUKS passphrase hashes are stored sealed by the TPM. The TPM can also provide Platform Configuration Registers (PCRs) that measure boot integrity, enabling attestation that the system has not been tampered with before releasing keys to the OS.
+
+**Key characteristic:** Keys are **hardware-bound to that specific machine**. If you remove the drive and attach it to another computer, the TPM on the original motherboard cannot be accessed, rendering the encrypted data unrecoverable without backup keys. This is a feature for physical theft protection, but a limitation for recovery scenarios.
 
 **Strengths:** Zero per-machine cost (already in modern hardware); no network dependency; protects against offline attacks (pulling drive and reading on another machine); attestation verifies boot chain integrity.
 
-**Limitations:** One per machine—no centralized management; limited key storage (typically 128KB NV ram); keys are bound to that specific hardware (if motherboard dies, keys are lost without backup); cannot serve keys to other systems over the network.
+**Limitations:** One per machine—no centralized management; limited key storage (typically 128KB NV RAM); keys are bound to that specific hardware (if motherboard dies, keys are lost without backup); cannot serve keys to other systems over the network.
 
-**Appropriate for:** Employee laptops, individual servers needing disk encryption, IoT devices with TPM chips.
+**Appropriate for:** Employee laptops, individual servers needing disk encryption, IoT devices with TPM chips where the device identity and local key storage are sufficient.
+
+**MedDefense use case:** Employee laptop disk encryption (BitLocker), BD Alaris pump firmware keys, web-srv-01 OS disk encryption.
 
 ---
 
 #### HSM (Hardware Security Module)
 
-**What it is:** An HSM is a dedicated, FIPS 140-2/140-3 validated cryptographic appliance designed for enterprise-scale key management. It provides a tamper-resistant environment where keys are generated, used, and destroyed without ever being exposed in plaintext to the host system. HSMs undergo rigorous physical and logical security certification including tamper-evident seals, tamper-responsive deletion (zeroizes keys if intrusion detected), and side-channel attack resistance.
+**What it is:** An HSM is a dedicated, FIPS 140-2/3 validated cryptographic appliance designed for enterprise-scale key management. It provides a tamper-resistant environment where keys are generated, used, and destroyed without ever being exposed in plaintext to the host system. HSMs undergo rigorous physical and logical security certification including tamper-evident seals, tamper-responsive deletion (zeroizes keys if intrusion detected), and side-channel attack resistance.
 
-**What it protects:** Enterprise-grade encryption keys including database TDE master keys, CA private keys (root and intermediate CAs), code-signing certificates, SSH certificate authorities, and application encryption keys. An HSM can manage thousands of keys and serve them to dozens of applications simultaneously.
+**What it protects:** Enterprise-grade encryption keys that need to be shared across multiple systems: database TDE master keys, CA private keys (root and intermediate CAs), code-signing certificates, SSH certificate authorities, TLS private keys, and application encryption keys. An HSM can manage thousands of keys and serve them to dozens of applications simultaneously over the network.
 
-**Strengths:** FIPS 140-2/3 validated; tamper-responsive (deletes keys on physical tampering); serves multiple systems over network; high-throughput cryptographic operations (offloads crypto from application servers); comprehensive audit logging; role-based access control (RBAC) with smart card or MFA for admin access.
+**Key characteristic:** Keys are **centrally stored and accessed over the network**. Multiple servers can request cryptographic operations (signing, encryption, decryption) from the same HSM, but the actual key material never leaves the HSM appliance. This separates key custody from data processing.
 
-**Limitations:** High upfront cost ($10K-$50K on-premise); requires specialized knowledge to configure and manage; single point of failure if not deployed in HA pairs; network dependency (if HSM is down, dependent systems cannot access keys).
+**Strengths:** FIPS 140-2/3 validated; tamper-responsive (deletes keys on physical tampering); serves multiple systems over network; high-throughput cryptographic operations (offloads crypto from application servers); comprehensive audit logging; role-based access control (RBAC) with smart card or MFA for admin access; HA pairs eliminate single point of failure.
 
-**Appropriate for:** Organizations managing encryption keys for multiple systems, CAs, or regulated industries (healthcare, finance, government). MedDefense's HSM-01 in Tasks 10 and 12.
+**Limitations:** High upfront cost ($10K-$50K on-premise); requires specialized knowledge to configure and manage; single point of failure if not deployed in HA pairs; network dependency (if HSM is down, dependent systems cannot perform cryptographic operations).
+
+**Appropriate for:** Organizations managing encryption keys for multiple systems, certificate authorities, regulated industries (healthcare, finance, government) requiring FIPS compliance and auditable key custody.
+
+**MedDefense use case:** PostgreSQL TDE master key, LUKS volume key for NAS-01, MySQL TDE master key, TLS certificate private key.
 
 ---
 
@@ -59,13 +67,17 @@ Sec+ 1.4 identifies three hardware security technologies designed to solve this 
 
 **What it is:** A secure enclave is a trusted execution environment (TEE) within the main CPU that isolates code and data from the rest of the system. Intel SGX creates encrypted memory regions (enclaves) that are protected from the OS, hypervisor, and other processes. ARM TrustZone provides a secure world partition. Apple's Secure Enclave is a dedicated coprocessor within Apple Silicon.
 
-**What it protects:** Data and operations during runtime processing. Unlike TPM (protects keys at rest) and HSM (protects keys centrally), secure enclaves protect sensitive computations in memory—decryption, key derivation, biometric matching—so that even a compromised OS cannot read the data being processed.
+**What it protects:** Data and operations **during runtime processing**. Unlike TPM (protects keys at rest on disk) and HSM (protects keys centrally for network access), secure enclaves protect sensitive computations **in memory**—decryption, key derivation, biometric matching—so that even a compromised OS cannot read the data being processed.
 
-**Strengths:** No additional hardware cost (included in modern CPUs); protects data in use (not just at rest or in transit); enables confidential computing where cloud providers cannot access customer data being processed.
+**Key characteristic:** Enclaves protect **data in use**, not keys at rest. They are not primarily key storage technologies—they are **computation isolation technologies**. The enclave can perform cryptographic operations on decrypted data without exposing that data to the rest of the system, but the enclave itself does not replace TPM or HSM for persistent key storage.
 
-**Limitations:** Vulnerable to side-channel attacks (Spectre, Meltdown, cache timing); Intel SGX has known vulnerabilities (Foreshadow, L1TF, SGAxe); requires application code modifications; limited enclave memory (SGX: 90MB EPC); no centralized key management.
+**Strengths:** No additional hardware cost (included in modern CPUs); protects data in use (not just at rest or in transit); enables confidential computing where cloud providers cannot access customer data being processed; fine-grained memory protection.
 
-**Appropriate for:** Applications processing sensitive data in untrusted environments (cloud), biometric authentication, DRM systems, and confidential computing workloads.
+**Limitations:** Vulnerable to side-channel attacks (Spectre, Meltdown, cache timing); Intel SGX has known vulnerabilities (Foreshadow, L1TF, SGAxe); requires application code modifications; limited enclave memory (SGX: 90MB EPC); no centralized key management; not FIPS certified for most implementations.
+
+**Appropriate for:** Applications processing sensitive data in untrusted environments (public cloud), biometric authentication systems, DRM systems where content must be decrypted for playback but not copied, and confidential computing workloads.
+
+**MedDefense use case:** None currently. Secure enclaves are not appropriate for MedDefense's core key management needs because the priority is protecting keys at rest (database keys, backup keys, TLS keys), not protecting data in use during processing. Enclaves could be considered in the future for PHI analytics workloads where data must be analyzed but not exposed to the cloud provider.
 
 ---
 
@@ -73,29 +85,61 @@ Sec+ 1.4 identifies three hardware security technologies designed to solve this 
 
 **What it is:** A software-based key management platform that provides centralized key generation, storage, rotation, and access control through APIs. Examples include AWS KMS, Azure Key Vault, HashiCorp Vault, and Thelma CipherTrust. KMS may use software keystores, encrypted databases, or delegate to an underlying HSM for hardware protection of the root key.
 
-**What it protects:** Application-level encryption keys, API secrets, TLS private keys, database credentials, and cloud resource access keys. KMS provides a central point of control for key lifecycle management across multiple applications and cloud services.
+**What it protects:** Application-level encryption keys, API secrets, TLS private keys, database credentials, and cloud resource access keys managed centrally through software interfaces. KMS provides a central point of control for key lifecycle management across multiple applications and cloud services.
 
-**Strengths:** Lower cost than HSM; easier to deploy and manage; API-first design integrates with CI/CD pipelines and cloud-native applications; automatic key rotation; detailed audit logging; cloud KMS services scale elastically.
+**Key characteristic:** KMS is a **management layer** that organizes key access, rotation, and policy enforcement. It may be purely software-based (keys stored in encrypted databases) or backed by HSM hardware (keys stored in HSM, accessed via KMS API). The software KMS layer itself does not provide the same hardware-rooted protection as TPM or HSM—its security depends on the underlying storage mechanism.
 
-**Limitations:** Keys may be stored in software (not hardware) unless backed by HSM; cloud KMS means the cloud provider may have access to keys (unless using customer-managed keys with BYOK); potential single point of failure; no physical tamper protection.
+**Strengths:** Lower cost than HSM; easier to deploy and manage; API-first design integrates with CI/CD pipelines and cloud-native applications; automatic key rotation; detailed audit logging; cloud KMS services scale elastically; can integrate with HSM for hardware root of trust while maintaining software management convenience.
 
-**Appropriate for:** Small-to-medium organizations, cloud-native applications, development environments, and as a management layer on top of HSM hardware.
+**Limitations:** Keys may be stored in software (not hardware) unless backed by HSM; cloud KMS means the cloud provider may have access to keys (unless using customer-managed keys with BYOK); potential single point of failure; no physical tamper protection; software vulnerabilities could expose keys.
+
+**Appropriate for:** Small-to-medium organizations, cloud-native applications, development environments, and as a management layer on top of HSM hardware to simplify API integration.
+
+**MedDefense use case:** VPN IPsec keys, PACS file encryption keys, employee laptop recovery keys (less critical keys that benefit from centralized management but don't require HSM-level hardware protection).
 
 ---
 
-### Comparative Summary Table
+### Clear Distinctions Between Technologies
 
-| Attribute | TPM | HSM | Secure Enclave | KMS (Software) |
+| Question | TPM | HSM | Secure Enclave | KMS |
 |---|---|---|---|---|
-| **Form Factor** | Chip on motherboard | Appliance or cloud service | CPU feature | Software service |
-| **Scale** | Single machine | Multiple systems (network) | Single process/application | Multiple systems (API) |
-| **FIPS Validation** | TPM 2.0: CC EAL4+ | FIPS 140-2/3 Level 2-3 | Varies (not always certified) | Varies (cloud KMS: FIPS 140-2) |
-| **Tamper Resistance** | Physical (soldered, sealed) | Physical + responsive (zeroizes) | Logical (memory encryption) | None (software only) |
-| **Network Accessible** | No | Yes (PKCS#11, KMIP) | No (process-local) | Yes (REST/gRPC API) |
-| **Key Throughput** | Low (~10 ops/sec) | High (~10,000 ops/sec) | Medium (depends on CPU) | High (depends on infrastructure) |
-| **HA/Redundancy** | No (bound to hardware) | Yes (HA pairs) | No (process-local) | Yes (cloud SLA) |
-| **Audit Logging** | Limited (local logs) | Comprehensive (centralized) | Limited (application logs) | Comprehensive (cloud logs) |
-| **Best Use Case** | Laptop disk encryption | Enterprise database/CA keys | Confidential computing | Application secrets |
+| **Is this primarily key storage or computation protection?** | Key storage | Key storage | Computation protection | Key management |
+| **What state does it protect?** | Keys at rest | Keys at rest | Data in use (in memory) | Keys at rest + lifecycle |
+| **Is it network-accessible?** | No (local only) | Yes (API over mTLS) | No (process-local) | Yes (REST/gRPC API) |
+| **Does it require new hardware?** | Built into motherboard (free) | Dedicated appliance ($$$) | Built into CPU (free) | Software (free/$$) |
+| **What scale does it serve?** | Single device | Multiple systems | Single application/process | Multiple applications |
+| **FIPS certified?** | Yes (CC EAL4+) | Yes (FIPS 140-2/3) | No (varies) | Varies (cloud: yes, on-prem: depends) |
+| **Can multiple apps share keys?** | No (device-bound) | Yes (centralized) | No (enclave-local) | Yes (policy-controlled) |
+
+---
+
+### When to Use Each Technology
+
+| Scenario | Appropriate Technology | Reasoning |
+|---|---|---|
+| Encrypt employee laptop disks | **TPM** | Key is bound to device; protects against physical theft; zero additional cost |
+| Store database TDE master key | **HSM** | Key shared across multiple servers; FIPS compliance required; high-value target |
+| Process PHI in public cloud | **Secure Enclave** (consider) | Data must be protected from cloud provider; enclave isolates in-memory processing |
+| Manage API secrets for 20 microservices | **KMS** (Vault) | Centralized policy management; frequent key rotation; API-first integration |
+| Sign code releases | **HSM** | Code-signing key must be centralized and tamper-proof; multiple developers need access |
+| Backup encryption volume key | **HSM** | Key must be recoverable across multiple systems; hardware protection required |
+| Biometric authentication on mobile | **Secure Enclave** | Template data protected in memory during matching; OS cannot access raw biometrics |
+| Vault root token management | **KMS + HSM** | Vault manages policies; HSM provides hardware root of trust for master key |
+| IoT device identity | **TPM** | Device identity key stored on chip; cannot be cloned or extracted |
+
+---
+
+### Side-by-Side: What Each Technology Actually Solves
+
+| Problem | Solved By | Why |
+|---|---|---|
+| Physical theft of laptop exposes disk data | TPM | Disk encryption key sealed to TPM; cannot decrypt on stolen hardware |
+| Database server compromised; attacker tries to steal TDE key | HSM | TDE key stored in HSM; attacker gets only ciphertext, not plaintext key |
+| Cloud provider employee accesses PHI during processing | Secure Enclave | Data decrypted only in enclave memory; cloud provider cannot read enclave contents |
+| Too many keys to track manually across 50 services | KMS | Centralized policy, rotation, audit, and API-driven access control |
+| Multiple DBAs need access to database keys without seeing plaintext | HSM | HSM performs cryptographic operations; DBAs get results but not keys |
+| Development team needs quick key management without hardware costs | KMS | Software KMS is free/open-source; no hardware procurement delay |
+| BIOS password bypass allows boot from USB | TPM + Secure Boot | TPM measures boot chain; if tampering detected, keys not released |
 
 ---
 
@@ -133,40 +177,43 @@ Additionally, MedDefense has:
 flowchart TD
     subgraph Arch["MedDefense Key Management Architecture"]
 
-        subgraph Layer1["Root of Trust — HSM Layer"]
-            HSM["HSM-01 (Thales Luna)<br/>━━━━━━━━━━━━━━━━━━━━━<br/>FIPS 140-2 Level 3 Appliance<br/><br/>Stores:<br/>• PG TDE key<br/>• LUKS vol key"]
-        end
+        HSM["HSM-01 (Thales Luna)<br/>FIPS 140-2 Level 3 Appliance<br/><br/>Stores:<br/>• PG TDE key<br/>• LUKS vol key"]
 
-        HSM <-. mTLS .-> EHR["ehr-db-01<br/>(PostgreSQL)"]
-        HSM <-. mTLS .-> BILL["billing-srv-01<br/>(MySQL)"]
-        HSM <-. mTLS .-> NAS["NAS-01<br/>(backup storage)"]
-        HSM <-. mTLS .-> WEBSRV["web-srv-01<br/>(TLS cert key)"]
+        EHR["ehr-db-01<br/>(PostgreSQL)"]
+        BILL["billing-srv-01<br/>(MySQL)"]
+        NAS["NAS-01<br/>(backup storage)"]
+        WEBSRV["web-srv-01<br/>(TLS cert key)"]
 
-        subgraph Layer2["Software KMS — Vault Layer"]
-            VAULT["Vault KMS (on-prem)<br/>━━━━━━━━━━━━━━━━━━━━━<br/>Software KMS (HashiCorp Vault)<br/><br/>Stores:<br/>• VPN PSK<br/>• PACS file keys"]
-        end
+        HSM <-- mTLS --> EHR
+        HSM <-- mTLS --> BILL
+        HSM <-- mTLS --> NAS
+        HSM <-- mTLS --> WEBSRV
 
-        HSM ==>|"Vault master key<br/>sealed by HSM"| VAULT
+        HSM -->|"HSM as root of trust"| VAULT
 
-        VAULT <-. REST API .-> VPN["vpn-srv-01<br/>(IPsec keys)"]
-        VAULT <-. REST API .-> PACS["pacs-srv-01<br/>(file keys)"]
-        VAULT <-. REST API .-> LAPREC["Employee laptops<br/>(recovery)"]
+        VAULT["Vault KMS (on-prem)<br/>Software KMS — HashiCorp Vault<br/><br/>Stores:<br/>• VPN PSK<br/>• PACS file keys"]
 
-        subgraph Layer3["Endpoint Security — TPM Layer"]
-            TPM["TPM 2.0 (per device)<br/>━━━━━━━━━━━━━━━━━━━━━<br/>Embedded in each endpoint<br/><br/>Stores:<br/>• BitLocker VMK<br/>• Firmware keys"]
-        end
+        VPN["vpn-srv-01<br/>(IPsec keys)"]
+        PACS["pacs-srv-01<br/>(file keys)"]
+        LAPREC["Employee laptops<br/>(recovery)"]
 
-        TPM <-. Sealed at boot .-> BL_LT["Employee laptops<br/>(BitLocker)"]
-        TPM <-. Sealed at boot .-> BL_WEB["web-srv-01<br/>(OS disk)"]
-        TPM <-. Sealed at boot .-> BL_ALARIS["BD Alaris pumps"]
+        VAULT <-- REST API --> VPN
+        VAULT <-- REST API --> PACS
+        VAULT <-- REST API --> LAPREC
 
-        subgraph Layer4["Air-Gapped Recovery"]
-            USB["Offline USB (Bank Safe)<br/>━━━━━━━━━━━━━━━━━━━━━<br/><br/>Stores:<br/>• LUKS header — Shamir 3-of-5<br/>• HSM SRK — Shamir 3-of-5<br/>• Vault recovery — Shamir 3-of-5"]
-        end
+        VAULT -->|"Vault master key sealed by HSM"| TPM
 
-        USB -.->|"Recovery share"| HSM
-        USB -.->|"Recovery share"| VAULT
-        USB -.->|"Recovery share"| TPM
+        TPM["TPM 2.0 (per device)<br/>Embedded in each endpoint<br/><br/>Stores:<br/>• BitLocker VMK<br/>• Firmware keys"]
+
+        LAPBL["Employee laptops<br/>(BitLocker)"]
+        WEBOS["web-srv-01<br/>(OS disk)"]
+        ALARIS["BD Alaris pumps"]
+
+        TPM <-- Sealed at boot --> LAPBL
+        TPM <-- Sealed at boot --> WEBOS
+        TPM <-- Sealed at boot --> ALARIS
+
+        USB["Offline USB (Bank Safe)<br/>Air-gapped recovery<br/><br/>Stores:<br/>• LUKS header — Shamir 3-of-5 shares<br/>• HSM SRK — Shamir 3-of-5 shares<br/>• Vault recovery — Shamir 3-of-5 shares"]
     end
 ```
 
@@ -402,5 +449,6 @@ MedDefense's key management strategy solves the "where do you keep the keys?" pr
 | **KMS (HashiCorp Vault)** | Software with HSM root of trust | VPN PSK, PACS file keys, application secrets | Flexible API-driven management for high-volume, lower-sensitivity keys |
 | **TPM 2.0** | Endpoint chip | BitLocker VMK, laptop disk keys, IoT firmware keys | Zero-cost, hardware-bound protection for individual devices |
 | **Offline USB (Shamir 3-of-5)** | Air-gapped storage | HSM recovery keys, LUKS header backup | Catastrophic recovery without single-person dependency |
+| **Secure Enclave** | Not deployed | None currently | Better suited for in-memory computation protection; not needed for MedDefense's key-at-rest priorities |
 
 The cloud HSM investment is justified at $4,352/year against a risk-adjusted annual cost of $377,500—an ROI of **7,654%** through risk avoidance. No other single security investment in the Phase 1 roadmap provides comparable risk reduction per dollar spent.
