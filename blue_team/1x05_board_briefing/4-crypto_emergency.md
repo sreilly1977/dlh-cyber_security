@@ -106,7 +106,7 @@ The advisory reveals that Crimson Tide specifically targets unencrypted database
 ### Priority Changes Summary
 
 | Change | Action | Reasoning |
-|---|--- threat exigen---|---|
+|---|---|---|
 | PROMOTED to joint #1 | PostgreSQL TDE + MySQL TDE | Crimson Tide Phase 4 directly targets unencrypted databases for raw file copying in 80% of incidents (4 of 5). Every hour without TDE, 50,000 patient records are copyable via simple filesystem access. |
 | ELEVATED to #2 | NAS-01 isolation + WORM | Crimson Tide Phase 5 destroys backups in 100% of incidents. Physical isolation is zero-cost, zero-time, and blocks backup destruction entirely. |
 | ELEVATED to #3 | RC4 Kerberos disable | Crimson Tide Phase 3 uses Kerberoasting in 60% of incidents (3 of 5). Pure crypto fix with rapid configuration deployment. |
