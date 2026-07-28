@@ -467,14 +467,3 @@ The posture gap is now execution, not strategy.
 **Total ALE across all findings: $1,488,000**
 
 ---
-
-## Key Performance Indicators
-
-| Metric | Value | Change | Status |
-|---|---|---|---|
-| Remediation Coverage | 100% | All 13 findings have clear path | ✅ Up |
-| Findings Remediated | 4 / 13 | 31% complete | ✅ Up |
-| Critical Findings Open | 3 | CRYPTO-001, 009, 011 | ➡️ Flat |
-| Total ALE Addressed | $1,488,000 | Across all findings | ✅ Up |
-
----
