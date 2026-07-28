@@ -1,77 +1,89 @@
 # DLH Cyber Security Academy Repository
 
-![Security+ Badge](https://img.shields.io/badge/Certification-CompTIA_Security%2B-blue)
-![Academy Badge](https://img.shields.io/badge/Academy-Luxembourg_Academy_of_Cybersecurity-green)
+<div align="center">
+
+![Security+ Badge](https://img.shields.io/badge/CompTIA-Security%2B-yellow)
+![Academy Badge](https://img.shields.io/badge/CS-Academy-blue)
+
+</div>
 
 A comprehensive cybersecurity study repository structured around two primary learning tracks — foundational coursework and applied blue team operations — supplemented by a practical SOC notes collection. Content aligns with the CompTIA Security+ (SY0-701) certification exam domains and NIST/CIS security frameworks.
-
----
 
 ## Repository Structure
 
 | Directory | Description |
 |-----------|-------------|
-| [`blue_team/`](blue_team/README.md) | Applied defensive operations through a scenario-driven case study (MedDefense) |
-| [`common_core/`](common_core/README.md) | Foundational coursework covering all five Security+ domains |
-| [`notes/`](notes/) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
+| [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Applied defensive operations through a scenario-driven case study (MedDefense) |
+| [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Foundational coursework covering all five Security+ domains |
+| [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
 
 ---
 
-## blue_team/
+## `blue_team/`
 
-Scenario-based curriculum following **MedDefense**, a fictional healthcare organization. Learners progress through four modules as a security analyst handling incidents, threat intelligence, vulnerability management, and defense strategy.
+Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Eight modules build practical SOC analyst skills from incident classification through executive briefing.
+
+### Scenario Modules
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`1x00_first_watch/`](blue_team/1x00_first_watch/README.md) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
-| [`1x01_know_your_enemy/`](blue_team/1x01_know_your_enemy/README.md) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
-| [`1x02_the_weak_links/`](blue_team/1x02_the_weak_links/README.md) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
-| [`1x03_defense_blueprint/`](blue_team/1x03_defense_blueprint/README.md) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
-| [`HIPA/`](blue_team/HIPA/) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
-| [`Knowbe4/`](blue_team/Knowbe4/) | Security awareness training — Social Engineering Red Flags reference |
-| [`Microsoft/`](blue_team/Microsoft/) | STRIDE Threat Model methodology guide |
-| [`NIST_CSF/`](blue_team/NIST_CSF/) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, NIST CSWP.29) |
-| [`NIST_Special_Publications/`](blue_team/NIST_Special_Publications/) | NIST SP 800-series documents (SP 800-12 r1, SP 800-30 r1, SP 800-53 r5, SP 800-61 r2) |
-| [`learning_objectives/`](blue_team/learning_objectives/) | Weekly learning objectives for the blue team track |
+| [`1x00_first_watch/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x00_first_watch) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
+| [`1x01_know_your_enemy/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x01_know_your_enemy) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
+| [`1x02_the_weak_links/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x02_the_weak_links) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
+| [`1x03_defense_blueprint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x03_defense_blueprint) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
+| [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | TBD |
+| [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | TBD |
 
-See the [`blue_team/README.md`](blue_team/) for full module details, exercise breakdowns, and the MedDefense case study overview.
+### Reference Libraries
+
+| Directory | Description |
+|-----------|-------------|
+| [`Crypt101/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Crypt101) | Foundational cryptography concepts, algorithms, and implementation guides |
+| [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/HIPAA) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
+| [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Knowbe4) | Security awareness training resources and social engineering red flags |
+| [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Microsoft) | Microsoft security methodologies (STRIDE Threat Model) |
+| [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_CSF) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, CSWP.29) |
+| [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_Special_Publications) | NIST SP 800-series reference documents (SP 800-12, 800-30, 800-53, 800-61) |
+| [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/SANS) | SANS Institute reading room materials and security research papers |
+| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Weekly learning objectives for the course (Week 10, Week 11) |
 
 ---
 
-## common_core/
+## `common_core/`
 
-Foundational coursework from the DLH Cyber Security Academy covering the core competencies required for the CompTIA Security+ (SY0-701) certification.
+Foundational coursework organized into sub-modules aligned with CompTIA Security+ (SY0-701) domains. Each sub-module builds theoretical knowledge with practical application examples.
 
 | Directory | Description | Security+ Domain |
 |-----------|-------------|------------------|
-| [`cybersecurity_basics/`](common_core/cybersecurity_basics/README.md) | Foundational concepts, terminology, and core principles | Domain 1.0 |
-| [`network_security/`](common_core/network_security/README.md) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
-| [`linux_security/`](common_core/linux_security/README.md) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
-| [`scripting_cyber/`](common_core/scripting_cyber/README.md) | Python automation scripts for security tasks and analysis | Domain 4.0 |
-| [`security_policy_analysis/`](common_core/security_policy_analysis/README.md) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
-| [`threat-modeling-fundamentals/`](common_core/threat-modeling-fundamentals/README.md) | Methodologies for identifying and assessing threats | Domain 1.0 |
-| [`understanding_vulnerabilities/`](common_core/understanding_vulnerabilities/README.md) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
-| [`web_application_security/`](common_core/web_application_security/README.md) | OWASP Top 10, secure coding practices, and application defense | Domain 1.0 |
-| [`learning_objectives/`](common_core/learning_objectives/) | Weekly learning objectives covering all five Security+ domains | Domains 1.0–5.0 |
+| [`cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/cybersecurity_basics) | Foundational concepts, terminology, and core principles | Domain 1.0 |
+| [`network_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/network_security) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
+| [`linux_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/linux_security) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
+| [`scripting_cyber/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/scripting_cyber) | Python automation scripts for security tasks and analysis | Domain 4.0 |
+| [`security_policy_analysis/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/security_policy_analysis) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
+| [`threat-modeling-fundamentals/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/threat-modeling-fundamentals) | Methodologies for identifying and assessing threats | Domain 1.0 |
+| [`understanding_vulnerabilities/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/understanding_vulnerabilities) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
+| [`web_application_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/web_application_security) | Web app vulnerabilities, OWASP Top 10, and secure coding practices | Domain 2.0 |
 
-See the [`common_core/README.md`](common_core/) for the full curriculum map.
+See the [`common_core/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/common_core/README.md) for the full curriculum map.
 
 ---
 
-## notes/
+## `notes/`
 
-Practical security operations references for SOC analysts and incident response.
+Practical security operations references for SOC analysts and incident response teams. Includes detection query templates, architecture documentation, and presentation materials.
 
-| File | Purpose | Platform |
-|------|---------|----------|
-| [`Open-Source_Security_Stack.md`](notes/Open-Source_Security_Stack.md) | Reference architecture for a complete open-source security platform (OPNsense, Security Onion, Shuffle, Eramba) | Infrastructure |
-| [`Top_25_SPL_Queries.md`](notes/Top_25_SPL_Queries.md) | Essential Splunk search queries for threat detection | Splunk SIEM |
-| [`Top_25_Wazuh_Queries.md`](notes/Top_25_Wazuh_Queries.md) | Core detection rules for security monitoring | Wazuh SIEM |
-| [`Flowchart.md`](notes/Flowchart.md) | Process flowchart for incident response procedures | — |
-| `Security+ Security Architecture Domain Presentation.odp` | Presentation deck for the Security Architecture domain | — |
-| `Security Infra Project For CS Academy.odp` | Infrastructure project presentation | — |
+### Key Documents
 
-See the [`notes/README.md`](notes/) for the full documentation including the open-source security stack architecture and detection query categories.
+| File | Description |
+|------|-------------|
+| [`Open-Source_Security_Stack.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md) | Architecture blueprint for home lab security infrastructure |
+| [`Top_25_SPL_Queries.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Top_25_SPL_Queries.md) | Commonly used Splunk SPL queries for threat detection |
+| [`Top_25_Wazuh_Queries.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Top_25_Wazuh_Queries.md) | Wazuh rule queries and detection patterns |
+| [`Flowchart.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Flowchart.md) | Incident response workflow diagrams |
+| [`Security+ Security Architecture Domain Presentation.odp`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Security+%20Security%20Architecture%20Domain%20Presentation.odp) | Slide deck for Security+ Domain 3 coverage |
+| [`Security Infra Project For CS Academy.odp`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Security%20Infra%20Project%20For%20CS%20Academy.odp) | Complete infrastructure project presentation |
+
+See the [`notes/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/README.md) for full documentation including the open-source security stack architecture and detection query categories.
 
 ---
 
@@ -79,61 +91,72 @@ See the [`notes/README.md`](notes/) for the full documentation including the ope
 
 This repository supports preparation for:
 
-- **CompTIA Security+ (SY0-701)** — All five exam domains covered across both tracks
-- **NIST Cybersecurity Framework (CSF 2.0)** — Govern, Identify, Protect, Detect, Respond, Recover
-- **CIS Controls v8** — Implementation Groups 1–3 safeguard mapping
-- **MITRE ATT&CK** — Technique mapping and adversary emulation analysis
-- **HIPAA / HICP** — Healthcare-specific regulatory and cybersecurity practices
+| Certification | Domain Coverage | Resources |
+|---------------|-----------------|-----------|
+| [CompTIA Security+ (SY0-701)](https://www.comptia.org/certifications/security) | All 5 domains | `common_core/` + `blue_team/` exercises |
+| [CompTIA CySA+ (CS0-003)](https://www.comptia.org/certifications/cybersecurity-analyst) | Threat detection, analysis, response | `notes/` queries + `blue_team/` SOC modules |
+| [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework) | Identify, Protect, Detect, Respond, Recover | `blue_team/NIST_CSF/` references |
+| [CIS Controls v8](https://www.cisecurity.org/controls) | Prioritized security best practices | `blue_team/` exercise mappings |
+| [HIPAA Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/index.html) | Healthcare compliance fundamentals | `blue_team/HIPAA/` references |
+| [MITRE ATT&CK Framework](https://attack.mitre.org/) | Adversary TTPs mapping | `blue_team/1x01_know_your_enemy/` exercises |
 
 ---
 
 ## Usage
 
-1. Start with [`common_core/`](common_core/) for foundational concepts aligned to Security+ domains
-2. Progress to [`blue_team/`](blue_team/) for applied scenario exercises
-3. Reference [`notes/`](notes/) for practical SOC tooling, queries, and architecture guides
-4. Within `blue_team/`, work modules sequentially (1x00 → 1x03) as later exercises build on earlier findings
+Work through the tracks based on your learning goals:
 
----
+### Learning Paths
+
+| Path | Start Here | Best For |
+|------|------------|----------|
+| Foundation First | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Security+ exam prep, new learners |
+| Applied Defense | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | SOC skills, hands-on practice |
+| Quick References | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Working professionals, query lookups |
+
+### Recommended Workflow
+
+1. **New learners:** Begin with [`common_core/cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/cybersecurity_basics), then proceed sequentially through each domain module
+2. **Security+ candidates:** Review [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) aligned with SY0-701 exam objectives, supplement with [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) for practical context
+3. **Blue team aspirants:** Follow [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) modules in order, document findings cumulatively
+4. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
 
 ### Cheat Sheets
 
-- [Nishtman's Cyber Study Hub](https://niteshtiwari.github.io/)
-- [SANS Cybersecurity Posters and Cheat Sheets](https://www.sans.org/posters/)
-- [Python Security Cheat Sheet for Developers](https://python-security.readthedocs.io/)
-- [Python Cheat Sheet for Ethical Hackers](https://github.com/The-Art-of-Hacking/h4cker)
+Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) directory:
+- Splunk SPL quick reference
+- Wazuh rule patterns
+- Common port/protocol reference
+- OWASP Top 10 summary
 
-### Online Training
+### Online Training Resources
 
-- [Learn Cybersecurity Step by Step](https://learncybersecurity.stepbystep.com/)
-- [HACKTHEBOX](https://www.hackthebox.com/)
-- [LetsDefend](https://letsdefend.io/)
-- [TryHackMe](https://tryhackme.com/)
+- [TryHackMe](https://tryhackme.com) — Guided learning rooms
+- [HackTheBox](https://www.hackthebox.com) — Hands-on labs
+- [OverTheWire](https://overthewire.org) — Command line and security challenges
 
 ### Open Source Infrastructure
 
-- [OPNsense](https://opnsense.org/) — FW, IPS/IDS, Netflow, VPN, WAF
-- [Security Onion](https://securityonionsolutions.com/) — NIDS/HIDS, Netflow, SIEM, XDR
-- [Shuffle Automation](https://shuffler.io/) — SOAR
-- [Eramba](https://www.eramba.org/) — GRC
+Setup guides and configuration files available in the repository for:
+- Wazuh SIEM deployment
+- Splunk Free instance
+- Security Onion network monitoring
+- Home lab architecture recommendations
 
 ### AuditD & SysMon Configs
 
-- [AuditD Best Practices Config](https://github.com/Neo23x0/auditd)
-- [SysMon for Windows](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
-- [SysMon for Linux](https://github.com/SysmonSystemMonitor/sysmon-for-linux)
-- [SwiftOnSecurity SysMon config](https://github.com/SwiftOnSecurity/sysmon-config)
-- Enable Windows Client DNS Logging: 
+Configuration templates for:
+- Linux audit daemon rules
+- Windows Sysmon Event ID filtering
+- Log retention policies
+- Compliance-aligned baselines
 
-```cmd
-wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
-```
-*Remember to enable browser ad blockers, and exclude local/own DNS*
+> **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
 
-## About
-
-DLH CS Academy Repo
+---
 
 ## License
 
-See [LICENSE](LICENSE) for details.
+See [`LICENSE`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/LICENSE) for details.
+
+---
