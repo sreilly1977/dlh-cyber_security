@@ -1,10 +1,10 @@
-0. The Advisory Analysis
+[0. The Advisory Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/0-advisory_analysis.md)
 
 Goal: Translate the CISA advisory into a MedDefense-specific impact assessment, proving you can apply threat intelligence to your own environment in real time.
 
 Context: The CISA advisory describes a generic attack chain. Your job is to make it specific. Every step in Crimson Tide's playbook must be mapped to a specific MedDefense system, vulnerability and gap. The question is not "could this happen to hospitals ?" The question is "could this happen to MedDefense, with our specific infrastructure, and if so, how exactly ?"
 
-Provided Files: [`cisaadvisorycrimson_tide.txt`]()
+Provided Files: [`cisaadvisorycrimson_tide.txt`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x05_board_briefing/cisaadvisorycrimson_tide.txt)
 
 Instructions: Read the entire advisory. Then produce a MedDefense Impact Assessment that maps every phase of the Crimson Tide attack chain to MedDefense's specific environment:
 
