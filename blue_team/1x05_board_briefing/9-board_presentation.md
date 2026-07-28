@@ -25,17 +25,17 @@ The Security Committee recommends the Board approve the emergency budget authori
 
 ## Part 2: Stakeholder Talking Points
 
-**Dr. Elena Morales (CEO) — Patient Safety and Reputation**  
-"This threat targets clinical data specifically; if breached, we risk interrupting patient care systems and exposing private health records to public view. Our priority is preventing the downtime that forces surgery cancellations and preserves the trust our patients place in our care."
+**Dr. Morales (CEO) — Patient Safety and Organizational Reputation**  
+"This threat directly endangers patient safety because the ransomware variant disrupts clinical systems and could force diversions of emergency care while exposed records are published online. Authorizing this plan prevents the operational downtime that leads to cancelled procedures and the reputational damage that erodes community trust in our facility for years afterward."
 
-**Robert Kim (CFO) — Financial Exposure and ROI**  
-"The cost of inaction is approximately seven point four million dollars per incident, whereas our emergency ask is less than one hundred thousand dollars for immediate protection. The return on investment for patching the primary entry point alone exceeds two thousand to one, making this a fiscally responsible hedge against insolvency risk."
+**Robert Kim (CFO) — Financial Exposure, ROI of Security Spend, Cost of Inaction**  
+"The updated annualized loss expectancy has risen to six point six six million dollars against an emergency spend of ninety-three thousand, yielding a benefit-cost ratio that would be unthinkable in any other capital expenditure decision. The FortiGate patch alone costs two thousand four hundred dollars and prevents an expected loss of nearly six million, meaning every hour we delay costs seven hundred and sixty dollars in cumulative risk exposure."
 
-**Dr. Reeves (Board Chair) — Governance and Oversight Responsibility**  
-"As Board Chair, you bear ultimate fiduciary responsibility for authorizing emergency expenditures outside the approved annual budget. Given the documented threat intelligence and validated risk quantification, declining to act within the next twenty-four hours shifts governance from prudent oversight to negligent inaction. Your signature on this approval creates the necessary audit trail demonstrating the Board exercised due diligence in protecting organizational assets and stakeholder interests."
+**Dr. Reeves (Board Chair) — Professional Recommendation and Confidence Level**  
+"My professional recommendation is to approve emergency spending authority today, not at the next quarterly review, because the governance risk of inaction now exceeds the governance risk of expedited procurement. As Board Chair, your approval signature creates the audit trail demonstrating fiduciary due diligence, whereas declining or deferring creates a record of awareness without action that would be indefensible in post-incident litigation or regulatory review."
 
-**Thomas Wright (Former Banker) — Industry Comparison**  
-"While the financial sector faces similar threats, we currently lag behind banking maturity standards regarding encryption at rest and 24/7 monitoring capabilities. Implementing this plan brings our defensive posture closer to industry baseline expectations for critical infrastructure operators managing sensitive customer data."
+**Thomas Wright (Former banker) — How MedDefense Compares to Financial Sector Security Maturity**  
+"In banking, encrypting data at rest, enforcing TLS in transit, and maintaining twenty-four-seven monitoring are baseline regulatory expectations enforced by examiners, yet MedDefense currently lacks all three. This plan closes the most critical gaps and begins moving us toward the maturity standards that auditors and insurers increasingly require before offering favorable terms or coverage."
 
-**Maria Santos (Legal Counsel) — Liability and Compliance**  
-"We are currently non-compliant with several HIPAA Technical Safeguards regarding encryption and audit controls, which creates significant liability exposure in the event of a breach. Authorizing this funding allows us to move toward substantial compliance and strengthens our defense against regulatory penalties or class-action litigation."
+**Maria Santos (Legal counsel) — HIPAA Liability Exposure, Breach Notification Obligations, Insurance Status**  
+"We are currently non-compliant with at least four HIPAA Technical Safeguard requirements, and a breach under these conditions would constitute knowing neglect rather than reasonable effort, multiplying statutory penalties under HITECH Act tier four provisions. Our cyber insurance policy likely requires evidence of basic security controls such as encryption to honor a claim, meaning a breach today could leave us uncovered and personally exposed to derivative claims from shareholders and patients."
