@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-#
+#!/bin/bash
+
 # 0-baseline_snapshot.sh — Capture the complete security baseline of a Linux system
 #
 # Usage:  sudo ./0-baseline_snapshot.sh
