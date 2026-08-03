@@ -4,24 +4,30 @@
 # Usage: sudo ./0-baseline_snapshot.sh
 #===============================================================================
 
+set -euo pipefail
+
 # Get OS info
-source /etc/os-release 2>/dev/null || PRETTY_NAME="Unknown"
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release
+else
+    PRETTY_NAME="Unknown"
+fi
 
 # Count running services
-SERVICE_COUNT=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l)
+SERVICE_COUNT=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l || echo 0)
 
 # Count open ports
 PORT_COUNT=$(ss -tuln 2>/dev/null | grep -c LISTEN) || PORT_COUNT=0
 
 # Count SUID binaries
-SUID_COUNT=$(find / -type f -perm -4000 2>/dev/null | wc -l)
+SUID_COUNT=$(find / -type f -perm -4000 2>/dev/null | wc -l) || SUID_COUNT=0
 
 # Count SGID binaries
-SGID_COUNT=$(find / -type f -perm -2000 2>/dev/null | wc -l)
+SGID_COUNT=$(find / -type f -perm -2000 2>/dev/null | wc -l) || SGID_COUNT=0
 
 # Count world-writable files (excluding proc, sys, dev)
 WW_COUNT=$(find / \( -path /proc -o -path /sys -o -path /dev \) -prune \
-  -o -type f -perm -0002 -print 2>/dev/null | wc -l)
+  -o -type f -perm -0002 -print 2>/dev/null | wc -l) || WW_COUNT=0
 
 echo "Hostname: $(hostname)"
 echo "OS: $PRETTY_NAME"
