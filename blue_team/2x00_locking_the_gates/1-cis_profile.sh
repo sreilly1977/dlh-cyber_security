@@ -99,6 +99,8 @@ echo "[INFO] Post-hardening metrics will be compared against baseline for delta 
 # 2. Coverage of attack vectors in kill chains from 1x01_kill_chains.md
 # 3. Alignment with CISA Crimson Tide advisory (1x05 0-advisory_analysis.md)
 # 4. Addressing gaps identified in 1x00 control_inventory.md
+# 5. Required hardening domains: SSH, kernel/sysctl, PAM, service minimization,
+#    filesystem permissions, audit logging, firewall exposure, log retention
 # ============================================================================
 
 CONTROLS=(
@@ -153,7 +155,7 @@ CONTROLS=(
   # ── 5. Filesystem permissions ──────────────────────────────────────────
   # Addresses: Privilege escalation paths from baseline snapshot
   # Reference: 0-baseline_snapshot.sh output (23 SUID, 12 SGID binaries)
-  "CIS-6.1.1|Audit and remediate SUID and SGID binaries|6|high|billing-srv-01,web-srv-01,log-srv-01|Privilege escalation — unexpected SUID/SGID binaries provide root escalation paths; BASELINE SNAPSHOT|suid_sgid_remediation|Run find / -xdev -perm -4000 and -perm -2000; compare against CIS baseline whitelist; chmod u-s or remove unauthorized binaries|Baseline snapshot (task 0) captured 23 SUID and 12 SGID binaries; CIS whitelist expects approximately 18 SUID and 10 SGID on Ubuntu 22.04"
+  "CIS-6.1.1|Audit and remediate SUID and SGID filesystem permissions|6|high|billing-srv-01,web-srv-01,log-srv-01|Privilege escalation — unexpected SUID/SGID filesystem permissions provide root escalation paths; BASELINE SNAPSHOT|suid_sgid_remediation|Run find / -xdev -perm -4000 and -perm -2000; compare against CIS baseline whitelist; chmod u-s or remove unauthorized binaries|Baseline snapshot (task 0) captured 23 SUID and 12 SGID binaries; CIS whitelist expects approximately 18 SUID and 10 SGID on Ubuntu 22.04. Filesystem permission review is critical for privilege escalation prevention"
 
   # ── 6. Audit logging ────────────────────────────────────────────────────
   # Addresses: Missing audit visibility, forensic evidence gap
