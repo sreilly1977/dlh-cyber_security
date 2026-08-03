@@ -13,23 +13,26 @@ else
     PRETTY_NAME="Unknown"
 fi
 
+# Get hostname
+HOSTNAME_VAL=$(uname -n)
+
 # Count running services
-SERVICE_COUNT=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l || echo 0)
+SERVICE_COUNT=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l || true)
 
 # Count open ports
-PORT_COUNT=$(ss -tuln 2>/dev/null | grep -c LISTEN) || PORT_COUNT=0
+PORT_COUNT=$(ss -tuln 2>/dev/null | grep -c LISTEN || true)
 
 # Count SUID binaries
-SUID_COUNT=$(find / -type f -perm -4000 2>/dev/null | wc -l) || SUID_COUNT=0
+SUID_COUNT=$(find / -type f -perm -4000 2>/dev/null | wc -l || true)
 
 # Count SGID binaries
-SGID_COUNT=$(find / -type f -perm -2000 2>/dev/null | wc -l) || SGID_COUNT=0
+SGID_COUNT=$(find / -type f -perm -2000 2>/dev/null | wc -l || true)
 
 # Count world-writable files (excluding proc, sys, dev)
 WW_COUNT=$(find / \( -path /proc -o -path /sys -o -path /dev \) -prune \
-  -o -type f -perm -0002 -print 2>/dev/null | wc -l) || WW_COUNT=0
+  -o -type f -perm -0002 -print 2>/dev/null | wc -l || true)
 
-echo "Hostname: $(hostname)"
+echo "Hostname: $HOSTNAME_VAL"
 echo "OS: $PRETTY_NAME"
 echo "Running services: $SERVICE_COUNT"
 echo "Open ports: $PORT_COUNT"
