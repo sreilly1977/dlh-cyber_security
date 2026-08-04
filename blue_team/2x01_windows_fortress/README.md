@@ -47,3 +47,80 @@ Findings: 9 (Critical: 3, High: 4, Medium: 2)
 
 ---
 
+# 1. Domain Risk Findings Extractor
+
+Goal: Produce the actionable findings inventory that drives the Windows hardening workflow.
+
+Context: Task 0 maps the domain baseline, but baseline data alone is not enough. The security engineer needs a findings inventory that identifies exactly what must be remediated, which task remediates it, and how severe the risk is. This rebuilt task connects Active Directory weaknesses to password policy, audit policy, Kerberos hardening, service account control, GPO hardening, and stale object cleanup.
+
+Instructions: Write 1-domain_findings.ps1.
+
+The script must audit meddefense.local and generate domain_security_findings.json.
+
+It must identify:
+
+    Accounts with PasswordNeverExpires, including account name, enabled state, group memberships, password last set date, and whether it is a service account.
+    Disabled accounts in privileged groups: Domain Admins, Enterprise Admins, and G_IT_Admins.
+    Stale computer objects with no logon/authentication activity in 90+ days.
+    Password and lockout policy gaps against the Windows Fortress target state: minimum length 14, complexity enabled, history 24, lockout threshold 5.
+    Missing audit visibility for process creation, special logon, account management, object access, and PowerShell/Sysmon readiness.
+    Service account risks: interactive logon allowed, unconstrained delegation, DES-only flag, privileged membership, stale password, or suspicious last logon.
+    Weak GPO security posture: default-only GPOs, no MedDefense hardening GPOs, or GPOs without clear security purpose.
+
+Each finding object must include id, severity, category, asset, evidence, risk, recommended_remediation, and mapped_task.
+
+Expected Output:
+
+```PS
+PS> .\1-domain_findings.ps1
+[CRITICAL] Password policy minimum length: 7
+[CRITICAL] Account lockout: not configured
+[CRITICAL] Kerberos DES/RC4 enabled
+[HIGH] 6 accounts with PasswordNeverExpires
+[HIGH] 3 service accounts with unconstrained delegation
+[HIGH] Advanced Audit Policy: not configured
+[MEDIUM] Stale computer objects: 2
+[MEDIUM] No MedDefense hardening GPOs present
+
+Findings: 9
+Critical: 3
+High: 4
+Medium: 2
+Report saved to: domain_security_findings.json
+```
+
+---
+
+# 2. Windows Event Log Assessment
+
+Goal: Assess the current event logging capability by checking which critical Event IDs the domain is actually generating and identifying the visibility gaps.
+
+Context: You need to know what the domain is currently capable of seeing. If Event ID 4688 (process creation) is not being generated, then every process the attacker runs is invisible. If Event ID 4672 (special logon) is not logged, you cannot detect when someone uses admin privileges. This task quantifies the gap between what the domain sees now and what it needs to see.
+
+Instructions: Write a PowerShell script 2-eventlog_assessment.ps1 that:
+
+    Checks the current audit policy configuration using auditpol /get /category:*
+
+    For each critical Event ID (4624, 4625, 4648, 4688, 4720, 4726, 4732, 4672, 1102), checks whether the required audit subcategory is enabled
+
+    Queries the Security log to confirm which Event IDs have actually been generated in the last 24 hours
+
+Expected Output:
+
+```PS
+PS> .\2-eventlog_assessment.ps1
+Event ID  Description               Audit Subcategory     Status
+--------  -----------               -----------------     ------
+4624      Successful Logon          Logon                 [GENERATING]
+4625      Failed Logon              Logon                 [GENERATING]
+4648      Explicit Credentials      Logon                 [NOT CONFIGURED]
+4688      Process Creation          Process Tracking      [NOT CONFIGURED]
+4720      Account Created           Account Management    [NOT CONFIGURED]
+4726      Account Deleted           Account Management    [NOT CONFIGURED]
+4732      Member Added to Group     Account Management    [NOT CONFIGURED]
+4672      Special Logon             Special Logon         [NOT CONFIGURED]
+1102      Audit Log Cleared         System Integrity      [GENERATING]
+```
+
+---
+

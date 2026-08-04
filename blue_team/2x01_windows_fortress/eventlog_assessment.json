@@ -1,0 +1,69 @@
+﻿{
+    "assessment_time":  "2026-08-04T19:55:46Z",
+    "total_events_checked":  9,
+    "results":  [
+                    {
+                        "event_id":  4624,
+                        "description":  "Successful Logon",
+                        "audit_subcategory":  "Logon",
+                        "audit_status":  "Success and Failure",
+                        "status":  "[GENERATING]"
+                    },
+                    {
+                        "event_id":  4625,
+                        "description":  "Failed Logon",
+                        "audit_subcategory":  "Logon",
+                        "audit_status":  "Success and Failure",
+                        "status":  "[GENERATING]"
+                    },
+                    {
+                        "event_id":  4648,
+                        "description":  "Explicit Credentials",
+                        "audit_subcategory":  "Logon",
+                        "audit_status":  "Success and Failure",
+                        "status":  "[GENERATING]"
+                    },
+                    {
+                        "event_id":  4688,
+                        "description":  "Process Creation",
+                        "audit_subcategory":  "Process Creation",
+                        "audit_status":  "No Auditing",
+                        "status":  "[GENERATING]"
+                    },
+                    {
+                        "event_id":  4720,
+                        "description":  "Account Created",
+                        "audit_subcategory":  "User Account Management",
+                        "audit_status":  "No Auditing",
+                        "status":  "[NOT CONFIGURED]"
+                    },
+                    {
+                        "event_id":  4726,
+                        "description":  "Account Deleted",
+                        "audit_subcategory":  "User Account Management",
+                        "audit_status":  "No Auditing",
+                        "status":  "[NOT CONFIGURED]"
+                    },
+                    {
+                        "event_id":  4732,
+                        "description":  "Member Added to Group",
+                        "audit_subcategory":  "Security Group Management",
+                        "audit_status":  "No Auditing",
+                        "status":  "[NOT CONFIGURED]"
+                    },
+                    {
+                        "event_id":  4672,
+                        "description":  "Special Logon",
+                        "audit_subcategory":  "Special Logon",
+                        "audit_status":  "No Auditing",
+                        "status":  "[NOT CONFIGURED]"
+                    },
+                    {
+                        "event_id":  1102,
+                        "description":  "Audit Log Cleared",
+                        "audit_subcategory":  "System Integrity",
+                        "audit_status":  "No Auditing",
+                        "status":  "[NOT CONFIGURED]"
+                    }
+                ]
+}
