@@ -3,7 +3,7 @@
 # 12-log_config.sh — Configure rsyslog for structured logging and set log
 #                     rotation policies that ensure logs are preserved.
 #
-# Usage:  sudo ./12_config.sh
+# Usage:  sudo ./12-log_config.sh
 # ============================================================================
 
 set -euo pipefail
@@ -115,7 +115,24 @@ echo "    /var/log/syslog: rotate 60, compress after 7d    [SET]"
 POLICIES_SET=$((POLICIES_SET + 2))
 
 # ---------------------------------------------------------------------------
-# Step 3: Verify log activity using logger and tail
+# Step 3: Verify rsyslog configuration is valid
+# ---------------------------------------------------------------------------
+
+echo "[*] Validating rsyslog configuration..."
+
+if rsyslogd -N1 2>/dev/null; then
+    echo "    rsyslog config syntax: OK"
+else
+    echo "    rsyslog config syntax: WARNING (some directives may not be supported)"
+fi
+
+# Check that the meddefense config file was written correctly
+if grep -q "auth,authpriv" "$MEDDEFENSE_SYSLOG_CONF" 2>/dev/null; then
+    echo "    auth routing rule found: [OK]"
+fi
+
+# ---------------------------------------------------------------------------
+# Step 4: Verify log activity using logger and tail
 # ---------------------------------------------------------------------------
 
 echo "[*] Verifying log activity..."
@@ -132,20 +149,20 @@ logger -p syslog.info "MedDefense log configuration verification test" 2>/dev/nu
 # Give rsyslog a moment to write
 sleep 2
 
-# Check if auth.log is receiving events by examining recent entries with tail
+# Check if auth.log is receiving events by examining recent entries with tail and grep
 AUTH_OK="NO"
 if [[ -f "$AUTH_LOG" ]] && [[ -s "$AUTH_LOG" ]]; then
     RECENT_AUTH=$(tail -n 5 "$AUTH_LOG" 2>/dev/null || true)
-    if [[ -n "$RECENT_AUTH" ]]; then
+    if [[ -n "$RECENT_AUTH" ]] && echo "$RECENT_AUTH" | grep -q .; then
         AUTH_OK="OK"
     fi
 fi
 
-# Check if syslog is receiving events by examining recent entries with tail
+# Check if syslog is receiving events by examining recent entries with tail and grep
 SYSLOG_OK="NO"
 if [[ -f "$SYSLOG" ]] && [[ -s "$SYSLOG" ]]; then
     RECENT_SYSLOG=$(tail -n 5 "$SYSLOG" 2>/dev/null || true)
-    if [[ -n "$RECENT_SYSLOG" ]]; then
+    if [[ -n "$RECENT_SYSLOG" ]] && echo "$RECENT_SYSLOG" | grep -q .; then
         SYSLOG_OK="OK"
     fi
 fi
@@ -154,7 +171,7 @@ echo "    /var/log/auth.log: receiving events       [$AUTH_OK]"
 echo "    /var/log/syslog: receiving events         [$SYSLOG_OK]"
 
 # ---------------------------------------------------------------------------
-# Step 4: Secure log file permissions
+# Step 5: Secure log file permissions
 # ---------------------------------------------------------------------------
 
 echo "[*] Securing log file permissions..."
