@@ -95,8 +95,11 @@ function Get-UserGroupList {
     param([string]$SamAccountName)
 
     try {
-        $groups = @(Get-ADPrincipalGroupMembership -Identity $SamAccountName -ErrorAction SilentlyContinue)
-        return ($groups.Name -join ", ")
+        $user = Get-ADUser -Identity $SamAccountName -Properties MemberOf -ErrorAction SilentlyContinue
+        if ($null -ne $user -and $null -ne $user.MemberOf) {
+            return ($user.MemberOf -join ", ")
+        }
+        return "Unable to retrieve"
     } catch {
         return "Unable to retrieve"
     }
@@ -110,8 +113,8 @@ Write-Host "[*] Auditing meddefense.local..." -ForegroundColor Yellow
 $domain = Get-ADDomain
 $domainFqdn = $domain.DNSRoot
 
-# All users with needed properties (FIXED: Removed AllowedPrimaryGroupID)
-$allUsers = @(Get-ADUser -Filter * -Properties Enabled, LastLogonDate, PasswordLastSet, PasswordNeverExpires, TrustedToAuthForDelegation, CannotChangePassword, ServicePrincipalName, logonHours)
+# All users with needed properties including MemberOf
+$allUsers = @(Get-ADUser -Filter * -Properties Enabled, LastLogonDate, PasswordLastSet, PasswordNeverExpires, TrustedToAuthForDelegation, CannotChangePassword, ServicePrincipalName, logonHours, MemberOf)
 
 # All computers
 $allComputers = @(Get-ADComputer -Filter * -Properties Enabled, LastLogonDate, LastLogonTimestamp, PasswordLastSet)
@@ -209,13 +212,24 @@ if ($pwNeverExpUsers.Count -gt 0) {
     Write-Host "[HIGH] $($pwNeverExpUsers.Count) accounts with PasswordNeverExpires" -ForegroundColor DarkYellow
 
     foreach ($u in $pwNeverExpUsers) {
+        # Use MemberOf property directly if available
+        $memberOfGroups = @()
+        if ($null -ne $u.MemberOf) {
+            $memberOfGroups = $u.MemberOf
+        }
+
         $isSvc = $svcAccounts.SamAccountName -contains $u.SamAccountName
-        $groupList = Get-UserGroupList -SamAccountName $u.SamAccountName
+        $groupList = if ($memberOfGroups.Count -gt 0) {
+            ($memberOfGroups | ForEach-Object { ($_ -split 'CN=')[1] -split ',' | Select-Object -First 1 } -join ", ")
+        } else {
+            Get-UserGroupList -SamAccountName $u.SamAccountName
+        }
+
         $enabledStr = if ($u.Enabled) { "Enabled" } else { "Disabled" }
         $svcStr = if ($isSvc) { "Yes" } else { "No" }
         $plsStr = if ($null -ne $u.PasswordLastSet) { $u.PasswordLastSet.ToString("yyyy-MM-dd") } else { "Unknown" }
 
-        $evidence = "Account: $($u.SamAccountName), State: $enabledStr, ServiceAccount: $svcStr, PasswordLastSet: $plsStr, Groups: $groupList"
+        $evidence = "Account: $($u.SamAccountName), State: $enabledStr, ServiceAccount: $svcStr, PasswordLastSet: $plsStr, MemberOf: $groupList"
 
         New-Finding -Severity "High" -Category "Credential Management" -Asset $u.SamAccountName -Evidence $evidence -Risk "Passwords that never expire increase exposure window if compromised" -RecommendedRemediation "Remove PasswordNeverExpires flag, implement managed service accounts or gMSAs where applicable" -MappedTask "3-service_accounts"
     }
@@ -237,10 +251,14 @@ foreach ($groupName in $privilegedGroups.Keys) {
     foreach ($m in $members) {
         if ($m.ObjectClass -eq "user") {
             try {
-                $userObj = Get-ADUser -Identity $m.SamAccountName -Properties Enabled -ErrorAction SilentlyContinue
+                $userObj = Get-ADUser -Identity $m.SamAccountName -Properties Enabled, MemberOf -ErrorAction SilentlyContinue
                 if ($null -ne $userObj -and $userObj.Enabled -eq $false) {
                     Write-Host "[MEDIUM] Disabled account in ${groupName}: $($m.SamAccountName)" -ForegroundColor Yellow
-                    New-Finding -Severity "Medium" -Category "Privilege Management" -Asset $m.SamAccountName -Evidence "Disabled user remains member of privileged group: $groupName" -Risk "If re-enabled, account retains elevated privileges without review" -RecommendedRemediation "Remove disabled accounts from all privileged groups immediately" -MappedTask "5-privileged_access"
+
+                    # Include MemberOf info in evidence
+                    $memberOfInfo = if ($null -ne $userObj.MemberOf) { "Member of: $($userObj.MemberOf.Count) groups" } else { "No group info available" }
+
+                    New-Finding -Severity "Medium" -Category "Privilege Management" -Asset $m.SamAccountName -Evidence "Disabled user remains member of privileged group: $groupName. $memberOfInfo" -Risk "If re-enabled, account retains elevated privileges without review" -RecommendedRemediation "Remove disabled accounts from all privileged groups immediately" -MappedTask "5-privileged_access"
                 }
             } catch {
                 # Skip if we cannot query the user
@@ -358,12 +376,27 @@ foreach ($svc in $svcAccounts) {
 
     # DES-only flag (check if account is restricted to DES only)
     try {
-        $svcFull = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl -ErrorAction SilentlyContinue
+        $svcFull = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl, MemberOf -ErrorAction SilentlyContinue
         if ($null -ne $svcFull) {
             $uac = [int]$svcFull.UserAccountControl
             # 0x200000 = UseDesKeyOnly
             if ($uac -band 0x200000) {
                 $risks += "DES-only encryption flag set"
+            }
+
+            # Check for privileged membership via MemberOf
+            if ($null -ne $svcFull.MemberOf) {
+                foreach ($dn in $svcFull.MemberOf) {
+                    if ($dn -match "CN=Domain Admins") {
+                        $risks += "Member of privileged group: Domain Admins"
+                    }
+                    if ($dn -match "CN=Enterprise Admins") {
+                        $risks += "Member of privileged group: Enterprise Admins"
+                    }
+                    if ($dn -match "CN=G_IT_Admins") {
+                        $risks += "Member of privileged group: G_IT_Admins"
+                    }
+                }
             }
         }
     } catch {
@@ -372,7 +405,7 @@ foreach ($svc in $svcAccounts) {
 
     # Interactive logon allowed (check if not set to deny)
     try {
-        $svcFull2 = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl -ErrorAction SilentlyContinue
+        $svcFull2 = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl, MemberOf -ErrorAction SilentlyContinue
         if ($null -ne $svcFull2) {
             $uac2 = [int]$svcFull2.UserAccountControl
             # Interactive logon is allowed by default unless denied via Deny logon locally
@@ -380,18 +413,6 @@ foreach ($svc in $svcAccounts) {
         }
     } catch {
         # Skip
-    }
-
-    # Privileged membership
-    $isDomAdmin = $domAdminMembers.SamAccountName -contains $svc.SamAccountName
-    $isEntAdmin = $entAdminMembers.SamAccountName -contains $svc.SamAccountName
-    $isGitAdmin = $gItAdminMembers.SamAccountName -contains $svc.SamAccountName
-    if ($isDomAdmin -or $isEntAdmin -or $isGitAdmin) {
-        $privGroups = @()
-        if ($isDomAdmin) { $privGroups += "Domain Admins" }
-        if ($isEntAdmin) { $privGroups += "Enterprise Admins" }
-        if ($isGitAdmin) { $privGroups += "G_IT_Admins" }
-        $risks += "Member of privileged group(s): $($privGroups -join ', ')"
     }
 
     # Stale password (password not set in 90+ days)
