@@ -1,0 +1,24 @@
+{
+  "script": "4-ssh_hardening.sh",
+  "timestamp": "2026-08-04T06:22:48Z",
+  "hostname": "billing-srv-01",
+  "backup_file": "/etc/ssh/sshd_config.bak",
+  "validation": "OK",
+  "ssh_service_status": "active",
+  "settings_applied": 10,
+  "banner_file": "/etc/issue.net",
+  "delta": [
+    {"setting": "PermitRootLogin", "before": "yes", "after": "no"},
+    {"setting": "PasswordAuthentication", "before": "yes", "after": "yes"},
+    {"setting": "PermitEmptyPasswords", "before": "no", "after": "no"},
+    {"setting": "X11Forwarding", "before": "yes", "after": "no"},
+    {"setting": "MaxAuthTries", "before": "6", "after": "3"},
+    {"setting": "ClientAliveInterval", "before": "0", "after": "300"},
+    {"setting": "ClientAliveCountMax", "before": "3", "after": "2"},
+    {"setting": "AllowUsers", "before": "not_set", "after": "medadmin
+sysadmin"},
+    {"setting": "Protocol", "before": "not_set", "after": "not_set"},
+    {"setting": "LoginGraceTime", "before": "120", "after": "60"},
+    {"setting": "Banner", "before": "none", "after": "/etc/issue.net"}
+  ]
+}
