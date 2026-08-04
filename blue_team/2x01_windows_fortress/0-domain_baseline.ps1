@@ -7,7 +7,7 @@
     GPOs, password and lockout policies, Kerberos encryption, and privileged
     group membership.
 .Author
-    Stephen Reilly - Cybersecurity Engineer
+    Steve - Cybersecurity Engineer
 .Date
     August 4, 2026
 #>
@@ -244,54 +244,62 @@ Write-Host "Lockout Duration:          $([int]$lockoutDuration.TotalMinutes) min
 Write-Host "Lockout Observation Window: $([int]$lockoutWindow.TotalMinutes) minutes" -ForegroundColor Gray
 
 # ===========================================================================
-# 8. KERBEROS ENCRYPTION TYPES
+# 8. KERBEROS ENCRYPTION TYPES (using msDS-SupportedEncryptionTypes)
 # ===========================================================================
 Write-Host ""
 Write-Host "[8/10] Checking Kerberos encryption types..." -ForegroundColor Yellow
 
+# Get-ADDomain does not support -Properties, so use Get-ADObject instead
+$domainObj = Get-ADObject -Identity $domain.DistinguishedName -Properties 'msDS-SupportedEncryptionTypes'
+$kerbEncTypes = @()
+
+if ($null -ne $domainObj.'msDS-SupportedEncryptionTypes') {
+    $rawValue = [int]$domainObj.'msDS-SupportedEncryptionTypes'
+    if ($rawValue -band 1) { $kerbEncTypes += "DES-CBC-MD5" }
+    if ($rawValue -band 2) { $kerbEncTypes += "DES-CBC-SHA1" }
+    if ($rawValue -band 4) { $kerbEncTypes += "RC4-HMAC" }
+    if ($rawValue -band 8) { $kerbEncTypes += "AES128-HMAC-SHA1" }
+    if ($rawValue -band 16) { $kerbEncTypes += "AES256-HMAC-SHA1" }
+}
+
+# Also check registry fallback for local context
 $kerbKey = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters"
 $kerbProps = $null
+$registryEncTypes = @()
 
 if (Test-Path $kerbKey) {
     $kerbProps = Get-ItemProperty -Path $kerbKey -ErrorAction SilentlyContinue
 }
 
-$encryptionMap = [ordered]@{
-    1  = "DES-CBC-MD5"
-    2  = "DES-CBC-SHA1"
-    4  = "RC4-HMAC"
-    8  = "AES128-HMAC-SHA1"
-    16 = "AES256-HMAC-SHA1"
-}
-
-$enabledEnc = @()
-
 if ($null -ne $kerbProps -and $null -ne $kerbProps.supportedEncryptionTypes) {
-    $rawValue = [int]$kerbProps.supportedEncryptionTypes
-    foreach ($bit in $encryptionMap.Keys) {
-        if ($rawValue -band $bit) {
-            $enabledEnc += $encryptionMap[$bit]
-        }
-    }
+    $regRawValue = [int]$kerbProps.supportedEncryptionTypes
+    if ($regRawValue -band 1) { $registryEncTypes += "DES-CBC-MD5" }
+    if ($regRawValue -band 2) { $registryEncTypes += "DES-CBC-SHA1" }
+    if ($regRawValue -band 4) { $registryEncTypes += "RC4-HMAC" }
+    if ($regRawValue -band 8) { $registryEncTypes += "AES128-HMAC-SHA1" }
+    if ($regRawValue -band 16) { $registryEncTypes += "AES256-HMAC-SHA1" }
 }
 
-if ($enabledEnc.Count -eq 0) {
-    Write-Host "Kerberos: No explicit encryption types configured - OS default applies" -ForegroundColor Yellow
-    $kerbDisplay = "Default (OS-dependent)"
+# Prefer AD attribute over registry
+if ($kerbEncTypes.Count -gt 0) {
+    $kerbDisplay = $kerbEncTypes -join ", "
+} elseif ($registryEncTypes.Count -gt 0) {
+    $kerbDisplay = $registryEncTypes -join ", "
 } else {
-    $kerbDisplay = $enabledEnc -join ", "
-    Write-Host "Kerberos: $kerbDisplay" -ForegroundColor $(if (($enabledEnc -match "DES") -or ($enabledEnc -match "RC4")) { "Red" } else { "Green" })
+    $kerbDisplay = "Default (OS-dependent)"
 }
 
-if ($enabledEnc -contains "DES-CBC-MD5" -or $enabledEnc -contains "DES-CBC-SHA1") {
+Write-Host "Kerberos: $kerbDisplay" -ForegroundColor $(if (($kerbEncTypes -match "DES") -or ($kerbEncTypes -match "RC4")) { "Red" } else { "Green" })
+
+if ($kerbEncTypes -contains "DES-CBC-MD5" -or $kerbEncTypes -contains "DES-CBC-SHA1") {
     Add-Finding -Description "DES Kerberos encryption types are enabled - these are cryptographically broken" -Severity "Critical" -Category "Cryptography"
 }
 
-if ($enabledEnc -contains "RC4-HMAC") {
+if ($kerbEncTypes -contains "RC4-HMAC") {
     Add-Finding -Description "RC4-HMAC Kerberos encryption is enabled - vulnerable to Kerberoasting attacks" -Severity "High" -Category "Cryptography"
 }
 
-if (-not ($enabledEnc -contains "AES256-HMAC-SHA1")) {
+if (-not ($kerbEncTypes -contains "AES256-HMAC-SHA1")) {
     Add-Finding -Description "AES256 Kerberos encryption not explicitly enabled" -Severity "Medium" -Category "Cryptography"
 }
 
