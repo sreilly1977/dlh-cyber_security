@@ -3,12 +3,6 @@
 # 10-auditd_config.sh — Deploy and configure auditd to monitor security-critical
 #                        events, creating the audit trail for SOC telemetry.
 #
-# Addresses:
-#   - 1x00 incident — "No SIEM or IDS was deployed. Attacker moved undetected for 5 days."
-#   - auditd provides kernel-level audit logging for system calls, file access,
-#     and authentication events
-#   - Rules written here determine what the SOC can see in Module 3
-#
 # Usage:  sudo ./10-auditd_config.sh
 # ============================================================================
 
