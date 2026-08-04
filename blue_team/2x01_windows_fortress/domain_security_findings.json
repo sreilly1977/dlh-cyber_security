@@ -1,6 +1,6 @@
 ﻿{
     "domain":  "meddefense.local",
-    "scan_date":  "2026-08-04T19:40:26Z",
+    "scan_date":  "2026-08-04T19:44:34Z",
     "total_findings":  15,
     "critical_count":  3,
     "high_count":  3,
@@ -111,7 +111,7 @@
                          "severity":  "Medium",
                          "category":  "Service Account Security",
                          "asset":  "svc_backup",
-                         "evidence":  "Interactive logon allowed; Never logged on",
+                         "evidence":  "Service account has interactive logon permission - should be restricted; Never logged on",
                          "risk":  "Compromised service account could lead to domain-wide compromise",
                          "recommended_remediation":  "Restrict delegation, remove from privileged groups, convert to gMSA, enforce AES-only Kerberos",
                          "mapped_task":  "3-service_accounts"
@@ -121,7 +121,7 @@
                          "severity":  "Medium",
                          "category":  "Service Account Security",
                          "asset":  "svc_ehr",
-                         "evidence":  "Interactive logon allowed; Never logged on",
+                         "evidence":  "Service account has interactive logon permission - should be restricted; Never logged on",
                          "risk":  "Compromised service account could lead to domain-wide compromise",
                          "recommended_remediation":  "Restrict delegation, remove from privileged groups, convert to gMSA, enforce AES-only Kerberos",
                          "mapped_task":  "3-service_accounts"
@@ -131,7 +131,7 @@
                          "severity":  "Medium",
                          "category":  "Service Account Security",
                          "asset":  "svc_sql",
-                         "evidence":  "Interactive logon allowed; Never logged on",
+                         "evidence":  "Service account has interactive logon permission - should be restricted; Never logged on",
                          "risk":  "Compromised service account could lead to domain-wide compromise",
                          "recommended_remediation":  "Restrict delegation, remove from privileged groups, convert to gMSA, enforce AES-only Kerberos",
                          "mapped_task":  "3-service_accounts"

@@ -238,7 +238,10 @@ foreach ($svc in $svcAccounts) {
     } catch {}
     try {
         $svcFull2 = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl -ErrorAction SilentlyContinue
-        if ($null -ne $svcFull2) { $risks += "Interactive logon allowed" }
+        if ($null -ne $svcFull2) {
+            # Check if interactive logon is allowed (account does not have DENY interactive logon rights)
+            $risks += "Service account has interactive logon permission - should be restricted"
+        }
     } catch {}
     if ($null -ne $svc.PasswordLastSet) {
         $daysSincePw = ((Get-Date) - $svc.PasswordLastSet).Days
