@@ -90,6 +90,7 @@ cp -p "$SYSCTL_CONF" "$SYSCTL_BAK"
 
 echo "[*] Applying kernel hardening parameters..."
 
+# Add all settings to sysctl.conf
 for setting in "${SETTINGS[@]}"; do
     key=$(parse_key "$setting")
     value=$(parse_value "$setting")
@@ -111,21 +112,26 @@ for setting in "${SETTINGS[@]}"; do
             echo "$setting" >> "$SYSCTL_CONF"
         fi
 
-        # Apply immediately
-        sysctl -w "$key=$value" >/dev/null 2>&1 || true
-
-        # Verify it was applied
-        actual_value=$(get_proc_value "$key")
-
-        if [[ "$actual_value" == "$value" ]]; then
-            printf '%-50s [PASS]\n' "$key = $value"
-            VERIFIED_PASS=$((VERIFIED_PASS + 1))
-        else
-            printf '%-50s [FAIL]\n' "$key = $value (got: %s)" "$actual_value"
-            VERIFIED_FAIL=$((VERIFIED_FAIL + 1))
-        fi
-
         SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
+    fi
+done
+
+# Apply all settings at once with sysctl -p
+sysctl -p "$SYSCTL_CONF" 2>/dev/null || true
+
+# Verify each setting was applied
+for setting in "${SETTINGS[@]}"; do
+    key=$(parse_key "$setting")
+    value=$(parse_value "$setting")
+
+    actual_value=$(get_proc_value "$key")
+
+    if [[ "$actual_value" == "$value" ]]; then
+        printf '%-50s [PASS]\n' "$key = $value"
+        VERIFIED_PASS=$((VERIFIED_PASS + 1))
+    else
+        printf '%-50s [FAIL]\n' "$key = $value (got: %s)" "$actual_value"
+        VERIFIED_FAIL=$((VERIFIED_FAIL + 1))
     fi
 done
 
