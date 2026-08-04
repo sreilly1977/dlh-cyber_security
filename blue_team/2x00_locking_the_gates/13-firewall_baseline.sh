@@ -3,14 +3,15 @@
 # 13-firewall_baseline.sh — Configure a host firewall with default-deny
 #                           inbound policy, allowing only required services.
 #
+# Addresses:
+#   - 1x02 Finding 006 — billing-srv-01 had 11 open ports before hardening
+#   - Service minimization (Task 7) reduced to 4-5 services
+#   - Firewall enforces network-layer access control independent of services
+#
 # Usage:  sudo ./13-firewall_baseline.sh
 # ============================================================================
 
 set -euo pipefail
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
 
 # Management network (SSH access)
 MGMT_NETWORK="10.10.1.0/24"
@@ -18,15 +19,8 @@ MGMT_NETWORK="10.10.1.0/24"
 # Application network (MySQL access)
 APP_NETWORK="10.10.2.0/24"
 
-# Default firewall actions
-DEFAULT_INCOMING="deny"
-DEFAULT_OUTGOING="allow"
-
 # Logging level for denied connections
 LOG_LEVEL="low"
-
-# UFW status check delay
-UFW_DELAY=2
 
 if [[ $EUID -ne 0 ]]; then
     echo "ERROR: This script must be run as root (use sudo)." >&2
@@ -44,15 +38,15 @@ if ! command -v ufw &>/dev/null; then
     apt-get update -qq && apt-get install -y ufw -qq 2>/dev/null
 fi
 
-# Reset UFW to clean slate (dangerous on production but safe for this test env)
+# Reset UFW to clean slate
 ufw --force reset 2>/dev/null || true
 
-# Set default policies
-ufw default "$DEFAULT_INCOMING" incoming 2>/dev/null || true
-echo "    Default incoming: $DEFAULT_INCOMING"
+# Set default policies — default deny incoming, default allow outgoing
+ufw default deny incoming 2>/dev/null || true
+echo "    Default incoming: deny"
 
-ufw default "$DEFAULT_OUTGOING" outgoing 2>/dev/null || true
-echo "    Default outgoing: $DEFAULT_OUTGOING"
+ufw default allow outgoing 2>/dev/null || true
+echo "    Default outgoing: allow"
 
 # ---------------------------------------------------------------------------
 # Add allow rules for required services
@@ -91,13 +85,9 @@ echo "    Logging: on ($LOG_LEVEL)"
 
 echo "[*] Activating firewall..."
 
-# Enable UFW (use --force to skip interactive prompt)
 ufw --force enable 2>/dev/null || true
+sleep 2
 
-# Wait for UFW to become active
-sleep "$UFW_DELAY"
-
-# Check UFW status
 UFW_STATUS=$(ufw status 2>/dev/null | head -1 || echo "inactive")
 
 if echo "$UFW_STATUS" | grep -qi "active"; then
@@ -120,7 +110,6 @@ ufw status verbose 2>/dev/null || echo "    Unable to retrieve rules"
 
 # Count allow rules
 ALLOW_RULES=$(ufw status 2>/dev/null | grep -c "ALLOW" || echo "0")
-DENY_DEFAULT=$(ufw status 2>/dev/null | grep -ci "deny" || echo "0")
 
 echo ""
 echo "Rules: $ALLOW_RULES allow, default deny"
@@ -130,7 +119,7 @@ echo "Rules: $ALLOW_RULES allow, default deny"
 # ---------------------------------------------------------------------------
 
 echo ""
-echo "Firewall baseline deployed: $DEFAULT_INCOMING incoming, $DEFAULT_OUTGOING outgoing"
+echo "Firewall baseline deployed: default deny incoming, default allow outgoing"
 echo "Allowed ports: 22 (management), 80/443 (public), 3306 (application network)"
 echo "Logging: $LOG_LEVEL"
 
