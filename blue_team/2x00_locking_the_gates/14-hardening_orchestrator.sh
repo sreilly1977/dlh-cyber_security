@@ -27,7 +27,7 @@ RUN_START=$(date +%s)
 # Find Lynis binary dynamically
 LYNIS_BIN=$(which lynis 2>/dev/null || echo "/usr/sbin/lynis")
 
-# Hardening scripts to execute (in dependency order) — 15 removed
+# Hardening scripts to execute (in dependency order) — including 15
 STEPS=(
     "0-baseline_snapshot.sh"
     "2-lynis_parse.sh"
@@ -41,6 +41,7 @@ STEPS=(
     "11-audit_coverage_test.sh"
     "12-log_config.sh"
     "13-firewall_baseline.sh"
+    "15-validation.sh"
 )
 
 # Track results
@@ -171,11 +172,9 @@ run_step() {
 
 # Generate the hardening run log JSON
 generate_run_log() {
-    local run_end total_duration steps_passed delta
+    local run_end total_duration delta
     run_end=$(date +%s)
     total_duration=$((run_end - RUN_START))
-
-    steps_passed=$((STEPS_COMPLETED - (STEPS_SCHEDULED - STEPS_FAILED)))
 
     # Calculate Lynis delta
     if [[ "$PRE_LYNIS_SCORE" =~ ^[0-9]+$ ]] && [[ "$POST_LYNIS_SCORE" =~ ^[0-9]+$ ]]; then
@@ -284,7 +283,6 @@ else
         echo "    Lynis binary found: $LYNIS_BIN [OK]"
     else
         echo "    WARNING: Lynis not found — scores will show N/A"
-        echo "    Lynis location searched: /usr/bin/lynis, /usr/sbin/lynis"
     fi
 fi
 
