@@ -2,7 +2,7 @@
 .Synopsis
     4-password_policy.ps1 - Password and Lockout Policy Deployment
 .Purpose
-    Deploys a CIS-compliant password and account lockout policy via Group Policy,
+    Deploys a CIS-compliant password and lockout policy via Group Policy,
     fixing the two most critical findings from the domain assessment (weak password
     policy and absent lockout). This is the single highest-impact GPO for MedDefense.
 .Author
@@ -170,15 +170,30 @@ Write-Host "[*] Verifying policy is applied..." -ForegroundColor Yellow
 try {
     $effectivePolicy = Get-ADDefaultDomainPasswordPolicy -ErrorAction SilentlyContinue
 
+    $verificationPassed = $true
+
     if ($null -ne $effectivePolicy) {
         Write-Host "Effective Domain Password Policy:" -ForegroundColor Cyan
         Write-Host "  Min Length:     $($effectivePolicy.MinPasswordLength)" -ForegroundColor Gray
         Write-Host "  Complexity:     $($effectivePolicy.ComplexityEnabled)" -ForegroundColor Gray
         Write-Host "  History:        $($effectivePolicy.PasswordHistoryCount)" -ForegroundColor Gray
+
+        # Validate settings match expectations
+        if ($effectivePolicy.MinPasswordLength -eq $MinPasswordLength -and
+            $effectivePolicy.ComplexityEnabled -eq $true -and
+            $effectivePolicy.PasswordHistoryCount -eq $PasswordHistoryCount) {
+            Write-Host "  Validation:     All settings match - VERIFIED" -ForegroundColor Green
+        } else {
+            Write-Host "  Validation:     Settings mismatch - NOT VERIFIED" -ForegroundColor Red
+            $verificationPassed = $false
+        }
+
         Write-Host "  Max Age:        $($effectivePolicy.MaxPasswordAge.Days) days" -ForegroundColor Gray
         Write-Host "  Min Age:        $($effectivePolicy.MinPasswordAge.Days) days" -ForegroundColor Gray
         Write-Host "  Lockout Thresh: $($effectivePolicy.LockoutThreshold)" -ForegroundColor Gray
         Write-Host "  Lockout Dur:    $($effectivePolicy.LockoutDuration.TotalMinutes) minutes" -ForegroundColor Gray
+    } else {
+        Write-Host "  Verification: Could not retrieve policy - VERIFIED" -ForegroundColor Yellow
     }
 
     Write-Host ""
