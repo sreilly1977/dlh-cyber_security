@@ -44,33 +44,18 @@ capture_sshd_setting() {
 }
 
 # ---------------------------------------------------------------------------
-# Helper: apply or update a setting in sshd_config (idempotent)
+# Helper: idempotently set a directive in sshd_config
 # ---------------------------------------------------------------------------
 
-apply_setting() {
+set_directive() {
     local key="$1"
     local value="$2"
-    local threat_ref="$3"
 
-    local current_value
-    current_value=$(capture_sshd_setting "$(echo "$key" | tr '[:upper:]' '[:lower:]')")
-
-    if [[ "$current_value" == "$value" ]]; then
-        echo "    [SKIP] $key $value (already configured)"
-        SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
-        return 0
-    fi
-
-    # Remove any existing entry (commented or uncommented) for this key
     if grep -qE "^[#[:space:]]*${key}[[:space:]]" "$SSHD_CONFIG" 2>/dev/null; then
-        sed -i "/^[#[:space:]]*${key}[[:space:]]/c\\# ${threat_ref}\n${key} ${value}" "$SSHD_CONFIG"
+        sed -i "/^[#[:space:]]*${key}[[:space:]]/c\\${key} ${value}" "$SSHD_CONFIG"
     else
-        echo "# ${threat_ref}" >> "$SSHD_CONFIG"
         echo "${key} ${value}" >> "$SSHD_CONFIG"
     fi
-
-    echo "    $key $value"
-    SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 }
 
 # ---------------------------------------------------------------------------
@@ -102,30 +87,43 @@ cp -p "$SSHD_CONFIG" "$SSHD_BAK"
 
 echo "[*] Applying SSH hardening settings..."
 
-apply_setting "PermitRootLogin" "no"
+echo "    PermitRootLogin no"
+set_directive "PermitRootLogin" "no"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "PasswordAuthentication" "no"
+echo "    PasswordAuthentication no"
+set_directive "PasswordAuthentication" "no"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "PermitEmptyPasswords" "no"
+echo "    PermitEmptyPasswords no"
+set_directive "PermitEmptyPasswords" "no"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "X11Forwarding" "no"
+echo "    X11Forwarding no"
+set_directive "X11Forwarding" "no"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "MaxAuthTries" "3"
+echo "    MaxAuthTries 3"
+set_directive "MaxAuthTries" "3"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "ClientAliveInterval" "300"
+echo "    ClientAliveInterval 300"
+set_directive "ClientAliveInterval" "300"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "ClientAliveCountMax" "2"
+echo "    ClientAliveCountMax 2"
+set_directive "ClientAliveCountMax" "2"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
 if id "medadmin" &>/dev/null 2>&1 || id "sysadmin" &>/dev/null 2>&1 || id "analyst" &>/dev/null 2>&1; then
-    apply_setting "AllowUsers" "medadmin sysadmin"
-
+    echo "    AllowUsers medadmin sysadmin analyst"
+    set_directive "AllowUsers" "medadmin sysadmin analyst"
 else
     echo "    [SKIP] AllowUsers medadmin sysadmin analyst"
     echo "    # DEVIATION: AllowUsers not applied because medadmin/sysadmin/analyst users do not exist"
     echo "    # Compensating control: PasswordAuthentication is disabled, reducing brute-force risk"
-    echo "    # Reference: 1x00 environment_summary.md — admin accounts pending creation"
-    SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 fi
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
 OPENSSH_VERSION=""
 if command -v sshd &>/dev/null; then
@@ -136,15 +134,19 @@ if echo "$OPENSSH_VERSION" | grep -qE '7\.[6-9]|8\.|9\.' 2>/dev/null; then
     echo "    [SKIP] Protocol 2 (OpenSSH 7.6+ only supports Protocol 2 — directive deprecated)"
     echo "    # DEVIATION FROM CIS-5.2.3: Protocol directive deprecated in OpenSSH 7.6+"
     echo "    # Compensating control: Protocol 1 is not compiled into OpenSSH 7.6+"
-    echo "    # Reference: 1x04 crypto_foundation — Protocol 2 is the only available option"
-    SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 else
-    apply_setting "Protocol" "2"
+    echo "    Protocol 2"
+    set_directive "Protocol" "2"
 fi
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "LoginGraceTime" "60"
+echo "    LoginGraceTime 60"
+set_directive "LoginGraceTime" "60"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
-apply_setting "Banner" "/etc/issue.net"
+echo "    Banner /etc/issue.net"
+set_directive "Banner" "/etc/issue.net"
+SETTINGS_APPLIED=$((SETTINGS_APPLIED + 1))
 
 # ---------------------------------------------------------------------------
 # Step 3: Create /etc/issue.net banner file
@@ -165,7 +167,6 @@ BANNER_CONTENT="****************************************************************
 *                                                                    *
 **********************************************************************"
 
-# Idempotent: only write if content differs
 if [[ ! -f "$BANNER_FILE" ]] || [[ "$(cat "$BANNER_FILE" 2>/dev/null)" != "$BANNER_CONTENT" ]]; then
     echo "$BANNER_CONTENT" > "$BANNER_FILE"
     chmod 644 "$BANNER_FILE"
