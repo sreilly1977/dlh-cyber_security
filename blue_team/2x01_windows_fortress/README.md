@@ -124,3 +124,36 @@ Event ID  Description               Audit Subcategory     Status
 
 ---
 
+# 3. Windows Telemetry Reference Builder
+
+Goal: Build a machine-readable Windows event reference that connects security events to MedDefense detection use cases.
+
+Context: The original task was too static. This rebuilt task creates an operational reference mapping Event IDs to log source, audit dependency, detection meaning, Crimson Tide phase, triage priority, and validation method. This becomes the bridge between audit policy configuration, Sysmon deployment, PowerShell logging, and Module 3 detection work.
+
+Instructions: Write 3-telemetry_reference.ps1.
+
+The script must generate windows_event_reference.json.
+
+The reference must include:
+
+Security log: 4624, 4625, 4648, 4672, 4688, 4720, 4726, 4732, 1102.
+
+PowerShell log: 4103, 4104.
+
+Sysmon log: 1, 3, 7, 11, 13, 22.
+
+For each event include event_id, event_name, log_source, audit_or_sensor_dependency, security_meaning, normal_frequency, triage_priority, crimson_tide_phase, example_suspicious_pattern, and validation_method.
+
+Expected Output:
+
+```PS
+PS> .\3-telemetry_reference.ps1
+Security events mapped: 9
+PowerShell events mapped: 2
+Sysmon events mapped: 6
+Total events documented: 17
+Reference saved to: windows_event_reference.json
+```
+
+---
+
