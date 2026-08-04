@@ -18,33 +18,36 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# Critical Event IDs and their corresponding audit subcategories
+# Critical Event IDs and their corresponding audit categories/subcategories
 $eventDefinitions = @(
-    @{ Id = 4624; Description = "Successful Logon"; Subcategory = "Logon" }
-    @{ Id = 4625; Description = "Failed Logon"; Subcategory = "Logon" }
-    @{ Id = 4648; Description = "Explicit Credentials"; Subcategory = "Logon" }
-    @{ Id = 4688; Description = "Process Creation"; Subcategory = "Process Creation" }
-    @{ Id = 4720; Description = "Account Created"; Subcategory = "User Account Management" }
-    @{ Id = 4726; Description = "Account Deleted"; Subcategory = "User Account Management" }
-    @{ Id = 4732; Description = "Member Added to Group"; Subcategory = "Security Group Management" }
-    @{ Id = 4672; Description = "Special Logon"; Subcategory = "Special Logon" }
-    @{ Id = 1102; Description = "Audit Log Cleared"; Subcategory = "System Integrity" }
+    @{ Id = 4624; Description = "Successful Logon"; AuditSubcategory = "Logon" }
+    @{ Id = 4625; Description = "Failed Logon"; AuditSubcategory = "Logon" }
+    @{ Id = 4648; Description = "Explicit Credentials"; AuditSubcategory = "Logon" }
+    @{ Id = 4688; Description = "Process Creation"; AuditSubcategory = "Process Tracking" }
+    @{ Id = 4720; Description = "Account Created"; AuditSubcategory = "Account Management" }
+    @{ Id = 4726; Description = "Account Deleted"; AuditSubcategory = "Account Management" }
+    @{ Id = 4732; Description = "Member Added to Group"; AuditSubcategory = "Account Management" }
+    @{ Id = 4672; Description = "Special Logon"; AuditSubcategory = "Special Logon" }
+    @{ Id = 1102; Description = "Audit Log Cleared"; AuditSubcategory = "System Integrity" }
 )
 
 Write-Host "[*] Assessing Windows Event Log Capability..." -ForegroundColor Yellow
 
 # 1. Get current audit policy using auditpol
 Write-Host "[1/3] Retrieving current audit policy..." -ForegroundColor Yellow
-$auditRawOutput = auditpol.exe /get /category:* 2>&1
 $auditConfig = @{}
 
-# Parse auditpol output to map subcategories to their status
-foreach ($line in $auditRawOutput) {
-    if ($line -match '^\s*(.+?)\s+(Success and Failure|Success|Failure|No Auditing)\s*$') {
-        $subcategory = $matches[1].Trim()
-        $status = $matches[2].Trim()
-        $auditConfig[$subcategory] = $status
+try {
+    $auditRawOutput = & auditpol.exe /get /category:* 2>&1
+    foreach ($line in $auditRawOutput) {
+        if ($line -match '^\s*(.+?)\s+(Success and Failure|Success|Failure|No Auditing)\s*$') {
+            $subcategory = $Matches[1].Trim()
+            $status = $Matches[2].Trim()
+            $auditConfig[$subcategory] = $status
+        }
     }
+} catch {
+    Write-Warning "Could not retrieve audit policy via auditpol (may require elevation). Continuing with assumed 'No Auditing' for all subcategories."
 }
 
 # 2. Query Security event log for Event IDs generated in the last 24 hours
@@ -53,7 +56,6 @@ $generatedEvents = @{}
 $startTime = (Get-Date).AddHours(-24)
 
 try {
-    # Query the Security log once for all target events for efficiency
     $targetIds = $eventDefinitions | ForEach-Object { $_.Id }
     $events = Get-WinEvent -FilterHashtable @{ LogName = 'Security'; Id = $targetIds; StartTime = $startTime } -ErrorAction SilentlyContinue
 
@@ -78,7 +80,7 @@ Write-Host ("-" * $header.Length)
 
 foreach ($def in $eventDefinitions) {
     $isConfigured = $false
-    $subcat = $def.Subcategory
+    $subcat = $def.AuditSubcategory
 
     if ($auditConfig.ContainsKey($subcat)) {
         if ($auditConfig[$subcat] -match "Success and Failure|Success|Failure") {
@@ -96,13 +98,13 @@ foreach ($def in $eventDefinitions) {
         $status = "[NOT CONFIGURED]"
     }
 
-    $row = "{0,-10} {1,-25} {2,-25} {3}" -f $def.Id, $def.Description, $def.Subcategory, $status
+    $row = "{0,-10} {1,-25} {2,-25} {3}" -f $def.Id, $def.Description, $def.AuditSubcategory, $status
     Write-Host $row
 
     $results += [PSCustomObject]@{
         event_id = $def.Id
         description = $def.Description
-        audit_subcategory = $def.Subcategory
+        audit_subcategory = $def.AuditSubcategory
         audit_status = $auditConfig[$subcat]
         status = $status
     }

@@ -1,5 +1,5 @@
 ﻿{
-    "assessment_time":  "2026-08-04T19:55:46Z",
+    "assessment_time":  "2026-08-04T20:00:01Z",
     "total_events_checked":  9,
     "results":  [
                     {
@@ -26,29 +26,29 @@
                     {
                         "event_id":  4688,
                         "description":  "Process Creation",
-                        "audit_subcategory":  "Process Creation",
-                        "audit_status":  "No Auditing",
+                        "audit_subcategory":  "Process Tracking",
+                        "audit_status":  null,
                         "status":  "[GENERATING]"
                     },
                     {
                         "event_id":  4720,
                         "description":  "Account Created",
-                        "audit_subcategory":  "User Account Management",
-                        "audit_status":  "No Auditing",
+                        "audit_subcategory":  "Account Management",
+                        "audit_status":  null,
                         "status":  "[NOT CONFIGURED]"
                     },
                     {
                         "event_id":  4726,
                         "description":  "Account Deleted",
-                        "audit_subcategory":  "User Account Management",
-                        "audit_status":  "No Auditing",
+                        "audit_subcategory":  "Account Management",
+                        "audit_status":  null,
                         "status":  "[NOT CONFIGURED]"
                     },
                     {
                         "event_id":  4732,
                         "description":  "Member Added to Group",
-                        "audit_subcategory":  "Security Group Management",
-                        "audit_status":  "No Auditing",
+                        "audit_subcategory":  "Account Management",
+                        "audit_status":  null,
                         "status":  "[NOT CONFIGURED]"
                     },
                     {
