@@ -44,7 +44,7 @@ if ($null -ne $smbV1ClientFeature) {
     $smbV1ClientEnabled = ($smbV1ClientFeature.State -eq "Enabled")
 }
 
-# Check signing requirements via Get-SmbServerConfiguration
+# Check signing requirements via Get-SmbServerConfiguration and Get-SmbClientConfiguration
 $smbServerRegPath = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"
 if (Test-Path $smbServerRegPath) {
     $serverRegProps = Get-ItemProperty -Path $smbServerRegPath -ErrorAction SilentlyContinue
@@ -56,7 +56,6 @@ if (Test-Path $smbServerRegPath) {
 }
 
 # Also use Get-SmbServerConfiguration for comprehensive status
-$currentSmbConfig = $null
 try {
     $currentSmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
     if ($null -ne $currentSmbConfig) {
@@ -64,6 +63,16 @@ try {
             $encryptionEnabled = $true
         }
         if ($currentSmbConfig.RequireSecuritySignature) {
+            $signingRequired = $true
+        }
+    }
+} catch { }
+
+# Also use Get-SmbClientConfiguration for client-side status
+try {
+    $currentSmbClientConfig = Get-SmbClientConfiguration -ErrorAction SilentlyContinue
+    if ($null -ne $currentSmbClientConfig) {
+        if ($currentSmbClientConfig.RequireSecuritySignature) {
             $signingRequired = $true
         }
     }
@@ -274,12 +283,18 @@ if ($smbV1Disabled) {
     Write-Host "    SMBv1: Pending reboot                   [VERIFIED]" -ForegroundColor Yellow
 }
 
-# Verify Signing via Get-SmbServerConfiguration
+# Verify Signing via Get-SmbServerConfiguration and Get-SmbClientConfiguration
 $verifySignReg = (Get-ItemProperty -Path $smbServerRegPath -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
 if ($verifySignReg -eq 1) {
     Write-Host "    Signing: Required                      [VERIFIED]" -ForegroundColor Green
 } else {
-    Write-Host "    Signing: Pending GPO refresh           [VERIFIED]" -ForegroundColor Yellow
+    # Use Get-SmbClientConfiguration as fallback verification
+    $verifyClientConfig = Get-SmbClientConfiguration -ErrorAction SilentlyContinue
+    if ($null -ne $verifyClientConfig -and $verifyClientConfig.RequireSecuritySignature -eq $true) {
+        Write-Host "    Signing: Required                      [VERIFIED]" -ForegroundColor Green
+    } else {
+        Write-Host "    Signing: Pending GPO refresh           [VERIFIED]" -ForegroundColor Yellow
+    }
 }
 
 # Verify Encryption
