@@ -22,7 +22,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_LOG_FILE="hardening_run.json"
 IMPROVEMENT_FILE="hardening_improvement.json"
 TIMESTAMP=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
-RUN_START=$(date +%s)
+WORKFLOW_START=$(date +%s)
+WORKFLOW_END=""
 
 # Find Lynis binary dynamically
 LYNIS_BIN=$(which lynis 2>/dev/null || echo "/usr/sbin/lynis")
@@ -172,9 +173,10 @@ run_step() {
 
 # Generate the hardening run log JSON
 generate_run_log() {
-    local run_end total_duration delta
-    run_end=$(date +%s)
-    total_duration=$((run_end - RUN_START))
+    local total_duration delta
+
+    WORKFLOW_END=$(date +%s)
+    total_duration=$((WORKFLOW_END - WORKFLOW_START))
 
     # Calculate Lynis delta
     if [[ "$PRE_LYNIS_SCORE" =~ ^[0-9]+$ ]] && [[ "$POST_LYNIS_SCORE" =~ ^[0-9]+$ ]]; then
@@ -186,8 +188,8 @@ generate_run_log() {
     {
         printf '{\n'
         printf '  "timestamp": "%s",\n' "$TIMESTAMP"
-        printf '  "run_start_epoch": %d,\n' "$RUN_START"
-        printf '  "run_end_epoch": %d,\n' "$run_end"
+        printf '  "run_start_epoch": %d,\n' "$WORKFLOW_START"
+        printf '  "run_end_epoch": %d,\n' "$WORKFLOW_END"
         printf '  "total_duration_seconds": %d,\n' "$total_duration"
         printf '  "steps_scheduled": %d,\n' "$STEPS_SCHEDULED"
         printf '  "steps_completed": %d,\n' "$STEPS_COMPLETED"
@@ -307,10 +309,10 @@ echo "Pre-checks: PASS"
 echo "Steps scheduled: $STEPS_SCHEDULED"
 
 # ---------------------------------------------------------------------------
-# Capture pre-hardening Lynis score
+# Capture Lynis baseline score before hardening starts
 # ---------------------------------------------------------------------------
 
-echo "[*] Capturing pre-hardening security baseline..."
+echo "[*] Capturing security baseline before hardening begins..."
 
 PRE_LYNIS_SCORE=$(get_lynis_score)
 echo "Before Lynis score: $PRE_LYNIS_SCORE"
@@ -326,10 +328,10 @@ for step in "${STEPS[@]}"; do
 done
 
 # ---------------------------------------------------------------------------
-# Capture post-hardening Lynis score
+# Capture Lynis score after hardening ends
 # ---------------------------------------------------------------------------
 
-echo "[*] Capturing post-hardening security baseline..."
+echo "[*] Capturing security baseline after hardening completes..."
 
 POST_LYNIS_SCORE=$(get_lynis_score)
 echo "After Lynis score: $POST_LYNIS_SCORE"

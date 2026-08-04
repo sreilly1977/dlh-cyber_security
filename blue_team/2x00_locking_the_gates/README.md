@@ -1,4 +1,4 @@
-0. The Baseline Snapshot
+# 0. The Baseline Snapshot
 
 Goal: Capture the complete security state of a system before any changes, establishing the measurement that every subsequent task will improve against.
 
@@ -37,7 +37,7 @@ World-writable files: 7
 
 ---
 
-1. MedDefense CIS Control Profile
+# 1. MedDefense CIS Control Profile
 
 Goal: Build a threat-driven CIS hardening profile for MedDefense Linux servers that becomes the input for later remediation tasks.
 
@@ -76,7 +76,7 @@ Report saved to: cis_profile.json
 
 ---
 
-2. The Lynis Audit Parser
+# 2. The Lynis Audit Parser
 
 Goal: Parse a report file and produce a machine-readable JSON summary of the most important audit results.
 
@@ -126,7 +126,7 @@ $ cat lynis_findings.json
 
 ---
 
-3. Evidence-Based Remediation Queue
+# 3. Evidence-Based Remediation Queue
 
 Goal: Convert the CIS control profile and Lynis findings into a prioritized, evidence-backed remediation queue.
 
@@ -166,7 +166,7 @@ Queue saved to: remediation_queue.json
 
 ---
 
-4. The SSH Lockdown
+# 4. The SSH Lockdown
 
 Goal: Harden SSH to eliminate password-based authentication and reduce the attack surface to the minimum required for MedDefense operations.
 
@@ -230,7 +230,7 @@ Settings applied: 11
 
 ---
 
-5. The Kernel Shield
+# 5. The Kernel Shield
 
 Goal: Harden the Linux kernel network stack and memory protections via sysctl to prevent the server from being used as a pivot point or exploitation target.
 
@@ -275,7 +275,7 @@ Verified FAIL: 0
 
 ---
 
-6. The Permission Sweep
+# 6. The Permission Sweep
 
 Goal: Audit and remediate dangerous filesystem permissions that could enable privilege escalation.
 
@@ -319,7 +319,7 @@ SUID remediated: 5 | SGID remediated: 1 | World-writable fixed: 7
 
 ---
 
-7. The Service Minimizer
+# 7. The Service Minimizer
 
 Goal: Identify and disable unnecessary services to reduce the attack surface to only what MedDefense operations require.
 
@@ -362,7 +362,7 @@ Before: 24 | After: 9 | Disabled: 15
 
 ---
 
-8. The PAM Fortress
+# 8. The PAM Fortress
 
 Goal: Configure PAM to enforce password quality requirements and lock accounts after failed authentication attempts.
 
@@ -405,7 +405,7 @@ Password minimum length: 14 | Lockout: 5 attempts / 15 min | History: 12
 
 ---
 
-9. The AppArmor Enforcer
+# 9. The AppArmor Enforcer
 
 Goal: Deploy and configure AppArmor profiles in enforce mode for all network-exposed services, implementing mandatory access control that limits damage even if a service is compromised.
 
@@ -444,7 +444,7 @@ Profiles in enforce: 4 | Complain: 0 | Unconfined: 1
 
 ---
 
-10. The Audit Engine
+# 10. The Audit Engine
 
 Goal: Deploy and configure auditd to monitor security-critical events, creating the audit trail that feeds future telemetry export.
 
@@ -489,7 +489,7 @@ $ sudo ./10-auditd_config.sh
 
 ---
 
-11. Audit Telemetry Coverage Test
+# 11. Audit Telemetry Coverage Test
 
 Goal: Prove that the audit rules deployed in Task 10 actually capture the security events MedDefense cares about.
 
@@ -530,7 +530,7 @@ Report saved to: audit_validation.json
 
 ---
 
-12. The Log Architect
+# 12. The Log Architect
 
 Goal: Configure rsyslog for structured logging and set log rotation policies that ensure logs are preserved and exportable.
 
@@ -569,7 +569,7 @@ Log sources configured: 2 | Rotation policies: 2 | Permissions: secured
 
 ---
 
-13. The Firewall Baseline
+# 13. The Firewall Baseline
 
 Goal: Configure a host firewall with default-deny inbound policy, allowing only the services MedDefense requires.
 
@@ -606,7 +606,7 @@ $ sudo ./13-firewall_baseline.sh
 
 ---
 
-14. Production Hardening Orchestrator
+# 14. Production Hardening Orchestrator
 
 Goal: Create a safe master script that runs the hardening workflow in dependency order and records the before/after security delta.
 
