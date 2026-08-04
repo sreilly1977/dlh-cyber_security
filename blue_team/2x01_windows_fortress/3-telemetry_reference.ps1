@@ -34,12 +34,12 @@ $securityEvents = @(
         example_suspicious_pattern = "Logon Type 3 (network) from unexpected IP, logon outside business hours for service account, NTLM authentication when Kerberos expected"
         validation_method = "Query Security log for 4624 events with LogonType 3 and cross-reference source IPs against known workstation ranges"
     }
-    [PSCustomObject]@{
+        [PSCustomObject]@{
         event_id = 4625
         event_name = "Failed Logon"
         log_source = "Security"
         audit_or_sensor_dependency = "Audit Logon (Failure)"
-        security_meaning = "Authentication attempt failed. Key indicator for brute force, password spraying, and credential stuffing attacks."
+        security_meaning = "A failed logon attempt. Authentication attempt failed. Key indicator for brute force, password spraying, and credential stuffing attacks."
         normal_frequency = "Low - occasional typos and expired passwords"
         triage_priority = "High"
         crimson_tide_phase = "Credential Access, Discovery"
