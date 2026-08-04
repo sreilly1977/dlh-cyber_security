@@ -173,8 +173,16 @@ try {
 # ===========================================================================
 Write-Host "[*] Disabling NetBIOS over TCP/IP...       [SET]" -ForegroundColor Yellow
 
+# Disable NetBIOS via registry - TcpipNetbiosOptions = 2 means disabled
+$tcpipParamsPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters"
+if (-not (Test-Path $tcpipParamsPath)) {
+    New-Item -Path $tcpipParamsPath -Force | Out-Null
+}
+Set-ItemProperty -Path $tcpipParamsPath -Name "TcpipNetbiosOptions" -Value 2 -Type DWord -Force
+Write-Host "    TcpipNetbiosOptions disabled          [SET]" -ForegroundColor Green
+
+# Also try WMI method
 try {
-    # Disable NetBIOS via WMI
     $netAdapters = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True" -ErrorAction SilentlyContinue
     foreach ($adapter in $netAdapters) {
         try {
@@ -186,15 +194,14 @@ try {
     Write-Host "    NetBIOS disable via WMI skipped       [SET]" -ForegroundColor Yellow
 }
 
-# Registry fallback for NetBIOS disable
-$netbtPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters\Interfaces"
-if (Test-Path $netbtPath) {
-    $interfaces = Get-ChildItem -Path $netbtPath -ErrorAction SilentlyContinue
+# Registry fallback for interface-specific NetBIOS disable
+$netbtInterfacesPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters\Interfaces"
+if (Test-Path $netbtInterfacesPath) {
+    $interfaces = Get-ChildItem -Path $netbtInterfacesPath -ErrorAction SilentlyContinue
     foreach ($iface in $interfaces) {
         Set-ItemProperty -Path $iface.PSPath -Name "NetbiosOptions" -Value 2 -Type DWord -ErrorAction SilentlyContinue
     }
 }
-Write-Host "    NetBIOS disabled via registry         [SET]" -ForegroundColor Green
 
 # ===========================================================================
 # STEP 6: DISABLE LLMNR VIA GPO
@@ -335,6 +342,14 @@ if ($null -ne $verifyLlmnr -and $verifyLlmnr.EnableMulticast -eq 0) {
     Write-Host "    LLMNR: Disabled                        [VERIFIED]" -ForegroundColor Green
 } else {
     Write-Host "    LLMNR: Pending GPO refresh             [VERIFIED]" -ForegroundColor Yellow
+}
+
+# Verify NetBIOS
+$verifyNetBios = (Get-ItemProperty -Path $tcpipParamsPath -Name "TcpipNetbiosOptions" -ErrorAction SilentlyContinue).TcpipNetbiosOptions
+if ($verifyNetBios -eq 2) {
+    Write-Host "    NetBIOS: Disabled                      [VERIFIED]" -ForegroundColor Green
+} else {
+    Write-Host "    NetBIOS: Pending refresh               [VERIFIED]" -ForegroundColor Yellow
 }
 
 # ===========================================================================
