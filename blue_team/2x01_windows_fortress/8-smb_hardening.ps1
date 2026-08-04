@@ -65,6 +65,10 @@ try {
         if ($currentSmbConfig.RequireSecuritySignature) {
             $signingRequired = $true
         }
+        # Check EnableSMB1Protocol property
+        if ($currentSmbConfig.EnableSMB1Protocol) {
+            $smbV1ServerEnabled = $true
+        }
     }
 } catch { }
 
@@ -105,6 +109,9 @@ Write-Host "[*] Disabling SMBv1 (server + client)...   " -NoNewline -ForegroundC
 try {
     # Disable SMBv1 feature via DISM
     dism.exe /online /Disable-Feature /FeatureName:SMB1Protocol /NoRestart 2>&1 | Out-Null
+
+    # Also disable via Set-SmbServerConfiguration
+    Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force -ErrorAction SilentlyContinue
 } catch { }
 
 # Disable SMBv1 via registry as backup
@@ -276,6 +283,16 @@ $verifySmb1Reg = (Get-ItemProperty -Path $smbServerRegPath -Name "SMB1" -ErrorAc
 if ($null -ne $verifySmb1Reg -and $verifySmb1Reg -eq 0) {
     $smbV1Disabled = $true
 }
+
+# Verify EnableSMB1Protocol via Get-SmbServerConfiguration
+try {
+    $verifySmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
+    if ($null -ne $verifySmbConfig) {
+        if ($verifySmbConfig.EnableSMB1Protocol -eq $false) {
+            $smbV1Disabled = $true
+        }
+    }
+} catch { }
 
 if ($smbV1Disabled) {
     Write-Host "    SMBv1: Disabled                        [VERIFIED]" -ForegroundColor Green
