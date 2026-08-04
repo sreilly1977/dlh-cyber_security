@@ -1,0 +1,96 @@
+﻿{
+    "Domain":  "MEDDEFENSE.meddefense.local",
+    "ForestLevel":  7,
+    "DomainMode":  7,
+    "DomainControllers":  [
+                              "DC01.meddefense.local"
+                          ],
+    "TotalUsers":  16,
+    "EnabledUsers":  2,
+    "DisabledUsers":  1,
+    "PwNeverExpires":  1,
+    "ServiceAccounts":  3,
+    "UnconstrainedDeleg":  0,
+    "GPOCount":  2,
+    "GPOs":  [
+                 "Default Domain Policy",
+                 "Default Domain Controllers Policy"
+             ],
+    "PasswordPolicy":  {
+                           "MinLength":  7,
+                           "ComplexityEnabled":  false,
+                           "HistoryCount":  0,
+                           "MaxAgeDays":  42,
+                           "MinAgeDays":  0
+                       },
+    "LockoutPolicy":  {
+                          "Threshold":  0,
+                          "DurationMinutes":  30,
+                          "ObsWindowMinutes":  30
+                      },
+    "KerberosEncryption":  "Default (OS-dependent)",
+    "DomainAdmins":  [
+                         "Administrator",
+                         "analyst"
+                     ],
+    "EnterpriseAdmins":  [
+                             "Administrator"
+                         ],
+    "SchemaAdmins":  [
+                         "Administrator"
+                     ],
+    "Findings":  [
+                     {
+                         "Description":  "1 user accounts have \u0027PasswordNeverExpires\u0027 flag set",
+                         "Severity":  "High",
+                         "Category":  "Credential Management"
+                     },
+                     {
+                         "Description":  "1 enabled user accounts have not logged on in 90+ days",
+                         "Severity":  "Medium",
+                         "Category":  "Account Hygiene"
+                     },
+                     {
+                         "Description":  "Only default GPOs are configured - no custom security policies detected",
+                         "Severity":  "Medium",
+                         "Category":  "Configuration Management"
+                     },
+                     {
+                         "Description":  "Password minimum length (7) is below recommended 12 characters",
+                         "Severity":  "High",
+                         "Category":  "Authentication"
+                     },
+                     {
+                         "Description":  "Password complexity requirements are disabled",
+                         "Severity":  "Critical",
+                         "Category":  "Authentication"
+                     },
+                     {
+                         "Description":  "Password history count (0) is below recommended minimum of 5",
+                         "Severity":  "Medium",
+                         "Category":  "Authentication"
+                     },
+                     {
+                         "Description":  "Account lockout threshold is set to 0 - brute force attacks are unrestricted",
+                         "Severity":  "Critical",
+                         "Category":  "Authentication"
+                     },
+                     {
+                         "Description":  "AES256 Kerberos encryption not explicitly enabled",
+                         "Severity":  "Medium",
+                         "Category":  "Cryptography"
+                     },
+                     {
+                         "Description":  "Built-in Administrator account has PasswordNeverExpires enabled",
+                         "Severity":  "Medium",
+                         "Category":  "Account Hardening"
+                     }
+                 ],
+    "FindingSummary":  {
+                           "Total":  9,
+                           "Critical":  2,
+                           "High":  2,
+                           "Medium":  5
+                       },
+    "Timestamp":  "2026-08-04T17:34:06Z"
+}
