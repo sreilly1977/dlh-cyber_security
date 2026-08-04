@@ -3,7 +3,7 @@
 # 12-log_config.sh — Configure rsyslog for structured logging and set log
 #                     rotation policies that ensure logs are preserved.
 #
-# Usage:  sudo ./12-log_config.sh
+# Usage:  sudo ./12_config.sh
 # ============================================================================
 
 set -euo pipefail
@@ -115,7 +115,7 @@ echo "    /var/log/syslog: rotate 60, compress after 7d    [SET]"
 POLICIES_SET=$((POLICIES_SET + 2))
 
 # ---------------------------------------------------------------------------
-# Step 3: Verify log activity using tail
+# Step 3: Verify log activity using logger and tail
 # ---------------------------------------------------------------------------
 
 echo "[*] Verifying log activity..."
@@ -126,13 +126,15 @@ touch "$SYSLOG" 2>/dev/null || true
 touch /var/log/cron.log 2>/dev/null || true
 touch /var/log/kern.log 2>/dev/null || true
 
-# Give rsyslog a moment to write any pending events
+# Inject a test syslog message to verify the pipeline is working
+logger -p syslog.info "MedDefense log configuration verification test" 2>/dev/null || true
+
+# Give rsyslog a moment to write
 sleep 2
 
 # Check if auth.log is receiving events by examining recent entries with tail
 AUTH_OK="NO"
 if [[ -f "$AUTH_LOG" ]] && [[ -s "$AUTH_LOG" ]]; then
-    # Use tail to check for recent entries in the log
     RECENT_AUTH=$(tail -n 5 "$AUTH_LOG" 2>/dev/null || true)
     if [[ -n "$RECENT_AUTH" ]]; then
         AUTH_OK="OK"
