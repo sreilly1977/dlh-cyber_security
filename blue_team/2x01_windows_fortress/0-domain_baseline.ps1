@@ -1,14 +1,14 @@
 <#
-.SYNOPSIS
+.Synopsis
     0-domain_baseline.ps1 - Active Directory Security Baseline Assessment
-.PURPOSE
+.Purpose
     Maps the complete security state of the MedDefense Active Directory domain,
     producing a structured report covering users, groups, service accounts,
     GPOs, password and lockout policies, Kerberos encryption, and privileged
     group membership.
-.AUTHOR
-    Steve - Cybersecurity Engineer
-.DATE
+.Author
+    Stephen Reilly - Cybersecurity Engineer
+.Date
     August 4, 2026
 #>
 
