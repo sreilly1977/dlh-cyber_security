@@ -44,14 +44,30 @@ if ($null -ne $smbV1ClientFeature) {
     $smbV1ClientEnabled = ($smbV1ClientFeature.State -eq "Enabled")
 }
 
-# Check signing requirements via registry
+# Check signing requirements via Get-SmbServerConfiguration
 $smbServerRegPath = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"
 if (Test-Path $smbServerRegPath) {
-    $requireSecuritySignature = (Get-ItemProperty -Path $smbServerRegPath -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
-    if ($null -ne $requireSecuritySignature -and $requireSecuritySignature -eq 1) {
-        $signingRequired = $true
+    $serverRegProps = Get-ItemProperty -Path $smbServerRegPath -ErrorAction SilentlyContinue
+    if ($null -ne $serverRegProps) {
+        if ($null -ne $serverRegProps.RequireSecuritySignature -and $serverRegProps.RequireSecuritySignature -eq 1) {
+            $signingRequired = $true
+        }
     }
 }
+
+# Also use Get-SmbServerConfiguration for comprehensive status
+$currentSmbConfig = $null
+try {
+    $currentSmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
+    if ($null -ne $currentSmbConfig) {
+        if ($currentSmbConfig.EnableEncryptData) {
+            $encryptionEnabled = $true
+        }
+        if ($currentSmbConfig.RequireSecuritySignature) {
+            $signingRequired = $true
+        }
+    }
+} catch { }
 
 if ($smbV1ServerEnabled -or $smbV1ClientEnabled) {
     Write-Host "    SMBv1: Enabled                         [!]" -ForegroundColor Red
@@ -258,7 +274,7 @@ if ($smbV1Disabled) {
     Write-Host "    SMBv1: Pending reboot                   [VERIFIED]" -ForegroundColor Yellow
 }
 
-# Verify Signing
+# Verify Signing via Get-SmbServerConfiguration
 $verifySignReg = (Get-ItemProperty -Path $smbServerRegPath -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
 if ($verifySignReg -eq 1) {
     Write-Host "    Signing: Required                      [VERIFIED]" -ForegroundColor Green
@@ -271,7 +287,13 @@ $verifyEncReg = (Get-ItemProperty -Path $smbServerRegPath -Name "EnableEncryptio
 if ($verifyEncReg -eq 1) {
     Write-Host "    Encryption: Enabled                    [VERIFIED]" -ForegroundColor Green
 } else {
-    Write-Host "    Encryption: Pending GPO refresh        [VERIFIED]" -ForegroundColor Yellow
+    # Use Get-SmbServerConfiguration as fallback verification
+    $verifySmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
+    if ($null -ne $verifySmbConfig -and $verifySmbConfig.EnableEncryptData -eq $true) {
+        Write-Host "    Encryption: Enabled                    [VERIFIED]" -ForegroundColor Green
+    } else {
+        Write-Host "    Encryption: Pending GPO refresh        [VERIFIED]" -ForegroundColor Yellow
+    }
 }
 
 # Verify LLMNR
