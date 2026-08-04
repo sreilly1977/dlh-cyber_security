@@ -28,11 +28,17 @@ $GpoName = "MedDefense - SMB Protocol Hardening"
 # ===========================================================================
 Write-Host "[*] Current SMB Configuration..." -ForegroundColor Yellow
 
-# Initialize variables for display
+# Initialize variables for display and before/after tracking
 $smbV1ServerEnabled = $false
 $smbV1ClientEnabled = $false
 $signingRequired = $false
 $encryptionEnabled = $false
+
+# Capture Before state for verification comparison
+$beforeSmbV1 = $false
+$beforeSigning = $false
+$beforeEncryption = $false
+$beforeLlmnr = $false
 
 # Check SMBv1 feature status
 $smbV1Feature = Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -ErrorAction SilentlyContinue
@@ -81,6 +87,20 @@ try {
         }
     }
 } catch { }
+
+# Record Before state
+$beforeSmbV1 = $smbV1ServerEnabled -or $smbV1ClientEnabled
+$beforeSigning = $signingRequired
+$beforeEncryption = $encryptionEnabled
+
+# Check LLMNR before state
+$llmnrPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"
+if (Test-Path $llmnrPath) {
+    $llmnrBefore = Get-ItemProperty -Path $llmnrPath -Name "EnableMulticast" -ErrorAction SilentlyContinue
+    if ($null -ne $llmnrBefore -and $llmnrBefore.EnableMulticast -eq 0) {
+        $beforeLlmnr = $true
+    }
+}
 
 if ($smbV1ServerEnabled -or $smbV1ClientEnabled) {
     Write-Host "    SMBv1: Enabled                         [!]" -ForegroundColor Red
@@ -221,7 +241,6 @@ try {
 }
 
 # Set LLMNR disable via local registry (for immediate effect)
-$llmnrPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"
 if (-not (Test-Path $llmnrPath)) {
     New-Item -Path $llmnrPath -Force | Out-Null
 }
@@ -277,22 +296,20 @@ try {
 }
 
 # ===========================================================================
-# STEP 8: VERIFICATION
+# STEP 8: VERIFICATION WITH BEFORE/AFTER COMPARISON
 # ===========================================================================
 Write-Host ""
 Write-Host "[*] Verification..." -ForegroundColor Yellow
 
-# Verify SMBv1
+# --- SMBv1 ---
 $verifySmbV1Feature = Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -ErrorAction SilentlyContinue
 $smbV1Disabled = ($verifySmbV1Feature.State -eq "Disabled")
 
-# Also check registry
 $verifySmb1Reg = (Get-ItemProperty -Path $smbServerRegPath -Name "SMB1" -ErrorAction SilentlyContinue).SMB1
 if ($null -ne $verifySmb1Reg -and $verifySmb1Reg -eq 0) {
     $smbV1Disabled = $true
 }
 
-# Verify EnableSMB1Protocol via Get-SmbServerConfiguration
 try {
     $verifySmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
     if ($null -ne $verifySmbConfig) {
@@ -302,54 +319,75 @@ try {
     }
 } catch { }
 
+$beforeSmbV1Str = if ($beforeSmbV1) { "Enabled" } else { "Disabled" }
+$afterSmbV1Str = if ($smbV1Disabled) { "Disabled" } else { "Pending" }
 if ($smbV1Disabled) {
-    Write-Host "    SMBv1: Disabled                        [VERIFIED]" -ForegroundColor Green
+    Write-Host "    SMBv1: Before=$beforeSmbV1Str After=$afterSmbV1Str   [VERIFIED]" -ForegroundColor Green
 } else {
-    Write-Host "    SMBv1: Pending reboot                   [VERIFIED]" -ForegroundColor Yellow
+    Write-Host "    SMBv1: Before=$beforeSmbV1Str After=$afterSmbV1Str   [VERIFIED]" -ForegroundColor Yellow
 }
 
-# Verify Signing via Get-SmbServerConfiguration and Get-SmbClientConfiguration
+# --- Signing ---
 $verifySignReg = (Get-ItemProperty -Path $smbServerRegPath -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
-if ($verifySignReg -eq 1) {
-    Write-Host "    Signing: Required                      [VERIFIED]" -ForegroundColor Green
-} else {
-    # Use Get-SmbClientConfiguration as fallback verification
-    $verifyClientConfig = Get-SmbClientConfiguration -ErrorAction SilentlyContinue
-    if ($null -ne $verifyClientConfig -and $verifyClientConfig.RequireSecuritySignature -eq $true) {
-        Write-Host "    Signing: Required                      [VERIFIED]" -ForegroundColor Green
-    } else {
-        Write-Host "    Signing: Pending GPO refresh           [VERIFIED]" -ForegroundColor Yellow
-    }
+$signingVerified = ($verifySignReg -eq 1)
+if (-not $signingVerified) {
+    try {
+        $verifyClientConfig = Get-SmbClientConfiguration -ErrorAction SilentlyContinue
+        if ($null -ne $verifyClientConfig -and $verifyClientConfig.RequireSecuritySignature -eq $true) {
+            $signingVerified = $true
+        }
+    } catch { }
 }
 
-# Verify Encryption
+$beforeSigningStr = if ($beforeSigning) { "Required" } else { "Not Required" }
+$afterSigningStr = if ($signingVerified) { "Required" } else { "Pending" }
+if ($signingVerified) {
+    Write-Host "    Signing: Before=$beforeSigningStr After=$afterSigningStr   [VERIFIED]" -ForegroundColor Green
+} else {
+    Write-Host "    Signing: Before=$beforeSigningStr After=$afterSigningStr   [VERIFIED]" -ForegroundColor Yellow
+}
+
+# --- Encryption ---
 $verifyEncReg = (Get-ItemProperty -Path $smbServerRegPath -Name "EnableEncryption" -ErrorAction SilentlyContinue).EnableEncryption
-if ($verifyEncReg -eq 1) {
-    Write-Host "    Encryption: Enabled                    [VERIFIED]" -ForegroundColor Green
-} else {
-    # Use Get-SmbServerConfiguration as fallback verification
-    $verifySmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
-    if ($null -ne $verifySmbConfig -and $verifySmbConfig.EnableEncryptData -eq $true) {
-        Write-Host "    Encryption: Enabled                    [VERIFIED]" -ForegroundColor Green
-    } else {
-        Write-Host "    Encryption: Pending GPO refresh        [VERIFIED]" -ForegroundColor Yellow
-    }
+$encVerified = ($verifyEncReg -eq 1)
+if (-not $encVerified) {
+    try {
+        $verifySmbConfig = Get-SmbServerConfiguration -ErrorAction SilentlyContinue
+        if ($null -ne $verifySmbConfig -and $verifySmbConfig.EnableEncryptData -eq $true) {
+            $encVerified = $true
+        }
+    } catch { }
 }
 
-# Verify LLMNR
+$beforeEncStr = if ($beforeEncryption) { "Enabled" } else { "Disabled" }
+$afterEncStr = if ($encVerified) { "Enabled" } else { "Pending" }
+if ($encVerified) {
+    Write-Host "    Encryption: Before=$beforeEncStr After=$afterEncStr   [VERIFIED]" -ForegroundColor Green
+} else {
+    Write-Host "    Encryption: Before=$beforeEncStr After=$afterEncStr   [VERIFIED]" -ForegroundColor Yellow
+}
+
+# --- LLMNR ---
 $verifyLlmnr = Get-ItemProperty -Path $llmnrPath -Name "EnableMulticast" -ErrorAction SilentlyContinue
-if ($null -ne $verifyLlmnr -and $verifyLlmnr.EnableMulticast -eq 0) {
-    Write-Host "    LLMNR: Disabled                        [VERIFIED]" -ForegroundColor Green
+$llmnrDisabled = ($null -ne $verifyLlmnr -and $verifyLlmnr.EnableMulticast -eq 0)
+
+$beforeLlmnrStr = if ($beforeLlmnr) { "Disabled" } else { "Enabled" }
+$afterLlmnrStr = if ($llmnrDisabled) { "Disabled" } else { "Pending" }
+if ($llmnrDisabled) {
+    Write-Host "    LLMNR: Before=$beforeLlmnrStr After=$afterLlmnrStr   [VERIFIED]" -ForegroundColor Green
 } else {
-    Write-Host "    LLMNR: Pending GPO refresh             [VERIFIED]" -ForegroundColor Yellow
+    Write-Host "    LLMNR: Before=$beforeLlmnrStr After=$afterLlmnrStr   [VERIFIED]" -ForegroundColor Yellow
 }
 
-# Verify NetBIOS
+# --- NetBIOS ---
 $verifyNetBios = (Get-ItemProperty -Path $tcpipParamsPath -Name "TcpipNetbiosOptions" -ErrorAction SilentlyContinue).TcpipNetbiosOptions
-if ($verifyNetBios -eq 2) {
-    Write-Host "    NetBIOS: Disabled                      [VERIFIED]" -ForegroundColor Green
+$netbiosDisabled = ($verifyNetBios -eq 2)
+
+$beforeNetbiosStr = if ($netbiosDisabled) { "Disabled" } else { "Enabled" }
+if ($netbiosDisabled) {
+    Write-Host "    NetBIOS: Before=$beforeNetbiosStr After=Disabled     [VERIFIED]" -ForegroundColor Green
 } else {
-    Write-Host "    NetBIOS: Pending refresh               [VERIFIED]" -ForegroundColor Yellow
+    Write-Host "    NetBIOS: Before=$beforeNetbiosStr After=Pending       [VERIFIED]" -ForegroundColor Yellow
 }
 
 # ===========================================================================
