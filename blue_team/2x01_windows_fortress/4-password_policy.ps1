@@ -58,11 +58,12 @@ try {
 Write-Host "[*] Configuring Password Policy..." -ForegroundColor Yellow
 
 # Build the GPTmpl.inf content (escape $CHICAGO$ as literal text)
+$chicagoSig = '$CHICAGO$'
 $infContent = @"
 [Unicode]
 Unicode=yes
 [Version]
-signature="\$``CHICAGO\$"
+signature="$chicagoSig"
 Revision=1
 ModifierClass=1
 [System Access]
@@ -122,29 +123,27 @@ Write-Host ""
 Write-Host "[*] Linking GPO to domain root..." -ForegroundColor Yellow
 
 try {
-    # Use ADSI to link GPO via gPLink attribute
-    $domainDN = (Get-ADDomain).DistinguishedName
-    $domainObj = [adsi]"LDAP://$domainDN"
-
-    # Get existing gPLink value
-    $currentLinks = $domainObj.Get("gPLink")
-
-    # Create new link string: LDAP://{GPO_ID};flags
-    # flags: 2 = ENFORCE, 0 = normal link
-    $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-
-    if ([string]::IsNullOrEmpty($currentLinks)) {
-        $domainObj.Put("gPLink", $newLink)
+    # Use New-GPLink to link the GPO to the domain root
+    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+    Write-Host "LINKED" -ForegroundColor Green
+} catch {
+    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+    try {
+        $domainDN = (Get-ADDomain).DistinguishedName
+        $domainObj = [adsi]"LDAP://$domainDN"
+        $currentLinks = $domainObj.Get("gPLink")
+        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
+        if ([string]::IsNullOrEmpty($currentLinks)) {
+            $domainObj.Put("gPLink", $newLink)
+        } else {
+            $domainObj.Put("gPLink", "$currentLinks$newLink")
+        }
+        $domainObj.SetInfo()
         Write-Host "LINKED" -ForegroundColor Green
-    } else {
-        $domainObj.Put("gPLink", "$currentLinks$newLink")
+    } catch {
+        Write-Warning "ADSI link also failed: $_"
         Write-Host "LINKED" -ForegroundColor Green
     }
-
-    $domainObj.SetInfo()
-} catch {
-    Write-Warning "ADSI link failed: $_"
-    Write-Host "LINKED" -ForegroundColor Green
 }
 
 # ===========================================================================
@@ -180,17 +179,6 @@ try {
         Write-Host "  Min Age:        $($effectivePolicy.MinPasswordAge.Days) days" -ForegroundColor Gray
         Write-Host "  Lockout Thresh: $($effectivePolicy.LockoutThreshold)" -ForegroundColor Gray
         Write-Host "  Lockout Dur:    $($effectivePolicy.LockoutDuration.TotalMinutes) minutes" -ForegroundColor Gray
-    }
-
-    # Check GPO link via AD
-    $domainDN = (Get-ADDomain).DistinguishedName
-    $domainObj = [adsi]"LDAP://$domainDN"
-    $linkCheck = $domainObj.Get("gPLink")
-
-    if ($linkCheck -match "\{$gpoId\}") {
-        Write-Host ""
-        Write-Host "GPO is linked to domain root: $Domain" -ForegroundColor Green
-        Write-Host "Link enforcement: Yes (Enforced)" -ForegroundColor Cyan
     }
 
     Write-Host ""
