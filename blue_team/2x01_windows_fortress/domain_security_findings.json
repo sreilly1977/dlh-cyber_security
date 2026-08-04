@@ -1,6 +1,6 @@
 ﻿{
     "domain":  "meddefense.local",
-    "scan_date":  "2026-08-04T18:17:05Z",
+    "scan_date":  "2026-08-04T19:35:04Z",
     "total_findings":  15,
     "critical_count":  3,
     "high_count":  3,
@@ -51,7 +51,7 @@
                          "severity":  "High",
                          "category":  "Credential Management",
                          "asset":  "Administrator",
-                         "evidence":  "Account: Administrator, State: Enabled, ServiceAccount: No, PasswordLastSet: 2026-04-16, Groups: Domain Users, Administrators, Schema Admins, Enterprise Admins, Domain Admins, Group Policy Creator Owners",
+                         "evidence":  "Account: Administrator, State: Enabled, ServiceAccount: No, PasswordLastSet: 2026-04-16, MemberOf: Group Policy Creator Owners, Domain Admins, Enterprise Admins, Schema Admins, Administrators",
                          "risk":  "Passwords that never expire increase exposure window if compromised",
                          "recommended_remediation":  "Remove PasswordNeverExpires flag, implement managed service accounts or gMSAs where applicable",
                          "mapped_task":  "3-service_accounts"
