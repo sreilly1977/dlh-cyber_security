@@ -107,8 +107,9 @@ Write-Host ""
 Write-Host "[*] Disabling SMBv1 (server + client)...   " -NoNewline -ForegroundColor Yellow
 
 try {
-    # Disable SMBv1 feature via DISM
-    dism.exe /online /Disable-Feature /FeatureName:SMB1Protocol /NoRestart 2>&1 | Out-Null
+    # Disable SMBv1 feature using PowerShell cmdlet
+    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue
+    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Client -NoRestart -ErrorAction SilentlyContinue
 
     # Also disable via Set-SmbServerConfiguration
     Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force -ErrorAction SilentlyContinue
