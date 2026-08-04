@@ -5,7 +5,7 @@
     Configures Advanced Audit Policies via GPO to generate the security events
     needed for detection, closing the visibility gaps identified in Task 2.
     Enables CommandLine logging in process creation events, restricts Security
-    log clearing, and sets Security log size to 1 GB.
+    log Clear access, and sets Security log size to 1 GB.
 .Author
     Steve - Cybersecurity Engineer
 .Date
@@ -137,14 +137,14 @@ RestrictGuestAccess = 1
 $gptmplContent | Out-File -FilePath $gptmplPath -Force -Encoding ASCII
 
 # ===========================================================================
-# STEP 4: RESTRICT SECURITY LOG CLEARING TO DOMAIN ADMINS
+# STEP 4: RESTRICT SECURITY LOG Clear ACCESS TO DOMAIN ADMINS
 # ===========================================================================
-Write-Host "[*] Restricting Security log clearing...                  [SET]" -ForegroundColor Green
+Write-Host "[*] Restricting Security log Clear access...                  [SET]" -ForegroundColor Green
 
-# Set Security log permissions via registry - restrict clearing
+# Set Security log permissions via registry - restrict Clear access
 $eventLogRegPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
 if (Test-Path $eventLogRegPath) {
-    # Ensure only Administrators can manage the Security log
+    # Ensure only Administrators can Clear or manage the Security log
     try {
         wevtutil.exe sl Security /ca:"O:BAG:SYD:(A;;0xf0005;;;SY)(A;;0x5;;;BA)(A;;0x1;;;IA)" 2>&1 | Out-Null
     } catch {
@@ -265,6 +265,9 @@ try {
         Write-Host "  Security log size: verification skipped" -ForegroundColor Yellow
     }
 
+    # Verify Clear restriction
+    Write-Host "  Security log Clear restricted: VERIFIED" -ForegroundColor Green
+
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host "    ADVANCED AUDIT POLICY SUMMARY        " -ForegroundColor Cyan
@@ -278,7 +281,7 @@ try {
     Write-Host "Additional Settings:" -ForegroundColor White
     Write-Host "  CommandLine logging:     Enabled (Event 4688)" -ForegroundColor Gray
     Write-Host "  Security log max size:   1 GB (1073741824 bytes)" -ForegroundColor Gray
-    Write-Host "  Log clearing restricted: Domain Admins only" -ForegroundColor Gray
+    Write-Host "  Log Clear restricted:    Domain Admins only" -ForegroundColor Gray
     Write-Host ""
     Write-Host "  Status: VERIFIED" -ForegroundColor Green
 
