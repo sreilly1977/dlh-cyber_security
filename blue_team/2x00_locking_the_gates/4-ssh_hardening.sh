@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+
 # 4-ssh_hardening.sh — Harden SSH to eliminate password-based authentication
 #                       and reduce the attack surface for MedDefense servers.
 #
