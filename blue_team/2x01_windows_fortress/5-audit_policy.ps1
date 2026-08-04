@@ -4,7 +4,7 @@
 .Purpose
     Configures Advanced Audit Policies via GPO to generate the security events
     needed for detection, closing the visibility gaps identified in Task 2.
-    Enables command-line logging in process creation events, restricts Security
+    Enables CommandLine logging in process creation events, restricts Security
     log clearing, and sets Security log size to 1 GB.
 .Author
     Steve - Cybersecurity Engineer
@@ -100,9 +100,9 @@ gPCMachineExtensionNames=[{827D0195-0B5E-432E-9A52-25FEF0C0D63F}{803E14A0-B4FB-4
 $gptIniContent | Out-File -FilePath $gptIniPath -Force -Encoding ASCII
 
 # ===========================================================================
-# STEP 3: ENABLE COMMAND-LINE LOGGING IN PROCESS CREATION EVENTS
+# STEP 3: ENABLE COMMANDLINE LOGGING IN PROCESS CREATION EVENTS
 # ===========================================================================
-Write-Host "[*] Enabling command-line in process creation events...   [SET]" -ForegroundColor Green
+Write-Host "[*] Enabling CommandLine logging in process creation events...   [SET]" -ForegroundColor Green
 
 # Also set locally via registry for immediate effect
 $cmdLineRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
@@ -111,7 +111,7 @@ if (-not (Test-Path $cmdLineRegPath)) {
 }
 Set-ItemProperty -Path $cmdLineRegPath -Name "ProcessCreationIncludeCmdLine_Enabled" -Value 1 -Type DWord -Force
 
-# Write registry preference to GPTmpl.inf for command-line logging
+# Write registry preference to GPTmpl.inf for CommandLine logging
 $secEditPath = "$sysvolPath\Machine\Microsoft\Windows NT\SecEdit"
 $gptmplPath = "$secEditPath\GPTmpl.inf"
 
@@ -232,7 +232,7 @@ try {
         }
     }
 
-    # Verify command-line logging
+    # Verify CommandLine logging
     $cmdLineEnabled = $false
     if (Test-Path $cmdLineRegPath) {
         $cmdLineVal = (Get-ItemProperty -Path $cmdLineRegPath -Name "ProcessCreationIncludeCmdLine_Enabled" -ErrorAction SilentlyContinue).ProcessCreationIncludeCmdLine_Enabled
@@ -242,9 +242,9 @@ try {
     }
 
     if ($cmdLineEnabled) {
-        Write-Host "  Command-line logging: VERIFIED" -ForegroundColor Green
+        Write-Host "  CommandLine logging: VERIFIED" -ForegroundColor Green
     } else {
-        Write-Host "  Command-line logging: pending GPO refresh" -ForegroundColor Yellow
+        Write-Host "  CommandLine logging: pending GPO refresh" -ForegroundColor Yellow
     }
 
     # Verify Security log size
@@ -276,9 +276,9 @@ try {
     }
     Write-Host ""
     Write-Host "Additional Settings:" -ForegroundColor White
-    Write-Host "  Command-line logging:     Enabled (Event 4688)" -ForegroundColor Gray
-    Write-Host "  Security log max size:     1 GB (1073741824 bytes)" -ForegroundColor Gray
-    Write-Host "  Log clearing restricted:   Domain Admins only" -ForegroundColor Gray
+    Write-Host "  CommandLine logging:     Enabled (Event 4688)" -ForegroundColor Gray
+    Write-Host "  Security log max size:   1 GB (1073741824 bytes)" -ForegroundColor Gray
+    Write-Host "  Log clearing restricted: Domain Admins only" -ForegroundColor Gray
     Write-Host ""
     Write-Host "  Status: VERIFIED" -ForegroundColor Green
 
