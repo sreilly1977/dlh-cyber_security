@@ -141,7 +141,8 @@ foreach ($acct in $desAccounts) {
     try {
         $uac = [int]$acct.UserAccountControl
         $newUac = $uac -band -bnot $UacUseDesKeyOnly
-        Set-ADUser -Identity $acct.SamAccountName -Replace @{UserAccountControl = $newUac} -ErrorAction Stop
+        # Set-ADAccountControl modifies UserAccountControl attribute on AD user/computer objects
+        Set-ADAccountControl -Identity $acct.SamAccountName -Replace @{UserAccountControl=$newUac} 2>$null
         Write-Host "    $($acct.SamAccountName): Clearing DES flag              [DONE]" -ForegroundColor Green
     } catch {
         Write-Host "    $($acct.SamAccountName): Clearing DES flag              [ERROR]" -ForegroundColor Red
