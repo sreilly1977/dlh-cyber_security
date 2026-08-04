@@ -8,25 +8,8 @@
 
 set -euo pipefail
 
-sanitize_int() {
-    local val="$1"
-    val="${val//[^0-9]/}"
-    [[ -z "$val" ]] && val="0"
-    printf '%s' "$val"
-}
-
-# ---------------------------------------------------------------------------
-# Pre-flight checks
-# ---------------------------------------------------------------------------
-
-if [[ $EUID -ne 0 ]]; then
-    echo "ERROR: This script must be run as root (use sudo)." >&2
-    exit 1
-fi
-
 RSYSLOG_CONF="/etc/rsyslog.conf"
 RSYSLOG_DIR="/etc/rsyslog.d"
-LOGROTATE_CONF="/etc/logrotate.conf"
 LOGROTATE_DIR="/etc/logrotate.d"
 AUTH_LOG="/var/log/auth.log"
 SYSLOG="/var/log/syslog"
@@ -34,23 +17,25 @@ SYSLOG="/var/log/syslog"
 SOURCES_CONFIGURED=0
 POLICIES_SET=0
 
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: This script must be run as root (use sudo)." >&2
+    exit 1
+fi
+
 # ---------------------------------------------------------------------------
 # Step 1: Configure rsyslog
 # ---------------------------------------------------------------------------
 
 echo "[*] Configuring rsyslog..."
 
-# Ensure rsyslog is installed and running
 if ! dpkg -l rsyslog &>/dev/null 2>&1; then
     apt-get update -qq && apt-get install -y rsyslog -qq 2>/dev/null
 fi
 systemctl enable rsyslog 2>/dev/null || true
 systemctl start rsyslog 2>/dev/null || true
 
-# Create dedicated rsyslog config for MedDefense logging
 MEDDEFENSE_SYSLOG_CONF="$RSYSLOG_DIR/meddefense_logs.conf"
 
-# Write structured rsyslog configuration
 cat > "$MEDDEFENSE_SYSLOG_CONF" << 'RSYSLOG_CONF'
 # MedDefense Structured Logging Configuration
 # Deployed by 12-log_config.sh
@@ -59,11 +44,9 @@ cat > "$MEDDEFENSE_SYSLOG_CONF" << 'RSYSLOG_CONF'
 # for SOC analysis and compliance evidence.
 
 # --- Auth events -> /var/log/auth.log ---
-# Capture all auth and authpriv facility messages
 auth,authpriv.* /var/log/auth.log
 
 # --- System events (excluding auth) -> /var/log/syslog ---
-# Capture info-level and above, excluding auth (already in auth.log)
 *.info;auth,authpriv.none /var/log/syslog
 
 # --- Cron events -> /var/log/cron.log ---
@@ -77,7 +60,6 @@ echo "    auth,authpriv.* -> /var/log/auth.log     [CONFIGURED]"
 echo "    *.info;auth.none -> /var/log/syslog      [CONFIGURED]"
 SOURCES_CONFIGURED=$((SOURCES_CONFIGURED + 2))
 
-# Restart rsyslog to apply changes
 systemctl restart rsyslog 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
@@ -86,12 +68,10 @@ systemctl restart rsyslog 2>/dev/null || true
 
 echo "[*] Setting log rotation policies..."
 
-# Ensure logrotate is installed
 if ! command -v logrotate &>/dev/null; then
     apt-get install -y logrotate -qq 2>/dev/null || true
 fi
 
-# Create MedDefense logrotate config for auth.log and syslog
 MEDDEFENSE_LOGROTATE_CONF="$LOGROTATE_DIR/meddefense"
 
 cat > "$MEDDEFENSE_LOGROTATE_CONF" << 'LOGROTATE_CONF'
@@ -135,7 +115,7 @@ echo "    /var/log/syslog: rotate 60, compress after 7d    [SET]"
 POLICIES_SET=$((POLICIES_SET + 2))
 
 # ---------------------------------------------------------------------------
-# Step 3: Verify log activity
+# Step 3: Verify log activity using tail
 # ---------------------------------------------------------------------------
 
 echo "[*] Verifying log activity..."
@@ -146,40 +126,24 @@ touch "$SYSLOG" 2>/dev/null || true
 touch /var/log/cron.log 2>/dev/null || true
 touch /var/log/kern.log 2>/dev/null || true
 
-# Trigger an auth event by running sudo
-sudo -v 2>/dev/null || true
-
-# Trigger a syslog event using logger
-logger "MedDefense log configuration test" 2>/dev/null || true
-
-# Give rsyslog a moment to write
+# Give rsyslog a moment to write any pending events
 sleep 2
 
-# Check if auth.log is receiving events
+# Check if auth.log is receiving events by examining recent entries with tail
 AUTH_OK="NO"
-if [[ -f "$AUTH_LOG" ]]; then
-    AUTH_SIZE=$(stat -c '%s' "$AUTH_LOG" 2>/dev/null || echo "0")
-    AUTH_SIZE=$(sanitize_int "$AUTH_SIZE" 2>/dev/null || echo "0")
-    if [[ "$AUTH_SIZE" -gt 0 ]]; then
+if [[ -f "$AUTH_LOG" ]] && [[ -s "$AUTH_LOG" ]]; then
+    # Use tail to check for recent entries in the log
+    RECENT_AUTH=$(tail -n 5 "$AUTH_LOG" 2>/dev/null || true)
+    if [[ -n "$RECENT_AUTH" ]]; then
         AUTH_OK="OK"
-    else
-        # Try generating an event and rechecking
-        last -n 1 2>/dev/null || true
-        sleep 1
-        AUTH_SIZE=$(stat -c '%s' "$AUTH_LOG" 2>/dev/null || echo "0")
-        AUTH_SIZE=$(sanitize_int "$AUTH_SIZE" 2>/dev/null || echo "0")
-        if [[ "$AUTH_SIZE" -gt 0 ]]; then
-            AUTH_OK="OK"
-        fi
     fi
 fi
 
-# Check if syslog is receiving events
+# Check if syslog is receiving events by examining recent entries with tail
 SYSLOG_OK="NO"
-if [[ -f "$SYSLOG" ]]; then
-    SYSLOG_SIZE=$(stat -c '%s' "$SYSLOG" 2>/dev/null || echo "0")
-    SYSLOG_SIZE=$(sanitize_int "$SYSLOG_SIZE" 2>/dev/null || echo "0")
-    if [[ "$SYSLOG_SIZE" -gt 0 ]]; then
+if [[ -f "$SYSLOG" ]] && [[ -s "$SYSLOG" ]]; then
+    RECENT_SYSLOG=$(tail -n 5 "$SYSLOG" 2>/dev/null || true)
+    if [[ -n "$RECENT_SYSLOG" ]]; then
         SYSLOG_OK="OK"
     fi
 fi
@@ -193,14 +157,12 @@ echo "    /var/log/syslog: receiving events         [$SYSLOG_OK]"
 
 echo "[*] Securing log file permissions..."
 
-# Set ownership and permissions on log files
 chmod 640 "$AUTH_LOG" 2>/dev/null || true
 chown root:adm "$AUTH_LOG" 2>/dev/null || true
 
 chmod 640 "$SYSLOG" 2>/dev/null || true
 chown root:adm "$SYSLOG" 2>/dev/null || true
 
-# Also secure the additional log files
 chmod 640 /var/log/cron.log 2>/dev/null || true
 chown root:adm /var/log/cron.log 2>/dev/null || true
 chmod 640 /var/log/kern.log 2>/dev/null || true

@@ -8,9 +8,17 @@
 
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# Pre-flight checks
-# ---------------------------------------------------------------------------
+MINLEN=14
+DENY=5
+UNLOCK_TIME=900
+FAIL_INTERVAL=900
+REMEMBER=12
+
+PWQUALITY_CONF="/etc/security/pwquality.conf"
+COMMON_AUTH="/etc/pam.d/common-auth"
+COMMON_PASSWORD="/etc/pam.d/common-password"
+FAILLOCK_CONF="/etc/security/faillock.conf"
+PAM_FAILLOCK_PROFILE="/usr/share/pam-configs/faillock"
 
 if [[ $EUID -ne 0 ]]; then
     echo "ERROR: This script must be run as root (use sudo)." >&2
@@ -18,20 +26,29 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# Configuration values
+# Helpers
 # ---------------------------------------------------------------------------
 
-PWQUALITY_CONF="/etc/security/pwquality.conf"
-COMMON_AUTH="/etc/pam.d/common-auth"
-COMMON_PASSWORD="/etc/pam.d/common-password"
-AUTH_ACCOUNT_LOCKOUT=5
-LOCKOUT_TIME=900
-FAIL_INTERVAL=900
-PASSWORD_HISTORY=12
-MIN_PASSWORD_LENGTH=14
+set_config_value() {
+    local file="$1" key="$2" value="$3"
+    touch "$file" 2>/dev/null || true
+    if grep -qE "^[#[:space:]]*${key}[[:space:]]*=" "$file" 2>/dev/null; then
+        sed -i "s|^[#[:space:]]*${key}[[:space:]]*=.*|${key} = ${value}|" "$file"
+    else
+        echo "${key} = ${value}" >> "$file"
+    fi
+}
+
+set_config_flag() {
+    local file="$1" flag="$2"
+    touch "$file" 2>/dev/null || true
+    if ! grep -qE "^${flag}[[:space:]]*$" "$file" 2>/dev/null; then
+        echo "$flag" >> "$file"
+    fi
+}
 
 # ---------------------------------------------------------------------------
-# Step 1: Install libpam-pwquality if not present
+# Step 1: Install libpam-pwquality
 # ---------------------------------------------------------------------------
 
 echo "[*] Checking libpam-pwquality..."
@@ -39,168 +56,174 @@ echo "[*] Checking libpam-pwquality..."
 if dpkg -l libpam-pwquality &>/dev/null 2>&1; then
     VERSION=$(dpkg -s libpam-pwquality 2>/dev/null | grep 'Version:' | awk '{print $2}')
     echo "    Already installed: libpam-pwquality $VERSION"
-    PWQUALITY_INSTALLED=true
 else
     echo "    Installing libpam-pwquality..."
-    apt-get update -qq && apt-get install -y libpam-pwquality -qq
+    apt-get update -qq 2>/dev/null
+    apt-get install -y libpam-pwquality 2>/dev/null
     echo "    Installation complete"
-    PWQUALITY_INSTALLED=true
 fi
 
 # ---------------------------------------------------------------------------
-# Step 2: Configure password quality
+# Step 2: Backup PAM files (restore point before any changes)
+# ---------------------------------------------------------------------------
+
+echo "[*] Backing up PAM files..."
+BACKUP_DIR="/root/pam_backups_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+for f in "$PWQUALITY_CONF" "$COMMON_AUTH" "$COMMON_PASSWORD" "$FAILLOCK_CONF"; do
+    [[ -f "$f" ]] && cp -p "$f" "$BACKUP_DIR/" || true
+done
+echo "    Backup saved to: $BACKUP_DIR"
+
+# ---------------------------------------------------------------------------
+# Step 3: Configure password quality (pwquality.conf)
 # ---------------------------------------------------------------------------
 
 echo "[*] Configuring password quality ($PWQUALITY_CONF)..."
 
-configure_pwquality() {
-    local setting="$1"
-    local value="$2"
+set_config_value "$PWQUALITY_CONF" "minlen" "$MINLEN"
+echo "    minlen = $MINLEN                      [SET]"
 
-    # Check if setting exists
-    if grep -qE "^${setting}[[:space:]]*=" "$PWQUALITY_CONF" 2>/dev/null; then
-        # Update existing setting
-        sed -i "s/^${setting}[[:space:]]*=.*/${setting} = ${value}/" "$PWQUALITY_CONF"
-        echo "    $setting = $value     [UPDATED]"
-    else
-        # Add new setting
-        echo "# Hardened by 8-pam_hardening.sh" >> "$PWQUALITY_CONF"
-        echo "${setting} = ${value}" >> "$PWQUALITY_CONF"
-        echo "    $setting = $value     [SET]"
-    fi
-}
+set_config_value "$PWQUALITY_CONF" "dcredit" "-1"
+echo "    dcredit = -1                     [SET]"
 
-# Minimum password length
-configure_pwquality "minlen" "$MIN_PASSWORD_LENGTH"
+set_config_value "$PWQUALITY_CONF" "ucredit" "-1"
+echo "    ucredit = -1                     [SET]"
 
-# Complexity requirements (-1 means required, not optional credits)
-configure_pwquality "dcredit" "-1"      # At least 1 digit required
-configure_pwquality "ucredit" "-1"      # At least 1 uppercase required
-configure_pwquality "lcredit" "-1"      # At least 1 lowercase required
-configure_pwquality "ocredit" "-1"      # At least 1 special character required
+set_config_value "$PWQUALITY_CONF" "lcredit" "-1"
+echo "    lcredit = -1                     [SET]"
 
-# Additional quality controls
-configure_pwquality "maxrepeat" "3"     # Reject 3+ consecutive identical characters
-configure_pwquality "reject_username" ""  # Reject passwords containing username
+set_config_value "$PWQUALITY_CONF" "ocredit" "-1"
+echo "    ocredit = -1                     [SET]"
+
+set_config_value "$PWQUALITY_CONF" "maxrepeat" "3"
+echo "    maxrepeat = 3                    [SET]"
+
+# reject_username is a FLAG (no = value) — the original bug was writing
+# "reject_username = " which is invalid syntax and caused pwquality to
+# reject all password changes
+set_config_flag "$PWQUALITY_CONF" "reject_username"
+echo "    reject_username                  [SET]"
 
 # ---------------------------------------------------------------------------
-# Step 3: Configure account lockout with pam_faillock
+# Step 4: Configure account lockout (faillock.conf)
 # ---------------------------------------------------------------------------
 
 echo "[*] Configuring account lockout (pam_faillock)..."
 
-# Configure faillock settings in /etc/security/faillock.conf
-FAILLOCK_CONF="/etc/security/faillock.conf"
+set_config_value "$FAILLOCK_CONF" "deny" "$DENY"
+set_config_value "$FAILLOCK_CONF" "unlock_time" "$UNLOCK_TIME"
+set_config_value "$FAILLOCK_CONF" "fail_interval" "$FAIL_INTERVAL"
 
-if [[ -f "$FAILLOCK_CONF" ]]; then
-    # Backup original
-    cp -p "$FAILLOCK_CONF" "${FAILLOCK_CONF}.bak"
+echo "    deny = $DENY                         [SET]"
+echo "    unlock_time = $UNLOCK_TIME                [SET]"
+echo "    fail_interval = $FAIL_INTERVAL              [SET]"
 
-    configure_pam_setting() {
-        local setting="$1"
-        local value="$2"
-        local file="$3"
+# ---------------------------------------------------------------------------
+# Step 5: Enable pam_faillock in common-auth
+# Uses pam-auth-update (Debian/Ubuntu native) with Python3 fallback
+# for safe PAM stack modification
+# ---------------------------------------------------------------------------
 
-        if grep -qE "^[[:space:]]*${setting}[[:space:]]*=" "$file" 2>/dev/null; then
-            sed -i "s/^[[:space:]]*${setting}[[:space:]]*=.*/${setting} = ${value}/" "$file"
-            echo "    $setting = $value     [UPDATED]"
-        else
-            echo "${setting} = ${value}" >> "$file"
-            echo "    $setting = $value     [SET]"
-        fi
-    }
-
-    configure_pam_setting "deny" "$AUTH_ACCOUNT_LOCKOUT" "$FAILLOCK_CONF"
-    configure_pam_setting "unlock_time" "$LOCKOUT_TIME" "$FAILLOCK_CONF"
-    configure_pam_setting "fail_interval" "$FAIL_INTERVAL" "$FAILLOCK_CONF"
-else
-    # Create faillock.conf if it doesn't exist
-    touch "$FAILLOCK_CONF"
-    echo "# Faillock configuration hardened by 8-pam_hardening.sh" > "$FAILLOCK_CONF"
-    echo "deny = $AUTH_ACCOUNT_LOCKOUT" >> "$FAILLOCK_CONF"
-    echo "unlock_time = $LOCKOUT_TIME" >> "$FAILLOCK_CONF"
-    echo "fail_interval = $FAIL_INTERVAL" >> "$FAILLOCK_CONF"
-    echo "    deny = $AUTH_ACCOUNT_LOCKOUT     [CREATED]"
-    echo "    unlock_time = $LOCKOUT_TIME     [CREATED]"
-    echo "    fail_interval = $FAIL_INTERVAL     [CREATED]"
+if [[ ! -f "$PAM_FAILLOCK_PROFILE" ]]; then
+    mkdir -p "$(dirname "$PAM_FAILLOCK_PROFILE")"
+    cat > "$PAM_FAILLOCK_PROFILE" << 'PAM_PROFILE'
+Name: Authenticate using faillock
+Default: no
+Conf-Type: auth
+Conf:
+     auth required pam_faillock.so preauth silent
+     auth [default=die] pam_faillock.so authfail
+     auth sufficient pam_faillock.so authsucc
+PAM_PROFILE
 fi
 
-# Ensure pam_faillock is in common-auth (preauth and authfail sections)
+if command -v pam-auth-update &>/dev/null; then
+    pam-auth-update --enable faillock 2>/dev/null || true
+fi
+
 if ! grep -q 'pam_faillock.so' "$COMMON_AUTH" 2>/dev/null; then
-    echo "# Adding pam_faillock to common-auth" >> "$COMMON_AUTH"
-    echo "auth required pam_faillock.so preauth silent deny=$AUTH_ACCOUNT_LOCKOUT unlock_time=$LOCKOUT_TIME fail_interval=$FAIL_INTERVAL" >> "$COMMON_AUTH"
-    echo "auth [default=die] pam_faillock.so authfail deny=$AUTH_ACCOUNT_LOCKOUT" >> "$COMMON_AUTH"
-else
-    echo "    pam_faillock already configured in common-auth"
+    echo "    Manually adding pam_faillock to common-auth..."
+
+    python3 << 'PYEOF'
+import re
+
+auth_file = '/etc/pam.d/common-auth'
+
+with open(auth_file, 'r') as f:
+    content = f.read()
+
+if 'pam_faillock' not in content:
+    lines = content.split('\n')
+    new_lines = []
+    for line in lines:
+        if 'pam_unix.so' in line and line.strip().startswith('auth'):
+            new_lines.append(
+                'auth    required                        pam_faillock.so preauth silent'
+            )
+            match = re.search(r'success=(\d+)', line)
+            if match:
+                old_val = int(match.group(1))
+                line = line.replace(f'success={old_val}', f'success={old_val + 1}')
+            new_lines.append(line)
+            new_lines.append(
+                'auth    [default=die]                    pam_faillock.so authfail'
+            )
+        else:
+            new_lines.append(line)
+
+    with open(auth_file, 'w') as f:
+        f.write('\n'.join(new_lines))
+else:
+    print('    pam_faillock already in common-auth')
+PYEOF
 fi
 
 # ---------------------------------------------------------------------------
-# Step 4: Configure password history
+# Step 6: Configure password history
+# Uses pam_unix.so's built-in remember parameter
 # ---------------------------------------------------------------------------
 
 echo "[*] Configuring password history..."
 
-# Add pam_pwhistory to common-password (remember parameter)
-if grep -q 'pam_pwhistory.so' "$COMMON_PASSWORD" 2>/dev/null; then
-    # Update existing pam_pwhistory line
-    if grep -qE 'remember[[:space:]]*=' "$COMMON_PASSWORD" 2>/dev/null; then
-        sed -i "s/remember[[:space:]]*[0-9]*/remember=$PASSWORD_HISTORY/" "$COMMON_PASSWORD"
-        echo "    remember = $PASSWORD_HISTORY     [UPDATED]"
+if grep -q 'pam_unix\.so' "$COMMON_PASSWORD" 2>/dev/null; then
+    if ! grep -q 'remember=' "$COMMON_PASSWORD" 2>/dev/null; then
+        sed -i '/pam_unix\.so/ s/$/ remember='"$REMEMBER"'/' "$COMMON_PASSWORD"
+        echo "    remember = $REMEMBER                    [SET]"
     else
-        # Add remember to existing pam_pwhistory line
-        sed -i "s/pam_pwhistory.so/pam_pwhistory.so remember=$PASSWORD_HISTORY/" "$COMMON_PASSWORD"
-        echo "    remember = $PASSWORD_HISTORY     [ADDED TO LINE]"
+        sed -i "s/remember=[0-9]*/remember=$REMEMBER/" "$COMMON_PASSWORD"
+        echo "    remember = $REMEMBER                    [UPDATED]"
     fi
 else
-    # Add pam_pwhistory to common-password (after pam_unix)
-    sed -i '/pam_unix.so.*password/a remember = '"$PASSWORD_HISTORY"'  # Password history' "$COMMON_PASSWORD"
-    echo "    remember = $PASSWORD_HISTORY     [ADDED NEW ENTRY]"
+    echo "    WARNING: pam_unix.so not found in common-password"
 fi
 
-# Ensure pam_pwquality is also in common-password for enforcement
-if ! grep -q 'pam_pwquality.so' "$COMMON_PASSWORD" 2>/dev/null; then
-    # Insert after pam_unix.so
-    sed -i '/pam_unix.so.*password/a pam_pwquality.so retry=3' "$COMMON_PASSWORD"
+if ! grep -q 'pam_pwquality\.so' "$COMMON_PASSWORD" 2>/dev/null; then
+    sed -i '/pam_unix\.so.*password/a pam_pwquality.so retry=3' "$COMMON_PASSWORD"
     echo "    pam_pwquality.so added to common-password"
 fi
 
 # ---------------------------------------------------------------------------
-# Step 5: Validate configuration
+# Step 7: Validate configuration
 # ---------------------------------------------------------------------------
 
 echo "[*] Validating PAM configuration..."
 
-validate_file() {
-    local file="$1"
-    if [[ -f "$file" ]] && [[ -r "$file" ]]; then
-        echo "    $file: readable [OK]"
-        return 0
-    else
-        echo "    $file: unreadable [WARN]"
-        return 1
-    fi
-}
+VALIDATE_OK=true
 
-validate_file "$PWQUALITY_CONF"
-validate_file "$COMMON_AUTH"
-validate_file "$COMMON_PASSWORD"
+[[ -r "$PWQUALITY_CONF" ]] && echo "    $PWQUALITY_CONF: readable [OK]" || { echo "    $PWQUALITY_CONF: unreadable [FAIL]"; VALIDATE_OK=false; }
+[[ -r "$COMMON_AUTH" ]] && echo "    $COMMON_AUTH: readable [OK]" || { echo "    $COMMON_AUTH: unreadable [FAIL]"; VALIDATE_OK=false; }
+[[ -r "$COMMON_PASSWORD" ]] && echo "    $COMMON_PASSWORD: readable [OK]" || { echo "    $COMMON_PASSWORD: unreadable [FAIL]"; VALIDATE_OK=false; }
 
-# Verify key settings were applied
-echo ""
-echo "[*] Verifying applied settings..."
-
-PW_MINLEN=$(grep -E '^minlen[[:space:]]*=' "$PWQUALITY_CONF" 2>/dev/null | grep -oE '[0-9]+' || echo "unknown")
-DENY_VALUE=$(grep -E '^deny[[:space:]]*=' "$FAILLOCK_CONF" 2>/dev/null | grep -oE '[0-9]+' || echo "unknown")
-UNLOCK_TIME=$(grep -E '^unlock_time[[:space:]]*=' "$FAILLOCK_CONF" 2>/dev/null | grep -oE '[0-9]+' || echo "unknown")
-REMEMBER=$(grep -oE 'remember[[:space:]]*=[[:space:]]*[0-9]+' "$COMMON_PASSWORD" 2>/dev/null | grep -oE '[0-9]+' || echo "unknown")
-
-echo "Password minimum length: $PW_MINLEN | Lockout: $DENY_VALUE attempts / $UNLOCK_TIME sec | History: $REMEMBER"
-
-# ---------------------------------------------------------------------------
-# Summary
-# ---------------------------------------------------------------------------
+if ! $VALIDATE_OK; then
+    echo "ERROR: Validation failed. Restore from $BACKUP_DIR if needed."
+    exit 1
+fi
 
 echo ""
-echo "Configuration complete: minlen=$PW_MINLEN | Lockout=$DENY_VALUE/$(( UNLOCK_TIME / 60 )) min | History=$REMEMBER"
+echo "Password minimum length: $MINLEN | Lockout: $DENY attempts / $(( UNLOCK_TIME / 60 )) min | History: $REMEMBER"
+echo ""
+echo "Configuration complete. To test, run: passwd <username>"
+echo "To restore from backup: cp $BACKUP_DIR/* <pam_file>"
 
 exit 0
