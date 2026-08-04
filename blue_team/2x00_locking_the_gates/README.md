@@ -606,4 +606,47 @@ $ sudo ./13-firewall_baseline.sh
 
 ---
 
+14. Production Hardening Orchestrator
 
+Goal: Create a safe master script that runs the hardening workflow in dependency order and records the before/after security delta.
+
+Context: A production-style hardening script must not run blindly. It must check prerequisites, stop safely, record failures, and generate evidence.
+
+Instructions: Write 14-hardening_orchestrator.sh.
+
+The script must run the hardening workflow in this order:
+
+    0-baseline_snapshot.sh
+    Lynis baseline capture or 2-lynis_parse.sh
+    4-ssh_hardening.sh
+    5-sysctl_hardening.sh
+    6-filesystem_hardening.sh
+    7-service_minimization.sh
+    8-pam_hardening.sh
+    9-apparmor_config.sh
+    10-auditd_config.sh
+    11-audit_coverage_test.sh
+    12-log_config.sh
+    13-firewall_baseline.sh
+    15-validation.sh
+
+The script must verify required scripts exist, stop immediately on failure, record timing and exit codes, capture pre/post Lynis scores, and write hardening_run.json plus hardening_improvement.json.
+
+It must be idempotent.
+
+Expected Output:
+
+```bash
+$ sudo ./14-hardening_orchestrator.sh
+Pre-checks: PASS
+Steps scheduled: 13
+Steps completed: 13
+Steps failed: 0
+Before Lynis score: 52
+After Lynis score: 84
+Delta: +32
+Run log saved to: hardening_run.json
+Improvement saved to: hardening_improvement.json
+```
+
+---
