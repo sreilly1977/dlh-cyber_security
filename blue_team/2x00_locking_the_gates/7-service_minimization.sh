@@ -95,18 +95,22 @@ disable_service() {
 }
 
 # ---------------------------------------------------------------------------
-# Step 1: Scan enabled services
+# Step 1: Scan enabled services using systemctl list-unit-files
 # ---------------------------------------------------------------------------
 
 echo "[*] Scanning enabled services..."
 
-ENABLED_SERVICES=$(systemctl list-units --type=service --state=enabled --no-pager 2>/dev/null | \
-                   grep -v '\.service\s' | tail -n +2 | awk '{print $1}' || true)
+# Use systemctl list-unit-files to get enabled services
+ENABLED_SERVICES=$(systemctl list-unit-files --type=service --state=enabled --no-pager 2>/dev/null | \
+                   grep 'enabled' | awk '{print $1}' || true)
 
 ENABLED_BEFORE=$(echo "$ENABLED_SERVICES" | grep -c '.' 2>/dev/null || echo "0")
 [[ -z "$ENABLED_SERVICES" ]] && ENABLED_BEFORE=0
 
 echo "    Enabled services found: $ENABLED_BEFORE"
+
+# Also check list-units for additional context
+ALL_UNITS=$(systemctl list-units --type=service --all --no-pager 2>/dev/null || true)
 
 # ---------------------------------------------------------------------------
 # Step 2: Compare against whitelist and disable non-essential services
