@@ -225,7 +225,8 @@ foreach ($svc in $svcAccounts) {
         $svcFull = Get-ADUser -Identity $svc.SamAccountName -Properties UserAccountControl, MemberOf, TrustedForDelegation -ErrorAction SilentlyContinue
         if ($null -ne $svcFull) {
             $uac = [int]$svcFull.UserAccountControl
-            if ($uac -band 0x200000) { $risks += "DES-only encryption flag set" }
+            # Check for UseDESKeyOnly flag (0x200000) - forces DES encryption only for this account
+            if ($uac -band 0x200000) { $risks += "UseDESKeyOnly flag set - DES-only encryption enforced" }
             if ($null -ne $svcFull.MemberOf) {
                 foreach ($dn in $svcFull.MemberOf) {
                     if ($dn -match "CN=Domain Admins") { $risks += "Member of privileged group: Domain Admins" }
