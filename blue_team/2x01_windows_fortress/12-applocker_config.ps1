@@ -24,10 +24,6 @@ $ErrorActionPreference = "Stop"
 $GpoName = "MedDefense - AppLocker Policy"
 $ExportPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "applocker_policy.xml"
 
-# AppLocker rule collection GUIDs
-$ExeCollectionGuid = "{92137328-c92f-4180-937d-bc3a5e4a4c61}"
-$ScriptCollectionGuid = "{06d9c09c-7b5f-4cb9-a3f4-3e9c4f1f1c2e}"
-
 # ===========================================================================
 # STEP 1: CREATE GPO
 # ===========================================================================
@@ -173,16 +169,10 @@ try {
     if ($null -ne $appLockerCmd) {
         Set-AppLockerPolicy -XmlPolicy $tempXml -ErrorAction SilentlyContinue
     } else {
-        # Fallback: import via the COM object
-        try {
-            $policyObj = New-Object -ComObject "SoftBridge.AppLockerPolicy"
-            $policyObj.SetPolicyFromFile($tempXml)
-        } catch {
-            # Fallback: use netsh or registry-based approach
-            $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe"
-            if (-not (Test-Path $regPath)) {
-                New-Item -Path $regPath -Force | Out-Null
-            }
+        # Fallback: use registry-based approach
+        $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe"
+        if (-not (Test-Path $regPath)) {
+            New-Item -Path $regPath -Force | Out-Null
         }
     }
 } catch {
@@ -190,7 +180,30 @@ try {
 }
 
 # ===========================================================================
-# STEP 8: DEPLOY POLICY VIA GPO REGISTRY PREFERENCES
+# STEP 8: EXPORT APPLOCKER POLICY USING POWERSHELL CMDLET
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Exporting AppLocker policy... " -NoNewline -ForegroundColor Yellow
+
+try {
+    # Try to export using the Export-AppLockerPolicy cmdlet
+    $exportCmd = Get-Command Export-AppLockerPolicy -ErrorAction SilentlyContinue
+    if ($null -ne $exportCmd) {
+        Export-AppLockerPolicy -FilePath $ExportPath -ErrorAction SilentlyContinue
+        Write-Host "COMPLETED (Export-AppLockerPolicy)" -ForegroundColor Green
+    } else {
+        # Cmdlet not available, save manually
+        $appLockerXml | Out-File -FilePath $ExportPath -Force -Encoding UTF8
+        Write-Host "COMPLETED (Manual export)" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "FAILED: $_" -ForegroundColor Red
+    $appLockerXml | Out-File -FilePath $ExportPath -Force -Encoding UTF8
+    Write-Host "    Saved manually instead" -ForegroundColor Gray
+}
+
+# ===========================================================================
+# STEP 9: DEPLOY POLICY VIA GPO REGISTRY PREFERENCES
 # ===========================================================================
 $gpoId = $gpo.Id
 $sysvolPath = "\\$Domain\SYSVOL\$Domain\Policies\{$gpoId}"
@@ -298,7 +311,7 @@ foreach ($ruleGuid in $scriptRules.Keys) {
 }
 
 # ===========================================================================
-# STEP 9: CONFIGURE APPLICATION IDENTITY SERVICE VIA GPO
+# STEP 10: CONFIGURE APPLICATION IDENTITY SERVICE VIA GPO
 # ===========================================================================
 $gptIniPath = "$sysvolPath\gpt.ini"
 $gptContent = @"
@@ -315,7 +328,7 @@ if (Test-Path $svcRegPath) {
 }
 
 # ===========================================================================
-# STEP 10: LINK GPO
+# STEP 11: LINK GPO
 # ===========================================================================
 Write-Host "[*] Linking GPO... " -NoNewline -ForegroundColor Yellow
 
@@ -351,7 +364,7 @@ try {
 }
 
 # ===========================================================================
-# STEP 11: TESTING
+# STEP 12: TESTING
 # ===========================================================================
 Write-Host ""
 Write-Host "[*] Testing..." -ForegroundColor Yellow
@@ -384,13 +397,6 @@ if (Test-Path $testCalcPath) {
 if (Test-Path $testCalcPath) {
     Remove-Item $testCalcPath -Force -ErrorAction SilentlyContinue
 }
-
-# ===========================================================================
-# STEP 12: EXPORT APPLOCKER POLICY XML
-# ===========================================================================
-$appLockerXml | Out-File -FilePath $ExportPath -Force -Encoding UTF8
-Write-Host ""
-Write-Host "Policy exported to: $ExportPath" -ForegroundColor Gray
 
 # ===========================================================================
 # FINAL SUMMARY
