@@ -612,16 +612,17 @@ try {
         $hasConstrained = ($uac -band 0x10000000) -ne 0
         $hasDesOnly = ($uac -band 0x200000) -ne 0
 
+        # Calculate password age in days
         $passwordAgeDays = 0
         if ($account.PasswordLastSet) {
             $passwordAgeDays = ((Get-Date) - $account.PasswordLastSet).Days
         }
 
-        # Check group memberships
+        # Check group memberships for excessive privileges
         $groups = @(Get-ADPrincipalGroupMembership -Identity $account.DistinguishedName -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)
         $dangerousGroups = @($groups | Where-Object { $privilegedGroups -contains $_ })
 
-        # Check for suspicious logon
+        # Check for suspicious logon - flag 03:17 AM pattern (svc_ehr compromise indicator)
         $suspiciousLogon = $false
         $lastLogonStr = $null
         if ($account.LastLogonDate) {
@@ -631,7 +632,7 @@ try {
             }
         }
 
-        # Interactive logon risk
+        # Interactive logon risk assessment
         $interactiveLogonRisk = "Unknown"
         $denyLogonGroup = @(Get-LocalGroupMember -Name "Deny log on locally" -ErrorAction SilentlyContinue)
         $isDenied = $false
@@ -668,6 +669,7 @@ try {
         accounts      = $accountPosture
         total_with_excessive_privileges = @($accountPosture | Where-Object { $_.privileged_group_memberships.Count -gt 0 }).Count
         total_with_unconstrained_delegation = @($accountPosture | Where-Object { $_.delegation_unconstrained -eq $true }).Count
+        # Track accounts with old passwords (password age > 90 days)
         total_with_old_passwords = @($accountPosture | Where-Object { $_.password_age_days -gt 90 }).Count
         total_with_suspicious_logons = @($accountPosture | Where-Object { $_.suspicious_logon_time -eq $true }).Count
     }

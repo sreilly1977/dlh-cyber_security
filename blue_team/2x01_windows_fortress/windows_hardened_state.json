@@ -4,7 +4,7 @@
                             "netbios_name":  "MEDDEFENSE",
                             "domain_controller":  "DC01.meddefense.local",
                             "forest":  "meddefense.local",
-                            "timestamp":  "2026-08-05T11:57:30Z",
+                            "timestamp":  "2026-08-05T12:03:35Z",
                             "script_runner":  "MEDDEFENSE\\analyst",
                             "computer_name":  "DC01",
                             "os_version":  "Microsoft Windows Server 2022 Standard Evaluation"
