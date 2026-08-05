@@ -433,7 +433,20 @@ try {
     # AppIDSvc status
     $appIdSvc = Get-Service -Name AppIDSvc -ErrorAction Stop
 
-    $state.applocker_posture = [ordered]@{
+    # Retrieve effective AppLocker policy using Get-AppLockerPolicy
+    $appLockerPolicy = $null
+    try {
+        $appLockerPolicy = Get-AppLockerPolicy -Effective -Xml -ErrorAction SilentlyContinue
+    } catch {
+        $appLockerPolicy = $null
+    }
+
+    $effectivePolicyXml = $null
+    if ($appLockerPolicy) {
+        $effectivePolicyXml = $appLockerPolicy
+    }
+
+        $state.applocker_posture = [ordered]@{
         appidsvc_status   = if ($appIdSvc) { $appIdSvc.Status.ToString() } else { "Not found" }
         appidsvc_start_type = if ($appIdSvc) { $appIdSvc.StartType.ToString() } else { "N/A" }
         enforcement_modes = [ordered]@{
@@ -448,6 +461,7 @@ try {
         total_rule_count  = $totalRules
         exported_policy_path = $exportedPolicyPath
         exported_policy_exists = (Test-Path $exportedPolicyPath)
+        effective_policy  = $effectivePolicyXml
     }
     Write-Host "$totalRules rules" -ForegroundColor Green
 } catch {
