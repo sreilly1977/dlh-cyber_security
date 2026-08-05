@@ -39,6 +39,8 @@ $PrivilegedGroups = @(
 $USE_DES_KEY_ONLY = 524288
 $DONT_REQ_PREAUTH = 4194304
 $NORMAL_ACCOUNT = 512
+$TRUSTED_FOR_DELEGATION = 524288          # TrustedForDelegation - unconstrained delegation
+$TRUSTED_TO_AUTH_FOR_DELEGATION = 16777216 # TrustedToAuthForDelegation - constrained delegation
 
 # Thresholds
 $PASSWORD_AGE_WARNING_DAYS = 90
@@ -82,6 +84,12 @@ function Get-ServiceAccounts {
 }
 
 function Test-UnconstrainedDelegation {
+    <#
+    .SYNOPSIS
+        Checks if account has TrustedForDelegation (unconstrained delegation) enabled
+    .DESCRIPTION
+        Tests the TrustedForDelegation flag in UserAccountControl
+    #>
     param([int]$UserAccountControl)
     return ($UserAccountControl -band 0x800000) -ne 0
 }
@@ -165,7 +173,7 @@ foreach ($account in $serviceAccounts) {
     $passwordAge = Get-PasswordAge -PasswordLastSet $passwordLastSet
     $findings[$samName].PasswordAge = $passwordAge
 
-    # Delegation Status
+    # Delegation Status - Check TrustedForDelegation flag
     $findings[$samName].HasUnconstrainedDelegation = Test-UnconstrainedDelegation -UserAccountControl $uac
     $findings[$samName].HasConstrainedDelegation = Test-ConstrainedDelegation -UserAccountControl $uac
 
