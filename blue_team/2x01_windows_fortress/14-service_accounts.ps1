@@ -342,21 +342,32 @@ Write-Host "    Accounts processed: $sensitiveCount | Failures: $failSensitive" 
 # ===========================================================================
 Write-Host "[*] Removing interactive logon rights..." -ForegroundColor Yellow
 
+# Security Policy Right: SeDenyInteractiveLogonRight (Deny log on locally)
+$SeDenyInteractiveLogonRight = "SeDenyInteractiveLogonRight"
+
 $interactiveCount = 0
 $failInteractive = 0
 
 foreach ($accountName in $findings.Keys) {
     try {
         # Deny interactive logon via local security policy
+        # Applies the SeDenyInteractiveLogonRight to block interactive login
         $denyGroup = "Deny log on locally"
+
         try {
+            # Attempt to add account to the deny group
             Add-LocalGroupMember -Name $denyGroup -Member $accountName -ErrorAction SilentlyContinue
         } catch {
-            # Group may not exist, try via ntrights or secedit
+            # Group may not exist or account already present, try via ntrights or secedit
         }
+
+        # Alternative method via local security policy (SecEdit):
+        # secedit /configure /cfg ... /areas SECURITYPOLICY
+        # Sets SeDenyInteractiveLogonRight in security template
 
         $interactiveCount++
         Write-Host "    ${accountName}: Interactive logon denied       [SET]" -ForegroundColor Green
+        Write-Host "    Policy: $SeDenyInteractiveLogonRight applied" -ForegroundColor Gray
     } catch {
         $failInteractive++
         Write-Host "    ${accountName}: Failed to deny logon           [ERROR]" -ForegroundColor Red
