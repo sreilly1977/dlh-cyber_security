@@ -5,7 +5,8 @@
     Audits all MedDefense service accounts, identifies excessive privileges and
     security weaknesses, then implements hardening measures that would have
     prevented the svc_ehr compromise. Excessive group memberships and delegation
-    settings are detected and remediated.
+    settings are detected and remediated. Detects suspicious logons like the
+    03:17 AM activity seen with svc_ehr during the Crimson Tide attack.
 .Author
     Steve - Cybersecurity Engineer
 .Date
@@ -46,6 +47,10 @@ $TRUSTED_TO_AUTH_FOR_DELEGATION = 16777216 # TrustedToAuthForDelegation - constr
 
 # Thresholds
 $PASSWORD_AGE_WARNING_DAYS = 90
+
+# Suspicious logon hour range (midnight to 6AM) - catches incidents like svc_ehr at 03:17
+$SUSPICIOUS_LOGON_START_HOUR = 0
+$SUSPICIOUS_LOGON_END_HOUR = 6
 
 # ===========================================================================
 # HELPER FUNCTIONS
@@ -201,15 +206,20 @@ foreach ($account in $serviceAccounts) {
         }
     }
 
-    # Last Logon Analysis
+    # Last Logon Analysis - Look for suspicious hours (like svc_ehr 03:17 AM incident)
     if ($account.LastLogonDate) {
         $lastLogon = $account.LastLogonDate
         $findings[$samName].LastLogonTime = $lastLogon
 
         # Check if logon occurred during unusual hours (midnight-6AM)
         $logonHour = $lastLogon.Hour
-        if ($logonHour -ge 0 -and $logonHour -lt 6) {
+        if ($logonHour -ge $SUSPICIOUS_LOGON_START_HOUR -and $logonHour -lt $SUSPICIOUS_LOGON_END_HOUR) {
             $findings[$samName].Warnings += "Suspicious last logon time: $($lastLogon.ToString('HH:mm'))"
+
+            # Flag 03:17 AM specifically as critical (svc_ehr compromise indicator)
+            if ($logonHour -eq 3 -and $lastLogon.Minute -eq 17) {
+                $findings[$samName].Warnings += "CRITICAL: Matches known 03:17 AM compromise pattern"
+            }
         }
     }
 }
@@ -260,12 +270,18 @@ foreach ($accountName in $findings.Keys) {
         Write-Host "  PasswordNeverExpires: False             [OK]" -ForegroundColor Green
     }
 
-    # Last Logon
+    # Last Logon - Highlight suspicious early morning logons
     if ($null -ne $f.LastLogonTime) {
         $logonStr = $f.LastLogonTime.ToString('yyyy-MM-dd HH:mm')
 
         $logonHour = $f.LastLogonTime.Hour
-        if ($logonHour -ge 0 -and $logonHour -lt 6) {
+        $logonMin = $f.LastLogonTime.Minute
+
+        # Check for 03:17 AM specifically (known svc_ehr compromise timestamp)
+        if ($logonHour -eq 3 -and $logonMin -eq 17) {
+            Write-Host "  Last logon: $logonStr                    [!!!]" -ForegroundColor Red
+            Write-Host "    WARNING: Matches 03:17 AM compromise pattern!" -ForegroundColor DarkRed
+        } elseif ($logonHour -ge 0 -and $logonHour -lt 6) {
             Write-Host "  Last logon: $logonStr                    [!!!]" -ForegroundColor Red
         } elseif ($logonHour -ge 6 -and $logonHour -lt 22) {
             Write-Host "  Last logon: $logonStr                    [OK]" -ForegroundColor Green
