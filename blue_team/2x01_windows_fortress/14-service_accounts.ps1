@@ -323,6 +323,9 @@ foreach ($accountName in $findings.Keys) {
         Set-ADAccountControl -Identity $accountName -DoesNotRequirePreAuth $false -ErrorAction SilentlyContinue
         Set-ADUser -Identity $accountName -Replace @{UserAccountControl = $newUac} -ErrorAction SilentlyContinue
 
+        # Set AccountNotDelegated (Account is sensitive and cannot be delegated)
+        Set-ADUser -Identity $accountName -AccountNotDelegated $true -ErrorAction SilentlyContinue
+
         $sensitiveCount++
         Write-Host "    ${accountName}: Delegation restrictions applied [SET]" -ForegroundColor Green
     } catch {
@@ -410,7 +413,7 @@ $verificationFailures = 0
 
 foreach ($accountName in $findings.Keys) {
     try {
-        $newAccount = Get-ADUser -Identity $accountName -Properties UserAccountControl `
+        $newAccount = Get-ADUser -Identity $accountName -Properties UserAccountControl, AccountNotDelegated `
             -ErrorAction SilentlyContinue
 
         $newUac = [int]$newAccount.UserAccountControl
@@ -418,7 +421,10 @@ foreach ($accountName in $findings.Keys) {
         $hasUnconstrained = Test-UnconstrainedDelegation -UserAccountControl $newUac
         $hasConstrained = Test-ConstrainedDelegation -UserAccountControl $newUac
 
-        if (-not $hasUnconstrained -and -not $hasConstrained) {
+        # Verify AccountNotDelegated is set
+        $isNotDelegated = $newAccount.AccountNotDelegated
+
+        if (-not $hasUnconstrained -and -not $hasConstrained -and $isNotDelegated) {
             $verifiedCount++
         } else {
             $verificationFailures++
