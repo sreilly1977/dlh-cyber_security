@@ -680,7 +680,7 @@ try {
 }
 
 # ===========================================================================
-# 11. VALIDATION SUMMARY
+# 11. VALIDATION SUMMARY (Task 15 integration)
 # ===========================================================================
 Write-Host "[*] Loading validation summary... " -NoNewline -ForegroundColor Yellow
 
@@ -688,7 +688,7 @@ try {
     $validationScript = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "15-master_validation.ps1"
 
     if (Test-Path $validationScript) {
-        # Run the validation script and capture output
+        # Run the Task 15 validation script and capture output
         $validationOutput = & $validationScript 2>&1
         $validationExitCode = $LASTEXITCODE
 
@@ -698,6 +698,7 @@ try {
 
         $state.validation_summary = [ordered]@{
             status          = "found"
+            task            = "Task 15"
             script_path     = $validationScript
             exit_code       = $validationExitCode
             total_passes    = $passes.Count
@@ -710,7 +711,8 @@ try {
     } else {
         $state.validation_summary = [ordered]@{
             status      = "not_found"
-            message     = "Validation script (15-master_validation.ps1) not found in same directory"
+            task        = "Task 15"
+            message     = "Task 15 validation script (15-master_validation.ps1) not found in same directory"
             searched_at = $validationScript
         }
         Write-Host "NOT FOUND" -ForegroundColor Yellow
@@ -718,7 +720,8 @@ try {
 } catch {
     $state.validation_summary = [ordered]@{
         status  = "error"
-        message = $_.Exception.Message
+        task    = "Task 15"
+        message = "Task 15 validation script error: $($_.Exception.Message)"
     }
     Write-Host "ERROR" -ForegroundColor Red
 }

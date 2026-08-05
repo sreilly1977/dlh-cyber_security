@@ -4,7 +4,7 @@
                             "netbios_name":  "MEDDEFENSE",
                             "domain_controller":  "DC01.meddefense.local",
                             "forest":  "meddefense.local",
-                            "timestamp":  "2026-08-05T12:07:12Z",
+                            "timestamp":  "2026-08-05T12:15:40Z",
                             "script_runner":  "MEDDEFENSE\\analyst",
                             "computer_name":  "DC01",
                             "os_version":  "Microsoft Windows Server 2022 Standard Evaluation"
@@ -339,7 +339,6 @@
                                                          "privileged_group_memberships":  [
 
                                                                                           ],
-                                                         "privileged_membership_risk":  "LOW - no privileged membership",
                                                          "interactive_logon_risk":  "Not explicitly denied (risk)",
                                                          "spn_count":  1,
                                                          "use_des_key_only":  false
@@ -356,7 +355,6 @@
                                                          "privileged_group_memberships":  [
 
                                                                                           ],
-                                                         "privileged_membership_risk":  "LOW - no privileged membership",
                                                          "interactive_logon_risk":  "Not explicitly denied (risk)",
                                                          "spn_count":  1,
                                                          "use_des_key_only":  false
@@ -373,7 +371,6 @@
                                                          "privileged_group_memberships":  [
 
                                                                                           ],
-                                                         "privileged_membership_risk":  "LOW - no privileged membership",
                                                          "interactive_logon_risk":  "Not explicitly denied (risk)",
                                                          "spn_count":  1,
                                                          "use_des_key_only":  false
@@ -386,6 +383,7 @@
                                 },
     "validation_summary":  {
                                "status":  "found",
+                               "task":  "Task 15",
                                "script_path":  "C:\\MedDefense_Lab\\Scripts\\15-master_validation.ps1",
                                "exit_code":  1,
                                "total_passes":  0,
