@@ -402,4 +402,94 @@ PS> .\8-smb_hardening.ps1
 
 ---
 
-# 
+# 9. Sysmon Deployment
+
+Goal: Install and configure Sysmon with a detection-optimized configuration, deploying the single most important endpoint detection tool on the Windows platform.
+
+Context: Windows Event Logs capture authentication and process creation. Sysmon captures everything else: network connections, DNS queries, file creation timestamps, registry modifications, driver loads, WMI events, named pipe connections. Sysmon transforms a Windows endpoint from "I know who logged in" to "I know what they ran, what it connected to, what files it created, what registry keys it modified and what network connections it made." Without Sysmon, detecting the Crimson Tide attacker's lateral movement (PsExec, WMI), data exfiltration (Rclone) and ransomware deployment would be nearly impossible.
+
+Instructions: Write a PowerShell script 9-sysmon_deploy.ps1 that:
+
+    Downloads Sysmon from the Microsoft Sysinternals website
+
+    Downloads the SwiftOnSecurity Sysmon configuration as a baseline
+
+    Installs Sysmon with the configuration
+
+    Verifies Sysmon is running, the driver is loaded and events are generating
+
+    Tests by creating a file in C:\Windows\Temp\ and verifying a Sysmon Event ID 11 (FileCreate) appears
+
+Produce the sysmonconfig.xml as a separate deliverable.
+
+Expected Output:
+
+```PS
+PS> .\9-sysmon_deploy.ps1
+[*] Downloading Sysmon... OK
+[*] Downloading SwiftOnSecurity config... OK
+[*] Installing Sysmon with config...
+    Sysmon64.exe -accepteula -i sysmonconfig.xml
+    Service: Sysmon64 - Running            [OK]
+    Driver: SysmonDrv - Loaded             [OK]
+[*] Verifying event generation...
+    Events in last 60 seconds: 12          [OK]
+[*] Testing FileCreate detection...
+    Created: C:\Windows\Temp\sysmon_test.txt
+    Event ID 11 captured                   [VERIFIED]
+```
+
+---
+
+# 10. Sysmon Detection Tuning
+
+Goal: Write custom Sysmon detection rules targeting MedDefense-specific threats, then validate each rule with a controlled trigger.
+
+Context: The SwiftOnSecurity config is a solid baseline, but it is generic. MedDefense has specific threats: Crimson Tide uses Rclone for exfiltration (Phase 4), PsExec for lateral movement (Phase 3), and encoded PowerShell for execution (Phase 3). Custom rules that detect THESE tools are more valuable than generic coverage. Adding rules for process creation from unusual paths, network connections to external IPs from server processes, file creation in startup directories and registry modifications to persistence keys makes the instrumentation specific to the MedDefense threat model.
+
+Instructions: Write a PowerShell script 10-sysmon_tune.ps1 that:
+
+    Loads the current Sysmon configuration
+
+    Adds 5 custom detection rules targeting MedDefense threats:
+
+        Rule 1: Detect rclone.exe execution (exfiltration tool)
+
+        Rule 2: Detect PsExec service installation (registry modification)
+
+        Rule 3: Detect encoded PowerShell execution (-enc in command line)
+
+        Rule 4: Detect vssadmin.exe delete shadows (ransomware pre-encryption)
+
+        Rule 5: Detect new scheduled task creation (persistence)
+
+    Updates the Sysmon configuration
+
+    Trigger-and-verify each rule: execute a safe trigger, check the Sysmon log, report PASS/FAIL
+
+Produce the updated sysmonconfig.xml as a deliverable.
+
+Expected Output:
+
+```PS
+PS> .\10-sysmon_tune.ps1
+[*] Loading Sysmon config... OK
+[*] Adding custom rules...
+    Rule 1: Rclone detection                [ADDED]
+    Rule 2: PsExec service installation     [ADDED]
+    Rule 3: Encoded PowerShell              [ADDED]
+    Rule 4: Shadow deletion (vssadmin)      [ADDED]
+    Rule 5: Scheduled task persistence      [ADDED]
+[*] Updating Sysmon config... OK
+[*] Trigger-and-Verify...
+    Rule 1: rclone.exe detection            [PASS]
+    Rule 2: PsExec registry key             [PASS]
+    Rule 3: Encoded PowerShell              [PASS]
+    Rule 4: vssadmin execution              [PASS]
+    Rule 5: schtasks /create                [PASS]
+Custom rules: 5 added | Tests: 5/5 PASS
+```
+
+---
+
+
