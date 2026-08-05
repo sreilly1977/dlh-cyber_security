@@ -1799,6 +1799,27 @@
             <CommandLine condition="contains">/create</CommandLine>
           </And>
         </Rule>
+        <Rule name="DetectRcloneExecution">
+          <Image condition="end with">\rclone.exe</Image>
+        </Rule>
+        <Rule name="DetectEncodedPowerShell">
+          <And>
+            <Image condition="is">powershell.exe</Image>
+            <CommandLine condition="contains">-enc</CommandLine>
+          </And>
+        </Rule>
+        <Rule name="DetectVssAdminDeleteShadows">
+          <And>
+            <Image condition="is">vssadmin.exe</Image>
+            <CommandLine condition="contains">delete</CommandLine>
+          </And>
+        </Rule>
+        <Rule name="DetectScheduledTaskCreation">
+          <And>
+            <Image condition="is">schtasks.exe</Image>
+            <CommandLine condition="contains">/create</CommandLine>
+          </And>
+        </Rule>
       </ProcessCreate>
       <RegistryEvent onmatch="include">
         <Rule name="DetectPsExecServiceInstall">
@@ -1807,7 +1828,11 @@
         <Rule name="DetectPsExecServiceInstall">
           <TargetObject condition="contains">PsExec</TargetObject>
         </Rule>
+        <Rule name="DetectPsExecServiceInstall">
+          <TargetObject condition="contains">PsExec</TargetObject>
+        </Rule>
       </RegistryEvent>
+      <FileSystem onmatch="include" />
     </Group>
   </RuleGroups>
 </Sysmon>
