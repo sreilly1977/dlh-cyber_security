@@ -383,6 +383,10 @@ foreach ($accountName in $findings.Keys) {
 
     foreach ($group in $dangerousGroups) {
         try {
+            # Remove the service account from the privileged group
+            Remove-ADGroupMember -Identity $group -Members $accountName -Confirm:$false -ErrorAction SilentlyContinue
+
+            # Also use Remove-ADPrincipalGroupMembership as a fallback
             Remove-ADPrincipalGroupMembership -Identity $accountName `
                 -MemberOf $group -Confirm:$false -ErrorAction SilentlyContinue
 
