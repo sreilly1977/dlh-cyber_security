@@ -1,0 +1,56 @@
+﻿<AppLockerPolicy Version="1">
+  <RuleCollection Type="Appx" EnforcementMode="AuditOnly" />
+  <RuleCollection Type="Dll" EnforcementMode="AuditOnly" />
+  <RuleCollection Type="Exe" EnforcementMode="AuditOnly" >
+    <!-- Allow Windows system directories -->
+    <FilePathRule Id="a9a9a9a9-aaaa-4aaa-9aaa-aaaaaaaaaaaa" Name="Allow Windows Directory" Description="Allow executables in Windows system directories" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePathRule Id="b1b1b1b1-bbbb-4bbb-9bbb-bbbbbbbbbbbb" Name="Allow Program Files" Description="Allow executables in Program Files" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%PROGRAMFILES%\*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePathRule Id="b2b2b2b2-cccc-4ccc-9ccc-cccccccccccc" Name="Allow Program Files (x86)" Description="Allow executables in Program Files (x86)" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%PROGRAMFILES(X86)%\*" />
+      </Conditions>
+    </FilePathRule>
+    <!-- Allow MedDefense-approved DicomViewer -->
+    <FilePathRule Id="c3c3c3c3-dddd-4ddd-9ddd-dddddddddddd" Name="Allow DicomViewer" Description="Allow DicomViewer.exe from MedImage Corp" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%PROGRAMFILES%\DicomViewer\DicomViewer.exe" />
+        <FilePathCondition Path="%PROGRAMFILES(X86)%\DicomViewer\DicomViewer.exe" />
+      </Conditions>
+    </FilePathRule>
+    <!-- Deny all other locations -->
+    <FilePathRule Id="d4d4d4d4-eeee-4eee-9eee-eeeeeeeeeeee" Name="Deny All Other" Description="Default deny for all other executable locations" UserOrGroupSid="S-1-1-0" Action="Deny">
+      <Conditions>
+        <FilePathCondition Path="*" />
+      </Conditions>
+    </FilePathRule>
+  </RuleCollection>
+  <RuleCollection Type="Msi" EnforcementMode="AuditOnly" />
+  <RuleCollection Type="Script" EnforcementMode="AuditOnly" >
+    <!-- Allow system scripts -->
+    <FilePathRule Id="e5e5e5e5-ffff-4fff-9fff-ffffffffffff" Name="Allow Windows Scripts" Description="Allow scripts from Windows directory" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\*" />
+      </Conditions>
+    </FilePathRule>
+    <!-- Allow admin scripts -->
+    <FilePathRule Id="f6f6f6f6-1111-4111-9111-111111111111" Name="Allow MedDefense Lab Scripts" Description="Allow admin scripts from MedDefense lab" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="C:\MedDefense_Lab\Scripts\*" />
+      </Conditions>
+    </FilePathRule>
+    <!-- Deny all other scripts -->
+    <FilePathRule Id="a7a7a7a7-2222-4222-9222-222222222222" Name="Deny All Other Scripts" Description="Default deny for all other script locations" UserOrGroupSid="S-1-1-0" Action="Deny">
+      <Conditions>
+        <FilePathCondition Path="*" />
+      </Conditions>
+    </FilePathRule>
+  </RuleCollection>
+</AppLockerPolicy>
