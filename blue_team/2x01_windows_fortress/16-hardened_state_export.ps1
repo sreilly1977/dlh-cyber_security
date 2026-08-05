@@ -632,7 +632,7 @@ try {
             }
         }
 
-        # Interactive logon risk assessment
+        # Interactive logon risk assessment - check if account is denied interactive logon
         $interactiveLogonRisk = "Unknown"
         $denyLogonGroup = @(Get-LocalGroupMember -Name "Deny log on locally" -ErrorAction SilentlyContinue)
         $isDenied = $false
