@@ -741,4 +741,49 @@ PS> .\15-master_validation.ps1
 
 ---
 
-# 
+# 16. Hardened Windows State Export
+
+Goal: Export the final hardened Windows domain state into a structured evidence package that Module 3 analysts can use for validation, detection planning, and weekly drift checks.
+
+Context: Windows hardening is only useful if it can be proven, reviewed, and handed off. This final task turns the hardened domain into a machine-readable evidence artifact. It connects the defensive controls built across the project — GPOs, audit policy, PowerShell logging, Sysmon, firewall, AppLocker, RDP, authentication protocols, SMB, and service account posture — to the telemetry analysts should expect later.
+
+Instructions: Write 16-hardened_state_export.ps1.
+
+The script must generate windows_hardened_state.json.
+
+The JSON export must include:
+
+    domain_metadata: domain name, domain controller, timestamp, and script runner.
+    gpo_inventory: MedDefense GPO names, linked scopes, enabled state, and key settings.
+    audit_policy: raw auditpol output and required audit subcategory status.
+    powershell_logging: Script Block Logging, Module Logging, Transcription, and Event IDs 4103 and 4104.
+    sysmon_posture: service status, driver status, config path, custom rule count, and active Event IDs.
+    firewall_posture: profile states, inbound policy, MedDefense rules, and dropped packet logging.
+    applocker_posture: enforcement mode, executable rules, script rules, and exported policy path.
+    rdp_posture: NLA state, allowed group, redirection state, and session timeout.
+    authentication_protocols: DES, RC4, AES, NTLMv1, SMBv1, and SMB signing status.
+    service_account_posture: delegation, password age, privileged membership, and interactive logon risk.
+    validation_summary: Task 15 validation results if available, or a clear not_found status.
+
+The script must print progress for each exported section and finish by showing the output path.
+
+Expected Output:
+
+```PS
+PS> .\16-hardened_state_export.ps1
+[*] Exporting domain metadata... OK
+[*] Exporting GPO settings... 5 GPOs
+[*] Exporting audit policy... 11 subcategories
+[*] Exporting PowerShell logging... OK
+[*] Exporting Sysmon config... 5 custom rules
+[*] Exporting firewall rules... 6 rules
+[*] Exporting AppLocker policy... 7 rules
+[*] Exporting remote access posture... OK
+[*] Exporting authentication protocol posture... OK
+[*] Exporting service account posture... 3 accounts
+[*] Loading validation summary... OK
+
+Hardened state exported to: windows_hardened_state.json
+```
+
+---
