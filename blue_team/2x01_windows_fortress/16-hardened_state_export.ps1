@@ -189,6 +189,18 @@ try {
         all_subcategories = $auditParsed
     }
     Write-Host "$subcategoryCount subcategories" -ForegroundColor Green
+    # Key Windows Security Event IDs to monitor
+    $keyEventIds = [ordered]@{
+        id_4624 = "Successful logon"
+        id_4625 = "Failed logon"
+        id_4672 = "Special privileges assigned to new logon"
+        id_4688 = "Process creation"
+        id_4698 = "Task created"
+        id_4720 = "User account created"
+        id_4732 = "Member added to security-enabled local group"
+    }
+    $state.audit_policy.key_event_ids = $keyEventIds
+
 } catch {
     $state.audit_policy = @{ error = $_.Exception.Message }
     Write-Host "ERROR" -ForegroundColor Red

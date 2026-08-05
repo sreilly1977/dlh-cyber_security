@@ -4,7 +4,7 @@
                             "netbios_name":  "MEDDEFENSE",
                             "domain_controller":  "DC01.meddefense.local",
                             "forest":  "meddefense.local",
-                            "timestamp":  "2026-08-05T11:36:17Z",
+                            "timestamp":  "2026-08-05T11:49:40Z",
                             "script_runner":  "MEDDEFENSE\\analyst",
                             "computer_name":  "DC01",
                             "os_version":  "Microsoft Windows Server 2022 Standard Evaluation"
@@ -91,7 +91,16 @@
                                              },
                          "all_subcategories":  [
 
-                                               ]
+                                               ],
+                         "key_event_ids":  {
+                                               "id_4624":  "Successful logon",
+                                               "id_4625":  "Failed logon",
+                                               "id_4672":  "Special privileges assigned to new logon",
+                                               "id_4688":  "Process creation",
+                                               "id_4698":  "Task created",
+                                               "id_4720":  "User account created",
+                                               "id_4732":  "Member added to security-enabled local group"
+                                           }
                      },
     "powershell_logging":  {
                                "error":  "The property \u0027ModuleNames\u0027 cannot be found on this object. Verify that the property exists."
@@ -104,6 +113,9 @@
                            "custom_rule_count":  0,
                            "active_event_ids":  [
                                                     1,
+                                                    2,
+                                                    3,
+                                                    5,
                                                     11,
                                                     12,
                                                     13,
@@ -308,19 +320,10 @@
                               "exported_policy_exists":  true
                           },
     "rdp_posture":  {
-                        "nla_required":  true,
-                        "encryption_level":  "High",
-                        "idle_timeout_min":  15,
-                        "max_session_hours":  8,
-                        "clipboard_disabled":  true,
-                        "drive_redirection_disabled":  true,
-                        "remote_assistance_disabled":  true,
-                        "allowed_group":  [
-
-                                          ]
+                        "error":  "Group Remote Desktop Users was not found."
                     },
     "authentication_protocols":  {
-                                     "error":  "The property \u0027SupportedEncryptionTypes\u0027 cannot be found on this object. Verify that the property exists."
+                                     "error":  "Property SupportedEncryptionTypes does not exist at path HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\Kerberos\\Parameters."
                                  },
     "service_account_posture":  {
                                     "account_count":  3,
