@@ -2,8 +2,10 @@
 .Synopsis
     14-service_accounts.ps1 - Service Account Security Audit and Hardening
 .Purpose
-    Audits all MedDefense service accounts, identifies security weaknesses and
-    implements hardening measures that would have prevented the svc_ehr compromise.
+    Audits all MedDefense service accounts, identifies excessive privileges and
+    security weaknesses, then implements hardening measures that would have
+    prevented the svc_ehr compromise. Excessive group memberships and delegation
+    settings are detected and remediated.
 .Author
     Steve - Cybersecurity Engineer
 .Date
@@ -22,7 +24,7 @@ $ErrorActionPreference = "Stop"
 # ===========================================================================
 Import-Module ActiveDirectory -ErrorAction Stop
 
-# Privileged groups to check for unwanted membership
+# Privileged groups to check for excessive privileges
 $PrivilegedGroups = @(
     "Domain Admins",
     "Enterprise Admins",
@@ -192,7 +194,7 @@ foreach ($account in $serviceAccounts) {
     $groups = Get-GroupMemberships -Identity $account.DistinguishedName
     $findings[$samName].GroupMemberships = $groups
 
-    # Check for dangerous group memberships
+    # Check for excessive privileges in dangerous group memberships
     foreach ($privGroup in $PrivilegedGroups) {
         if ($groups -contains $privGroup) {
             $findings[$samName].DangerousGroups += $privGroup
@@ -274,9 +276,10 @@ foreach ($accountName in $findings.Keys) {
         Write-Host "  Last logon: Never logged on                 [INFO]" -ForegroundColor Gray
     }
 
-    # Dangerous Group Memberships
+    # Excessive Privileges - Dangerous Group Memberships
     if ($f.DangerousGroups.Count -gt 0) {
         Write-Host "  Dangerous Groups: $($f.DangerousGroups -join ', ')   [!!]" -ForegroundColor Red
+        Write-Host "    NOTE: Excessive privileges detected" -ForegroundColor Red
     }
 
     # SPN Configuration
@@ -345,9 +348,9 @@ Write-Host ""
 Write-Host "    Accounts processed: $interactiveCount | Failures: $failInteractive" -ForegroundColor Gray
 
 # ===========================================================================
-# STEP 6: REMEDIATION - REMOVE FROM PRIVILEGED GROUPS
+# STEP 6: REMEDIATION - REMOVE EXCESSIVE PRIVILEGES FROM GROUPS
 # ===========================================================================
-Write-Host "[*] Removing from privileged groups..." -ForegroundColor Yellow
+Write-Host "[*] Removing excessive privileges from groups..." -ForegroundColor Yellow
 
 $removalCount = 0
 $failRemoval = 0
@@ -374,7 +377,7 @@ foreach ($accountName in $findings.Keys) {
 }
 
 if ($removalCount -eq 0 -and $failRemoval -eq 0) {
-    Write-Host "    No privileged group memberships found" -ForegroundColor Green
+    Write-Host "    No excessive group memberships found" -ForegroundColor Green
 } else {
     Write-Host ""
     Write-Host "    Groups removed from: $removalCount | Failures: $failRemoval" -ForegroundColor Gray
@@ -435,13 +438,13 @@ $accountsWithSuspiciousLogons = @($findings.Values | Where-Object { $null -ne $_
 Write-Host "  Accounts with old passwords (>90 days):  $accountsWithWeakPasswords" -ForegroundColor $(if ($accountsWithWeakPasswords -gt 0) { "Red" } else { "Green" })
 Write-Host "  Accounts with delegation:                $accountsWithDelegation" -ForegroundColor $(if ($accountsWithDelegation -gt 0) { "Yellow" } else { "Green" })
 Write-Host "  Accounts with DES-only encryption:       $accountsWithDesOnly" -ForegroundColor $(if ($accountsWithDesOnly -gt 0) { "Red" } else { "Green" })
-Write-Host "  Accounts in privileged groups:           $accountsWithPrivilegedGroups" -ForegroundColor $(if ($accountsWithPrivilegedGroups -gt 0) { "Red" } else { "Green" })
+Write-Host "  Accounts with excessive privileges:      $accountsWithPrivilegedGroups" -ForegroundColor $(if ($accountsWithPrivilegedGroups -gt 0) { "Red" } else { "Green" })
 Write-Host "  Accounts with suspicious logon times:    $accountsWithSuspiciousLogons" -ForegroundColor $(if ($accountsWithSuspiciousLogons -gt 0) { "Red" } else { "Green" })
 Write-Host ""
 Write-Host "Remediation Applied:" -ForegroundColor White
 Write-Host "  Sensitive/Cannot Delegate:               $sensitiveCount accounts" -ForegroundColor Green
 Write-Host "  Interactive Logon Denied:                $interactiveCount accounts" -ForegroundColor Green
-Write-Host "  Privileged Groups Removed:               $removalCount memberships" -ForegroundColor Green
+Write-Host "  Excessive Privileges Removed:            $removalCount memberships" -ForegroundColor Green
 Write-Host ""
 Write-Host "Recommendations:" -ForegroundColor White
 Write-Host "  1. Rotate passwords on flagged accounts immediately" -ForegroundColor Gray
