@@ -632,7 +632,7 @@ try {
             }
         }
 
-        # Interactive logon risk assessment - check if account is denied interactive logon
+        # Assess interactive logon risk for each service account
         $interactiveLogonRisk = "Unknown"
         $denyLogonGroup = @(Get-LocalGroupMember -Name "Deny log on locally" -ErrorAction SilentlyContinue)
         $isDenied = $false
@@ -648,7 +648,7 @@ try {
             $interactiveLogonRisk = "Not explicitly denied (risk)"
         }
 
-            $accountPosture += [ordered]@{
+        $accountPosture += [ordered]@{
             sam_account_name          = $account.SamAccountName
             delegation_unconstrained  = $hasUnconstrained
             delegation_constrained    = $hasConstrained
@@ -658,7 +658,6 @@ try {
             last_logon                = $lastLogonStr
             suspicious_logon_time     = $suspiciousLogon
             privileged_group_memberships = $dangerousGroups
-            privileged_membership_risk = if ($dangerousGroups.Count -gt 0) { "HIGH - excessive privileges detected" } else { "LOW - no privileged membership" }
             interactive_logon_risk    = $interactiveLogonRisk
             spn_count                 = if ($account.ServicePrincipalName) { @($account.ServicePrincipalName).Count } else { 0 }
             use_des_key_only          = $hasDesOnly
