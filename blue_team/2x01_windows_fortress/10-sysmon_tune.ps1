@@ -68,6 +68,21 @@ Write-Host "[*] Adding custom rules..." -ForegroundColor Yellow
 # The root element is <Sysmon>. Find or create RuleGroups as a direct child.
 $rootNode = $xmlDoc.DocumentElement
 
+# Configure EventFiltering settings for optimal detection
+$eventFiltering = $rootNode.SelectSingleNode("EventFiltering")
+if ($null -eq $eventFiltering) {
+    $eventFiltering = $xmlDoc.CreateElement("EventFiltering")
+    $rootNode.InsertAfter($eventFiltering, $rootNode.FirstChild) | Out-Null
+}
+
+# Ensure EventLogClear monitoring is enabled (important for detecting attacker cleanup)
+$logClearRule = $eventFiltering.SelectSingleNode("EventLogClear")
+if ($null -eq $logClearRule) {
+    $logClearRule = $xmlDoc.CreateElement("EventLogClear")
+    $logClearRule.SetAttribute("onmatch", "include")
+    $eventFiltering.AppendChild($logClearRule) | Out-Null
+}
+
 # Ensure RuleGroups node exists as direct child of root
 $ruleGroups = $rootNode.SelectSingleNode("RuleGroups")
 if ($null -eq $ruleGroups) {
@@ -428,7 +443,7 @@ Write-Host "  Rule 2: PsExec service installation    Added" -ForegroundColor Gre
 Write-Host "  Rule 3: Encoded PowerShell             Added" -ForegroundColor Green
 Write-Host "  Rule 4: vssadmin shadow deletion       Added" -ForegroundColor Green
 Write-Host "  Rule 5: Scheduled task persistence     Added" -ForegroundColor Green
-Write-Host "  FileCreate Event ID 11 Monitoring      Enabled" -ForegroundColor Green
+Write-Host "  EventFiltering: EventLogClear monitoring Enabled" -ForegroundColor Green
 Write-Host ""
 Write-Host "Test Results:" -ForegroundColor White
 Write-Host "  Passed: $testsPassed / 5" -ForegroundColor Green
