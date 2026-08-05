@@ -618,7 +618,7 @@ try {
             $passwordAgeDays = ((Get-Date) - $account.PasswordLastSet).Days
         }
 
-        # Check group memberships for excessive privileges
+        # Check group memberships for excessive privileges and privileged membership
         $groups = @(Get-ADPrincipalGroupMembership -Identity $account.DistinguishedName -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)
         $dangerousGroups = @($groups | Where-Object { $privilegedGroups -contains $_ })
 
@@ -648,7 +648,7 @@ try {
             $interactiveLogonRisk = "Not explicitly denied (risk)"
         }
 
-        $accountPosture += [ordered]@{
+            $accountPosture += [ordered]@{
             sam_account_name          = $account.SamAccountName
             delegation_unconstrained  = $hasUnconstrained
             delegation_constrained    = $hasConstrained
@@ -658,6 +658,7 @@ try {
             last_logon                = $lastLogonStr
             suspicious_logon_time     = $suspiciousLogon
             privileged_group_memberships = $dangerousGroups
+            privileged_membership_risk = if ($dangerousGroups.Count -gt 0) { "HIGH - excessive privileges detected" } else { "LOW - no privileged membership" }
             interactive_logon_risk    = $interactiveLogonRisk
             spn_count                 = if ($account.ServicePrincipalName) { @($account.ServicePrincipalName).Count } else { 0 }
             use_des_key_only          = $hasDesOnly
