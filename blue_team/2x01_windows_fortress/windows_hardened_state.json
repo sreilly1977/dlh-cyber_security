@@ -4,7 +4,7 @@
                             "netbios_name":  "MEDDEFENSE",
                             "domain_controller":  "DC01.meddefense.local",
                             "forest":  "meddefense.local",
-                            "timestamp":  "2026-08-05T11:49:40Z",
+                            "timestamp":  "2026-08-05T11:53:22Z",
                             "script_runner":  "MEDDEFENSE\\analyst",
                             "computer_name":  "DC01",
                             "os_version":  "Microsoft Windows Server 2022 Standard Evaluation"
@@ -93,6 +93,7 @@
 
                                                ],
                          "key_event_ids":  {
+                                               "id_1102":  "Audit log cleared",
                                                "id_4624":  "Successful logon",
                                                "id_4625":  "Failed logon",
                                                "id_4672":  "Special privileges assigned to new logon",
@@ -117,8 +118,6 @@
                                                     3,
                                                     5,
                                                     11,
-                                                    12,
-                                                    13,
                                                     22
                                                 ],
                            "event_id_meanings":  {
