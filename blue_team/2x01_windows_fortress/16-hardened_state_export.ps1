@@ -12,7 +12,7 @@
 #>
 
 Set-StrictMode -Version Latest
-$ErrorActionPreference = "Continue"
+$ErrorActionPreference = "Stop"
 
 # ===========================================================================
 # OUTPUT PATH
@@ -28,9 +28,9 @@ $state = [ordered]@{}
 Write-Host "[*] Exporting domain metadata... " -NoNewline -ForegroundColor Yellow
 
 try {
-    Import-Module ActiveDirectory -ErrorAction SilentlyContinue
-    $domain = Get-ADDomain -ErrorAction SilentlyContinue
-    $dc = Get-ADDomainController -Discover -Service PrimaryDC -ErrorAction SilentlyContinue
+    Import-Module ActiveDirectory -ErrorAction Stop
+    $domain = Get-ADDomain -ErrorAction Stop
+    $dc = Get-ADDomainController -Discover -Service PrimaryDC -ErrorAction Stop
 
     $state.domain_metadata = [ordered]@{
         domain_name    = if ($domain) { $domain.DNSRoot } else { $env:USERDOMAIN }
@@ -40,7 +40,7 @@ try {
         timestamp      = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
         script_runner  = "$env:USERDOMAIN\$env:USERNAME"
         computer_name  = $env:COMPUTERNAME
-        os_version     = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue).Caption
+        os_version     = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop).Caption
     }
     Write-Host "OK" -ForegroundColor Green
 } catch {
@@ -60,12 +60,12 @@ try {
 Write-Host "[*] Exporting GPO settings... " -NoNewline -ForegroundColor Yellow
 
 try {
-    $allGpos = Get-GPO -All -ErrorAction SilentlyContinue
+    $allGpos = Get-GPO -All -ErrorAction Stop
     $medDefenseGpos = $allGpos | Where-Object { $_.DisplayName -like "*MedDefense*" -or $_.DisplayName -like "*MedDef*" }
     $gpoInventory = @()
 
     foreach ($gpo in $medDefenseGpos) {
-        $gpoLinks = Get-GPInheritance -Target (Get-ADDomain).DistinguishedName -ErrorAction SilentlyContinue |
+        $gpoLinks = Get-GPInheritance -Target (Get-ADDomain).DistinguishedName -ErrorAction Stop |
             Select-Object -ExpandProperty GpoLinks |
             Where-Object { $_.DisplayName -eq $gpo.DisplayName }
 
@@ -143,7 +143,7 @@ try {
 Write-Host "[*] Exporting audit policy... " -NoNewline -ForegroundColor Yellow
 
 try {
-    $rawAuditpol = auditpol /get /category:* /r 2>$null
+    $rawAuditpol = auditpol /get /category:* /r 2>&1
     $auditLines = $rawAuditpol -split "`r?`n" | Where-Object { $_.Trim() -ne "" }
 
     $requiredSubcategories = @(
@@ -202,9 +202,9 @@ Write-Host "[*] Exporting PowerShell logging... " -NoNewline -ForegroundColor Ye
 try {
     $psRegBase = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell"
 
-    $scriptBlockLog = Get-ItemProperty -Path "$psRegBase\ScriptBlockLogging" -ErrorAction SilentlyContinue
-    $moduleLog = Get-ItemProperty -Path "$psRegBase\ModuleLogging" -ErrorAction SilentlyContinue
-    $transcription = Get-ItemProperty -Path "$psRegBase\Transcription" -ErrorAction SilentlyContinue
+    $scriptBlockLog = Get-ItemProperty -Path "$psRegBase\ScriptBlockLogging" -ErrorAction Stop
+    $moduleLog = Get-ItemProperty -Path "$psRegBase\ModuleLogging" -ErrorAction Stop
+    $transcription = Get-ItemProperty -Path "$psRegBase\Transcription" -ErrorAction Stop
 
     # Check for recent Event ID 4104 (Script Block) entries
     $event4104 = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4104} -MaxEvents 10 -ErrorAction SilentlyContinue)
@@ -244,7 +244,7 @@ try {
 Write-Host "[*] Exporting Sysmon config... " -NoNewline -ForegroundColor Yellow
 
 try {
-    $sysmonService = Get-Service -Name Sysmon64 -ErrorAction SilentlyContinue
+    $sysmonService = Get-Service -Name Sysmon64 -ErrorAction Stop
     $sysmonDriver = Get-Service -Name SysmonDrv -ErrorAction SilentlyContinue
 
     # Try to get config path
@@ -262,7 +262,7 @@ try {
     $activeEventIds = @()
 
     if ($sysmonConfigPath) {
-        $configXml = Get-Content $sysmonConfigPath -Raw -ErrorAction SilentlyContinue
+        $configXml = Get-Content $sysmonConfigPath -Raw -ErrorAction Stop
         if ($configXml) {
             $customRuleCount = ([regex]::Matches($configXml, '<Rule(?:\s|>)')).Count
         }
@@ -312,7 +312,7 @@ try {
 Write-Host "[*] Exporting firewall rules... " -NoNewline -ForegroundColor Yellow
 
 try {
-    $fwProfiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
+    $fwProfiles = Get-NetFirewallProfile -ErrorAction Stop
     $profileStates = @()
 
     foreach ($profile in $fwProfiles) {
@@ -328,7 +328,7 @@ try {
         }
     }
 
-    $medDefRules = @(Get-NetFirewallRule -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like "MedDef-*" })
+    $medDefRules = @(Get-NetFirewallRule -ErrorAction Stop | Where-Object { $_.DisplayName -like "MedDef-*" })
     $ruleDetails = @()
 
     foreach ($rule in $medDefRules) {
@@ -367,11 +367,11 @@ Write-Host "[*] Exporting AppLocker policy... " -NoNewline -ForegroundColor Yell
 
 try {
     # Enforcement modes from registry
-    $exeEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe" -Name "EnforcementMode" -ErrorAction SilentlyContinue).EnforcementMode
-    $scriptEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script" -Name "EnforcementMode" -ErrorAction SilentlyContinue).EnforcementMode
-    $msiEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Msi" -Name "EnforcementMode" -ErrorAction SilentlyContinue).EnforcementMode
-    $dllEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Dll" -Name "EnforcementMode" -ErrorAction SilentlyContinue).EnforcementMode
-    $appxEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Appx" -Name "EnforcementMode" -ErrorAction SilentlyContinue).EnforcementMode
+    $exeEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+    $scriptEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+    $msiEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Msi" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+    $dllEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Dll" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+    $appxEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Appx" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
 
     function Get-EnforcementMode {
         param($value)
@@ -390,7 +390,7 @@ try {
     # Exe rule details
     $exeRuleList = @()
     foreach ($rule in $exeRules) {
-        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction SilentlyContinue
+        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction Stop
         $exeRuleList += [ordered]@{
             guid        = $rule.PSChildName
             name        = $ruleProps.Name
@@ -401,7 +401,7 @@ try {
     # Script rule details
     $scriptRuleList = @()
     foreach ($rule in $scriptRules) {
-        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction SilentlyContinue
+        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction Stop
         $scriptRuleList += [ordered]@{
             guid        = $rule.PSChildName
             name        = $ruleProps.Name
@@ -416,7 +416,7 @@ try {
     $exportedPolicyPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "applocker_policy.xml"
 
     # AppIDSvc status
-    $appIdSvc = Get-Service -Name AppIDSvc -ErrorAction SilentlyContinue
+    $appIdSvc = Get-Service -Name AppIDSvc -ErrorAction Stop
 
     $state.applocker_posture = [ordered]@{
         appidsvc_status   = if ($appIdSvc) { $appIdSvc.Status.ToString() } else { "Not found" }
@@ -450,16 +450,16 @@ try {
     $tsMachineReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server"
     $raReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance"
 
-    $nlaValue = (Get-ItemProperty -Path $tsReg -Name "UserAuthentication" -ErrorAction SilentlyContinue).UserAuthentication
-    $minEnc = (Get-ItemProperty -Path $tsReg -Name "MinEncryptionLevel" -ErrorAction SilentlyContinue).MinEncryptionLevel
-    $idleTimeout = (Get-ItemProperty -Path $tsReg -Name "MaxIdleTime" -ErrorAction SilentlyContinue).MaxIdleTime
-    $maxSession = (Get-ItemProperty -Path $tsReg -Name "MaxConnectionTime" -ErrorAction SilentlyContinue).MaxConnectionTime
-    $clipDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableClip" -ErrorAction SilentlyContinue).fDisableClip
-    $driveDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableCdm" -ErrorAction SilentlyContinue).fDisableCdm
-    $raAllowHelp = (Get-ItemProperty -Path $raReg -Name "fAllowToGetHelp" -ErrorAction SilentlyContinue).fAllowToGetHelp
+    $nlaValue = (Get-ItemProperty -Path $tsReg -Name "UserAuthentication" -ErrorAction Stop).UserAuthentication
+    $minEnc = (Get-ItemProperty -Path $tsReg -Name "MinEncryptionLevel" -ErrorAction Stop).MinEncryptionLevel
+    $idleTimeout = (Get-ItemProperty -Path $tsReg -Name "MaxIdleTime" -ErrorAction Stop).MaxIdleTime
+    $maxSession = (Get-ItemProperty -Path $tsReg -Name "MaxConnectionTime" -ErrorAction Stop).MaxConnectionTime
+    $clipDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableClip" -ErrorAction Stop).fDisableClip
+    $driveDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableCdm" -ErrorAction Stop).fDisableCdm
+    $raAllowHelp = (Get-ItemProperty -Path $raReg -Name "fAllowToGetHelp" -ErrorAction Stop).fAllowToGetHelp
 
     # RDP Users group
-    $rdpMembers = @(Get-LocalGroupMember -Name "Remote Desktop Users" -ErrorAction SilentlyContinue)
+    $rdpMembers = @(Get-LocalGroupMember -Name "Remote Desktop Users" -ErrorAction Stop)
     $memberNames = @()
     foreach ($member in $rdpMembers) {
         $memberNames += $member.Name
@@ -489,7 +489,7 @@ Write-Host "[*] Exporting authentication protocol posture... " -NoNewline -Foreg
 try {
     # Kerberos encryption types
     $kerbReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters"
-    $supportedEnc = (Get-ItemProperty -Path $kerbReg -Name "SupportedEncryptionTypes" -ErrorAction SilentlyContinue).SupportedEncryptionTypes
+    $supportedEnc = (Get-ItemProperty -Path $kerbReg -Name "SupportedEncryptionTypes" -ErrorAction Stop).SupportedEncryptionTypes
 
     $desEnabled = $false
     $rc4Enabled = $false
@@ -508,7 +508,7 @@ try {
 
     # NTLMv1 check
     $lsaReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-    $lmCompat = (Get-ItemProperty -Path $lsaReg -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue).LmCompatibilityLevel
+    $lmCompat = (Get-ItemProperty -Path $lsaReg -Name "LmCompatibilityLevel" -ErrorAction Stop).LmCompatibilityLevel
 
     $ntlmv1Enabled = $false
     if ($null -eq $lmCompat) {
@@ -519,12 +519,12 @@ try {
     }
 
     # SMBv1
-    $smbv1Feature = Get-WindowsOptionalFeature -FeatureName SMB1Protocol -Online -ErrorAction SilentlyContinue
+    $smbv1Feature = Get-WindowsOptionalFeature -FeatureName SMB1Protocol -Online -ErrorAction Stop
     $smbv1Enabled = if ($smbv1Feature) { $smbv1Feature.State -ne "Disabled" -and $smbv1Feature.State -ne "DisabledWithDependencies" } else { $false }
 
     # SMB signing
-    $clientSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManWorkstation\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
-    $serverSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue).RequireSecuritySignature
+    $clientSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManWorkstation\Parameters" -Name "RequireSecuritySignature" -ErrorAction Stop).RequireSecuritySignature
+    $serverSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction Stop).RequireSecuritySignature
 
     $state.authentication_protocols = [ordered]@{
         kerberos = [ordered]@{
@@ -564,7 +564,7 @@ try {
     foreach ($prefix in $prefixes) {
         $found = Get-ADUser -Filter "SamAccountName -like '$prefix*'" `
             -Properties UserAccountControl, PasswordLastSet, LastLogonDate, ServicePrincipalName,
-            msDS-AllowedToDelegateTo, AccountNotDelegated -ErrorAction SilentlyContinue
+            msDS-AllowedToDelegateTo, AccountNotDelegated -ErrorAction Stop
         if ($found) {
             $serviceAccounts += $found
         }
