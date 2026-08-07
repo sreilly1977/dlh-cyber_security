@@ -100,6 +100,45 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# Create systemd service to protect sysctl settings after UFW
+# ---------------------------------------------------------------------------
+# UFW resets per-interface sysctl values during initialization (log_martians, etc.)
+# This service re-applies hardening after UFW completes.
+# ---------------------------------------------------------------------------
+
+echo ""
+echo "[*] Creating sysctl persistence service..."
+
+cat > /etc/systemd/system/sysctl-after-ufw.service << 'UFW_SYSCTL'
+[Unit]
+Description=Reapply MedDefense sysctl settings after UFW
+After=ufw.service
+Wants=ufw.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/sysctl -w net.ipv4.conf.all.log_martians=1
+ExecStart=/sbin/sysctl -w net.ipv4.conf.default.log_martians=1
+ExecStart=/bin/sh -c 'for iface in $(ls /proc/sys/net/ipv4/conf/); do sysctl -w net.ipv4.conf.$iface.log_martians=1; done'
+ExecStart=/bin/sh -c 'for iface in $(ls /proc/sys/net/ipv4/conf/); do sysctl -w net.ipv4.conf.$iface.accept_redirects=0; done'
+ExecStart=/bin/sh -c 'for iface in $(ls /proc/sys/net/ipv4/conf/); do sysctl -w net.ipv4.conf.$iface.rp_filter=1; done'
+ExecStart=/bin/sh -c 'for iface in $(ls /proc/sys/net/ipv4/conf/); do sysctl -w net.ipv4.conf.$iface.send_redirects=0; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+UFW_SYSCTL
+
+chmod 644 /etc/systemd/system/sysctl-after-ufw.service
+systemctl daemon-reload 2>/dev/null || true
+systemctl enable sysctl-after-ufw.service 2>/dev/null || true
+
+# Apply immediately
+systemctl start sysctl-after-ufw.service 2>/dev/null || true
+
+echo "    sysctl-after-ufw.service: [ENABLED]"
+
+# ---------------------------------------------------------------------------
 # Display and validate the active ruleset
 # ---------------------------------------------------------------------------
 
@@ -114,6 +153,14 @@ ALLOW_RULES=$(ufw status 2>/dev/null | grep -c "ALLOW" || echo "0")
 echo ""
 echo "Rules: $ALLOW_RULES allow, default deny"
 
+# Verify sysctl settings are protected
+echo "[*] Verifying sysctl protection..."
+SYSCTL_MARTIANS_ALL=$(sysctl -n net.ipv4.conf.all.log_martians 2>/dev/null || echo "?")
+SYSCTL_MARTIANS_DEF=$(sysctl -n net.ipv4.conf.default.log_martians 2>/dev/null || echo "?")
+
+echo "    log_martians (all):     $SYSCTL_MARTIANS_ALL"
+echo "    log_martians (default): $SYSCTL_MARTIANS_DEF"
+
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
@@ -122,6 +169,7 @@ echo ""
 echo "Firewall baseline deployed: default deny incoming, default allow outgoing"
 echo "Allowed ports: 22 (management), 80/443 (public), 3306 (application network)"
 echo "Logging: $LOG_LEVEL"
+echo "Sysctl persistence: enabled via systemd service"
 
 if $FIREWALL_ACTIVE; then
     echo "Status: ACTIVE"

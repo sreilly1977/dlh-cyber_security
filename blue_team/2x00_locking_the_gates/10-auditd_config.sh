@@ -77,7 +77,7 @@ cat > "$MEDDEFENSE_RULES" << 'AUDIT_RULES'
 
 # --- Identity Files ---
 -w /etc/passwd -p wa -k identity
--w /etc/shadow -p wa -k identity
+-w /etc/shadow -p rwa -k identity
 -w /etc/group -p wa -k identity
 
 # --- Authentication Configuration ---
@@ -132,17 +132,34 @@ chmod 640 "$MEDDEFENSE_RULES" 2>/dev/null || true
 chown root:root "$MEDDEFENSE_RULES" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
-# Step 3: Load the rules
+# Step 3: Enable kernel auditing and load rules
 # ---------------------------------------------------------------------------
 
+echo "[*] Enabling kernel auditing..."
+
+# Enable auditing at the kernel level
+auditctl -e 1 2>/dev/null || echo "    WARNING: Could not enable auditing via auditctl"
+
+# Verify it's enabled
+AUDIT_ENABLED=$(auditctl -s 2>/dev/null | grep '^enabled' | awk '{print $2}' || echo "0")
+AUDIT_ENABLED=$(sanitize_int "$AUDIT_ENABLED")
+
+if [[ "$AUDIT_ENABLED" -ge 1 ]]; then
+    echo "    Kernel auditing: ENABLED"
+else
+    echo "    Kernel auditing: DISABLED (enabled=$AUDIT_ENABLED)"
+    echo "    This may indicate a container environment or locked audit config"
+fi
+
+# Load rules (use --force in case rules haven't changed since last load)
 echo "[*] Loading rules... augenrules --load:"
 
-if augenrules --load 2>/dev/null; then
+if augenrules --load --force 2>/dev/null; then
     echo "augenrules --load: OK"
 else
     echo "augenrules --load: FAILED, trying auditctl..."
     auditctl -R "$MEDDEFENSE_RULES" 2>/dev/null || true
-    echo "auditctl -R: loaded"
+    echo "auditctl -R: attempted"
 fi
 
 # ---------------------------------------------------------------------------
@@ -160,37 +177,55 @@ if [[ "$ACTIVE_RULES" -lt 1 ]]; then
     echo "    WARNING: No rules appear to be active"
 fi
 
+# Confirm audit is still enabled after rule load
+AUDIT_CHECK=$(auditctl -s 2>/dev/null | grep '^enabled' | awk '{print $2}' || echo "0")
+AUDIT_CHECK=$(sanitize_int "$AUDIT_CHECK")
+
+if [[ "$AUDIT_CHECK" -eq 0 ]]; then
+    echo "    WARNING: Auditing got disabled during rule load, re-enabling..."
+    auditctl -e 1 2>/dev/null || true
+fi
+
 # ---------------------------------------------------------------------------
-# Step 5: Test by triggering an auditable event
+# Step 5: Test by triggering an auditable WRITE event
 # ---------------------------------------------------------------------------
 
-echo "[*] Test: reading /etc/shadow..."
+echo "[*] Test: writing to /etc/shadow (touch triggers 'w' permission)..."
 
-# Trigger an audit event by reading /etc/shadow (identity key)
-cat /etc/shadow > /dev/null 2>&1 || true
+# Trigger a write event (touches file metadata, triggers 'w' permission)
+touch /etc/shadow 2>/dev/null || true
 
-# Small delay to allow audit subsystem to process
-sleep 1
+# Allow audit subsystem to process the event
+sleep 2
 
-# Search for the event
-TEST_RAW=$(ausearch -ts recent -k identity 2>/dev/null || true)
-TEST_RESULT=$(echo "$TEST_RAW" | grep -c 'type=' || true)
+# Search for the event using ausearch
+echo "    Searching for identity key events..."
+
+TEST_RESULT=$(ausearch -ts recent -k identity 2>/dev/null | grep -c 'msg=' || echo "0")
 TEST_RESULT=$(sanitize_int "$TEST_RESULT")
 
 if [[ "$TEST_RESULT" -gt 0 ]]; then
-    echo "    ausearch -ts recent -k identity: $TEST_RESULT event found [PASS]"
+    echo "    ausearch -ts recent -k identity: $TEST_RESULT event(s) found [PASS]"
     TEST_PASSED=true
 else
-    # Try broader search
-    TEST_RESULT_BROAD=$(echo "$TEST_RAW" | grep -c '.' || true)
-    TEST_RESULT_BROAD=$(sanitize_int "$TEST_RESULT_BROAD")
+    # Try searching the raw audit log directly
+    if [[ -f "/var/log/audit/audit.log" ]]; then
+        LOG_RESULT=$(grep -c 'key="identity"' /var/log/audit/audit.log 2>/dev/null || echo "0")
+        LOG_RESULT=$(sanitize_int "$LOG_RESULT")
 
-    if [[ "$TEST_RESULT_BROAD" -gt 0 ]]; then
-        echo "    ausearch -ts recent -k identity: $TEST_RESULT_BROAD event found [PASS]"
-        TEST_PASSED=true
+        if [[ "$LOG_RESULT" -gt 0 ]]; then
+            echo "    Raw log search: $LOG_RESULT event(s) found [PASS]"
+            TEST_PASSED=true
+        else
+            echo "    ausearch -ts recent -k identity: 0 events found [FAIL]"
+            echo "    Last 3 audit.log entries for diagnosis:"
+            tail -3 /var/log/audit/audit.log 2>/dev/null || echo "      (unable to read audit.log)"
+            TEST_PASSED=false
+        fi
     else
         echo "    ausearch -ts recent -k identity: 0 events found [FAIL]"
-        echo "    Note: The rule is loaded but the test event may take longer to register"
+        echo "    No audit.log found at /var/log/audit/audit.log"
+        echo "    Check auditd log configuration: cat /etc/audit/auditd.conf"
         TEST_PASSED=false
     fi
 fi

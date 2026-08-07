@@ -8,11 +8,12 @@
 
 set -euo pipefail
 
-RSYSLOG_CONF="/etc/rsyslog.conf"
 RSYSLOG_DIR="/etc/rsyslog.d"
 LOGROTATE_DIR="/etc/logrotate.d"
 AUTH_LOG="/var/log/auth.log"
 SYSLOG="/var/log/syslog"
+SYSTEMD_SERVICE="/etc/systemd/system/fix-log-permissions.service"
+SYSTEMD_TARGET="/etc/systemd/system/fix-log-permissions.target"
 
 SOURCES_CONFIGURED=0
 POLICIES_SET=0
@@ -32,16 +33,21 @@ if ! dpkg -l rsyslog &>/dev/null 2>&1; then
     apt-get update -qq && apt-get install -y rsyslog -qq 2>/dev/null
 fi
 systemctl enable rsyslog 2>/dev/null || true
-systemctl start rsyslog 2>/dev/null || true
 
-MEDDEFENSE_SYSLOG_CONF="$RSYSLOG_DIR/meddefense_logs.conf"
+MEDDEFENSE_SYSLOG_CONF="$RSYSLOG_DIR/99-meddefense_logs.conf"
 
 cat > "$MEDDEFENSE_SYSLOG_CONF" << 'RSYSLOG_CONF'
 # MedDefense Structured Logging Configuration
 # Deployed by 12-log_config.sh
-#
-# Purpose: Ensure security-relevant logs are captured, structured and retained
-# for SOC analysis and compliance evidence.
+# File: 99- prefix ensures it loads AFTER 50-default.conf
+
+# --- File ownership and permissions ---
+$FileOwner root
+$FileGroup adm
+$FileCreateMode 0640
+$DirOwner root
+$DirGroup adm
+$DirCreateMode 0750
 
 # --- Auth events -> /var/log/auth.log ---
 auth,authpriv.* /var/log/auth.log
@@ -54,16 +60,74 @@ cron.* /var/log/cron.log
 
 # --- Kernel messages -> /var/log/kern.log ---
 kern.* /var/log/kern.log
+
+# Reset to defaults for other log files
+$FileOwner syslog
+$FileGroup adm
+$FileCreateMode 0640
 RSYSLOG_CONF
 
 echo "    auth,authpriv.* -> /var/log/auth.log     [CONFIGURED]"
 echo "    *.info;auth.none -> /var/log/syslog      [CONFIGURED]"
 SOURCES_CONFIGURED=$((SOURCES_CONFIGURED + 2))
 
-systemctl restart rsyslog 2>/dev/null || true
+# ---------------------------------------------------------------------------
+# Step 2: Create systemd service to enforce permissions after rsyslog starts
+# ---------------------------------------------------------------------------
+
+echo "[*] Creating systemd service for persistent permissions..."
+
+cat > "$SYSTEMD_SERVICE" << 'SYSTEMD_UNIT'
+[Unit]
+Description=Fix log file permissions after rsyslog start
+After=rsyslog.service
+Wants=rsyslog.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/chown root:adm /var/log/auth.log
+ExecStart=/bin/chown root:adm /var/log/syslog
+ExecStart=/bin/chown root:adm /var/log/cron.log
+ExecStart=/bin/chown root:adm /var/log/kern.log
+ExecStart=/bin/chmod 640 /var/log/auth.log
+ExecStart=/bin/chmod 640 /var/log/syslog
+ExecStart=/bin/chmod 640 /var/log/cron.log
+ExecStart=/bin/chmod 640 /var/log/kern.log
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+SYSTEMD_UNIT
+
+cat > "$SYSTEMD_TARGET" << 'TARGET_FILE'
+[Unit]
+Description=Ensure log permissions are secured
+After=fix-log-permissions.service
+Requires=fix-log-permissions.service
+Target=fix-log-permissions.service
+
+[Install]
+WantedBy=multi-user.target
+TARGET_FILE
+
+# Actually we just need to enable the service, not a target
+rm -f "$SYSTEMD_TARGET"
+
+chmod 644 "$SYSTEMD_SERVICE"
+systemctl daemon-reload 2>/dev/null || true
+systemctl enable fix-log-permissions.service 2>/dev/null || true
+
+# Fix permissions NOW
+systemctl stop rsyslog 2>/dev/null || true
+touch "$AUTH_LOG" "$SYSLOG" /var/log/cron.log /var/log/kern.log 2>/dev/null || true
+chown root:adm "$AUTH_LOG" "$SYSLOG" /var/log/cron.log /var/log/kern.log 2>/dev/null || true
+chmod 640 "$AUTH_LOG" "$SYSLOG" /var/log/cron.log /var/log/kern.log 2>/dev/null || true
+systemctl start rsyslog 2>/dev/null || true
+
+echo "    Permissions fixed and systemd service enabled"
 
 # ---------------------------------------------------------------------------
-# Step 2: Set log rotation policies
+# Step 3: Set log rotation policies
 # ---------------------------------------------------------------------------
 
 echo "[*] Setting log rotation policies..."
@@ -92,6 +156,7 @@ cat > "$MEDDEFENSE_LOGROTATE_CONF" << 'LOGROTATE_CONF'
     create 640 root adm
     postrotate
         /usr/lib/rsyslog/rsyslog-rotate 2>/dev/null || invoke-rc.d rsyslog rotate 2>/dev/null || systemctl reload rsyslog 2>/dev/null || true
+        systemctl restart fix-log-permissions.service 2>/dev/null || true
     endscript
 }
 
@@ -106,6 +171,7 @@ cat > "$MEDDEFENSE_LOGROTATE_CONF" << 'LOGROTATE_CONF'
     create 640 root adm
     postrotate
         /usr/lib/rsyslog/rsyslog-rotate 2>/dev/null || invoke-rc.d rsyslog rotate 2>/dev/null || systemctl reload rsyslog 2>/dev/null || true
+        systemctl restart fix-log-permissions.service 2>/dev/null || true
     endscript
 }
 LOGROTATE_CONF
@@ -115,7 +181,7 @@ echo "    /var/log/syslog: rotate 60, compress after 7d    [SET]"
 POLICIES_SET=$((POLICIES_SET + 2))
 
 # ---------------------------------------------------------------------------
-# Step 3: Verify rsyslog configuration is valid
+# Step 4: Validate rsyslog configuration
 # ---------------------------------------------------------------------------
 
 echo "[*] Validating rsyslog configuration..."
@@ -126,30 +192,19 @@ else
     echo "    rsyslog config syntax: WARNING (some directives may not be supported)"
 fi
 
-# Check that the meddefense config file was written correctly
 if grep -q "auth,authpriv" "$MEDDEFENSE_SYSLOG_CONF" 2>/dev/null; then
     echo "    auth routing rule found: [OK]"
 fi
 
 # ---------------------------------------------------------------------------
-# Step 4: Verify log activity using logger and tail
+# Step 5: Verify log activity
 # ---------------------------------------------------------------------------
 
 echo "[*] Verifying log activity..."
 
-# Create log files if they don't exist
-touch "$AUTH_LOG" 2>/dev/null || true
-touch "$SYSLOG" 2>/dev/null || true
-touch /var/log/cron.log 2>/dev/null || true
-touch /var/log/kern.log 2>/dev/null || true
-
-# Inject a test syslog message to verify the pipeline is working
 logger -p syslog.info "MedDefense log configuration verification test" 2>/dev/null || true
-
-# Give rsyslog a moment to write
 sleep 2
 
-# Check if auth.log is receiving events by examining recent entries with tail and grep
 AUTH_OK="NO"
 if [[ -f "$AUTH_LOG" ]] && [[ -s "$AUTH_LOG" ]]; then
     RECENT_AUTH=$(tail -n 5 "$AUTH_LOG" 2>/dev/null || true)
@@ -158,7 +213,6 @@ if [[ -f "$AUTH_LOG" ]] && [[ -s "$AUTH_LOG" ]]; then
     fi
 fi
 
-# Check if syslog is receiving events by examining recent entries with tail and grep
 SYSLOG_OK="NO"
 if [[ -f "$SYSLOG" ]] && [[ -s "$SYSLOG" ]]; then
     RECENT_SYSLOG=$(tail -n 5 "$SYSLOG" 2>/dev/null || true)
@@ -171,35 +225,13 @@ echo "    /var/log/auth.log: receiving events       [$AUTH_OK]"
 echo "    /var/log/syslog: receiving events         [$SYSLOG_OK]"
 
 # ---------------------------------------------------------------------------
-# Step 5: Secure log file permissions
-# ---------------------------------------------------------------------------
-
-echo "[*] Securing log file permissions..."
-
-chmod 640 "$AUTH_LOG" 2>/dev/null || true
-chown root:adm "$AUTH_LOG" 2>/dev/null || true
-
-chmod 640 "$SYSLOG" 2>/dev/null || true
-chown root:adm "$SYSLOG" 2>/dev/null || true
-
-chmod 640 /var/log/cron.log 2>/dev/null || true
-chown root:adm /var/log/cron.log 2>/dev/null || true
-chmod 640 /var/log/kern.log 2>/dev/null || true
-chown root:adm /var/log/kern.log 2>/dev/null || true
-
-# Verify permissions
-AUTH_PERMS=$(stat -c '%a' "$AUTH_LOG" 2>/dev/null || echo "unknown")
-AUTH_OWNER=$(stat -c '%U:%G' "$AUTH_LOG" 2>/dev/null || echo "unknown")
-SYSLOG_PERMS=$(stat -c '%a' "$SYSLOG" 2>/dev/null || echo "unknown")
-SYSLOG_OWNER=$(stat -c '%U:%G' "$SYSLOG" 2>/dev/null || echo "unknown")
-
-echo "    /var/log/auth.log: $AUTH_PERMS $AUTH_OWNER          [OK]"
-echo "    /var/log/syslog: $SYSLOG_PERMS $SYSLOG_OWNER            [OK]"
-
-# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 
-echo "Log sources configured: $SOURCES_CONFIGURED | Rotation policies: $POLICIES_SET | Permissions: secured"
+echo ""
+echo "=== Summary ==="
+echo "Log sources configured: $SOURCES_CONFIGURED"
+echo "Rotation policies: $POLICIES_SET"
+echo "Persistent permissions: systemd service enabled"
 
 exit 0

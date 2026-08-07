@@ -1,8 +1,21 @@
 {
-  "assessment_date": "2026-08-04T06:00:16Z",
-  "total_actions": 11,
+  "assessment_date": "2026-08-07T11:28:19Z",
+  "total_actions": 12,
   "sorted_by": "priority_descending",
   "queue": [
+    {
+      "priority": 100,
+      "control_id": "CIS-5.2.4",
+      "title": "Enforce SSH public key authentication, disable passwords",
+      "severity": "critical",
+      "status": "non_compliant",
+      "affected_asset": "billing-srv-01,web-srv-01,log-srv-01",
+      "lynis_findings": "BOOT-5122:Set a password on GRUB boot loader to prevent altering boot configuration (e.g. boot in single user mode without password)\nAUTH-9230:Configure password hashing rounds in /etc/login.defs\nAUTH-9282:When possible set expire dates for all password protected accounts\nAUTH-9286:Configure minimum password age in /etc/login.defs\nAUTH-9286:Configure maximum password age in /etc/login.defs",
+      "implementation_task": "ssh_hardening",
+      "operational_risk": "Immediate risk of compromise: Weak authentication — password-based SSH susceptible to brute force and credential stuffing; FINDING 009",
+      "expected_validation": "Confirm PasswordAuthentication no and PubkeyAuthentication yes in sshd -T output",
+      "detail": "PasswordAuthentication is enabled (should be no)"
+    },
     {
       "priority": 90,
       "control_id": "CIS-2.2.1",
@@ -14,20 +27,7 @@
       "implementation_task": "service_exposure_remediation",
       "operational_risk": "Immediate risk of compromise: Exposed database services — billing database listening on 0.0.0.0 exposes PHI to network traversal; SHADOW SYSTEMS",
       "expected_validation": "Verify database service bound to 127.0.0.1 or 10.0.x.x; confirm UFW/iptables denies external access to port 3306/5432",
-      "detail": "Database listening on all interfaces: LISTEN 0      70         127.0.0.1:33060      0.0.0.0:*          "
-    },
-    {
-      "priority": 90,
-      "control_id": "CIS-5.2.4",
-      "title": "Enforce SSH public key authentication, disable passwords",
-      "severity": "critical",
-      "status": "non_compliant",
-      "affected_asset": "billing-srv-01,web-srv-01,log-srv-01",
-      "lynis_findings": "",
-      "implementation_task": "ssh_hardening",
-      "operational_risk": "Immediate risk of compromise: Weak authentication — password-based SSH susceptible to brute force and credential stuffing; FINDING 009",
-      "expected_validation": "Confirm PasswordAuthentication no and PubkeyAuthentication yes in sshd -T output",
-      "detail": "PasswordAuthentication is enabled (should be no)"
+      "detail": "Database listening on all interfaces: LISTEN 0      70         127.0.0.1:33060      0.0.0.0:*    users:((\"mysqld\",pid=925,fd=21))                                                                                                                             "
     },
     {
       "priority": 90,
@@ -54,19 +54,6 @@
       "operational_risk": "Immediate risk of compromise: Weak authentication — default password policy allows trivial passwords; RISK REGISTER R-07",
       "expected_validation": "Verify pam_pwquality module in common-password with minlen 14, dcredit -1, ucredit -1, ocredit -1, lcredit -1",
       "detail": "pam_pwquality present but minlen not set to 14 (found: )"
-    },
-    {
-      "priority": 65,
-      "control_id": "CIS-4.1.4",
-      "title": "Configure audit rules for privileged commands and file access",
-      "severity": "high",
-      "status": "non_compliant",
-      "affected_asset": "billing-srv-01,web-srv-01,log-srv-01",
-      "lynis_findings": "",
-      "implementation_task": "audit_rules_configure",
-      "operational_risk": "Significant risk if exploited: Missing audit visibility — privileged syscall auditing catches sudo abuse, crontab tampering, and passwd file modification",
-      "expected_validation": "Verify /etc/audit/rules.d/ contains rules for /usr/bin/sudo, /usr/bin/passwd, /etc/passwd, /etc/shadow, /var/spool/cron/",
-      "detail": "No audit rules for privileged commands found"
     },
     {
       "priority": 65,
@@ -108,6 +95,19 @@
       "detail": "AllowGroups is not configured; all users can SSH"
     },
     {
+      "priority": 65,
+      "control_id": "CIS-4.1.4",
+      "title": "Configure audit rules for privileged commands and file access",
+      "severity": "high",
+      "status": "non_compliant",
+      "affected_asset": "billing-srv-01,web-srv-01,log-srv-01",
+      "lynis_findings": "",
+      "implementation_task": "audit_rules_configure",
+      "operational_risk": "Significant risk if exploited: Missing audit visibility — privileged syscall auditing catches sudo abuse, crontab tampering, and passwd file modification",
+      "expected_validation": "Verify /etc/audit/rules.d/ contains rules for /usr/bin/sudo, /usr/bin/passwd, /etc/passwd, /etc/shadow, /var/spool/cron/",
+      "detail": "No audit rules for privileged commands found"
+    },
+    {
       "priority": 60,
       "control_id": "CIS-1.5.1",
       "title": "Enable ASLR and restrict kernel pointer exposure",
@@ -119,6 +119,19 @@
       "operational_risk": "Significant risk if exploited: Insufficient kernel hardening — disabled ASLR enables reliable exploit development for memory corruption bugs; LYNIS AUDIT",
       "expected_validation": "Check sysctl kernel.randomize_va_space=2 and kernel.kptr_restrict=2",
       "detail": "ASLR=2, kptr_restrict=1 (need both=2)"
+    },
+    {
+      "priority": 60,
+      "control_id": "CIS-5.2.6",
+      "title": "Configure SSH idle timeout and MaxAuthTries",
+      "severity": "high",
+      "status": "partially_compliant",
+      "affected_asset": "billing-srv-01,web-srv-01,log-srv-01",
+      "lynis_findings": "",
+      "implementation_task": "ssh_session_hardening",
+      "operational_risk": "Significant risk if exploited: SSH lateral movement — unattended sessions and unlimited retries enable session hijacking and brute force",
+      "expected_validation": "Verify ClientAliveInterval 300, ClientAliveCountMax 0, MaxAuthTries 3 in sshd -T output",
+      "detail": "ClientAliveInterval=0, MaxAuthTries=6 (need <=300 and <=3)"
     },
     {
       "priority": 40,

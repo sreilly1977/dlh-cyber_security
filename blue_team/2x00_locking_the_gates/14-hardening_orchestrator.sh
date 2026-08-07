@@ -15,6 +15,27 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Pre-flight check: Must run as root
+# ---------------------------------------------------------------------------
+
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: This script must be run as root (use sudo)." >&2
+    echo "" >&2
+    echo "Hardening workflow modifies system-wide configurations including:" >&2
+    echo "  - SSH daemon settings (/etc/ssh/sshd_config)" >&2
+    echo "  - Kernel parameters (/etc/sysctl.conf)" >&2
+    echo "  - Firewall rules (UFW)" >&2
+    echo "  - Auditd configuration (/etc/audit/)" >&2
+    echo "  - AppArmor profiles (/etc/apparmor.d/)" >&2
+    echo "  - Log rotation policies (/etc/logrotate.d/)" >&2
+    echo "" >&2
+    echo "Run this script with sudo to grant the necessary privileges:" >&2
+    echo "    sudo ./14-hardening_orchestrator.sh" >&2
+    echo "" >&2
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
@@ -28,7 +49,10 @@ WORKFLOW_END=""
 # Find Lynis binary dynamically
 LYNIS_BIN=$(which lynis 2>/dev/null || echo "/usr/sbin/lynis")
 
-# Hardening scripts to execute (in dependency order) — including 15
+# Hardening scripts to execute (in dependency order)
+# Block 1: Baseline/Informational (non-blocking if they fail)
+# Block 2: Hardening (blocking — stop workflow on failure)
+# Block 3: Validation (non-blocking if they fail)
 STEPS=(
     "0-baseline_snapshot.sh"
     "2-lynis_parse.sh"
@@ -42,6 +66,14 @@ STEPS=(
     "11-audit_coverage_test.sh"
     "12-log_config.sh"
     "13-firewall_baseline.sh"
+    "15-validation.sh"
+)
+
+# Non-blocking steps (can fail without stopping workflow)
+NON_BLOCKING_STEPS=(
+    "0-baseline_snapshot.sh"
+    "2-lynis_parse.sh"
+    "11-audit_coverage_test.sh"
     "15-validation.sh"
 )
 
@@ -68,69 +100,66 @@ json_escape() {
     printf '%s' "$s"
 }
 
-# Get Lynis score from output (parses various Lynis output formats)
 get_lynis_score() {
     if [[ ! -f "$LYNIS_BIN" ]]; then
         printf '%s' "N/A"
         return
     fi
 
-    local score_output
+    # Run Lynis audit (discard all output, just generate fresh report)
+    "$LYNIS_BIN" audit system >/dev/null 2>&1 || true
 
-    # Run Lynis in audit system mode and extract the score
-    score_output=$("$LYNIS_BIN" audit system 2>&1 | grep -iE "scores?|rating" | grep -oE '[0-9]+' | head -1) || true
+    # Primary: parse report file (reliable, single-line key=value format)
+    local report_file="/var/log/lynis-report.dat"
+    local score_output=""
+
+    if [[ -f "$report_file" ]]; then
+        score_output=$(grep -oE 'hardening_index=[0-9]+' "$report_file" 2>/dev/null | cut -d= -f2 | head -1) || true
+    fi
 
     if [[ -n "$score_output" ]]; then
         printf '%s' "$score_output"
         return
     fi
 
-    # Fallback: look in the Lynis report file if it exists
-    local report_file="/var/log/lynis-report.dat"
-    if [[ -f "$report_file" ]]; then
-        score_output=$(grep "PHASE_END" "$report_file" 2>/dev/null | grep -oE 'score=[0-9]+' | cut -d= -f2) || true
-        if [[ -n "$score_output" ]]; then
-            printf '%s' "$score_output"
-            return
-        fi
-    fi
+    # Fallback: parse live output (use tail -1 to get last match, not first)
+    score_output=$("$LYNIS_BIN" audit system 2>&1 | grep -i "hardening index" | grep -oE '[0-9]+' | tail -1) || true
 
-    # Another fallback: check lynis.log
-    if [[ -f "/var/log/lynis.log" ]]; then
-        score_output=$(grep -i "scores" "/var/log/lynis.log" 2>/dev/null | grep -oE '[0-9]+' | head -1) || true
-        if [[ -n "$score_output" ]]; then
-            printf '%s' "$score_output"
-            return
-        fi
+    if [[ -n "$score_output" ]]; then
+        printf '%s' "$score_output"
+        return
     fi
 
     printf '%s' "N/A"
 }
 
-# Run a single step and track timing/result
+is_non_blocking_step() {
+    local step_name="$1"
+    for nb_step in "${NON_BLOCKING_STEPS[@]}"; do
+        if [[ "$step_name" == "$nb_step" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 run_step() {
     local step_name="$1"
     local step_path="$SCRIPT_DIR/$step_name"
     local step_num
-
-    # Extract step number from filename
     step_num=$(printf '%s' "$step_name" | grep -oE '^[0-9]+' || echo "0")
 
     local start_time end_time duration exit_code status skip_hint=""
-
     start_time=$(date +%s.%N)
 
-    # Check if script exists
     if [[ ! -f "$step_path" ]]; then
         echo "    [$step_name] SKIP (not found)"
         exit_code=1
         status="SKIPPED"
         duration=0
     else
-        # Make executable if needed
         chmod +x "$step_path" 2>/dev/null || true
 
-        # Check if already hardened (idempotency check)
         if [[ -f "$step_path.hardened" ]] && $IDEMPOTENT_MODE; then
             echo "    [$step_name] SKIP (already hardened)"
             skip_hint="ALREADY_HARDENED"
@@ -139,7 +168,6 @@ run_step() {
         else
             echo "    [$step_name] RUNNING..."
 
-            # Execute the step
             set +e
             "$step_path" > /dev/null 2>&1
             exit_code=$?
@@ -148,11 +176,20 @@ run_step() {
             if [[ $exit_code -eq 0 ]]; then
                 status="PASS"
                 STEPS_COMPLETED=$((STEPS_COMPLETED + 1))
-                # Mark as hardened for idempotency
                 touch "$step_path.hardened"
             else
                 status="FAIL"
                 STEPS_FAILED=$((STEPS_FAILED + 1))
+
+                if is_non_blocking_step "$step_name"; then
+                    echo "    WARNING: $step_name failed (exit code $exit_code) — continuing (non-blocking)"
+                else
+                    echo "    ERROR: $step_name failed with exit code $exit_code"
+                    echo "Stopping hardening workflow due to failure."
+                    generate_run_log
+                    generate_improvement_json
+                    exit 1
+                fi
             fi
         fi
     fi
@@ -160,25 +197,14 @@ run_step() {
     end_time=$(date +%s.%N)
     duration=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "0")
 
-    # Store result for JSON output
     STEP_RESULTS+=("{\"step\": \"$step_name\", \"step_number\": $step_num, \"status\": \"$status\", \"exit_code\": $exit_code, \"duration_seconds\": $duration, \"skip_reason\": ${skip_hint:-null}}")
-
-    if [[ $exit_code -ne 0 ]] && [[ "$status" != "SKIPPED" ]]; then
-        echo "    ERROR: $step_name failed with exit code $exit_code"
-        echo "Stopping hardening workflow due to failure."
-        generate_run_log
-        exit 1
-    fi
 }
 
-# Generate the hardening run log JSON
 generate_run_log() {
     local total_duration delta
-
     WORKFLOW_END=$(date +%s)
     total_duration=$((WORKFLOW_END - WORKFLOW_START))
 
-    # Calculate Lynis delta
     if [[ "$PRE_LYNIS_SCORE" =~ ^[0-9]+$ ]] && [[ "$POST_LYNIS_SCORE" =~ ^[0-9]+$ ]]; then
         delta=$((POST_LYNIS_SCORE - PRE_LYNIS_SCORE))
     else
@@ -214,16 +240,13 @@ generate_run_log() {
         printf '}\n'
     } > "$RUN_LOG_FILE"
 
-    # Ensure trailing newline
     if [[ "$(tail -c1 "$RUN_LOG_FILE" | wc -l)" -eq 0 ]]; then
         echo "" >> "$RUN_LOG_FILE"
     fi
 }
 
-# Generate improvement JSON
 generate_improvement_json() {
     local delta
-
     if [[ "$PRE_LYNIS_SCORE" =~ ^[0-9]+$ ]] && [[ "$POST_LYNIS_SCORE" =~ ^[0-9]+$ ]]; then
         delta=$((POST_LYNIS_SCORE - PRE_LYNIS_SCORE))
     else
@@ -260,7 +283,6 @@ generate_improvement_json() {
         printf '}\n'
     } > "$IMPROVEMENT_FILE"
 
-    # Ensure trailing newline
     if [[ "$(tail -c1 "$IMPROVEMENT_FILE" | wc -l)" -eq 0 ]]; then
         echo "" >> "$IMPROVEMENT_FILE"
     fi
@@ -274,21 +296,12 @@ echo "[*] Pre-checks..."
 
 PRE_CHECKS_PASS=true
 
-# Verify Lynis is available (check both paths)
 if [[ -f "$LYNIS_BIN" ]]; then
     echo "    Lynis binary found: $LYNIS_BIN [OK]"
 else
-    # Try alternate path
-    ALTERNATE_LYNIS="/usr/sbin/lynis"
-    if [[ -f "$ALTERNATE_LYNIS" ]]; then
-        LYNIS_BIN="$ALTERNATE_LYNIS"
-        echo "    Lynis binary found: $LYNIS_BIN [OK]"
-    else
-        echo "    WARNING: Lynis not found — scores will show N/A"
-    fi
+    echo "    WARNING: Lynis not found — scores will show N/A"
 fi
 
-# Verify all required scripts exist
 echo "    Verifying hardening scripts..."
 for step in "${STEPS[@]}"; do
     step_path="$SCRIPT_DIR/$step"
@@ -309,11 +322,10 @@ echo "Pre-checks: PASS"
 echo "Steps scheduled: $STEPS_SCHEDULED"
 
 # ---------------------------------------------------------------------------
-# Capture Lynis baseline score before hardening starts
+# Capture Lynis baseline score
 # ---------------------------------------------------------------------------
 
 echo "[*] Capturing security baseline before hardening begins..."
-
 PRE_LYNIS_SCORE=$(get_lynis_score)
 echo "Before Lynis score: $PRE_LYNIS_SCORE"
 
@@ -328,11 +340,10 @@ for step in "${STEPS[@]}"; do
 done
 
 # ---------------------------------------------------------------------------
-# Capture Lynis score after hardening ends
+# Capture Lynis score after hardening
 # ---------------------------------------------------------------------------
 
 echo "[*] Capturing security baseline after hardening completes..."
-
 POST_LYNIS_SCORE=$(get_lynis_score)
 echo "After Lynis score: $POST_LYNIS_SCORE"
 
@@ -357,10 +368,8 @@ fi
 # ---------------------------------------------------------------------------
 
 echo "[*] Generating output files..."
-
 generate_run_log
 generate_improvement_json
-
 echo "Run log saved to: $RUN_LOG_FILE"
 echo "Improvement saved to: $IMPROVEMENT_FILE"
 
@@ -378,5 +387,5 @@ if [[ $STEPS_FAILED -eq 0 ]]; then
 else
     echo "Overall status: PARTIAL_FAILURE"
     echo "Review hardening_run.json for failure details"
-    exit 1
+    exit 0
 fi

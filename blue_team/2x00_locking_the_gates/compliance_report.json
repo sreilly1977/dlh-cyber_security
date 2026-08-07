@@ -1,0 +1,389 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-08-07T13:53:32Z",
+    "generated_by": "MedDefense Hardening Pipeline v1.0",
+    "tool_version": "1.0.0",
+    "report_type": "Compliance Evidence Bundle"
+  },
+  "system_identity": {
+    "hostname": "billing-srv-01",
+    "environment": "production",
+    "region": "us-east-1",
+    "owner": "Sarah Park",
+    "team": "MedDefense Security Engineering"
+  },
+  "hardening_date": "2026-08-07",
+  "control_statistics": {
+    "controls_selected": 15,
+    "controls_remediated": 0,
+    "controls_verified": 31,
+    "controls_unresolved": 15,
+    "deviations_documented": 0
+  },
+  "compliance_metrics": {
+    "final_compliance_percentage": 206.7,
+    "verification_method": "Automated validation + manual review",
+    "assessment_scope": "Host-level hardening (billing-srv-01)"
+  },
+  "controls": {
+    "selected_controls": [
+      {
+        "control_id": "CIS-5.2.1",
+        "title": "Disable SSH direct root login",
+        "cis_section": "5",
+        "severity": "critical",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "SSH lateral movement — root login via SSH allows immediate privilege escalation after credential theft; CRIMSON TIDE PHASE 3",
+        "implementation_task": "ssh_hardening",
+        "verification_method": "Verify PermitRootLogin is set to no in sshd_config and sshd -T output",
+        "justification": "Root SSH login eliminates authentication barriers for attackers who obtain credentials; kill chain #1 (1x01) shows SSH as the lateral movement vector"
+      },
+      {
+        "control_id": "CIS-5.2.4",
+        "title": "Enforce SSH public key authentication, disable passwords",
+        "cis_section": "5",
+        "severity": "critical",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Weak authentication — password-based SSH susceptible to brute force and credential stuffing; FINDING 009",
+        "implementation_task": "ssh_hardening",
+        "verification_method": "Confirm PasswordAuthentication no and PubkeyAuthentication yes in sshd -T output",
+        "justification": "1x02 vulnerability scan found SSH password auth enabled on all three servers; password attacks are the #1 initial access vector in healthcare breaches"
+      },
+      {
+        "control_id": "CIS-5.2.2",
+        "title": "Restrict SSH access to authorized groups via AllowGroups",
+        "cis_section": "5",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "SSH lateral movement — unrestricted SSH allows any valid account to pivot between servers; FLAT NETWORK VECTOR",
+        "implementation_task": "ssh_access_control",
+        "verification_method": "Check AllowGroups directive in sshd_config; confirm only secops and admin groups listed",
+        "justification": "Flat network topology (1x00) means any compromised user can SSH to any server; restricting to named groups shrinks the attack surface to admin-only"
+      },
+      {
+        "control_id": "CIS-5.2.6",
+        "title": "Configure SSH idle timeout and MaxAuthTries",
+        "cis_section": "5",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "SSH lateral movement — unattended sessions and unlimited retries enable session hijacking and brute force",
+        "implementation_task": "ssh_session_hardening",
+        "verification_method": "Verify ClientAliveInterval 300, ClientAliveCountMax 0, MaxAuthTries 3 in sshd -T output",
+        "justification": "Unattended SSH sessions were observed during 1x00 physical assessment; MaxAuthTries default of 6 doubles the brute-force window"
+      },
+      {
+        "control_id": "CIS-1.5.1",
+        "title": "Enable ASLR and restrict kernel pointer exposure",
+        "cis_section": "1",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Insufficient kernel hardening — disabled ASLR enables reliable exploit development for memory corruption bugs; LYNIS AUDIT",
+        "implementation_task": "sysctl_kernel_hardening",
+        "verification_method": "Check sysctl kernel.randomize_va_space=2 and kernel.kptr_restrict=2",
+        "justification": "1x02 lynis audit flagged ASLR as partially configured; kernel pointers leak memory layout to attackers"
+      },
+      {
+        "control_id": "CIS-3.1.1",
+        "title": "Disable IPv4 forwarding and ICMP redirects",
+        "cis_section": "1",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "SSH lateral movement — IP forwarding enables server-to-server pivoting; redirects enable ARP cache poisoning on flat network",
+        "implementation_task": "sysctl_kernel_hardening",
+        "verification_method": "Verify sysctl net.ipv4.ip_forward=0, net.ipv4.conf.all.send_redirects=0, net.ipv4.conf.default.send_redirects=0",
+        "justification": "1x00 network topology shows flat /24 segment; IP forwarding on servers extends the attack path beyond intended routes"
+      },
+      {
+        "control_id": "CIS-3.1.2",
+        "title": "Enable network sysctl hardening for SYN floods and martian logging",
+        "cis_section": "1",
+        "severity": "medium",
+        "asset_scope": "billing-srv-01,web-srv-01",
+        "threat_mapping": "Insufficient kernel hardening — SYN flood and spoofed traffic mitigation not enabled; MISCONFIGURATION ANALYSIS",
+        "implementation_task": "sysctl_network_hardening",
+        "verification_method": "Verify sysctl net.ipv4.tcp_syncookies=1, net.ipv4.conf.all.log_martians=1",
+        "justification": "1x02 misconfiguration analysis found default sysctl values on all servers; SYN cookies prevent resource exhaustion attacks on billing-srv-01"
+      },
+      {
+        "control_id": "CIS-5.4.1",
+        "title": "Enforce password complexity via pam_pwquality",
+        "cis_section": "5",
+        "severity": "critical",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Weak authentication — default password policy allows trivial passwords; RISK REGISTER R-07",
+        "implementation_task": "pam_password_policy",
+        "verification_method": "Verify pam_pwquality module in common-password with minlen 14, dcredit -1, ucredit -1, ocredit -1, lcredit -1",
+        "justification": "1x03 risk register item R-07 identifies weak passwords as top authentication risk; healthcare sector sees 78% of breaches start with credential abuse"
+      },
+      {
+        "control_id": "CIS-5.5.1",
+        "title": "Set password aging and account lockout policy",
+        "cis_section": "5",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Weak authentication — no lockout allows unlimited brute force; no aging allows indefinite credential reuse",
+        "implementation_task": "pam_password_policy",
+        "verification_method": "Verify PASS_MAX_DAYS 90, PASS_MIN_DAYS 1 in login.defs; confirm pam_faillock configured in common-auth",
+        "justification": "1x02 scan found no lockout policy; 1x00 onboarding notes mention shared admin credentials that rotate never"
+      },
+      {
+        "control_id": "CIS-2.2.1",
+        "title": "Restrict database service exposure to localhost or private subnet",
+        "cis_section": "2",
+        "severity": "critical",
+        "asset_scope": "billing-srv-01",
+        "threat_mapping": "Exposed database services — billing database listening on 0.0.0.0 exposes PHI to network traversal; SHADOW SYSTEMS",
+        "implementation_task": "service_exposure_remediation",
+        "verification_method": "Verify database service bound to 127.0.0.1 or 10.0.x.x; confirm UFW/iptables denies external access to port 3306/5432",
+        "justification": "1x02 network posture analysis shows MySQL listening on all interfaces on billing-srv-01; 1x00 shadow systems identified external DB connectivity as unmanaged"
+      },
+      {
+        "control_id": "CIS-2.2.2",
+        "title": "Disable unnecessary default services (avahi-daemon, cups, nfs)",
+        "cis_section": "2",
+        "severity": "medium",
+        "asset_scope": "web-srv-01,log-srv-01",
+        "threat_mapping": "Unnecessary services — default daemons expand attack surface without serving business function; SERVICES.TXT",
+        "implementation_task": "service_exposure_remediation",
+        "verification_method": "Confirm systemctl status shows disabled/inactive for avahi-daemon, cups, rpcbind, nfs-kernel-server",
+        "justification": "1x02 services.txt lists 31 running services; 12 are non-essential; each unnecessary daemon is a CVE candidate"
+      },
+      {
+        "control_id": "CIS-6.1.1",
+        "title": "Audit and remediate SUID and SGID filesystem permissions",
+        "cis_section": "6",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Privilege escalation — unexpected SUID/SGID filesystem permissions provide root escalation paths; BASELINE SNAPSHOT",
+        "implementation_task": "suid_sgid_remediation",
+        "verification_method": "Run find / -xdev -perm -4000 and -perm -2000; compare against CIS baseline whitelist; chmod u-s or remove unauthorized binaries",
+        "justification": "Baseline snapshot (task 0) captured 23 SUID and 12 SGID binaries; CIS whitelist expects approximately 18 SUID and 10 SGID on Ubuntu 22.04. Filesystem permission review is critical for privilege escalation prevention"
+      },
+      {
+        "control_id": "CIS-4.1.1",
+        "title": "Install and configure auditd",
+        "cis_section": "4",
+        "severity": "critical",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Missing audit visibility — no system call auditing means post-incident forensics cannot reconstruct attacker activity",
+        "implementation_task": "auditd_setup",
+        "verification_method": "Verify auditd installed, enabled, and running; confirm /etc/audit/auditd.conf has disk_full_action and admin_space_left_action set",
+        "justification": "1x00 control inventory shows no auditing deployed; 1x01 kill chain analysis notes that lack of audit logs prevented detection of lateral movement"
+      },
+      {
+        "control_id": "CIS-4.1.4",
+        "title": "Configure audit rules for privileged commands and file access",
+        "cis_section": "4",
+        "severity": "high",
+        "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
+        "threat_mapping": "Missing audit visibility — privileged syscall auditing catches sudo abuse, crontab tampering, and passwd file modification",
+        "implementation_task": "audit_rules_configure",
+        "verification_method": "Verify /etc/audit/rules.d/ contains rules for /usr/bin/sudo, /usr/bin/passwd, /etc/passwd, /etc/shadow, /var/spool/cron/",
+        "justification": "1x05 Crimson Tide advisory shows attackers modifying cron and passwd; without audit rules these actions leave no trace"
+      },
+      {
+        "control_id": "CIS-4.2.3",
+        "title": "Configure centralized log retention and rotation",
+        "cis_section": "4",
+        "severity": "medium",
+        "asset_scope": "log-srv-01",
+        "threat_mapping": "Missing audit visibility — short retention periods destroy forensic evidence; log-srv-01 must retain 365 days minimum",
+        "implementation_task": "log_retention_configure",
+        "verification_method": "Verify rsyslog forwarding from billing-srv-01 and web-srv-01 to log-srv-01; confirm logrotate maxage 365 on log-srv-01",
+        "justification": "1x03 security strategy specifies SIEM ingestion with 1-year retention; 1x02 found default 4-week retention insufficient for breach investigation timelines"
+      }
+    ],
+    "remediated_controls": [],
+    "verified_controls": [
+      {
+        "id": "PermitRootLogin = no"
+      },
+      {
+        "id": "PasswordAuthentication = no"
+      },
+      {
+        "id": "MaxAuthTries = 3"
+      },
+      {
+        "id": "X11Forwarding = no"
+      },
+      {
+        "id": "ClientAliveInterval = 300"
+      },
+      {
+        "id": "Protocol = 2"
+      },
+      {
+        "id": "net.ipv4.ip_forward = 0"
+      },
+      {
+        "id": "net.ipv4.tcp_syncookies = 1"
+      },
+      {
+        "id": "kernel.randomize_va_space = 2"
+      },
+      {
+        "id": "net.ipv4.conf.all.log_martians = 1"
+      },
+      {
+        "id": "net.ipv4.conf.default.log_martians = 1"
+      },
+      {
+        "id": "net.ipv4.icmp_echo_ignore_broadcasts = 1"
+      },
+      {
+        "id": "net.ipv4.icmp_ignore_bogus_error_responses = 1"
+      },
+      {
+        "id": "net.ipv4.conf.all.accept_redirects = 0"
+      },
+      {
+        "id": "net.ipv4.conf.all.send_redirects = 0"
+      },
+      {
+        "id": "net.ipv4.conf.all.rp_filter = 1"
+      },
+      {
+        "id": "auditd.service = active"
+      },
+      {
+        "id": "Audit rules loaded (19 rules)"
+      },
+      {
+        "id": "auditd.conf exists (/etc/audit/auditd.conf)"
+      },
+      {
+        "id": "apparmor.service = active"
+      },
+      {
+        "id": "AppArmor tools installed"
+      },
+      {
+        "id": "AppArmor kernel interface present"
+      },
+      {
+        "id": "/var/log/auth.log permissions (640 root:adm)"
+      },
+      {
+        "id": "/var/log/syslog permissions (640 root:adm)"
+      },
+      {
+        "id": "rsyslog.service = active"
+      },
+      {
+        "id": "UFW status = active"
+      },
+      {
+        "id": "Default incoming = deny"
+      },
+      {
+        "id": "Default outgoing = allow"
+      },
+      {
+        "id": "/tmp directory mode 1777 (sticky bit)"
+      },
+      {
+        "id": "/tmp has sticky bit set"
+      },
+      {
+        "id": "/var/tmp has sticky bit set"
+      }
+    ],
+    "unresolved_controls": [
+      {
+        "id": "CIS-2.2.2",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-5.5.1",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-3.1.2",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-1.5.1",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-2.2.1",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-4.1.4",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-4.2.3",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-3.1.1",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-5.2.1",
+        "reason": "Not yet remediated"
+      },
+      {
+        "id": "CIS-5.4.1",
+        "reason": "Not yet remediated"
+      }
+    ]
+  },
+  "deviations": [],
+  "compensating_controls": [],
+  "residual_findings": {
+    "lynis_remaining_count": 0,
+    "lynis_new_count": 35,
+    "lynis_score_before": 58,
+    "lynis_score_after": 64,
+    "lynis_delta": 6,
+    "summary": "Residual risk: LOW — 0 warnings and 0 suggestions remain unresolved. 35 new findings introduced during hardening."
+  },
+  "audit_coverage": {
+    "audit_rules_deployed": 0,
+    "events_captured": 0,
+    "tests_executed": 6,
+    "coverage_percentage": 100,
+    "validation_status": "unknown"
+  },
+  "evidence_files_used": [
+    {
+      "file": "cis_profile",
+      "path": "cis_profile.json",
+      "purpose": "Control selection baseline"
+    },
+    {
+      "file": "gap_analysis",
+      "path": "gap_analysis.json",
+      "purpose": "Initial gap identification"
+    },
+    {
+      "file": "remediation_queue",
+      "path": "remediation_queue.json",
+      "purpose": "Remediation tracking and completion status"
+    },
+    {
+      "file": "audit_validation",
+      "path": "audit_validation.json",
+      "purpose": "Audit coverage verification"
+    },
+    {
+      "file": "validation_results",
+      "path": "validation_results.json",
+      "purpose": "Post-hardening control verification"
+    },
+    {
+      "file": "hardening_improvement",
+      "path": "hardening_improvement.json",
+      "purpose": "Lynis security score delta"
+    }
+  ],
+  "approvals": {
+    "security_owner": "Sarah Park",
+    "compliance_reviewer": "Pending",
+    "approval_status": "Draft"
+  }
+}

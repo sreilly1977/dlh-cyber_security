@@ -1,10 +1,10 @@
 {
-  "assessment_date": "2026-08-04T06:00:16Z",
+  "assessment_date": "2026-08-07T11:28:19Z",
   "controls_assessed": 15,
   "compliant": 3,
   "non_compliant": 8,
-  "partially_compliant": 3,
-  "not_assessed": 1,
+  "partially_compliant": 4,
+  "not_assessed": 0,
   "controls": [
     {
       "control_id": "CIS-5.2.1",
@@ -26,7 +26,7 @@
       "status": "non_compliant",
       "detail": "PasswordAuthentication is enabled (should be no)",
       "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
-      "lynis_correlation": "",
+      "lynis_correlation": "BOOT-5122:Set a password on GRUB boot loader to prevent altering boot configuration (e.g. boot in single user mode without password)\nAUTH-9230:Configure password hashing rounds in /etc/login.defs\nAUTH-9282:When possible set expire dates for all password protected accounts\nAUTH-9286:Configure minimum password age in /etc/login.defs\nAUTH-9286:Configure maximum password age in /etc/login.defs",
       "threat_mapping": "Weak authentication — password-based SSH susceptible to brute force and credential stuffing; FINDING 009",
       "justification": "1x02 vulnerability scan found SSH password auth enabled on all three servers; password attacks are the #1 initial access vector in healthcare breaches"
     },
@@ -47,10 +47,10 @@
       "title": "Configure SSH idle timeout and MaxAuthTries",
       "cis_section": "5",
       "severity": "high",
-      "status": "not_assessed",
-      "detail": "SSH config not readable",
+      "status": "partially_compliant",
+      "detail": "ClientAliveInterval=0, MaxAuthTries=6 (need <=300 and <=3)",
       "asset_scope": "billing-srv-01,web-srv-01,log-srv-01",
-      "lynis_correlation": "Consider hardening SSH configuration:ClientAliveCountMax (set 3 to 2)",
+      "lynis_correlation": "",
       "threat_mapping": "SSH lateral movement — unattended sessions and unlimited retries enable session hijacking and brute force",
       "justification": "Unattended SSH sessions were observed during 1x00 physical assessment; MaxAuthTries default of 6 doubles the brute-force window"
     },
@@ -120,7 +120,7 @@
       "cis_section": "2",
       "severity": "critical",
       "status": "non_compliant",
-      "detail": "Database listening on all interfaces: LISTEN 0      70         127.0.0.1:33060      0.0.0.0:*          ",
+      "detail": "Database listening on all interfaces: LISTEN 0      70         127.0.0.1:33060      0.0.0.0:*    users:((\"mysqld\",pid=925,fd=21))                                                                                                                             ",
       "asset_scope": "billing-srv-01",
       "lynis_correlation": "",
       "threat_mapping": "Exposed database services — billing database listening on 0.0.0.0 exposes PHI to network traversal; SHADOW SYSTEMS",

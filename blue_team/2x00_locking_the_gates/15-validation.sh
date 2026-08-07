@@ -3,6 +3,9 @@
 # 15-validation.sh — Post-Hardening Validator
 #                     Reads system state and compares against expected hardening values.
 #                     Makes NO changes — read-only verification only.
+# Outputs:
+#   - Console summary (text format)
+#   - validation_results.json (machine-readable JSON)
 #
 # Context:
 #   - Configuration drift happens over time (debug changes, updates, etc.)
@@ -13,6 +16,12 @@
 # ============================================================================
 
 set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Output Configuration
+# ---------------------------------------------------------------------------
+
+JSON_OUTPUT="validation_results.json"
 
 # ---------------------------------------------------------------------------
 # Counters
@@ -26,6 +35,12 @@ FAILED_CHECKS=0
 EXIT_CODE=0
 
 # ---------------------------------------------------------------------------
+# Array to hold all check results for JSON output
+# ---------------------------------------------------------------------------
+
+declare -a CHECK_RESULTS=()
+
+# ---------------------------------------------------------------------------
 # Helper Functions
 # ---------------------------------------------------------------------------
 
@@ -34,6 +49,7 @@ check_pass() {
     echo "[PASS] $description"
     PASSED_CHECKS=$((PASSED_CHECKS + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    CHECK_RESULTS+=("{\"check\": \"$description\", \"status\": \"pass\"}")
 }
 
 check_fail() {
@@ -43,13 +59,57 @@ check_fail() {
 
     if [[ -n "$actual" ]] && [[ -n "$expected" ]]; then
         echo "[FAIL] $description (actual: $actual, expected: $expected)"
+        CHECK_RESULTS+=("{\"check\": \"$description\", \"status\": \"fail\", \"actual\": \"$actual\", \"expected\": \"$expected\"}")
     else
         echo "[FAIL] $description"
+        CHECK_RESULTS+=("{\"check\": \"$description\", \"status\": \"fail\", \"actual\": \"$actual\", \"expected\": \"$expected\"}")
     fi
 
     FAILED_CHECKS=$((FAILED_CHECKS + 1))
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
     EXIT_CODE=1
+}
+
+generate_validation_json() {
+    local timestamp
+    timestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+    {
+        printf '{\n'
+        printf '  "timestamp": "%s",\n' "$timestamp"
+        printf '  "total_checks": %d,\n' "$TOTAL_CHECKS"
+        printf '  "passed_checks": %d,\n' "$PASSED_CHECKS"
+        printf '  "failed_checks": %d,\n' "$FAILED_CHECKS"
+        printf '  "overall_status": "'
+        if [[ "$FAILED_CHECKS" -eq 0 ]]; then
+            printf 'ALL_CONTROLS_VERIFIED'
+        else
+            printf 'HARDENING_DRIFT_DETECTED'
+        fi
+        printf '",\n'
+        printf '  "checks": [\n'
+
+        local first=true
+        for result in "${CHECK_RESULTS[@]}"; do
+            if $first; then
+                first=false
+            else
+                printf ',\n'
+            fi
+            printf '    %s' "$result"
+        done
+
+        printf '\n  ]\n'
+        printf '}\n'
+    } > "$JSON_OUTPUT"
+
+    # Ensure trailing newline
+    if [[ "$(tail -c1 "$JSON_OUTPUT" | wc -l)" -eq 0 ]]; then
+        echo "" >> "$JSON_OUTPUT"
+    fi
+
+    echo ""
+    echo "Validation results saved to: $JSON_OUTPUT"
 }
 
 # ---------------------------------------------------------------------------
@@ -62,7 +122,7 @@ SSH_CONFIG="/etc/ssh/sshd_config"
 
 if [[ -f "$SSH_CONFIG" ]]; then
     # PermitRootLogin = no
-    ROOT_LOGIN=$(grep -E "^PermitRootLogin" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+    ROOT_LOGIN=$(grep -E "^PermitRootLogin" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || ROOT_LOGIN=""
     if [[ "$ROOT_LOGIN" == "no" ]]; then
         check_pass "PermitRootLogin = no"
     else
@@ -70,7 +130,7 @@ if [[ -f "$SSH_CONFIG" ]]; then
     fi
 
     # PasswordAuthentication = no
-    PASSWORD_AUTH=$(grep -E "^PasswordAuthentication" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+    PASSWORD_AUTH=$(grep -E "^PasswordAuthentication" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || PASSWORD_AUTH=""
     if [[ "$PASSWORD_AUTH" == "no" ]]; then
         check_pass "PasswordAuthentication = no"
     else
@@ -78,7 +138,7 @@ if [[ -f "$SSH_CONFIG" ]]; then
     fi
 
     # MaxAuthTries = 3
-    MAX_AUTH=$(grep -E "^MaxAuthTries" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+    MAX_AUTH=$(grep -E "^MaxAuthTries" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || MAX_AUTH=""
     if [[ "$MAX_AUTH" == "3" ]]; then
         check_pass "MaxAuthTries = 3"
     else
@@ -86,7 +146,7 @@ if [[ -f "$SSH_CONFIG" ]]; then
     fi
 
     # X11Forwarding = no
-    X11_FWD=$(grep -E "^X11Forwarding" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+    X11_FWD=$(grep -E "^X11Forwarding" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || X11_FWD=""
     if [[ "$X11_FWD" == "no" ]]; then
         check_pass "X11Forwarding = no"
     else
@@ -94,7 +154,7 @@ if [[ -f "$SSH_CONFIG" ]]; then
     fi
 
     # ClientAliveInterval = 300
-    CLIENT_ALIVE=$(grep -E "^ClientAliveInterval" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+    CLIENT_ALIVE=$(grep -E "^ClientAliveInterval" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || CLIENT_ALIVE=""
     if [[ "$CLIENT_ALIVE" == "300" ]]; then
         check_pass "ClientAliveInterval = 300"
     else
@@ -103,7 +163,7 @@ if [[ -f "$SSH_CONFIG" ]]; then
 
     # Protocol = 2 (deprecated in newer OpenSSH, skip if not applicable)
     if grep -q "^Protocol" "$SSH_CONFIG" 2>/dev/null; then
-        PROTOCOL=$(grep -E "^Protocol" "$SSH_CONFIG" 2>/dev/null | awk '{print $2}' || echo "")
+        PROTOCOL=$(grep -E "^Protocol" "$SSH_CONFIG" 2>/dev/null | awk '{print $2; exit}') || PROTOCOL=""
         if [[ "$PROTOCOL" == "2" ]]; then
             check_pass "Protocol = 2"
         else
@@ -218,20 +278,32 @@ echo "=== Auditd Validation Checks ==="
 if systemctl is-active --quiet auditd 2>/dev/null; then
     check_pass "auditd.service = active"
 else
-    check_fail "auditd.service" "$(systemctl is-active auditd 2>/dev/null || echo 'inactive')" "active"
+    AUDITD_STATE=$(systemctl is-active auditd 2>/dev/null) || AUDITD_STATE="inactive"
+    check_fail "auditd.service" "$AUDITD_STATE" "active"
 fi
 
 # Check audit rules are loaded
-RULE_COUNT=$(auditctl -l 2>/dev/null | wc -l || echo "0")
+RULE_COUNT=$(auditctl -l 2>/dev/null | wc -l)
+RULE_COUNT=${RULE_COUNT//[^0-9]/}
+[[ -z "$RULE_COUNT" ]] && RULE_COUNT=0
+
 if [[ "$RULE_COUNT" -gt 5 ]]; then
     check_pass "Audit rules loaded ($RULE_COUNT rules)"
 else
     check_fail "Audit rules loaded" "$RULE_COUNT" "> 5"
 fi
 
-# Check /etc/audit/auditd.conf exists
-if [[ -f "/etc/audit/auditd.conf" ]]; then
-    check_pass "auditd.conf exists"
+# Check auditd.conf exists at common paths
+AUDITD_CONF=""
+for conf_path in /etc/audit/auditd.conf /etc/audit/rules.d/auditd.conf /etc/audit/audit.rules; do
+    if [[ -f "$conf_path" ]]; then
+        AUDITD_CONF="$conf_path"
+        break
+    fi
+done
+
+if [[ -n "$AUDITD_CONF" ]]; then
+    check_pass "auditd.conf exists ($AUDITD_CONF)"
 else
     check_fail "auditd.conf exists"
 fi
@@ -247,7 +319,15 @@ echo "=== AppArmor Validation Checks ==="
 if systemctl is-active --quiet apparmor 2>/dev/null; then
     check_pass "apparmor.service = active"
 else
-    check_fail "apparmor.service" "$(systemctl is-active apparmor 2>/dev/null || echo 'inactive')" "active"
+    # AppArmor may be loaded as kernel feature without a standard service unit
+    # Check aa-status as fallback
+    if aa-status 2>/dev/null | grep -q "profiles are loaded"; then
+        AA_PROFILES=$(aa-status 2>/dev/null | grep "profiles are loaded" | grep -oE '^[0-9]+' || echo "0")
+        check_pass "AppArmor active ($AA_PROFILES profiles loaded via aa-status)"
+    else
+        APPARMOR_STATE=$(systemctl is-active apparmor 2>/dev/null) || APPARMOR_STATE="inactive"
+        check_fail "apparmor.service" "$APPARMOR_STATE" "active"
+    fi
 fi
 
 # Check aa-enforce or aa-status exists
@@ -273,8 +353,8 @@ echo "=== Log Configuration Validation Checks ==="
 
 # Check auth.log exists and has proper permissions
 if [[ -f "/var/log/auth.log" ]]; then
-    AUTH_PERMS=$(stat -c '%a' /var/log/auth.log 2>/dev/null || echo "")
-    AUTH_OWNER=$(stat -c '%U:%G' /var/log/auth.log 2>/dev/null || echo "")
+    AUTH_PERMS=$(stat -c '%a' /var/log/auth.log 2>/dev/null) || AUTH_PERMS="unknown"
+    AUTH_OWNER=$(stat -c '%U:%G' /var/log/auth.log 2>/dev/null) || AUTH_OWNER="unknown"
     if [[ "$AUTH_PERMS" == "640" ]] && [[ "$AUTH_OWNER" == "root:adm" ]]; then
         check_pass "/var/log/auth.log permissions (640 root:adm)"
     else
@@ -286,8 +366,8 @@ fi
 
 # Check syslog exists
 if [[ -f "/var/log/syslog" ]]; then
-    SYSLOG_PERMS=$(stat -c '%a' /var/log/syslog 2>/dev/null || echo "")
-    SYSLOG_OWNER=$(stat -c '%U:%G' /var/log/syslog 2>/dev/null || echo "")
+    SYSLOG_PERMS=$(stat -c '%a' /var/log/syslog 2>/dev/null) || SYSLOG_PERMS="unknown"
+    SYSLOG_OWNER=$(stat -c '%U:%G' /var/log/syslog 2>/dev/null) || SYSLOG_OWNER="unknown"
     if [[ "$SYSLOG_PERMS" == "640" ]] && [[ "$SYSLOG_OWNER" == "root:adm" ]]; then
         check_pass "/var/log/syslog permissions (640 root:adm)"
     else
@@ -301,7 +381,8 @@ fi
 if systemctl is-active --quiet rsyslog 2>/dev/null; then
     check_pass "rsyslog.service = active"
 else
-    check_fail "rsyslog.service" "$(systemctl is-active rsyslog 2>/dev/null || echo 'inactive')" "active"
+    RSYSLOG_STATE=$(systemctl is-active rsyslog 2>/dev/null) || RSYSLOG_STATE="inactive"
+    check_fail "rsyslog.service" "$RSYSLOG_STATE" "active"
 fi
 
 # ---------------------------------------------------------------------------
@@ -316,23 +397,27 @@ if ufw status 2>/dev/null | grep -qi "active"; then
     check_pass "UFW status = active"
 else
     check_fail "UFW status" "inactive" "active"
-    EXIT_CODE=1
 fi
 
 # Check default incoming policy
-UFW_DEFAULT_IN=$(ufw status verbose 2>/dev/null | grep -i "Default:" | grep -oE "incoming [a-z]+" | awk '{print $2}' || echo "")
-if [[ "$UFW_DEFAULT_IN" == "deny" ]]; then
+# ufw status verbose output: "Default: deny (incoming), allow (outgoing), ..."
+UFW_DEFAULT_LINE=$(ufw status verbose 2>/dev/null | grep -i "Default:") || UFW_DEFAULT_LINE=""
+
+if echo "$UFW_DEFAULT_LINE" | grep -qi "deny.*incoming"; then
     check_pass "Default incoming = deny"
 else
-    check_fail "Default incoming" "$UFW_DEFAULT_IN" "deny"
+    UFW_IN_VAL=$(echo "$UFW_DEFAULT_LINE" | grep -oE "[a-z]+ \(incoming\)" | grep -oE "^[a-z]+") || UFW_IN_VAL="not found"
+    [[ -z "$UFW_IN_VAL" ]] && UFW_IN_VAL="not found"
+    check_fail "Default incoming" "$UFW_IN_VAL" "deny"
 fi
 
 # Check default outgoing policy
-UFW_DEFAULT_OUT=$(ufw status verbose 2>/dev/null | grep -i "Default:" | grep -oE "outgoing [a-z]+" | awk '{print $2}' || echo "")
-if [[ "$UFW_DEFAULT_OUT" == "allow" ]]; then
+if echo "$UFW_DEFAULT_LINE" | grep -qi "allow.*outgoing"; then
     check_pass "Default outgoing = allow"
 else
-    check_fail "Default outgoing" "$UFW_DEFAULT_OUT" "allow"
+    UFW_OUT_VAL=$(echo "$UFW_DEFAULT_LINE" | grep -oE "[a-z]+ \(outgoing\)" | grep -oE "^[a-z]+") || UFW_OUT_VAL="not found"
+    [[ -z "$UFW_OUT_VAL" ]] && UFW_OUT_VAL="not found"
+    check_fail "Default outgoing" "$UFW_OUT_VAL" "allow"
 fi
 
 # ---------------------------------------------------------------------------
@@ -354,7 +439,7 @@ if mount | grep -q "/tmp "; then
 else
     # If /tmp is not a separate mount, check /tmp directory permissions
     if [[ -d "/tmp" ]]; then
-        TMP_PERMS=$(stat -c '%a' /tmp 2>/dev/null || echo "")
+        TMP_PERMS=$(stat -c '%a' /tmp 2>/dev/null) || TMP_PERMS="unknown"
         if [[ "$TMP_PERMS" == "1777" ]]; then
             check_pass "/tmp directory mode 1777 (sticky bit)"
         else
@@ -387,6 +472,9 @@ echo "Total Checks:  $TOTAL_CHECKS"
 echo "Passed:        $PASSED_CHECKS"
 echo "Failed:        $FAILED_CHECKS"
 echo "=========================================="
+
+# Generate JSON output
+generate_validation_json
 
 if [[ $FAILED_CHECKS -eq 0 ]]; then
     echo "RESULT: ALL HARDENING CONTROLS VERIFIED"

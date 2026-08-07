@@ -1,7 +1,7 @@
 {
   "profile_name": "MedDefense Linux Server CIS Hardening Profile",
   "version": "1.0",
-  "generated": "2026-08-03T19:32:41Z",
+  "generated": "2026-08-07T11:26:29Z",
   "source_cis_benchmark": "CIS Ubuntu Linux 22.04 LTS Benchmark v2.0.0",
   "assets": [
     "billing-srv-01",

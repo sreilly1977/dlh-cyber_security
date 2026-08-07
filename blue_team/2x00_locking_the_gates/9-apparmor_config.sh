@@ -3,12 +3,6 @@
 # 9-apparmor_config.sh — Deploy and configure AppArmor profiles in enforce mode
 #                        for all network-exposed services.
 #
-# Addresses:
-#   - 1x00 incident — crypto-miner compromised Apache with full filesystem access
-#   - AppArmor MAC limits damage even if service is compromised
-#   - Custom profile for MedDefense billing application restricts unauthorized access
-#   - Difference between "shell on web server" and "shell confined to /var/www"
-#
 # Usage:  sudo ./9-apparmor_config.sh
 # ============================================================================
 
@@ -46,10 +40,14 @@ UNCONFINED_COUNT=0
 
 # ---------------------------------------------------------------------------
 # Helper: check if AppArmor module is loaded
+# Uses /sys/module instead of lsmod to handle built-in kernels
 # ---------------------------------------------------------------------------
 
 check_apparmor_loaded() {
-    if lsmod | grep -q apparmor; then
+    if [[ -d /sys/module/apparmor ]]; then
+        echo "    AppArmor module: loaded"
+        return 0
+    elif lsmod 2>/dev/null | grep -q apparmor; then
         echo "    AppArmor module: loaded"
         return 0
     else
@@ -63,7 +61,7 @@ check_apparmor_loaded() {
 # ---------------------------------------------------------------------------
 
 check_apparmor_service() {
-    if systemctl is-active apparmor &>/dev/null 2>&1; then
+    if systemctl is-active --quiet apparmor 2>/dev/null; then
         echo "    AppArmor service: active"
         return 0
     else
@@ -74,33 +72,40 @@ check_apparmor_service() {
 
 # ---------------------------------------------------------------------------
 # Helper: get profile status
+# Returns: enforce, complain, or unknown
+# Always returns 0 to avoid set -e killing the script
 # ---------------------------------------------------------------------------
 
 get_profile_mode() {
     local profile="$1"
+    local profiles_file="/sys/kernel/security/apparmor/profiles"
 
-    # Check aa-status output
-    local status_output
-    status_output=$(aa-status 2>/dev/null || true)
-
-    if echo "$status_output" | grep -q "profile $profile.*\(enforce\|$profile\)" 2>/dev/null; then
-        echo "enforce"
-    elif echo "$status_output" | grep -q "profile $profile.*\(complain\|$profile\)" 2>/dev/null; then
-        echo "complain"
-    else
-        # Alternative check via /sys/kernel/security/apparmor/profiles
-        if [[ -f "/sys/kernel/security/apparmor/profiles" ]]; then
-            if grep -q "${profile} (enforce)" "/sys/kernel/security/apparmor/profiles" 2>/dev/null; then
-                echo "enforce"
-            elif grep -q "${profile} (complain)" "/sys/kernel/security/apparmor/profiles" 2>/dev/null; then
-                echo "complain"
-            else
-                echo "unknown"
-            fi
-        else
-            echo "unknown"
+    if [[ -f "$profiles_file" ]]; then
+        if grep -q "^${profile} (enforce)" "$profiles_file" 2>/dev/null; then
+            echo "enforce"
+            return 0
+        elif grep -q "^${profile} (complain)" "$profiles_file" 2>/dev/null; then
+            echo "complain"
+            return 0
         fi
     fi
+
+    # Fallback: try aa-status
+    if command -v aa-status &>/dev/null; then
+        local status_output
+        status_output=$(aa-status 2>/dev/null || true)
+
+        if echo "$status_output" | grep -qE "${profile}.*enforce"; then
+            echo "enforce"
+            return 0
+        elif echo "$status_output" | grep -qE "${profile}.*complain"; then
+            echo "complain"
+            return 0
+        fi
+    fi
+
+    echo "unknown"
+    return 0
 }
 
 # ---------------------------------------------------------------------------
@@ -110,22 +115,8 @@ get_profile_mode() {
 enforce_profile() {
     local profile="$1"
 
-    if aa-enforce "$profile" &>/dev/null 2>&1; then
+    if aa-enforce "$profile" 2>/dev/null; then
         echo "enforce"
-    else
-        echo "unknown"
-    fi
-}
-
-# ---------------------------------------------------------------------------
-# Helper: switch profile to complain mode
-# ---------------------------------------------------------------------------
-
-complain_profile() {
-    local profile="$1"
-
-    if aa-complain "$profile" &>/dev/null 2>&1; then
-        echo "complain"
     else
         echo "unknown"
     fi
@@ -137,20 +128,17 @@ complain_profile() {
 
 echo "[*] Checking AppArmor status..."
 
-APPARMOR_LOADED=false
-APPARMOR_ACTIVE=false
+check_apparmor_loaded
 
-check_apparmor_loaded && APPARMOR_LOADED=true
-check_apparmor_service && APPARMOR_ACTIVE=true
-
-if ! $APPARMOR_LOADED; then
-    echo "    ERROR: AppArmor kernel module not loaded"
-    exit 1
-fi
-
-if ! $APPARMOR_ACTIVE; then
+if ! check_apparmor_service; then
     echo "    WARNING: AppArmor service not active, attempting to start..."
     systemctl start apparmor 2>/dev/null || true
+fi
+
+# Re-check service after attempt to start
+if ! systemctl is-active --quiet apparmor 2>/dev/null; then
+    echo "    WARNING: AppArmor service could not be activated"
+    echo "    Continuing anyway — profiles may still be loadable"
 fi
 
 # ---------------------------------------------------------------------------
@@ -169,7 +157,7 @@ echo ""
 echo "[*] Profile enforcement:"
 
 for service in "${SERVICES_TO_ENFORCE[@]}"; do
-    current_mode=$(get_profile_mode "$service")
+    current_mode=$(get_profile_mode "$service") || current_mode="unknown"
 
     case "$current_mode" in
         enforce)
@@ -186,13 +174,13 @@ for service in "${SERVICES_TO_ENFORCE[@]}"; do
             fi
             ;;
         *)
-            echo "    $service           NOT FOUND"
+            echo "    $service           NOT FOUND (no existing profile)"
             ;;
     esac
 done
 
 # Check sshd as example of already enforcing
-SSHD_MODE=$(get_profile_mode "/usr/sbin/sshd")
+SSHD_MODE=$(get_profile_mode "/usr/sbin/sshd") || SSHD_MODE="unknown"
 if [[ "$SSHD_MODE" == "enforce" ]]; then
     echo "    /usr/sbin/sshd           enforce              [OK]"
     ENFORCE_COUNT=$((ENFORCE_COUNT + 1))
@@ -257,8 +245,8 @@ if [[ ! -f "$MEDDEFENSE_CUSTOM_PROFILE" ]]; then
   deny /home/** rw,
 
   # Deny execution of binaries outside application
-  deny /bin/** ix,
-  deny /usr/bin/** ix,
+  deny /bin/** x,
+  deny /usr/bin/** x,
 
   # Proc access for monitoring
   /proc/self/** r,
@@ -267,15 +255,28 @@ if [[ ! -f "$MEDDEFENSE_CUSTOM_PROFILE" ]]; then
 APPARMOR_PROFILE
 
     chmod 644 "$MEDDEFENSE_CUSTOM_PROFILE"
-    aa-enforce "$MEDDEFENSE_CUSTOM_PROFILE" 2>/dev/null || true
-    echo "    Custom profile: $MEDDEFENSE_CUSTOM_PATH   [CREATED] [ENFORCED]"
+    echo "    Custom profile: $MEDDEFENSE_CUSTOM_PROFILE   [CREATED]"
 else
-    echo "    Custom profile: $MEDDEFENSE_CUSTOM_PATH   [ALREADY EXISTS]"
+    echo "    Custom profile: $MEDDEFENSE_CUSTOM_PROFILE   [ALREADY EXISTS]"
 fi
 
-# Reload AppArmor profiles
+# Load/reload the custom profile with apparmor_parser — show errors for debugging
 if command -v apparmor_parser &>/dev/null; then
-    apparmor_parser -r "$MEDDEFENSE_CUSTOM_PROFILE" 2>/dev/null || true
+    # Remove old profile from kernel if loaded
+    apparmor_parser -R "$MEDDEFENSE_CUSTOM_PROFILE" 2>/dev/null || true
+
+    # Load fresh
+    if apparmor_parser -r "$MEDDEFENSE_CUSTOM_PROFILE" 2>&1; then
+        echo "    Profile loaded via apparmor_parser: [OK]"
+        # Now switch to enforce mode using the app path
+        aa-enforce "$MEDDEFENSE_APP_PATH" 2>/dev/null && \
+            echo "    Enforce mode: [ACTIVATED]" || \
+            echo "    Enforce mode: [FAILED - profile may not be attached to a running process]"
+    else
+        echo "    Profile load: [FAILED - see errors above]"
+    fi
+else
+    echo "    apparmor_parser not found, skipping profile load"
 fi
 
 # ---------------------------------------------------------------------------
@@ -285,21 +286,15 @@ fi
 echo ""
 echo "[*] Unconfined network-exposed processes:"
 
-# Get list of unconfined processes
-UNCONFINED_PROCS=$(aa-status 2>/dev/null | grep -A100 "unconfined processes" | tail -n +2 | awk '{print $1}' | grep -E '^/' | head -5 || true)
+# Get list of unconfined processes from aa-status
+UNCONFINED_PROCS=$(aa-status 2>/dev/null | sed -n '/unconfined/,/^$/p' | grep -E '^\s*/' | head -5 || true)
 
 if [[ -n "$UNCONFINED_PROCS" ]]; then
-    echo "$UNCONFINED_PROCS" | while read -r proc; do
+    while IFS= read -r proc; do
         [[ -z "$proc" ]] && continue
-        # Check if it's a network-exposed service
-        if ps aux 2>/dev/null | grep -q "$(basename "$proc")" | grep -v grep; then
-            echo "    $proc       [UNCONFINED - Profile recommended]"
-            UNCONFINED_COUNT=$((UNCONFINED_COUNT + 1))
-        fi
-    done
-
-    # Recount since subshell
-    UNCONFINED_COUNT=$(echo "$UNCONFINED_PROCS" | grep -c '^' 2>/dev/null || echo "0")
+        echo "    $proc       [UNCONFINED - Profile recommended]"
+        UNCONFINED_COUNT=$((UNCONFINED_COUNT + 1))
+    done < <(printf '%s\n' "$UNCONFINED_PROCS")
 else
     echo "    None detected"
 fi
@@ -310,11 +305,10 @@ fi
 
 echo ""
 
-# Get final counts
-PROFILE_STATUS=$(aa-status 2>/dev/null || true)
-ENFORCE_FINAL=$(echo "$PROFILE_STATUS" | grep -c "(enforce)" 2>/dev/null || echo "0")
-COMPLAIN_FINAL=$(echo "$PROFILE_STATUS" | grep -c "(complain)" 2>/dev/null || echo "0")
-UNCONFINED_FINAL=$(echo "$PROFILE_STATUS" | grep -A10 "unconfined processes" | grep -c '/' 2>/dev/null || echo "0")
+# Get final counts from aa-status (fixed: assign outside $())
+ENFORCE_FINAL=$(aa-status 2>/dev/null | grep -c "(enforce)" 2>/dev/null) || ENFORCE_FINAL=0
+COMPLAIN_FINAL=$(aa-status 2>/dev/null | grep -c "(complain)" 2>/dev/null) || COMPLAIN_FINAL=0
+UNCONFINED_FINAL=$(aa-status 2>/dev/null | sed -n '/unconfined/,/^$/p' | grep -c '/' 2>/dev/null) || UNCONFINED_FINAL=0
 
 echo "Profiles in enforce: $ENFORCE_FINAL | Complain: $COMPLAIN_FINAL | Unconfined: $UNCONFINED_FINAL"
 

@@ -83,6 +83,15 @@ files = {
     "hardening_improvement": "hardening_improvement.json"
 }
 
+purposes = {
+    "cis_profile": "Control selection baseline",
+    "gap_analysis": "Initial gap identification",
+    "remediation_queue": "Remediation tracking and completion status",
+    "audit_validation": "Audit coverage verification",
+    "validation_results": "Post-hardening control verification",
+    "hardening_improvement": "Lynis security score delta"
+}
+
 # Load all evidence files
 data = {}
 for name, filepath in files.items():
@@ -110,7 +119,6 @@ deviations = []
 if "controls" in cis_data:
     selected_controls = cis_data.get("controls", [])
 elif "profiles" in cis_data:
-    # Flatten nested control structures
     for profile in cis_data.get("profiles", []):
         if "controls" in profile:
             selected_controls.extend(profile["controls"])
@@ -123,16 +131,42 @@ for item in completed:
     if control_id not in remediated_controls:
         remediated_controls.append(control_id)
 
-# From validation results - controls marked as verified/passed
+# From validation results - extract verified controls from checks array
 validation_data = data.get("validation_results", {})
-passed_checks = validation_data.get("passed_checks", validation_data.get("passes", []))
-for check in passed_checks:
-    control_id = check.get("control_id", check.get("id", check.get("check", str(check))))
-    if control_id not in verified_controls:
-        verified_controls.append(control_id)
 
-# Identify unresolved controls (selected but not remediated or not verified)
-selected_set = set(selected_controls) if isinstance(selected_controls[0], str) if selected_controls else set() else set(c.get("id", c) for c in selected_controls)
+# Try passed_checks first (might be int or list)
+passed_checks = validation_data.get("passed_checks", [])
+if isinstance(passed_checks, int):
+    # passed_checks is a count, not a list — extract from checks array
+    passed_checks = [c for c in validation_data.get("checks", []) if isinstance(c, dict) and c.get("status") == "pass"]
+
+if passed_checks and isinstance(passed_checks[0], dict):
+    for check in passed_checks:
+        control_id = check.get("control_id", check.get("id", check.get("check", str(check))))
+        if control_id not in verified_controls:
+            verified_controls.append(control_id)
+elif passed_checks and isinstance(passed_checks[0], str):
+    for check in passed_checks:
+        if check not in verified_controls:
+            verified_controls.append(check)
+
+# Fallback: if passed_checks was empty or int, extract from checks array
+if not verified_controls:
+    checks_array = validation_data.get("checks", [])
+    for check in checks_array:
+        if isinstance(check, dict) and check.get("status") == "pass":
+            control_id = check.get("control_id", check.get("id", check.get("check", str(check))))
+            if control_id not in verified_controls:
+                verified_controls.append(control_id)
+
+# Build sets for comparison — handle both string and dict control formats
+if selected_controls and isinstance(selected_controls[0], str):
+    selected_set = set(selected_controls)
+elif selected_controls and isinstance(selected_controls[0], dict):
+    selected_set = set(c.get("id", c.get("control_id", str(c))) for c in selected_controls)
+else:
+    selected_set = set()
+
 remediated_set = set(remediated_controls)
 verified_set = set(verified_controls)
 
@@ -142,36 +176,36 @@ if selected_set:
 
 # From hardening improvement - residual Lynis findings
 improvement_data = data.get("hardening_improvement", {})
-residual_findings = improvement_data.get("remaining_findings", [])
+residual_findings = improvement_data.get("remaining_findings", improvement_data.get("residual_findings", []))
 new_findings = improvement_data.get("new_findings", [])
 
 # Document deviations (controls that couldn't be applied with justifications)
-# Pull from gap analysis and remediation queue
 gap_data = data.get("gap_analysis", {})
 skipped_items = gap_data.get("skipped_items", gap_data.get("exceptions", []))
 
 deviation_id = 1
 for skip in skipped_items:
-    deviation = {
-        "deviation_id": f"DEV-{deviation_id:03d}",
-        "control_id": skip.get("control_id", skip.get("id", f"UNKNOWN-{deviation_id}")),
-        "reason": skip.get("reason", skip.get("justification", "Operational constraint")),
-        "risk_accepted": skip.get("risk_accepted", True),
-        "risk_level": skip.get("risk_level", "Medium"),
-        "compensating_control": skip.get("compensating_control", "Monitoring and alerting"),
-        "owner": skip.get("owner", "MedDefense Security Team"),
-        "review_date": datetime.datetime.now().strftime("%Y-%m-%d")
-    }
-    deviations.append(deviation)
-    deviation_id += 1
+    if isinstance(skip, dict):
+        deviation = {
+            "deviation_id": "DEV-{:03d}".format(deviation_id),
+            "control_id": skip.get("control_id", skip.get("id", "UNKNOWN-{}".format(deviation_id))),
+            "reason": skip.get("reason", skip.get("justification", "Operational constraint")),
+            "risk_accepted": skip.get("risk_accepted", True),
+            "risk_level": skip.get("risk_level", "Medium"),
+            "compensating_control": skip.get("compensating_control", "Monitoring and alerting"),
+            "owner": skip.get("owner", "MedDefense Security Team"),
+            "review_date": datetime.datetime.now().strftime("%Y-%m-%d")
+        }
+        deviations.append(deviation)
+        deviation_id += 1
 
 # Also check remediation queue for skipped/pending items
 pending_items = remediation_data.get("pending_items", remediation_data.get("failed_items", []))
 for pending in pending_items:
-    if pending not in skipped_items:
+    if isinstance(pending, dict) and pending not in skipped_items:
         deviation = {
-            "deviation_id": f"DEV-{deviation_id:03d}",
-            "control_id": pending.get("control_id", pending.get("id", f"UNKNOWN-{deviation_id}")),
+            "deviation_id": "DEV-{:03d}".format(deviation_id),
+            "control_id": pending.get("control_id", pending.get("id", "UNKNOWN-{}".format(deviation_id))),
             "reason": pending.get("reason", pending.get("status_desc", "Pending remediation")),
             "risk_accepted": False,
             "risk_level": pending.get("risk_level", "Unknown"),
@@ -188,8 +222,6 @@ total_remediated = len(remediated_controls)
 total_verified = len(verified_controls)
 total_deviations = len(deviations)
 
-# Compliance = (Verified + Remediated) / Selected * 100
-# More conservative: only count verified
 if total_selected > 0:
     compliance_percentage = round((total_verified / total_selected) * 100, 1)
 else:
@@ -200,21 +232,19 @@ evidence_files = [
     {"file": k, "path": v, "purpose": purposes.get(k, "Evidence artifact")}
     for k, v in files.items()
 ]
-purposes = {
-    "cis_profile": "Control selection baseline",
-    "gap_analysis": "Initial gap identification",
-    "remediation_queue": "Remediation tracking and completion status",
-    "audit_validation": "Audit coverage verification",
-    "validation_results": "Post-hardening control verification",
-    "hardening_improvement": "Lynis security score delta"
-}
+
+# Normalize selected_controls for JSON output
+if selected_controls and isinstance(selected_controls[0], str):
+    selected_controls_out = [{"id": c} for c in selected_controls]
+else:
+    selected_controls_out = selected_controls if selected_controls else []
 
 # Build residual findings summary
 residual_risk = {
     "lynis_remaining_count": len(residual_findings),
     "lynis_new_count": len(new_findings),
-    "lynis_score_before": improvement_data.get("before_score", improvement_data.get("pre_lynis_score", "N/A")),
-    "lynis_score_after": improvement_data.get("after_score", improvement_data.get("post_lynis_score", "N/A")),
+    "lynis_score_before": improvement_data.get("before_score", improvement_data.get("pre_hardening_score", improvement_data.get("pre_lynis_score", "N/A"))),
+    "lynis_score_after": improvement_data.get("after_score", improvement_data.get("post_hardening_score", improvement_data.get("post_lynis_score", "N/A"))),
     "lynis_delta": improvement_data.get("delta", improvement_data.get("score_delta", improvement_data.get("lynis_delta", "N/A"))),
     "summary": improvement_data.get("residual_risk_summary", "Residual risk assessment pending")
 }
@@ -252,10 +282,10 @@ report = {
         "assessment_scope": "Host-level hardening (billing-srv-01)"
     },
     "controls": {
-        "selected_controls": selected_controls if not isinstance(selected_controls[0], str) if selected_controls else selected_controls else [{"id": c} for c in selected_controls],
+        "selected_controls": selected_controls_out,
         "remediated_controls": [{"id": c} for c in remediated_controls],
         "verified_controls": [{"id": c} for c in verified_controls],
-        "unresolved_controls": [{"id": c, "reason": "Not yet remediated"} for c in unresolved_controls[:10]]  # Limit to first 10 for readability
+        "unresolved_controls": [{"id": c, "reason": "Not yet remediated"} for c in unresolved_controls[:10]]
     },
     "deviations": deviations,
     "compensating_controls": [

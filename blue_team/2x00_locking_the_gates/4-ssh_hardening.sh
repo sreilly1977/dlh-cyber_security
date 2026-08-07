@@ -44,6 +44,29 @@ capture_sshd_setting() {
 }
 
 # ---------------------------------------------------------------------------
+# Helper: sanitize drop-in config files in sshd_config.d/
+# Comments out conflicting directives that override our hardening
+# ---------------------------------------------------------------------------
+
+sanitize_dropin_configs() {
+    local dropin_dir="/etc/ssh/sshd_config.d"
+    local directives_regex="PermitRootLogin|PasswordAuthentication|PermitEmptyPasswords|X11Forwarding|MaxAuthTries|ClientAliveInterval|ClientAliveCountMax|AllowUsers|LoginGraceTime|Banner"
+
+    if [[ ! -d "$dropin_dir" ]]; then
+        return 0
+    fi
+
+    for conf_file in "$dropin_dir"/*.conf; do
+        [[ ! -f "$conf_file" ]] && continue
+
+        if grep -qE "^[[:space:]]*(${directives_regex})[[:space:]]" "$conf_file" 2>/dev/null; then
+            echo "    Sanitizing conflicting directives in $(basename "$conf_file")"
+            sed -i -E "s/^([[:space:]]*)(${directives_regex})/\1#\2/I" "$conf_file"
+        fi
+    done
+}
+
+# ---------------------------------------------------------------------------
 # Helper: idempotently set a directive in sshd_config
 # ---------------------------------------------------------------------------
 
@@ -80,6 +103,13 @@ echo "    Banner: $(capture_sshd_setting 'banner')"
 
 echo "[*] Backing up $SSHD_CONFIG"
 cp -p "$SSHD_CONFIG" "$SSHD_BAK"
+
+# ---------------------------------------------------------------------------
+# Step 1b: Sanitize drop-in configs that override hardening
+# ---------------------------------------------------------------------------
+
+echo "[*] Checking SSH drop-in config files for conflicting directives..."
+sanitize_dropin_configs
 
 # ---------------------------------------------------------------------------
 # Step 2: Apply SSH hardening settings

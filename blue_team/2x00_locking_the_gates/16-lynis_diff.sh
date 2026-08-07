@@ -138,7 +138,11 @@ def load_findings(filepath):
     with open(filepath, 'r') as f:
         data = json.load(f)
 
-    score = data.get("score", data.get("lynis_score", "N/A"))
+    # Check all possible key names for the score
+    score = data.get("hardening_index",
+                     data.get("score",
+                     data.get("lynis_score",
+                     data.get("hardening_score", "N/A"))))
     findings = data.get("findings", [])
 
     # Extract finding IDs or descriptions for comparison

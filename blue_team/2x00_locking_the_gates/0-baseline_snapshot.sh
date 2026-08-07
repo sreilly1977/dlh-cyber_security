@@ -51,17 +51,14 @@ banner "1. SYSTEM IDENTIFICATION"
 
 HOSTNAME_VAL="$(hostname)"
 
-# OS — try /etc/os-release first (works on most modern distros)
 if [[ -f /etc/os-release ]]; then
-    # shellcheck disable=SC1091
-    . /etc/os-release
-    OS_PRETTY="${PRETTY_NAME:-unknown}"
+    OS_PRETTY="$(. /etc/os-release 2>/dev/null && printf '%s' "${PRETTY_NAME:-unknown}" 2>/dev/null || echo "unknown")"
 else
     OS_PRETTY="unknown (/etc/os-release not found)"
 fi
 
 KERNEL_VAL="$(uname -r)"
-UPTIME_VAL="$(uptime -p 2>/dev/null || uptime)"
+UPTIME_VAL="$(uptime -p 2>/dev/null || uptime 2>/dev/null || echo "unknown")"
 
 {
     echo "Hostname : $HOSTNAME_VAL"
@@ -77,16 +74,21 @@ UPTIME_VAL="$(uptime -p 2>/dev/null || uptime)"
 # ==================================================================
 banner "2. RUNNING SERVICES"
 
-# Use systemctl if available (systemd), otherwise fall back to service(8)
+SVC_COUNT=0
+
 if command -v systemctl &>/dev/null && systemctl list-units &>/dev/null 2>&1; then
+    # Temporarily disable pipefail for systemctl pipelines
+    set +o pipefail
     systemctl list-units --type=service --all --no-pager --no-legend \
-        | awk '{print $1, $3, $4}' >> "$REPORT" 2>&1
+        | awk '{print $1, $3, $4}' >> "$REPORT" 2>&1 || true
     SVC_COUNT=$(systemctl list-units --type=service --state=running \
-                --no-pager --no-legend 2>/dev/null | wc -l)
+                --no-pager --no-legend 2>/dev/null | wc -l || echo "0")
+    set -o pipefail
 else
     # Non-systemd fallback
     service --status-all 2>/dev/null >> "$REPORT" || echo "(service command unavailable)" >> "$REPORT"
-    SVC_COUNT=$(service --status-all 2>/dev/null | grep -c '\[ + \]' || echo 0)
+    SVC_COUNT=$(service --status-all 2>/dev/null | grep -c '\[ + \]' || true)
+    [[ -z "$SVC_COUNT" ]] && SVC_COUNT=0
 fi
 
 echo "Running services captured." >> "$REPORT"
@@ -96,15 +98,20 @@ echo "Running services captured." >> "$REPORT"
 # ==================================================================
 banner "3. OPEN PORTS AND LISTENING SOCKETS"
 
+PORT_COUNT=0
+
 if command -v ss &>/dev/null; then
-    ss -tulnp >> "$REPORT" 2>&1
-    PORT_COUNT=$(ss -tulnH 2>/dev/null | wc -l)
+    ss -tulnp >> "$REPORT" 2>&1 || true
+    set +o pipefail
+    PORT_COUNT=$(ss -tulnH 2>/dev/null | wc -l || echo "0")
+    set -o pipefail
 elif command -v netstat &>/dev/null; then
-    netstat -tulnp >> "$REPORT" 2>&1
-    PORT_COUNT=$(netstat -tulnH 2>/dev/null | wc -l)
+    netstat -tulnp >> "$REPORT" 2>&1 || true
+    set +o pipefail
+    PORT_COUNT=$(netstat -tulnH 2>/dev/null | wc -l || echo "0")
+    set -o pipefail
 else
     echo "(Neither ss nor netstat available)" >> "$REPORT"
-    PORT_COUNT=0
 fi
 
 echo "Listening sockets captured." >> "$REPORT"
@@ -114,10 +121,10 @@ echo "Listening sockets captured." >> "$REPORT"
 # ==================================================================
 banner "4. SUID BINARIES"
 
-# find SUID files (numeric-permission test: 4000 bit set)
-mapfile -t SUID_LIST < <(find / -xdev -type f -perm -4000 -exec ls -l {} \; 2>/dev/null \
-                         || true)
-printf '%s\n' "${SUID_LIST[@]}" >> "$REPORT"
+mapfile -t SUID_LIST < <(find / -xdev -type f -perm -4000 -exec ls -l {} \; 2>/dev/null || true)
+if [[ ${#SUID_LIST[@]} -gt 0 ]]; then
+    printf '%s\n' "${SUID_LIST[@]}" >> "$REPORT"
+fi
 SUID_COUNT=${#SUID_LIST[@]}
 
 # ==================================================================
@@ -125,9 +132,10 @@ SUID_COUNT=${#SUID_LIST[@]}
 # ==================================================================
 banner "5. SGID BINARIES"
 
-mapfile -t SGID_LIST < <(find / -xdev -type f -perm -2000 -exec ls -l {} \; 2>/dev/null \
-                         || true)
-printf '%s\n' "${SGID_LIST[@]}" >> "$REPORT"
+mapfile -t SGID_LIST < <(find / -xdev -type f -perm -2000 -exec ls -l {} \; 2>/dev/null || true)
+if [[ ${#SGID_LIST[@]} -gt 0 ]]; then
+    printf '%s\n' "${SGID_LIST[@]}" >> "$REPORT"
+fi
 SGID_COUNT=${#SGID_LIST[@]}
 
 # ==================================================================
@@ -143,7 +151,9 @@ mapfile -t WW_LIST < <(
         -exec ls -l {} \; 2>/dev/null \
     || true
 )
-printf '%s\n' "${WW_LIST[@]}" >> "$REPORT"
+if [[ ${#WW_LIST[@]} -gt 0 ]]; then
+    printf '%s\n' "${WW_LIST[@]}" >> "$REPORT"
+fi
 WW_COUNT=${#WW_LIST[@]}
 
 # ==================================================================
@@ -151,10 +161,7 @@ WW_COUNT=${#WW_LIST[@]}
 # ==================================================================
 banner "7. SYSCTL SECURITY PARAMETERS"
 
-# Curated list of security-relevant keys (will silently skip any that
-# don't exist on this kernel).
 SYSCTL_KEYS=(
-    # --- IP networking ---
     net.ipv4.ip_forward
     net.ipv4.conf.all.send_redirects
     net.ipv4.conf.default.send_redirects
@@ -171,23 +178,17 @@ SYSCTL_KEYS=(
     net.ipv6.conf.all.accept_redirects
     net.ipv6.conf.default.accept_redirects
     net.ipv6.conf.all.disable_ipv6
-
-    # --- Kernel hardening ---
     kernel.randomize_va_space
     kernel.kptr_restrict
     kernel.dmesg_restrict
     kernel.perf_event_paranoid
     kernel.yama.ptrace_scope
     kernel.exec-shield
-
-    # --- Filesystem protections ---
     fs.suid_dumpable
     fs.protected_hardlinks
     fs.protected_symlinks
     fs.protected_fifos
     fs.protected_regular
-
-    # --- User limits ---
     kernel.core_uses_pid
 )
 
@@ -208,8 +209,6 @@ SSH_CONFIG="/etc/ssh/sshd_config"
 SSHD_DIR="/etc/ssh/sshd_config.d"
 
 if [[ -f "$SSH_CONFIG" ]]; then
-    # Show the effective config: main file plus any Include'd snippets,
-    # stripped of comments and blank lines.
     {
         echo "--- $SSH_CONFIG (non-comment, non-blank) ---"
         grep -vE '^\s*#|^\s*$' "$SSH_CONFIG" 2>/dev/null || echo "(empty or unreadable)"
@@ -228,11 +227,11 @@ else
     echo "(sshd_config not found at $SSH_CONFIG)" >> "$REPORT"
 fi
 
-# Also capture the effective runtime config if sshd supports -T
+# Capture effective runtime config if sshd supports -T
 if command -v sshd &>/dev/null; then
     echo "" >> "$REPORT"
     echo "--- Effective runtime config (sshd -T) ---" >> "$REPORT"
-    sshd -T 2>>"$REPORT" >> "$REPORT" || echo "(sshd -T not available or sshd not running)" >> "$REPORT"
+    sshd -T >> "$REPORT" 2>&1 || echo "(sshd -T not available or sshd not running)" >> "$REPORT"
 fi
 
 # ==================================================================
@@ -240,7 +239,6 @@ fi
 # ==================================================================
 banner "9. USER ACCOUNTS AND SUDO GROUP MEMBERSHIP"
 
-# --- Normal user accounts (UID >= 1000 on most distros) ---
 {
     echo "--- Users with login shells (UID >= 1000) ---"
     awk -F: '($3 >= 1000) && ($7 !~ /(nologin|false|sync|shutdown|halt)/) {printf "  %-20s UID=%-6s shell=%s\n", $1, $3, $7}' /etc/passwd
@@ -259,7 +257,7 @@ banner "9. USER ACCOUNTS AND SUDO GROUP MEMBERSHIP"
     echo "--- Password policy (aging defaults) ---"
     if [[ -f /etc/login.defs ]]; then
         grep -E '^\s*(PASS_MAX_DAYS|PASS_MIN_DAYS|PASS_WARN_AGE|ENCRYPT_METHOD)' /etc/login.defs 2>/dev/null \
-            | sed 's/^/  /'
+            | sed 's/^/  /' || true
     else
         echo "  (/etc/login.defs not found)"
     fi
@@ -288,7 +286,4 @@ World-writable files: $WW_COUNT
 Login-shell users: $USER_COUNT
 EOF
 
-# ==================================================================
-# Exit cleanly
-# ==================================================================
 exit 0
