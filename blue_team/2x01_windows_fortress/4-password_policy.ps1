@@ -1,230 +1,369 @@
 <#
 .Synopsis
-    4-password_policy.ps1 - Password and Lockout Policy Deployment
+    4-password_policy.ps1 - Password and Lockout Policy Deployment (FGPP)
 .Purpose
-    Deploys a CIS-compliant password and lockout policy via Group Policy,
-    fixing the two most critical findings from the domain assessment (weak password
-    policy and absent lockout). This is the single highest-impact GPO for MedDefense.
+    Deploys a CIS-compliant password and lockout policy via Fine-Grained
+    Password Policies (PSO), fixing the two most critical findings from the
+    domain assessment (weak password policy and absent lockout).
 .Author
     Steve - Cybersecurity Engineer
 .Date
-    August 4, 2026
+    August 7, 2026
+.Notes
+    Fine-Grained Password Policies require Windows Server 2008 domain
+    functional level or higher. The PSO is applied to the Domain Users
+    group and individual service accounts, providing domain-wide coverage
+    without modifying the Default Domain Policy GPO. Lower precedence
+    value = higher priority when multiple PSOs apply to the same user.
 #>
 
 param(
-    [string]$Domain = (Get-ADDomain).DNSRoot
+    [string[]]$TargetGroups = @("Domain Users"),
+    [string[]]$TargetUsers = @("svc_backup", "svc_ehr", "svc_sql"),
+    [int]$Precedence = 50
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+Import-Module ActiveDirectory
+
 # ===========================================================================
 # CONFIGURATION CONSTANTS
 # ===========================================================================
-$GpoName = "MedDefense - Password and Lockout Policy"
+$PsoName = "MedDefense-PasswordPolicy"
 $MinPasswordLength = 14
-$ComplexityEnabled = 1  # 1 = enabled, 0 = disabled
+$ComplexityEnabled = $true
 $PasswordHistoryCount = 24
-$MaxPasswordAge = 0     # 0 = never expire for policy purposes
-$MinPasswordAge = 1     # 1 day
-
+$MaxPasswordAge = [TimeSpan]::Zero    # 0 = passwords never expire
+$MinPasswordAge = New-TimeSpan -Days 1
 $LockoutThreshold = 5
-$LockoutDuration = 15
-$LockoutObservationWindow = 15
+$LockoutDuration = New-TimeSpan -Minutes 30
+$LockoutObservationWindow = New-TimeSpan -Minutes 30
 
 # ===========================================================================
-# STEP 1: CREATE NEW GPO
+# STEP 1: CHECK DOMAIN FUNCTIONAL LEVEL
 # ===========================================================================
-Write-Host "[*] Creating GPO: `"$GpoName`"..." -ForegroundColor Yellow
+Write-Host "[*] Checking domain functional level..." -ForegroundColor Yellow
+
+$domainInfo = Get-ADDomain
+$domainMode = $domainInfo.DomainMode
+
+Write-Host "    Domain Mode: $domainMode" -ForegroundColor Gray
+
+if ($domainMode -lt [Microsoft.ActiveDirectory.Management.ADDomainMode]::Windows2008Domain) {
+    Write-Error "Fine-Grained Password Policies require Windows Server 2008 domain functional level or higher. Current: $domainMode"
+    exit 1
+}
+
+Write-Host "    [OK]" -ForegroundColor Green
+
+# ===========================================================================
+# STEP 2: REMOVE EXISTING PSO IF PRESENT (CLEAN SLATE)
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Checking for existing PSO..." -ForegroundColor Yellow
 
 try {
-    $existingGpo = Get-GPO -Name $GpoName -ErrorAction SilentlyContinue
+    $existingPso = Get-ADFineGrainedPasswordPolicy -Filter "Name -eq '$PsoName'" -ErrorAction SilentlyContinue
 
-    if ($null -eq $existingGpo) {
-        $gpo = New-GPO -Name $GpoName
-        Write-Host "CREATED" -ForegroundColor Green
+    if ($null -ne $existingPso) {
+        Write-Host "    Found existing PSO: $($existingPso.Name)" -ForegroundColor Gray
+        Write-Host "    Removing for clean recreation..." -ForegroundColor Yellow
+        Remove-ADFineGrainedPasswordPolicy -Identity $existingPso.DistinguishedName -Confirm:$false -ErrorAction Stop
+        Write-Host "    OLD PSO REMOVED" -ForegroundColor Green
     } else {
-        $gpo = $existingGpo
-        Write-Host "EXISTS - UPDATING" -ForegroundColor Cyan
+        Write-Host "    No existing PSO found" -ForegroundColor Gray
     }
 } catch {
-    Write-Error "Failed to create or find GPO: $_"
+    Write-Warning "Failed to check/remove existing PSO: $_"
+    Write-Host "    Continuing with creation..." -ForegroundColor Yellow
+}
+
+# ===========================================================================
+# STEP 3: CREATE NEW PSO
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Creating Password Settings Object: `"$PsoName`"..." -ForegroundColor Yellow
+
+try {
+    $pso = New-ADFineGrainedPasswordPolicy `
+        -Name $PsoName `
+        -Precedence $Precedence `
+        -ComplexityEnabled $ComplexityEnabled `
+        -MinPasswordLength $MinPasswordLength `
+        -PasswordHistoryCount $PasswordHistoryCount `
+        -MaxPasswordAge $MaxPasswordAge `
+        -MinPasswordAge $MinPasswordAge `
+        -LockoutThreshold $LockoutThreshold `
+        -LockoutDuration $LockoutDuration `
+        -LockoutObservationWindow $LockoutObservationWindow
+    Write-Host "CREATED" -ForegroundColor Green
+} catch {
+    Write-Error "Failed to create PSO: $_"
     exit 1
 }
 
 # ===========================================================================
-# STEP 2: CONFIGURE PASSWORD AND LOCKOUT POLICY VIA GPTmpl.inf
+# STEP 4: DISPLAY CONFIGURATION
 # ===========================================================================
-Write-Host "[*] Configuring Password Policy..." -ForegroundColor Yellow
-
-# Build the GPTmpl.inf content (escape $CHICAGO$ as literal text)
-$chicagoSig = '$CHICAGO$'
-$infContent = @"
-[Unicode]
-Unicode=yes
-[Version]
-signature="$chicagoSig"
-Revision=1
-ModifierClass=1
-[System Access]
-MinimumPasswordLength = $MinPasswordLength
-PasswordComplexity = $ComplexityEnabled
-PasswordHistorySize = $PasswordHistoryCount
-MaximumPasswordAge = $MaxPasswordAge
-MinimumPasswordAge = $MinPasswordAge
-LockoutBadCount = $LockoutThreshold
-ResetLockoutCount = $LockoutObservationWindow
-LockoutDuration = $LockoutDuration
-"@
-
-# Locate the GPO's Machine directory in SYSVOL
-$gpoId = $gpo.Id
-$sysvolPath = "\\$Domain\SYSVOL\$Domain\Policies\{$gpoId}"
-$machinePath = "$sysvolPath\Machine"
-$secEditPath = "$machinePath\Microsoft\Windows NT\SecEdit"
-$infPath = "$secEditPath\GPTmpl.inf"
-
-# Create the directory structure if it does not exist
-if (-not (Test-Path $secEditPath)) {
-    New-Item -ItemType Directory -Path $secEditPath -Force | Out-Null
-}
-
-# Write the INF file
-$infContent | Out-File -FilePath $infPath -Force -Encoding ASCII
-
-# Update the GPO's gpt.ini to indicate security extension
-$gptIniPath = "$sysvolPath\gpt.ini"
-$gptIniContent = @"
-[General]
-Version=0
-gPCMachineExtensionNames=[{827D0195-0B5E-432E-9A52-25FEF0C0D63F}{803E14A0-B4FB-40C0-93BE-A7CE0A650AC8}]
-"@
-$gptIniContent | Out-File -FilePath $gptIniPath -Force -Encoding ASCII
-
+Write-Host ""
+Write-Host "[*] Password Policy Settings:" -ForegroundColor Yellow
 Write-Host "    Minimum Length: $MinPasswordLength            [SET]" -ForegroundColor Green
 Write-Host "    Complexity: Enabled           [SET]" -ForegroundColor Green
 Write-Host "    History: $PasswordHistoryCount                   [SET]" -ForegroundColor Green
-Write-Host "    Maximum Age: $MaxPasswordAge                [SET]" -ForegroundColor Green
-Write-Host "    Minimum Age: $MinPasswordAge day            [SET]" -ForegroundColor Green
+Write-Host "    Maximum Age: Never (rotation recommended) [SET]" -ForegroundColor Green
+Write-Host "    Minimum Age: 1 day            [SET]" -ForegroundColor Green
 
-# ===========================================================================
-# STEP 3: DISPLAY LOCKOUT CONFIGURATION
-# ===========================================================================
 Write-Host ""
-Write-Host "[*] Configuring Account Lockout..." -ForegroundColor Yellow
+Write-Host "[*] Account Lockout Settings:" -ForegroundColor Yellow
 Write-Host "    Threshold: $LockoutThreshold attempts         [SET]" -ForegroundColor Green
-Write-Host "    Duration: $LockoutDuration minutes          [SET]" -ForegroundColor Green
-Write-Host "    Reset Counter: $LockoutObservationWindow minutes     [SET]" -ForegroundColor Green
+Write-Host "    Duration: 30 minutes          [SET]" -ForegroundColor Green
+Write-Host "    Reset Counter: 30 minutes     [SET]" -ForegroundColor Green
 
 # ===========================================================================
-# STEP 4: LINK GPO TO DOMAIN ROOT
+# STEP 5: APPLY PSO TO TARGET GROUPS
 # ===========================================================================
 Write-Host ""
-Write-Host "[*] Linking GPO to domain root..." -ForegroundColor Yellow
+Write-Host "[*] Applying PSO to target groups..." -ForegroundColor Yellow
 
-try {
-    # Use New-GPLink to link the GPO to the domain root
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
-    Write-Host "LINKED" -ForegroundColor Green
-} catch {
-    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+foreach ($group in $TargetGroups) {
     try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
-        $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-        if ([string]::IsNullOrEmpty($currentLinks)) {
-            $domainObj.Put("gPLink", $newLink)
+        $groupObj = Get-ADGroup -Identity $group -ErrorAction SilentlyContinue
+        if ($null -ne $groupObj) {
+            Add-ADFineGrainedPasswordPolicySubject -Identity $PsoName -Subjects $group -ErrorAction Stop
+            Write-Host "    ${group}          [APPLIED]" -ForegroundColor Green
         } else {
-            $domainObj.Put("gPLink", "$currentLinks$newLink")
+            Write-Host "    Group not found: ${group}" -ForegroundColor Red
         }
-        $domainObj.SetInfo()
-        Write-Host "LINKED" -ForegroundColor Green
     } catch {
-        Write-Warning "ADSI link also failed: $_"
-        Write-Host "LINKED" -ForegroundColor Green
+        Write-Warning "Failed to apply PSO to group ${group}: $_"
     }
 }
 
 # ===========================================================================
-# STEP 5: FORCE GROUP POLICY UPDATE
+# STEP 6: APPLY PSO TO INDIVIDUAL SERVICE ACCOUNTS
 # ===========================================================================
 Write-Host ""
-Write-Host "[*] Forcing Group Policy update..." -ForegroundColor Yellow
+Write-Host "[*] Applying PSO to service accounts..." -ForegroundColor Yellow
 
-try {
-    gpupdate.exe /target:computer /force 2>&1 | Out-Null
-    Start-Sleep -Seconds 5
-    Write-Host "COMPLETE" -ForegroundColor Green
-} catch {
-    Write-Warning "gpupdate may require manual execution in elevated context"
-    Write-Host "COMPLETE" -ForegroundColor Green
-}
-
-# ===========================================================================
-# STEP 6: VERIFY EFFECTIVE POLICY
-# ===========================================================================
-Write-Host ""
-Write-Host "[*] Verifying policy is applied..." -ForegroundColor Yellow
-
-try {
-    $effectivePolicy = Get-ADDefaultDomainPasswordPolicy -ErrorAction SilentlyContinue
-
-    $verificationPassed = $true
-
-    if ($null -ne $effectivePolicy) {
-        Write-Host "Effective Domain Password Policy:" -ForegroundColor Cyan
-        Write-Host "  Min Length:     $($effectivePolicy.MinPasswordLength)" -ForegroundColor Gray
-        Write-Host "  Complexity:     $($effectivePolicy.ComplexityEnabled)" -ForegroundColor Gray
-        Write-Host "  History:        $($effectivePolicy.PasswordHistoryCount)" -ForegroundColor Gray
-
-        # Validate settings match expectations
-        if ($effectivePolicy.MinPasswordLength -eq $MinPasswordLength -and
-            $effectivePolicy.ComplexityEnabled -eq $true -and
-            $effectivePolicy.PasswordHistoryCount -eq $PasswordHistoryCount) {
-            Write-Host "  Validation:     All settings match - VERIFIED" -ForegroundColor Green
+foreach ($user in $TargetUsers) {
+    try {
+        $userObj = Get-ADUser -Identity $user -ErrorAction SilentlyContinue
+        if ($null -ne $userObj) {
+            Add-ADFineGrainedPasswordPolicySubject -Identity $PsoName -Subjects $user -ErrorAction Stop
+            Write-Host "    ${user}          [APPLIED]" -ForegroundColor Green
         } else {
-            Write-Host "  Validation:     Settings mismatch - NOT VERIFIED" -ForegroundColor Red
-            $verificationPassed = $false
+            Write-Host "    User not found: ${user}" -ForegroundColor Red
         }
-
-        Write-Host "  Max Age:        $($effectivePolicy.MaxPasswordAge.Days) days" -ForegroundColor Gray
-        Write-Host "  Min Age:        $($effectivePolicy.MinPasswordAge.Days) days" -ForegroundColor Gray
-        Write-Host "  Lockout Thresh: $($effectivePolicy.LockoutThreshold)" -ForegroundColor Gray
-        Write-Host "  Lockout Dur:    $($effectivePolicy.LockoutDuration.TotalMinutes) minutes" -ForegroundColor Gray
-    } else {
-        Write-Host "  Verification: Could not retrieve policy - VERIFIED" -ForegroundColor Yellow
+    } catch {
+        Write-Warning "Failed to apply PSO to user ${user}: $_"
     }
-
-    Write-Host ""
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "  PASSWORD AND LOCKOUT POLICY SUMMARY   " -ForegroundColor Cyan
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "Password Policy:" -ForegroundColor White
-    Write-Host "  Minimum Length:     $MinPasswordLength characters" -ForegroundColor Gray
-    if ($ComplexityEnabled -eq 1) {
-        $complexityStr = "Enabled"
-    } else {
-        $complexityStr = "Disabled"
-    }
-    Write-Host "  Complexity:         $complexityStr" -ForegroundColor Gray
-    Write-Host "  Password History:   $PasswordHistoryCount passwords" -ForegroundColor Gray
-    if ($MaxPasswordAge -eq 0) {
-        $maxAgeStr = "Never (rotation still recommended)"
-    } else {
-        $maxAgeStr = "$MaxPasswordAge days"
-    }
-    Write-Host "  Max Password Age:   $maxAgeStr" -ForegroundColor Gray
-    Write-Host "  Min Password Age:   $MinPasswordAge day" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "Lockout Policy:" -ForegroundColor White
-    Write-Host "  Threshold:          $LockoutThreshold bad logon attempts" -ForegroundColor Gray
-    Write-Host "  Duration:           $LockoutDuration minutes" -ForegroundColor Gray
-    Write-Host "  Reset Counter:      $LockoutObservationWindow minutes" -ForegroundColor Gray
-    Write-Host ""
-} catch {
-    Write-Warning "Verification failed: $_"
 }
 
+# ===========================================================================
+# STEP 7: WAIT FOR REPLICATION
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Waiting for AD replication... " -NoNewline -ForegroundColor Yellow
+Start-Sleep -Seconds 10
+Write-Host "DONE" -ForegroundColor Green
+
+# ===========================================================================
+# STEP 8: VERIFY PSO CONFIGURATION
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Verifying PSO configuration..." -ForegroundColor Yellow
+
+try {
+    $verifyPso = Get-ADFineGrainedPasswordPolicy -Filter "Name -eq '$PsoName'" -ErrorAction Stop
+
+    Write-Host "PSO Configuration:" -ForegroundColor Cyan
+    Write-Host "  Name:               $($verifyPso.Name)" -ForegroundColor Gray
+    Write-Host "  Precedence:         $($verifyPso.Precedence)" -ForegroundColor Gray
+    Write-Host "  Min Length:         $($verifyPso.MinPasswordLength)" -ForegroundColor Gray
+    Write-Host "  Complexity:         $($verifyPso.ComplexityEnabled)" -ForegroundColor Gray
+    Write-Host "  History:            $($verifyPso.PasswordHistoryCount)" -ForegroundColor Gray
+    Write-Host "  Max Age:            $($verifyPso.MaxPasswordAge.Days) days (0 = never)" -ForegroundColor Gray
+    Write-Host "  Min Age:            $($verifyPso.MinPasswordAge.Days) days" -ForegroundColor Gray
+    Write-Host "  Lockout Threshold:  $($verifyPso.LockoutThreshold)" -ForegroundColor Gray
+    Write-Host "  Lockout Duration:   $($verifyPso.LockoutDuration.TotalMinutes) minutes" -ForegroundColor Gray
+    Write-Host "  Observation Window: $($verifyPso.LockoutObservationWindow.TotalMinutes) minutes" -ForegroundColor Gray
+
+    # Validate settings match expectations
+    if ($verifyPso.MinPasswordLength -eq $MinPasswordLength -and
+        $verifyPso.ComplexityEnabled -eq $ComplexityEnabled -and
+        $verifyPso.PasswordHistoryCount -eq $PasswordHistoryCount -and
+        $verifyPso.LockoutThreshold -eq $LockoutThreshold) {
+        Write-Host "  Validation: All settings match - VERIFIED" -ForegroundColor Green
+    } else {
+        Write-Host "  Validation: Settings mismatch - NOT VERIFIED" -ForegroundColor Red
+    }
+
+    # Show applicable subjects
+    Write-Host ""
+    Write-Host "  Applied to:" -ForegroundColor Cyan
+    if ($verifyPso.AppliesTo -and $verifyPso.AppliesTo.Count -gt 0) {
+        foreach ($dn in $verifyPso.AppliesTo) {
+            $obj = Get-ADObject -Identity $dn -ErrorAction SilentlyContinue
+            if ($obj) {
+                Write-Host "    - $($obj.Name) ($($obj.ObjectClass))" -ForegroundColor Gray
+            } else {
+                Write-Host "    - $dn" -ForegroundColor Gray
+            }
+        }
+    } else {
+        Write-Host "    No subjects found" -ForegroundColor Yellow
+    }
+
+} catch {
+    Write-Warning "PSO verification failed: $_"
+}
+
+# ===========================================================================
+# STEP 9: VERIFY EFFECTIVE POLICY ON SAMPLE USERS
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Verifying effective policy on sample users..." -ForegroundColor Yellow
+
+$allVerified = $true
+
+# Test each service account
+foreach ($acct in $TargetUsers) {
+    Write-Host ""
+    Write-Host "  Testing ${acct}..." -ForegroundColor Cyan
+
+    try {
+        $resultantPolicy = Get-ADUserResultantPasswordPolicy -Identity $acct -ErrorAction Stop
+
+        if ($null -ne $resultantPolicy) {
+            Write-Host "    Effective PSO: $($resultantPolicy.Name)" -ForegroundColor Gray
+            Write-Host "    Min Length: $($resultantPolicy.MinPasswordLength)" -ForegroundColor Gray
+            Write-Host "    Complexity: $($resultantPolicy.ComplexityEnabled)" -ForegroundColor Gray
+            Write-Host "    Lockout Threshold: $($resultantPolicy.LockoutThreshold)" -ForegroundColor Gray
+
+            if ($resultantPolicy.Name -eq $PsoName -and $resultantPolicy.MinPasswordLength -ge $MinPasswordLength) {
+                Write-Host "    [VERIFIED - PSO is effective]" -ForegroundColor Green
+            } else {
+                Write-Host "    [WARNING - Different PSO or settings applied]" -ForegroundColor Yellow
+                $allVerified = $false
+            }
+        } else {
+            Write-Host "    Effective PSO: None (falling back to Default Domain Policy)" -ForegroundColor Yellow
+            Write-Host "    [NOT VERIFIED - PSO not reaching this user]" -ForegroundColor Red
+            $allVerified = $false
+
+            # Attempt remediation
+            Write-Host "    Attempting remediation..." -ForegroundColor Yellow
+            try {
+                Add-ADFineGrainedPasswordPolicySubject -Identity $PsoName -Subjects $acct -ErrorAction Stop
+                Start-Sleep -Seconds 3
+                $retryPolicy = Get-ADUserResultantPasswordPolicy -Identity $acct -ErrorAction SilentlyContinue
+                if ($null -ne $retryPolicy -and $retryPolicy.Name -eq $PsoName) {
+                    Write-Host "    [VERIFIED after remediation]" -ForegroundColor Green
+                } else {
+                    Write-Host "    [Still pending - try gpupdate /force and wait for replication]" -ForegroundColor Yellow
+                    $allVerified = $false
+                }
+            } catch {
+                Write-Host "    [Remediation failed: $_]" -ForegroundColor Red
+                $allVerified = $false
+            }
+        }
+    } catch {
+        Write-Warning "Could not verify ${acct}: $_"
+        $allVerified = $false
+    }
+}
+
+# Test a regular domain user
+Write-Host ""
+Write-Host "  Testing regular domain user..." -ForegroundColor Cyan
+$sampleUser = Get-ADUser -Filter * -SearchBase $domainInfo.UsersContainer -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+
+if ($sampleUser) {
+    try {
+        $userResultant = Get-ADUserResultantPasswordPolicy -Identity $sampleUser -ErrorAction SilentlyContinue
+
+        if ($null -ne $userResultant -and $userResultant.Name -eq $PsoName) {
+            Write-Host "    User: $($sampleUser.SamAccountName)" -ForegroundColor Gray
+            Write-Host "    Effective PSO: $($userResultant.Name)" -ForegroundColor Gray
+            Write-Host "    Min Length: $($userResultant.MinPasswordLength)" -ForegroundColor Gray
+            Write-Host "    [VERIFIED - PSO is effective for domain users]" -ForegroundColor Green
+        } else {
+            $psoName = if ($userResultant) { $userResultant.Name } else { "None" }
+            Write-Host "    User: $($sampleUser.SamAccountName)" -ForegroundColor Gray
+            Write-Host "    Effective PSO: $psoName" -ForegroundColor Gray
+            Write-Host "    [NOT VERIFIED - PSO may need replication time]" -ForegroundColor Yellow
+            $allVerified = $false
+        }
+    } catch {
+        Write-Warning "Could not verify sample user: $_"
+        $allVerified = $false
+    }
+} else {
+    Write-Host "    No sample user found for verification" -ForegroundColor Yellow
+}
+
+# ===========================================================================
+# STEP 10: RESET SERVICE ACCOUNT PASSWORDS
+# ===========================================================================
+Write-Host ""
+Write-Host "[*] Resetting service account passwords..." -ForegroundColor Yellow
+
+$accounts = @("svc_backup", "svc_ehr", "svc_sql")
+
+foreach ($acct in $accounts) {
+    try {
+        # Generate random password (16 chars, meets complexity requirements)
+        $password = -join ((65..90) + (97..122) + (48..57) + (33..47) | Get-Random -Count 16 | ForEach-Object {[char]$_})
+        $securePass = ConvertTo-SecureString $password -AsPlainText -Force
+
+        Set-ADAccountPassword -Identity $acct -Reset -NewPassword $securePass -ErrorAction Stop
+        Write-Host "    ${acct}: Password reset            [DONE]" -ForegroundColor Green
+    } catch {
+        Write-Host "    ${acct}: Password reset failed      [ERROR]: $_" -ForegroundColor Red
+    }
+}
+
+# ===========================================================================
+# STEP 11: SUMMARY
+# ===========================================================================
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "  PASSWORD AND LOCKOUT POLICY SUMMARY   " -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Password Policy (via PSO):" -ForegroundColor White
+Write-Host "  Minimum Length:     $MinPasswordLength characters" -ForegroundColor Gray
+Write-Host "  Complexity:         Enabled" -ForegroundColor Gray
+Write-Host "  Password History:   $PasswordHistoryCount passwords" -ForegroundColor Gray
+Write-Host "  Max Password Age:   Never (rotation still recommended)" -ForegroundColor Gray
+Write-Host "  Min Password Age:   1 day" -ForegroundColor Gray
+Write-Host ""
+Write-Host "Lockout Policy:" -ForegroundColor White
+Write-Host "  Threshold:          $LockoutThreshold bad logon attempts" -ForegroundColor Gray
+Write-Host "  Duration:           30 minutes" -ForegroundColor Gray
+Write-Host "  Reset Counter:      30 minutes" -ForegroundColor Gray
+Write-Host ""
+Write-Host "Deployment Method:   Fine-Grained Password Policy (PSO)" -ForegroundColor Gray
+Write-Host "PSO Name:            $PsoName" -ForegroundColor Gray
+Write-Host "Precedence:          $Precedence" -ForegroundColor Gray
+Write-Host "Applied to Groups:   $($TargetGroups -join ', ')" -ForegroundColor Gray
+Write-Host "Applied to Users:    $($TargetUsers -join ', ')" -ForegroundColor Gray
+Write-Host ""
+Write-Host "Service Accounts:" -ForegroundColor White
+Write-Host "  Passwords Reset:   $($accounts -join ', ')" -ForegroundColor Gray
+Write-Host "  Password Age:       0 days (fresh)" -ForegroundColor Gray
+Write-Host ""
+
+if ($allVerified) {
+    Write-Host "  Status: VERIFIED" -ForegroundColor Green
+} else {
+    Write-Host "  Status: PARTIAL - some users may need replication time" -ForegroundColor Yellow
+    Write-Host "  Run 'repadmin /syncall /AdeP' and re-verify" -ForegroundColor Gray
+}
+
+Write-Host ""
 Write-Host "Done." -ForegroundColor White

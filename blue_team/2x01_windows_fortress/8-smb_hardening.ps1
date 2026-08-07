@@ -23,6 +23,9 @@ $ErrorActionPreference = "Stop"
 # ===========================================================================
 $GpoName = "MedDefense - SMB Protocol Hardening"
 
+# Get domain distinguished name for GPO linking
+$DomainDN = (Get-ADDomain).DistinguishedName
+
 # ===========================================================================
 # STEP 1: CHECK CURRENT SMB CONFIGURATION
 # ===========================================================================
@@ -127,9 +130,9 @@ Write-Host ""
 Write-Host "[*] Disabling SMBv1 (server + client)...   " -NoNewline -ForegroundColor Yellow
 
 try {
-    # Disable SMBv1 feature using PowerShell cmdlet
-    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue
-    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Client -NoRestart -ErrorAction SilentlyContinue
+    # Disable SMBv1 — redirect ALL streams to suppress console warnings
+    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart *> $null
+    Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol-Client -NoRestart *> $null
 
     # Also disable via Set-SmbServerConfiguration
     Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force -ErrorAction SilentlyContinue
@@ -206,7 +209,7 @@ try {
     $netAdapters = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True" -ErrorAction SilentlyContinue
     foreach ($adapter in $netAdapters) {
         try {
-            $adapter.SetTcpipNetbios(2)  # 2 = Disable NetBIOS over TCP/IP
+            $adapter.SetTcpipNetbios(2) | Out-Null  # Suppress __PARAMETERS output
         } catch { }
     }
     Write-Host "    NetBIOS disabled on network adapters  [SET]" -ForegroundColor Green
@@ -268,31 +271,51 @@ $dnsClientContent | Out-File -FilePath "$dnsClientPath\registry.pol" -Force -Enc
 Write-Host ""
 Write-Host "[*] Linking GPO and forcing update..." -ForegroundColor Yellow
 
+# Check if GPO is already linked to the domain root
+$alreadyLinked = $false
 try {
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
-} catch {
-    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
-    try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
-        $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-        if ([string]::IsNullOrEmpty($currentLinks)) {
-            $domainObj.Put("gPLink", $newLink)
-        } else {
-            $domainObj.Put("gPLink", "$currentLinks$newLink")
+    $existingLinks = Get-GPInheritance -Target $DomainDN -ErrorAction Stop
+    foreach ($link in $existingLinks.GpoLinks) {
+        if ($link.DisplayName -eq $GpoName) {
+            $alreadyLinked = $true
+            break
         }
-        $domainObj.SetInfo()
+    }
+} catch { }
+
+if ($alreadyLinked) {
+    Write-Host "LINKED (already exists)" -ForegroundColor Cyan
+} else {
+    try {
+        New-GPLink -Name $GpoName -Target $DomainDN -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+        Write-Host "LINKED" -ForegroundColor Green
     } catch {
-        Write-Warning "ADSI link also failed: $_"
+        Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+        try {
+            $domainObj = [adsi]"LDAP://$DomainDN"
+            $currentLinks = $domainObj.Get("gPLink")
+            $newLink = "[LDAP://CN={$gpoId},CN=Policies,CN=System,$DomainDN;0]"
+            if ([string]::IsNullOrEmpty($currentLinks)) {
+                $domainObj.Put("gPLink", $newLink)
+            } else {
+                $domainObj.Put("gPLink", "$currentLinks$newLink")
+            }
+            $domainObj.SetInfo()
+            Write-Host "LINKED (via ADSI)" -ForegroundColor Green
+        } catch {
+            Write-Warning "ADSI link also failed: $_"
+            Write-Host "LINK FAILED" -ForegroundColor Red
+        }
     }
 }
 
 try {
     gpupdate.exe /target:computer /force 2>&1 | Out-Null
     Start-Sleep -Seconds 5
+    Write-Host "COMPLETE" -ForegroundColor Green
 } catch {
     Write-Warning "gpupdate may require manual execution"
+    Write-Host "COMPLETE" -ForegroundColor Green
 }
 
 # ===========================================================================

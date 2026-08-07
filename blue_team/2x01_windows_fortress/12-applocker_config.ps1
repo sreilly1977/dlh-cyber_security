@@ -24,6 +24,9 @@ $ErrorActionPreference = "Stop"
 $GpoName = "MedDefense - AppLocker Policy"
 $ExportPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "applocker_policy.xml"
 
+# Get domain distinguished name for GPO linking
+$DomainDN = (Get-ADDomain).DistinguishedName
+
 # ===========================================================================
 # STEP 1: CREATE GPO
 # ===========================================================================
@@ -94,10 +97,15 @@ $appLockerXml = @"
         <FilePathCondition Path="%PROGRAMFILES(X86)%\*" />
       </Conditions>
     </FilePathRule>
-    <!-- Allow MedDefense-approved DicomViewer -->
-    <FilePathRule Id="c3c3c3c3-dddd-4ddd-9ddd-dddddddddddd" Name="Allow DicomViewer" Description="Allow DicomViewer.exe from MedImage Corp" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+       <!-- Allow MedDefense-approved DicomViewer (64-bit) -->
+    <FilePathRule Id="c3c3c3c3-dddd-4ddd-9ddd-dddddddddddd" Name="Allow DicomViewer (x64)" Description="Allow DicomViewer.exe from MedImage Corp" UserOrGroupSid="S-1-5-32-544" Action="Allow">
       <Conditions>
         <FilePathCondition Path="%PROGRAMFILES%\DicomViewer\DicomViewer.exe" />
+      </Conditions>
+    </FilePathRule>
+    <!-- Allow MedDefense-approved DicomViewer (32-bit) -->
+    <FilePathRule Id="c3c3c3c3-dddd-4ddd-9ddd-dddeadbeef01" Name="Allow DicomViewer (x86)" Description="Allow DicomViewer.exe from MedImage Corp (32-bit)" UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
         <FilePathCondition Path="%PROGRAMFILES(X86)%\DicomViewer\DicomViewer.exe" />
       </Conditions>
     </FilePathRule>
@@ -332,26 +340,41 @@ if (Test-Path $svcRegPath) {
 # ===========================================================================
 Write-Host "[*] Linking GPO... " -NoNewline -ForegroundColor Yellow
 
+# Check if GPO is already linked to the domain root
+$alreadyLinked = $false
 try {
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
-    Write-Host "COMPLETE" -ForegroundColor Green
-} catch {
-    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
-    try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
-        $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-        if ([string]::IsNullOrEmpty($currentLinks)) {
-            $domainObj.Put("gPLink", $newLink)
-        } else {
-            $domainObj.Put("gPLink", "$currentLinks$newLink")
+    $existingLinks = Get-GPInheritance -Target $DomainDN -ErrorAction Stop
+    foreach ($link in $existingLinks.GpoLinks) {
+        if ($link.DisplayName -eq $GpoName) {
+            $alreadyLinked = $true
+            break
         }
-        $domainObj.SetInfo()
+    }
+} catch { }
+
+if ($alreadyLinked) {
+    Write-Host "LINKED (already exists)" -ForegroundColor Cyan
+} else {
+    try {
+        New-GPLink -Name $GpoName -Target $DomainDN -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
         Write-Host "COMPLETE" -ForegroundColor Green
     } catch {
-        Write-Host "FAILED" -ForegroundColor Red
-        Write-Warning "GPO link failed: $_"
+        Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+        try {
+            $domainObj = [adsi]"LDAP://$DomainDN"
+            $currentLinks = $domainObj.Get("gPLink")
+            $newLink = "[LDAP://CN={$gpoId},CN=Policies,CN=System,$DomainDN;0]"
+            if ([string]::IsNullOrEmpty($currentLinks)) {
+                $domainObj.Put("gPLink", $newLink)
+            } else {
+                $domainObj.Put("gPLink", "$currentLinks$newLink")
+            }
+            $domainObj.SetInfo()
+            Write-Host "COMPLETE (via ADSI)" -ForegroundColor Green
+        } catch {
+            Write-Host "FAILED" -ForegroundColor Red
+            Write-Warning "GPO link failed: $_"
+        }
     }
 }
 

@@ -217,30 +217,72 @@ Write-Host "[*] Exporting PowerShell logging... " -NoNewline -ForegroundColor Ye
 try {
     $psRegBase = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell"
 
-    $scriptBlockLog = Get-ItemProperty -Path "$psRegBase\ScriptBlockLogging" -ErrorAction Stop
-    $moduleLog = Get-ItemProperty -Path "$psRegBase\ModuleLogging" -ErrorAction Stop
-    $transcription = Get-ItemProperty -Path "$psRegBase\Transcription" -ErrorAction Stop
+    # Safe registry reads - each key may or may not exist
+    $scriptBlockEnabled = $false
+    $moduleEnabled = $false
+    $transcriptionEnabled = $false
+    $transcriptDir = $null
 
-    # Check for recent Event ID 4104 (Script Block) entries
-    $event4104 = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4104} -MaxEvents 10 -ErrorAction SilentlyContinue)
-    $event4103 = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4103} -MaxEvents 10 -ErrorAction SilentlyContinue)
+    try {
+        $sbProps = Get-ItemProperty -Path "$psRegBase\ScriptBlockLogging" -ErrorAction SilentlyContinue
+        if ($null -ne $sbProps) {
+            $scriptBlockEnabled = ($sbProps.EnableScriptBlockLogging -eq 1)
+        }
+    } catch { }
+
+    try {
+        $modProps = Get-ItemProperty -Path "$psRegBase\ModuleLogging" -ErrorAction SilentlyContinue
+        if ($null -ne $modProps) {
+            $moduleEnabled = ($modProps.EnableModuleLogging -eq 1)
+        }
+    } catch { }
+
+    try {
+        $transProps = Get-ItemProperty -Path "$psRegBase\Transcription" -ErrorAction SilentlyContinue
+        if ($null -ne $transProps) {
+            $transcriptionEnabled = ($transProps.EnableTranscripting -eq 1)
+            $transcriptDir = $transProps.OutputDirectory
+        }
+    } catch { }
+
+    # Event log checks - wrapped individually
+    $event4104Count = 0
+    $event4103Count = 0
+
+    try {
+        $event4104Count = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4104} -MaxEvents 10 -ErrorAction SilentlyContinue).Count
+    } catch { }
+
+    try {
+        $event4103Count = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; Id=4103} -MaxEvents 10 -ErrorAction SilentlyContinue).Count
+    } catch { }
+
+    # Also check the non-policy registry path (direct config, not GPO)
+    if (-not $scriptBlockEnabled) {
+        try {
+            $sbDirect = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\PowerShell\ScriptBlockLogging" -ErrorAction SilentlyContinue
+            if ($null -ne $sbDirect) {
+                $scriptBlockEnabled = ($sbDirect.EnableScriptBlockLogging -eq 1)
+            }
+        } catch { }
+    }
 
     $state.powershell_logging = [ordered]@{
         script_block_logging = [ordered]@{
-            enabled   = ($scriptBlockLog.EnableScriptBlockLogging -eq 1)
-            event_id  = 4104
-            recent_events = $event4104.Count
+            enabled        = $scriptBlockEnabled
+            event_id       = 4104
+            recent_events  = $event4104Count
         }
         module_logging = [ordered]@{
-            enabled   = ($moduleLog.EnableModuleLogging -eq 1)
-            event_id  = 4103
-            recent_events = $event4103.Count
-            module_names = if ($moduleLog.ModuleNames) { $moduleLog.ModuleNames } else { @("*") }
+            enabled        = $moduleEnabled
+            event_id       = 4103
+            recent_events  = $event4103Count
+            module_names   = @("*")
         }
         transcription = [ordered]@{
-            enabled         = ($transcription.EnableTranscripting -eq 1)
-            output_directory = if ($transcription.OutputDirectory) { $transcription.OutputDirectory } else { $null }
-            enable_invocation_header = if ($transcription.EnableInvocationHeader) { $transcription.EnableInvocationHeader -eq 1 } else { $false }
+            enabled                  = $transcriptionEnabled
+            output_directory         = $transcriptDir
+            enable_invocation_header = $false
         }
         event_ids = [ordered]@{
             id_4103 = "Module Logging"
@@ -381,73 +423,87 @@ try {
 Write-Host "[*] Exporting AppLocker policy... " -NoNewline -ForegroundColor Yellow
 
 try {
-    # Enforcement modes from registry
-    $exeEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
-    $scriptEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
-    $msiEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Msi" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
-    $dllEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Dll" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
-    $appxEnforcement = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Appx" -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+    $srpBase = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2"
+
+    # Safe enforcement mode reads
+    $exeEnforcement = $null
+    $scriptEnforcement = $null
+    $msiEnforcement = $null
+    $dllEnforcement = $null
+    $appxEnforcement = $null
+
+    try { $exeEnforcement = (Get-ItemProperty -Path "$srpBase\Exe" -ErrorAction SilentlyContinue).EnforcementMode } catch { }
+    try { $scriptEnforcement = (Get-ItemProperty -Path "$srpBase\Script" -ErrorAction SilentlyContinue).EnforcementMode } catch { }
+    try { $msiEnforcement = (Get-ItemProperty -Path "$srpBase\Msi" -ErrorAction SilentlyContinue).EnforcementMode } catch { }
+    try { $dllEnforcement = (Get-ItemProperty -Path "$srpBase\Dll" -ErrorAction SilentlyContinue).EnforcementMode } catch { }
+    try { $appxEnforcement = (Get-ItemProperty -Path "$srpBase\Appx" -ErrorAction SilentlyContinue).EnforcementMode } catch { }
 
     function Get-EnforcementMode {
         param($value)
+        if ($null -eq $value) { return "NotConfigured" }
         switch ($value) {
-            1 { "Enforce" }
-            2 { "AuditOnly" }
-            3 { "NotConfigured" }
-            default { "NotConfigured" }
+            1 { return "Enforce" }
+            2 { return "AuditOnly" }
+            3 { return "NotConfigured" }
+            default { return "NotConfigured" }
         }
     }
 
-    # Count rules from registry
-    $exeRules = @(Get-ChildItem -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe" -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -ne "EnforcementMode" -and $_.PSChildName -match "^[{(]?[0-9a-fA-F-]{36}[)}]?$" })
-    $scriptRules = @(Get-ChildItem -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script" -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -ne "EnforcementMode" -and $_.PSChildName -match "^[{(]?[0-9a-fA-F-]{36}[)}]?$" })
-
-    # Exe rule details
+    # Safe rule counting
+    $exeRules = @()
+    $scriptRules = @()
     $exeRuleList = @()
-    foreach ($rule in $exeRules) {
-        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction Stop
-        $exeRuleList += [ordered]@{
-            guid        = $rule.PSChildName
-            name        = $ruleProps.Name
-            description = $ruleProps.Description
-        }
-    }
-
-    # Script rule details
     $scriptRuleList = @()
-    foreach ($rule in $scriptRules) {
-        $ruleProps = Get-ItemProperty -Path $rule.PSPath -ErrorAction Stop
-        $scriptRuleList += [ordered]@{
-            guid        = $rule.PSChildName
-            name        = $ruleProps.Name
-            description = $ruleProps.Description
-        }
+
+    try {
+        $exeRules = @(Get-ChildItem -Path "$srpBase\Exe" -ErrorAction SilentlyContinue |
+            Where-Object { $_.PSChildName -match "^[{(]?[0-9a-fA-F-]{36}[)}]?$" })
+    } catch { }
+
+    try {
+        $scriptRules = @(Get-ChildItem -Path "$srpBase\Script" -ErrorAction SilentlyContinue |
+            Where-Object { $_.PSChildName -match "^[{(]?[0-9a-fA-F-]{36}[)}]?$" })
+    } catch { }
+
+    foreach ($rule in $exeRules) {
+        try {
+            $props = Get-ItemProperty -Path $rule.PSPath -ErrorAction SilentlyContinue
+            $exeRuleList += [ordered]@{
+                guid        = $rule.PSChildName
+                name        = if ($props -and $props.Name) { $props.Name } else { "Unknown" }
+                description = if ($props -and $props.Description) { $props.Description } else { "" }
+            }
+        } catch { }
     }
 
-    # Total rule count
+    foreach ($rule in $scriptRules) {
+        try {
+            $props = Get-ItemProperty -Path $rule.PSPath -ErrorAction SilentlyContinue
+            $scriptRuleList += [ordered]@{
+                guid        = $rule.PSChildName
+                name        = if ($props -and $props.Name) { $props.Name } else { "Unknown" }
+                description = if ($props -and $props.Description) { $props.Description } else { "" }
+            }
+        } catch { }
+    }
+
     $totalRules = $exeRules.Count + $scriptRules.Count
 
-    # Exported policy path
     $exportedPolicyPath = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "applocker_policy.xml"
 
     # AppIDSvc status
-    $appIdSvc = Get-Service -Name AppIDSvc -ErrorAction Stop
+    $appIdSvc = $null
+    try { $appIdSvc = Get-Service -Name AppIDSvc -ErrorAction SilentlyContinue } catch { }
 
-    # Retrieve effective AppLocker policy using Get-AppLockerPolicy
-    $appLockerPolicy = $null
-    try {
-        $appLockerPolicy = Get-AppLockerPolicy -Effective -Xml -ErrorAction SilentlyContinue
-    } catch {
-        $appLockerPolicy = $null
-    }
-
+    # Effective policy
     $effectivePolicyXml = $null
-    if ($appLockerPolicy) {
-        $effectivePolicyXml = $appLockerPolicy
-    }
+    try {
+        $eff = Get-AppLockerPolicy -Effective -Xml -ErrorAction SilentlyContinue
+        if ($eff) { $effectivePolicyXml = $eff }
+    } catch { }
 
-        $state.applocker_posture = [ordered]@{
-        appidsvc_status   = if ($appIdSvc) { $appIdSvc.Status.ToString() } else { "Not found" }
+    $state.applocker_posture = [ordered]@{
+        appidsvc_status     = if ($appIdSvc) { $appIdSvc.Status.ToString() } else { "Not found" }
         appidsvc_start_type = if ($appIdSvc) { $appIdSvc.StartType.ToString() } else { "N/A" }
         enforcement_modes = [ordered]@{
             exe      = Get-EnforcementMode $exeEnforcement
@@ -456,12 +512,12 @@ try {
             dll      = Get-EnforcementMode $dllEnforcement
             appx     = Get-EnforcementMode $appxEnforcement
         }
-        executable_rules  = $exeRuleList
-        script_rules      = $scriptRuleList
-        total_rule_count  = $totalRules
-        exported_policy_path = $exportedPolicyPath
+        executable_rules       = $exeRuleList
+        script_rules           = $scriptRuleList
+        total_rule_count       = $totalRules
+        exported_policy_path   = $exportedPolicyPath
         exported_policy_exists = (Test-Path $exportedPolicyPath)
-        effective_policy  = $effectivePolicyXml
+        effective_policy       = $effectivePolicyXml
     }
     Write-Host "$totalRules rules" -ForegroundColor Green
 } catch {
@@ -479,29 +535,30 @@ try {
     $tsMachineReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server"
     $raReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance"
 
-    $nlaValue = (Get-ItemProperty -Path $tsReg -Name "UserAuthentication" -ErrorAction Stop).UserAuthentication
-    $minEnc = (Get-ItemProperty -Path $tsReg -Name "MinEncryptionLevel" -ErrorAction Stop).MinEncryptionLevel
-    $idleTimeout = (Get-ItemProperty -Path $tsReg -Name "MaxIdleTime" -ErrorAction Stop).MaxIdleTime
-    $maxSession = (Get-ItemProperty -Path $tsReg -Name "MaxConnectionTime" -ErrorAction Stop).MaxConnectionTime
-    $clipDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableClip" -ErrorAction Stop).fDisableClip
-    $driveDisabled = (Get-ItemProperty -Path $tsReg -Name "fDisableCdm" -ErrorAction Stop).fDisableCdm
-    $raAllowHelp = (Get-ItemProperty -Path $raReg -Name "fAllowToGetHelp" -ErrorAction Stop).fAllowToGetHelp
+    # Use SilentlyContinue - keys may not exist until GPO applied
+    $nlaValue = Get-ItemProperty -Path $tsReg -Name "UserAuthentication" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty UserAuthentication
+    $minEnc = Get-ItemProperty -Path $tsReg -Name "MinEncryptionLevel" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty MinEncryptionLevel
+    $idleTimeout = Get-ItemProperty -Path $tsReg -Name "MaxIdleTime" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty MaxIdleTime
+    $maxSession = Get-ItemProperty -Path $tsReg -Name "MaxConnectionTime" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty MaxConnectionTime
+    $clipDisabled = Get-ItemProperty -Path $tsReg -Name "fDisableClip" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty fDisableClip
+    $driveDisabled = Get-ItemProperty -Path $tsReg -Name "fDisableCdm" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty fDisableCdm
+    $raAllowHelp = Get-ItemProperty -Path $raReg -Name "fAllowToGetHelp" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty fAllowToGetHelp
 
     # RDP Users group
-    $rdpMembers = @(Get-LocalGroupMember -Name "Remote Desktop Users" -ErrorAction Stop)
+    $rdpMembers = @(Get-LocalGroupMember -Name "Remote Desktop Users" -ErrorAction SilentlyContinue)
     $memberNames = @()
     foreach ($member in $rdpMembers) {
         $memberNames += $member.Name
     }
 
     $state.rdp_posture = [ordered]@{
-        nla_required      = ($nlaValue -eq 1)
-        encryption_level  = switch ($minEnc) { 1 { "Low" } 2 { "Client Compatible" } 3 { "High" } default { "Not Configured" } }
-        idle_timeout_min  = if ($idleTimeout) { [math]::Round($idleTimeout / 60000) } else { $null }
-        max_session_hours = if ($maxSession) { [math]::Round($maxSession / 3600000) } else { $null }
-        clipboard_disabled = ($clipDisabled -eq 1)
-        drive_redirection_disabled = ($driveDisabled -eq 1)
-        remote_assistance_disabled = ($raAllowHelp -eq 0)
+        nla_required      = if ($null -ne $nlaValue) { ($nlaValue -eq 1) } else { $false }
+        encryption_level  = if ($null -ne $minEnc) { switch ($minEnc) { 1 { "Low" } 2 { "Client Compatible" } 3 { "High" } default { "Not Configured" } } } else { "Not Configured" }
+        idle_timeout_min  = if ($null -ne $idleTimeout) { [math]::Round($idleTimeout / 60000) } else { $null }
+        max_session_hours = if ($null -ne $maxSession) { [math]::Round($maxSession / 3600000) } else { $null }
+        clipboard_disabled = if ($null -ne $clipDisabled) { ($clipDisabled -eq 1) } else { $false }
+        drive_redirection_disabled = if ($null -ne $driveDisabled) { ($driveDisabled -eq 1) } else { $false }
+        remote_assistance_disabled = if ($null -ne $raAllowHelp) { ($raAllowHelp -eq 0) } else { $false }
         allowed_group     = $memberNames
     }
     Write-Host "OK" -ForegroundColor Green
@@ -518,26 +575,26 @@ Write-Host "[*] Exporting authentication protocol posture... " -NoNewline -Foreg
 try {
     # Kerberos encryption types
     $kerbReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters"
-    $supportedEnc = (Get-ItemProperty -Path $kerbReg -Name "SupportedEncryptionTypes" -ErrorAction Stop).SupportedEncryptionTypes
+    $kerbSupport = Get-ItemProperty -Path $kerbReg -Name "SupportedEncryptionTypes" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SupportedEncryptionTypes
 
     $desEnabled = $false
     $rc4Enabled = $false
     $aesEnabled = $false
 
-    if ($supportedEnc) {
-        $desEnabled = ($supportedEnc -band 0x04) -ne 0    # DES_CBC_CRC or DES_CBC_MD5
-        $rc4Enabled = ($supportedEnc -band 0x20) -ne 0   # RC4-HMAC
-        $aesEnabled = (($supportedEnc -band 0x08) -ne 0 -or ($supportedEnc -band 0x10) -ne 0)  # AES128/AES256
+    if ($null -ne $kerbSupport -and $kerbSupport) {
+        $desEnabled = ($kerbSupport -band 0x04) -ne 0    # DES_CBC_CRC or DES_CBC_MD5
+        $rc4Enabled = ($kerbSupport -band 0x20) -ne 0   # RC4-HMAC
+        $aesEnabled = (($kerbSupport -band 0x08) -ne 0 -or ($kerbSupport -band 0x10) -ne 0)  # AES128/AES256
     } else {
         # Default Windows config includes DES and RC4
-        $desEnabled = $false
+        $desEnabled = $true
         $rc4Enabled = $true
         $aesEnabled = $true
     }
 
     # NTLMv1 check
     $lsaReg = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-    $lmCompat = (Get-ItemProperty -Path $lsaReg -Name "LmCompatibilityLevel" -ErrorAction Stop).LmCompatibilityLevel
+    $lmCompat = Get-ItemProperty -Path $lsaReg -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LmCompatibilityLevel
 
     $ntlmv1Enabled = $false
     if ($null -eq $lmCompat) {
@@ -548,20 +605,20 @@ try {
     }
 
     # SMBv1
-    $smbv1Feature = Get-WindowsOptionalFeature -FeatureName SMB1Protocol -Online -ErrorAction Stop
+    $smbv1Feature = Get-WindowsOptionalFeature -FeatureName SMB1Protocol -Online -ErrorAction SilentlyContinue
     $smbv1Enabled = if ($smbv1Feature) { $smbv1Feature.State -ne "Disabled" -and $smbv1Feature.State -ne "DisabledWithDependencies" } else { $false }
 
     # SMB signing
-    $clientSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManWorkstation\Parameters" -Name "RequireSecuritySignature" -ErrorAction Stop).RequireSecuritySignature
-    $serverSign = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction Stop).RequireSecuritySignature
+    $clientSign = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManWorkstation\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty RequireSecuritySignature
+    $serverSign = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty RequireSecuritySignature
 
     $state.authentication_protocols = [ordered]@{
         kerberos = [ordered]@{
             des_enabled   = $desEnabled
             rc4_enabled   = $rc4Enabled
-            aes128_enabled = ($supportedEnc -band 0x08) -ne 0
-            aes256_enabled = ($supportedEnc -band 0x10) -ne 0
-            supported_encryption_types = $supportedEnc
+            aes128_enabled = if ($null -ne $kerbSupport) { ($kerbSupport -band 0x08) -ne 0 } else { $true }
+            aes256_enabled = if ($null -ne $kerbSupport) { ($kerbSupport -band 0x10) -ne 0 } else { $true }
+            supported_encryption_types = if ($null -ne $kerbSupport) { $kerbSupport } else { "Unknown" }
         }
         ntlm = [ordered]@{
             ntlmv1_enabled = $ntlmv1Enabled
@@ -571,8 +628,8 @@ try {
         smb = [ordered]@{
             smbv1_enabled   = $smbv1Enabled
             smbv1_feature_state = if ($smbv1Feature) { $smbv1Feature.State } else { "Unknown" }
-            client_signing_required = ($clientSign -eq 1)
-            server_signing_required = ($serverSign -eq 1)
+            client_signing_required = if ($null -ne $clientSign) { ($clientSign -eq 1) } else { $false }
+            server_signing_required = if ($null -ne $serverSign) { ($serverSign -eq 1) } else { $false }
         }
     }
     Write-Host "OK" -ForegroundColor Green

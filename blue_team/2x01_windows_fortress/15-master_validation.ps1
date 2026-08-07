@@ -55,42 +55,94 @@ Write-Sector "Password & Lockout"
 try {
     $domain = Get-ADDomain -ErrorAction Stop
 
+    # Get a sample user to check resultant (effective) password policy
+    # FGPP/PSO policies only appear via Get-ADUserResultantPasswordPolicy,
+    # not via Get-ADDomain or Get-ADDefaultDomainPasswordPolicy
+    $sampleUser = Get-ADUser -Filter * -SearchBase $domain.UsersContainer -ErrorAction SilentlyContinue | Select-Object -First 1
+
+    $effectivePolicy = $null
+    if ($sampleUser) {
+        $effectivePolicy = Get-ADUserResultantPasswordPolicy -Identity $sampleUser -ErrorAction SilentlyContinue
+    }
+
     # Minimum password length
-    $minLength = $domain.MinPasswordLength
-    if ($minLength -ge 14) {
-        Write-Pass "Minimum length: $minLength"
-    } else {
-        Write-Fail "Minimum length: $minLength (expected >= 14)"
-    }
-
-    # Lockout threshold
-    $lockoutThreshold = $domain.LockoutThreshold
-    if ($lockoutThreshold -le 5) {
-        Write-Pass "Lockout threshold: $lockoutThreshold"
-    } else {
-        Write-Fail "Lockout threshold: $lockoutThreshold (expected <= 5)"
-    }
-
-    # Lockout duration (minutes)
-    $lockoutDuration = $domain.LockOutDuration
-    if ($lockoutDuration -ge 30) {
-        Write-Pass "Lockout duration: $lockoutDuration min"
-    } else {
-        Write-Warn "Lockout duration: $lockoutDuration min (expected >= 30)"
-    }
-
-    # Max Password Age - Handle TimeSpan properly
-    $maxPasswordAge = $domain.MaxPasswordAge
-    if ($maxPasswordAge -and $maxPasswordAge -is [TimeSpan]) {
-        $ageDays = $maxPasswordAge.Days
-        if ($ageDays -le 45) {
-            Write-Pass "Max password age: $ageDays days"
+    if ($effectivePolicy) {
+        # PSO is active — check resultant policy
+        $minLength = $effectivePolicy.MinPasswordLength
+        if ($minLength -ge 14) {
+            Write-Pass "Minimum length: $minLength (via PSO: $($effectivePolicy.Name))"
         } else {
-            Write-Fail "Max password age: $ageDays days (expected <= 45)"
+            Write-Fail "Minimum length: $minLength (expected >= 14)"
+        }
+
+        # Lockout threshold
+        $lockoutThreshold = $effectivePolicy.LockoutThreshold
+        if ($lockoutThreshold -le 5) {
+            Write-Pass "Lockout threshold: $lockoutThreshold"
+        } else {
+            Write-Fail "Lockout threshold: $lockoutThreshold (expected <= 5)"
+        }
+
+        # Lockout duration (minutes)
+        $lockoutDuration = $effectivePolicy.LockoutDuration.TotalMinutes
+        if ($lockoutDuration -ge 30) {
+            Write-Pass "Lockout duration: $lockoutDuration min"
+        } else {
+            Write-Warn "Lockout duration: $lockoutDuration min (expected >= 30)"
+        }
+
+        # Max Password Age
+        $maxPasswordAge = $effectivePolicy.MaxPasswordAge
+        if ($maxPasswordAge -and $maxPasswordAge -is [TimeSpan] -and $maxPasswordAge.TotalDays -gt 0) {
+            $ageDays = $maxPasswordAge.Days
+            if ($ageDays -le 45) {
+                Write-Pass "Max password age: $ageDays days"
+            } else {
+                Write-Fail "Max password age: $ageDays days (expected <= 45)"
+            }
+        } else {
+            Write-Pass "Max password age: Never expires (rotation recommended)"
         }
     } else {
-        # Default max password age is 42 days
-        Write-Pass "Max password age: 42 days (default)"
+        # No PSO active — fall back to Default Domain Policy
+        $defaultPolicy = Get-ADDefaultDomainPasswordPolicy -ErrorAction SilentlyContinue
+
+        if ($defaultPolicy) {
+            $minLength = $defaultPolicy.MinPasswordLength
+            if ($minLength -ge 14) {
+                Write-Pass "Minimum length: $minLength (via Default Domain Policy)"
+            } else {
+                Write-Fail "Minimum length: $minLength (expected >= 14)"
+            }
+
+            $lockoutThreshold = $defaultPolicy.LockoutThreshold
+            if ($lockoutThreshold -le 5) {
+                Write-Pass "Lockout threshold: $lockoutThreshold"
+            } else {
+                Write-Fail "Lockout threshold: $lockoutThreshold (expected <= 5)"
+            }
+
+            $lockoutDuration = $defaultPolicy.LockoutDuration.TotalMinutes
+            if ($lockoutDuration -ge 30) {
+                Write-Pass "Lockout duration: $lockoutDuration min"
+            } else {
+                Write-Warn "Lockout duration: $lockoutDuration min (expected >= 30)"
+            }
+
+            $maxPasswordAge = $defaultPolicy.MaxPasswordAge
+            if ($maxPasswordAge -and $maxPasswordAge -is [TimeSpan] -and $maxPasswordAge.TotalDays -gt 0) {
+                $ageDays = $maxPasswordAge.Days
+                if ($ageDays -le 45) {
+                    Write-Pass "Max password age: $ageDays days"
+                } else {
+                    Write-Fail "Max password age: $ageDays days (expected <= 45)"
+                }
+            } else {
+                Write-Pass "Max password age: Never expires (default)"
+            }
+        } else {
+            Write-Fail "Could not retrieve any password policy"
+        }
     }
 } catch {
     Write-Fail "Could not retrieve AD domain policy: $_"

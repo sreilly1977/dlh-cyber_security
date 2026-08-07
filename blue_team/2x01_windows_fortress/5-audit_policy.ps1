@@ -16,6 +16,9 @@ param(
     [string]$Domain = (Get-ADDomain).DNSRoot
 )
 
+# Get domain distinguished name for GPO linking
+$DomainDN = (Get-ADDomain).DistinguishedName
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -175,35 +178,44 @@ try {
 Write-Host ""
 Write-Host "[*] Linking GPO and forcing update..." -ForegroundColor Yellow
 
+# Check if GPO is already linked to the domain root
+$alreadyLinked = $false
 try {
-    # Use New-GPLink to link the GPO to the domain root
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
-} catch {
-    Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
-    try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
-        $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
-        if ([string]::IsNullOrEmpty($currentLinks)) {
-            $domainObj.Put("gPLink", $newLink)
-        } else {
-            $domainObj.Put("gPLink", "$currentLinks$newLink")
+    $existingLinks = Get-GPInheritance -Target $DomainDN -ErrorAction Stop
+    foreach ($link in $existingLinks.GpoLinks) {
+        if ($link.DisplayName -eq $GpoName) {
+            $alreadyLinked = $true
+            break
         }
-        $domainObj.SetInfo()
-    } catch {
-        Write-Warning "ADSI link also failed: $_"
     }
+} catch {
+    # Get-GPInheritance may fail on some configs, proceed to try linking
 }
 
-# Force Group Policy update
-try {
-    gpupdate.exe /target:computer /force 2>&1 | Out-Null
-    Start-Sleep -Seconds 5
-    Write-Host "COMPLETE" -ForegroundColor Green
-} catch {
-    Write-Warning "gpupdate may require manual execution"
-    Write-Host "COMPLETE" -ForegroundColor Green
+if ($alreadyLinked) {
+    Write-Host "LINKED (already exists)" -ForegroundColor Cyan
+} else {
+    try {
+        New-GPLink -Name $GpoName -Target $DomainDN -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+        Write-Host "LINKED" -ForegroundColor Green
+    } catch {
+        Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
+        try {
+            $domainObj = [adsi]"LDAP://$DomainDN"
+            $currentLinks = $domainObj.Get("gPLink")
+            $newLink = "[LDAP://CN={$gpoId},CN=Policies,CN=System,$DomainDN;0]"
+            if ([string]::IsNullOrEmpty($currentLinks)) {
+                $domainObj.Put("gPLink", $newLink)
+            } else {
+                $domainObj.Put("gPLink", "$currentLinks$newLink")
+            }
+            $domainObj.SetInfo()
+            Write-Host "LINKED (via ADSI)" -ForegroundColor Green
+        } catch {
+            Write-Warning "ADSI link also failed: $_"
+            Write-Host "LINK FAILED - check permissions and domain connectivity" -ForegroundColor Red
+        }
+    }
 }
 
 # ===========================================================================
@@ -213,22 +225,64 @@ Write-Host ""
 Write-Host "[*] Verifying audit policy..." -ForegroundColor Yellow
 
 try {
+    # Get raw auditpol output
     $auditResult = & auditpol.exe /get /category:* 2>&1
 
-    $verifiedCategories = @()
+    # auditpol /get /category:* on Server 2016 outputs subcategory NAMES
+    # but NOT GUIDs. Parse by splitting each line into tokens and matching
+    # the exact subcategory name as a complete token, not a substring.
+    # This prevents "Logon" from matching "Logoff" or "Special Logon".
+    $auditEntries = @()
     foreach ($line in $auditResult) {
-        foreach ($setting in $auditSettings) {
-            if ($line -match [regex]::Escape($setting.Name)) {
-                $verifiedCategories += $setting.Name
-                break
+        $tokens = $line.ToString().Trim() -split '\s{2,}'
+        foreach ($token in $tokens) {
+            $cleanToken = $token.Trim()
+            foreach ($setting in $auditSettings) {
+                if ($cleanToken -eq $setting.Name) {
+                    $auditEntries += [PSCustomObject]@{
+                        Name    = $setting.Name
+                        Guid    = $setting.Guid
+                        Line    = $line.Trim()
+                        Setting = $setting.Setting
+                    }
+                    break
+                }
             }
         }
     }
 
-    if ($verifiedCategories.Count -gt 0) {
-        Write-Host "  Verified audit subcategories: $($verifiedCategories.Count) of $($auditSettings.Count)" -ForegroundColor Green
-        foreach ($cat in $verifiedCategories) {
-            Write-Host "    - $cat : VERIFIED" -ForegroundColor Green
+    # Deduplicate by subcategory name
+    $uniqueVerified = @($auditEntries | Sort-Object Name -Unique)
+
+    # Special handling for Kerberos Authentication - it appears under "Account Logon"
+    # category with different formatting than other subcategories
+    $kerberosFound = $false
+    foreach ($line in $auditResult) {
+        if ($line -match "Kerberos.*Authentication" -or $line -match "Authentication.*Kerberos") {
+            $kerberosFound = $true
+            break
+        }
+    }
+
+    if (-not ($uniqueVerified.Name -contains "Kerberos Authentication") -and $kerberosFound) {
+        $uniqueVerified += [PSCustomObject]@{
+            Name    = "Kerberos Authentication"
+            Guid    = "{0CCE9240-69AE-11D9-BED3-505054503030}"
+            Line    = "Kerberos Authentication (via Account Logon)"
+            Setting = "Success and Failure"
+        }
+    }
+
+    Write-Host "  Verified audit subcategories: $($uniqueVerified.Count) of $($auditSettings.Count)" -ForegroundColor $(if ($uniqueVerified.Count -eq $auditSettings.Count) { 'Green' } else { 'Yellow' })
+    foreach ($entry in $uniqueVerified) {
+        Write-Host "    - $($entry.Name): VERIFIED" -ForegroundColor Green
+    }
+
+    # List any that were NOT found
+    $verifiedNames = @($uniqueVerified.Name)
+    foreach ($setting in $auditSettings) {
+        if ($setting.Name -notin $verifiedNames) {
+            Write-Host "    - $($setting.Name): NOT FOUND" -ForegroundColor Yellow
         }
     }
 
@@ -247,22 +301,28 @@ try {
         Write-Host "  CommandLine logging: pending GPO refresh" -ForegroundColor Yellow
     }
 
-    # Verify Security log size
+    # Verify Security log size — wevtutil gl (not gi) on Server 2016
     try {
-        $logInfo = wevtutil.exe gi Security 2>&1
+        $logInfo = wevtutil.exe gl Security 2>&1
+        $sizeVerified = $false
         foreach ($line in $logInfo) {
-            if ($line -match "maximumSize:\s*(\d+)") {
+            # wevtutil gl outputs lowercase "maxSize" typically
+            if ($line -match "(?i)maxSize\s*:\s*(\d+)") {
                 $currentSize = [int64]$Matches[1]
                 if ($currentSize -ge $securityLogMaxSize) {
                     Write-Host "  Security log size: VERIFIED ($currentSize bytes)" -ForegroundColor Green
                 } else {
-                    Write-Host "  Security log size: pending GPO refresh (current: $currentSize)" -ForegroundColor Yellow
+                    Write-Host "  Security log size: PENDING (current: $currentSize bytes, expected: $securityLogMaxSize)" -ForegroundColor Yellow
                 }
+                $sizeVerified = $true
                 break
             }
         }
+        if (-not $sizeVerified) {
+            Write-Host "  Security log size: UNABLE TO PARSE wevtutil output" -ForegroundColor Yellow
+        }
     } catch {
-        Write-Host "  Security log size: verification skipped" -ForegroundColor Yellow
+        Write-Host "  Security log size: verification failed - $($_.Exception.Message)" -ForegroundColor Yellow
     }
 
     # Verify Clear restriction
@@ -283,12 +343,44 @@ try {
     Write-Host "  Security log max size:   1 GB (1073741824 bytes)" -ForegroundColor Gray
     Write-Host "  Log Clear restricted:    Domain Admins only" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "  Status: VERIFIED" -ForegroundColor Green
+
+    if ($uniqueVerified.Count -eq $auditSettings.Count -and $cmdLineEnabled) {
+        Write-Host "  Status: VERIFIED" -ForegroundColor Green
+    } else {
+        Write-Host "  Status: PARTIAL - some settings pending GPO refresh" -ForegroundColor Yellow
+    }
 
 } catch {
     Write-Warning "Verification via auditpol failed (may require elevation): $_"
-    Write-Host "  Status: VERIFIED (pending GPO refresh)" -ForegroundColor Green
+    Write-Host "  Status: PENDING (manual verification required)" -ForegroundColor Yellow
 }
 
 Write-Host ""
+
+# ===========================================================================
+# STEP 8: FORCE AUDITPOL SETTINGS (OVERRIDE GPO REFRESH)
+# ===========================================================================
+# gpupdate /force can reset advanced audit policies to GPO defaults,
+# which may not include Process Creation if the audit.csv didn't apply
+# correctly. Set the critical subcategories directly AFTER the GPO
+# refresh to ensure they stick.
+
+Write-Host ""
+Write-Host "[*] Enforcing critical audit subcategories (post-GPO)... " -NoNewline -ForegroundColor Yellow
+
+try {
+    # Process Creation (both success and failure for 4688 events)
+    auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable *> $null
+
+    # Verify it stuck
+    $verifyProc = auditpol /get /subcategory:"Process Creation" 2>&1
+    if ($verifyProc -match "Success") {
+        Write-Host "Process Creation: VERIFIED" -ForegroundColor Green
+    } else {
+        Write-Host "Process Creation: FAILED" -ForegroundColor Red
+    }
+} catch {
+    Write-Host "FAILED" -ForegroundColor Red
+}
+
 Write-Host "Done." -ForegroundColor White

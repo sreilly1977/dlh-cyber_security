@@ -51,15 +51,12 @@ try {
 Write-Host "[*] Restricting to $AllowedGroupName..." -ForegroundColor Yellow
 
 try {
-    $rdpUsersGroup = New-Object System.Security.Principal.NTAccount("BUILTIN","Remote Desktop Users")
-    $rdpUsersSid = $rdpUsersGroup.Translate([System.Security.Principal.SID])
-
-    # Get members of Remote Desktop Users group
+    # Get current members of Remote Desktop Users group
     $currentMembers = Get-LocalGroupMember -Name "Remote Desktop Users" -ErrorAction SilentlyContinue
 
     if ($currentMembers) {
         foreach ($member in $currentMembers) {
-            # Check if member is Domain Users
+            # Remove Domain Users and BUILTIN\Users
             if ($member.Name -like "*Domain Users*" -or $member.Name -like "*BUILTIN\Users*") {
                 Remove-LocalGroupMember -Name "Remote Desktop Users" -Member $member.Name -ErrorAction SilentlyContinue
                 Write-Host "    Removed: $($member.Name) from Remote Desktop Users" -ForegroundColor Gray
@@ -68,14 +65,10 @@ try {
     }
 
     # Add the allowed group
-    $allowedGroup = Get-LocalGroupMember -Name $AllowedGroupName -ErrorAction SilentlyContinue
-
-    if ($null -ne $allowedGroup -and $allowedGroup.Count -gt 0) {
-        # Add group itself (not individual members)
-        $groupAccount = New-Object System.Security.Principal.NTAccount("", $AllowedGroupName)
-        Add-LocalGroupMember -Name "Remote Desktop Users" -Member $AllowedGroupName -ErrorAction SilentlyContinue
+    try {
+        Add-LocalGroupMember -Name "Remote Desktop Users" -Member $AllowedGroupName -ErrorAction Stop
         Write-Host "    Added: $AllowedGroupName                           [SET]" -ForegroundColor Green
-    } else {
+    } catch {
         # Group not found locally, try AD lookup
         $adGroup = Get-ADGroup -Identity $AllowedGroupName -ErrorAction SilentlyContinue
         if ($null -ne $adGroup) {

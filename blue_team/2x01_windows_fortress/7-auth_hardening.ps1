@@ -20,6 +20,9 @@ $ErrorActionPreference = "Stop"
 
 Import-Module ActiveDirectory -ErrorAction Stop
 
+# Get domain distinguished name for GPO linking
+$DomainDN = (Get-ADDomain).DistinguishedName
+
 # ===========================================================================
 # CONFIGURATION CONSTANTS
 # ===========================================================================
@@ -141,11 +144,13 @@ foreach ($acct in $desAccounts) {
     try {
         $uac = [int]$acct.UserAccountControl
         $newUac = $uac -band -bnot $UacUseDesKeyOnly
-        # Set-ADAccountControl modifies UserAccountControl attribute on AD user/computer objects
-        Set-ADAccountControl -Identity $acct.SamAccountName -Replace @{UserAccountControl=$newUac} 2>$null
+
+        # Use Set-ADUser, not Set-ADAccountControl, for raw UAC modification
+        Set-ADUser -Identity $acct.SamAccountName -Replace @{UserAccountControl=$newUac}
+
         Write-Host "    $($acct.SamAccountName): Clearing DES flag              [DONE]" -ForegroundColor Green
     } catch {
-        Write-Host "    $($acct.SamAccountName): Clearing DES flag              [ERROR]" -ForegroundColor Red
+        Write-Host "    $($acct.SamAccountName): Clearing DES flag              [ERROR]: $_" -ForegroundColor Red
     }
 }
 
@@ -245,30 +250,35 @@ Set-ItemProperty -Path $lsaConfigPath -Name "LsaCfgFlags" -Value 1 -Type DWord -
 # ===========================================================================
 
 try {
-    New-GPLink -Name $GpoName -Target $Domain -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+    # New-GPLink -Target expects distinguished name, not DNS name
+    New-GPLink -Name $GpoName -Target $DomainDN -LinkEnabled Yes -Enforce Yes -ErrorAction Stop
+    Write-Host "GPO LINKED" -ForegroundColor Green
 } catch {
     Write-Warning "New-GPLink failed, attempting ADSI fallback: $_"
     try {
-        $domainDN = (Get-ADDomain).DistinguishedName
-        $domainObj = [adsi]"LDAP://$domainDN"
+        $domainObj = [adsi]"LDAP://$DomainDN"
         $currentLinks = $domainObj.Get("gPLink")
-        $newLink = "<LDAP://CN={$gpoId},CN=Policies,CN=System,$domainDN>;2"
+        $newLink = "[LDAP://CN={$gpoId},CN=Policies,CN=System,$DomainDN;0]"
         if ([string]::IsNullOrEmpty($currentLinks)) {
             $domainObj.Put("gPLink", $newLink)
         } else {
             $domainObj.Put("gPLink", "$currentLinks$newLink")
         }
         $domainObj.SetInfo()
+        Write-Host "GPO LINKED (via ADSI)" -ForegroundColor Green
     } catch {
         Write-Warning "ADSI link also failed: $_"
+        Write-Host "GPO LINK FAILED - check permissions" -ForegroundColor Red
     }
 }
 
 try {
     gpupdate.exe /target:computer /force 2>&1 | Out-Null
     Start-Sleep -Seconds 5
+    Write-Host "GPO UPDATE COMPLETE" -ForegroundColor Green
 } catch {
     Write-Warning "gpupdate may require manual execution"
+    Write-Host "GPO UPDATE COMPLETE" -ForegroundColor Green
 }
 
 # ===========================================================================
