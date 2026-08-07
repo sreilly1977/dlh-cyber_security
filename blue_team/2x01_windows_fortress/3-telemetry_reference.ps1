@@ -9,6 +9,8 @@
     Steve - Cybersecurity Engineer
 .Date
     August 4, 2026
+.Caveat
+    Run the following to avoid errors: Add-MpPreference -ExclusionPath "C:\MedDefense_Lab"
 #>
 
 param(
