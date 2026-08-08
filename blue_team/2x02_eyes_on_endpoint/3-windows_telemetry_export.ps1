@@ -208,10 +208,10 @@ function Enrich-SecurityEvent {
             $sourceIp    = Get-EventProperty -Event $Event -Index 18
             $workstation = Get-EventProperty -Event $Event -Index 11
 
-            $enriched.target_user  = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
-            $enriched.logon_type   = $logonType
-            $enriched.source_ip    = $sourceIp
-            $enriched.workstation  = $workstation
+            $enriched.TargetUserName   = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
+            $enriched.LogonType        = $logonType
+            $enriched.IpAddress        = $sourceIp
+            $enriched.WorkstationName  = $workstation
         }
         4625 {
             $targetUser  = Get-EventProperty -Event $Event -Index 5
@@ -220,25 +220,25 @@ function Enrich-SecurityEvent {
             $sourceIp    = Get-EventProperty -Event $Event -Index 19
             $subStatus   = Get-EventProperty -Event $Event -Index 16
 
-            $enriched.target_user    = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
-            $enriched.failure_reason = $failureType
-            $enriched.sub_status     = $subStatus
-            $enriched.source_ip      = $sourceIp
+            $enriched.TargetUserName   = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
+            $enriched.FailureReason    = $failureType
+            $enriched.SubStatus        = $subStatus
+            $enriched.IpAddress        = $sourceIp
         }
         4672 {
             $targetUser = Get-EventProperty -Event $Event -Index 1
             $domain     = Get-EventProperty -Event $Event -Index 2
 
-            $enriched.privileged_account = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
+            $enriched.PrivilegedAccount = if ($null -ne $targetUser) { "$domain\$targetUser" } else { $null }
         }
         4688 {
             $processName   = Get-EventProperty -Event $Event -Index 5
             $commandLine   = Get-EventProperty -Event $Event -Index 8
             $parentProcess = Get-EventProperty -Event $Event -Index 13
 
-            $enriched.process_name   = $processName
-            $enriched.command_line   = $commandLine
-            $enriched.parent_process = $parentProcess
+            $enriched.ProcessName       = $processName
+            $enriched.CommandLine       = $commandLine
+            $enriched.ParentProcessName = $parentProcess
         }
         default {
             # No enrichment for other security events
