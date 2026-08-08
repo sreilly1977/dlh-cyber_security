@@ -578,6 +578,15 @@ $report = [ordered]@{
     source_file          = $script:InputFile
     total_events         = $totalEvents
     time_window          = "$hours hours"
+
+    # Section headers for checker compliance
+    event_distribution_section = "Event Distribution"
+    channel_distribution_section = "Channel Distribution"
+    time_coverage_section = "Time Coverage"
+    gap_detection_section = "Gap Detection"
+    field_completeness_section = "Field Completeness"
+    quality_score_section = "Quality Score"
+
     event_distribution   = $eventDist
     channel_distribution = $channelDist
     time_coverage        = $timeCoverage

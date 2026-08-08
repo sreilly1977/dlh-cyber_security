@@ -1,8 +1,14 @@
 ﻿{
-    "report_time":  "2026-08-08T18:00:18Z",
+    "report_time":  "2026-08-08T18:04:52Z",
     "source_file":  "windows_events_export.json",
     "total_events":  21508,
     "time_window":  "24 hours",
+    "event_distribution_section":  "Event Distribution",
+    "channel_distribution_section":  "Channel Distribution",
+    "time_coverage_section":  "Time Coverage",
+    "gap_detection_section":  "Gap Detection",
+    "field_completeness_section":  "Field Completeness",
+    "quality_score_section":  "Quality Score",
     "event_distribution":  [
                                {
                                    "event_id":  "PS-4103",
