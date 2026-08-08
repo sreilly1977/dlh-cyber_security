@@ -6,7 +6,7 @@
 # Date:        August 8, 2026
 #
 
-set -euo pipefail
+set -ueo pipefail
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
