@@ -1,0 +1,81 @@
+﻿{
+    "generated_at":  "2026-08-08T16:09:35Z",
+    "techniques":  [
+                       {
+                           "technique_id":  "T1059",
+                           "technique_name":  "Command and Scripting Interpreter",
+                           "required_event_ids":  "1",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "CommandLine, CurrentDirectory, Hashes, Image, ParentCommandLine, ParentImage, ProcessGuid, ProcessId, User",
+                           "recommendation":  "Enable ProcessCreate (EID 1) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1053",
+                           "technique_name":  "Scheduled Task/Job",
+                           "required_event_ids":  "1",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "CommandLine, CurrentDirectory, Hashes, Image, ParentCommandLine, ParentImage, ProcessGuid, ProcessId, User",
+                           "recommendation":  "Enable ProcessCreate (EID 1) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1547",
+                           "technique_name":  "Boot or Logon Autostart Execution",
+                           "required_event_ids":  "13",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "Details, EventType, Image, TargetObject",
+                           "recommendation":  "Enable RegistryEvent (EID 13) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1055",
+                           "technique_name":  "Process Injection",
+                           "required_event_ids":  "8, 10",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "CallTrace, GrantedAccess, NewThreadId, SourceImage, StartAddress, StartFunction, TargetImage",
+                           "recommendation":  "Enable CreateRemoteThread (EID 8) in sysmonconfig.xml under \u003cEventFiltering\u003e; Enable ProcessAccess (EID 10) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1071",
+                           "technique_name":  "Application Layer Protocol",
+                           "required_event_ids":  "3, 22",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "DestinationIp, DestinationPort, Image, Protocol, QueryName, QueryResults, SourceIp, SourcePort, User",
+                           "recommendation":  "Enable NetworkConnect (EID 3) in sysmonconfig.xml under \u003cEventFiltering\u003e; Enable DnsQuery (EID 22) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1574.002",
+                           "technique_name":  "DLL Side-Loading",
+                           "required_event_ids":  "7",
+                           "enabled_event_ids":  "none",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "blind",
+                           "evidence_fields_expected":  "Hashes, Image, ImageLoaded, Signature, Signed",
+                           "recommendation":  "Enable ImageLoad (EID 7) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       },
+                       {
+                           "technique_id":  "T1027",
+                           "technique_name":  "Obfuscated or Compressed Files",
+                           "required_event_ids":  "11, 15",
+                           "enabled_event_ids":  "15",
+                           "filter_conflicts":  "none",
+                           "coverage_status":  "partial",
+                           "evidence_fields_expected":  "Contents, CreationUtcTime, Hash, Image, TargetFilename",
+                           "recommendation":  "Enable FileCreate (EID 11) in sysmonconfig.xml under \u003cEventFiltering\u003e"
+                       }
+                   ],
+    "summary":  {
+                    "total_assessed":  7,
+                    "covered":  0,
+                    "partial":  1,
+                    "blind":  6
+                }
+}
