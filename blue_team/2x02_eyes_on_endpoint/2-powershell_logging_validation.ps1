@@ -343,7 +343,7 @@ Write-Output "Service count: $serviceCount"
                 $found = $true
                 $capturedLines = ($text -split "`n" | Where-Object { $_.Trim().Length -gt 0 }).Count
                 if ($capturedLines -ge $lineCount) {
-                    $detail = "full block ($capturedLines lines)"
+                    $detail = "Full block ($capturedLines lines)"
                 }
                 else {
                     $detail = "partial ($capturedLines of $lineCount lines)"
