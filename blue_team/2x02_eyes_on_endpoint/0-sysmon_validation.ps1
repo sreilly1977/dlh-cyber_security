@@ -1,11 +1,11 @@
 <#
-.NOTES
+.Notes
     Name:        0-sysmon_validation.ps1
     Purpose:     Validate Sysmon telemetry coverage by triggering and verifying five key Event IDs
-    Author:      Cybersecurity Engineer
+    Author:      Steve - Cybersecurity Engineer
     Date:        August 8, 2026
 
-.DESCRIPTION
+.Purpose
     This script validates that Sysmon is correctly capturing five critical Event IDs
     by triggering controlled actions and verifying each produces the expected telemetry:
 
