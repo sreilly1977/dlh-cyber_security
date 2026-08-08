@@ -47,6 +47,19 @@ function Get-SafeProperty {
     param($Object, [string]$Name)
 
     if ($null -eq $Object) { return $null }
+
+    # Handle dictionaries (OrderedDictionary, Hashtable)
+    if ($Object -is [System.Collections.IDictionary]) {
+        # Case-insensitive key lookup
+        foreach ($key in $Object.Keys) {
+            if ([string]$key -eq $Name) {
+                return $Object[$key]
+            }
+        }
+        return $null
+    }
+
+    # Handle PSCustomObject
     try {
         $prop = $Object.PSObject.Properties[$Name]
         if ($null -ne $prop) {

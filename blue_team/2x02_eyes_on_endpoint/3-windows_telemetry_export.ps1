@@ -358,31 +358,16 @@ function Export-TelemetryFromChannel {
         $EndTime
     )
 
-    $events = @()
     $allRecords = [System.Collections.ArrayList]::new()
 
-    $filter = @{
-        LogName   = $LogName
-        StartTime = $StartTime
-    }
-
-    if ($null -ne $EndTime) {
-        $filter.EndTime = $EndTime
-    }
-
-    try {
-        $events = Get-WinEvent -FilterHashtable $filter -MaxEvents 50000 -ErrorAction Stop
-    }
-    catch [System.Exception] {
-        if ($_.Exception.Message -match 'No events were found') {
-            Write-Host "$ChannelLabel events: 0"
-            return @()
-        }
-        Write-Host "[!] Error reading $LogName : $($_.Exception.Message)"
+    if ($null -eq $script:CachedEvents[$ChannelLabel]) {
+        Write-Host "$ChannelLabel events: 0"
         return @()
     }
 
-    if ($null -eq $events -or @($events).Count -eq 0) {
+    $events = @($script:CachedEvents[$ChannelLabel])
+
+    if ($events.Count -eq 0) {
         Write-Host "$ChannelLabel events: 0"
         return @()
     }
@@ -410,7 +395,6 @@ function Export-TelemetryFromChannel {
         $count++
     }
 
-    # Explicit output format for checker compliance
     if ($ChannelLabel -eq 'Security') {
         Write-Host "Security events: $count"
     }
@@ -495,6 +479,66 @@ if ($null -eq $StartTime) {
 
 $endLabel = if ($null -ne $EndTime) { $EndTime } else { 'now' }
 Write-Host "[*] Exporting Windows telemetry from $StartTime to $endLabel..."
+
+# Query ALL three logs UPFRONT before any processing to avoid
+# circular log evicting events during processing
+$script:CachedEvents = @{}
+
+# PowerShell FIRST - it's the most vulnerable to circular log eviction
+Write-Host "  Querying PowerShell log..."
+$psFilter = @{
+    LogName   = $script:Channels.PowerShell.LogName
+    StartTime = $StartTime
+}
+if ($null -ne $EndTime) { $psFilter.EndTime = $EndTime }
+try {
+    $script:CachedEvents['PowerShell'] = @(Get-WinEvent -FilterHashtable $psFilter -MaxEvents 50000 -ErrorAction Stop)
+} catch {
+    if ($_.Exception.Message -match 'No events were found') {
+        $script:CachedEvents['PowerShell'] = @()
+    } else {
+        Write-Host "[!] Error reading PowerShell log: $($_.Exception.Message)"
+        $script:CachedEvents['PowerShell'] = @()
+    }
+}
+
+# Security log
+Write-Host "  Querying Security log..."
+$secFilter = @{
+    LogName   = $script:Channels.Security.LogName
+    StartTime = $StartTime
+}
+if ($null -ne $EndTime) { $secFilter.EndTime = $EndTime }
+try {
+    $script:CachedEvents['Security'] = @(Get-WinEvent -FilterHashtable $secFilter -MaxEvents 50000 -ErrorAction Stop)
+} catch {
+    if ($_.Exception.Message -match 'No events were found') {
+        $script:CachedEvents['Security'] = @()
+    } else {
+        Write-Host "[!] Error reading Security log: $($_.Exception.Message)"
+        $script:CachedEvents['Security'] = @()
+    }
+}
+
+# Sysmon log
+Write-Host "  Querying Sysmon log..."
+$sysFilter = @{
+    LogName   = $script:Channels.Sysmon.LogName
+    StartTime = $StartTime
+}
+if ($null -ne $EndTime) { $sysFilter.EndTime = $EndTime }
+try {
+    $script:CachedEvents['Sysmon'] = @(Get-WinEvent -FilterHashtable $sysFilter -MaxEvents 50000 -ErrorAction Stop)
+} catch {
+    if ($_.Exception.Message -match 'No events were found') {
+        $script:CachedEvents['Sysmon'] = @()
+    } else {
+        Write-Host "[!] Error reading Sysmon log: $($_.Exception.Message)"
+        $script:CachedEvents['Sysmon'] = @()
+    }
+}
+
+Write-Host ""
 
 $allRecords = [System.Collections.ArrayList]::new()
 $counts = @{ hours = $Hours; security = 0; sysmon = 0; powershell = 0 }
