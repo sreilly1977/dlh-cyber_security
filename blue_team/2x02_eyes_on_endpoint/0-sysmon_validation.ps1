@@ -169,20 +169,7 @@ function Test-NetworkConnection {
     Write-Host '    [2/5] Network connection (Event ID 3)...'
 
     $startTime = Get-Date
-    $tcp = New-Object System.Net.Sockets.TcpClient
-    try {
-        $asyncResult = $tcp.BeginConnect($script:TestDestIp, $script:TestDestPort, $null, $null)
-        $connected = $asyncResult.AsyncWaitHandle.WaitOne(3000, $false)
-        if ($connected) {
-            $tcp.EndConnect($asyncResult)
-        }
-    }
-    catch {
-        # A failed SYN still triggers Sysmon EID 3 in most configs
-    }
-    finally {
-        if ($null -ne $tcp) { $tcp.Close() }
-    }
+    $null = Test-NetConnection -ComputerName $script:TestDestIp -Port $script:TestDestPort -WarningAction SilentlyContinue
 
     Start-Sleep -Milliseconds 500
 
