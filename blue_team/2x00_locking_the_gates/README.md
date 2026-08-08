@@ -1,10 +1,10 @@
-# 0. The Baseline Snapshot
+# [0. The Baseline Snapshot](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/0-baseline_snapshot.sh)
 
 ## Goal: 
 
 Capture the complete security state of a system before any changes, establishing the measurement that every subsequent task will improve against.
 
-# Context: 
+## Context: 
 
 You cannot prove hardening worked if you do not know where you started. This task captures the system as it is: unhardened, default configuration, every setting at its out-of-the-box value. Every number you record here is the number you will improve.
 
@@ -43,7 +43,7 @@ World-writable files: 7
 
 ---
 
-# 1. MedDefense CIS Control Profile
+# [1. MedDefense CIS Control Profile](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/1-cis_profile.sh)
 
 ## Goal: 
 
@@ -88,7 +88,7 @@ Report saved to: cis_profile.json
 
 ---
 
-# 2. The Lynis Audit Parser
+# [2. The Lynis Audit Parser](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/2-lynis_parse.sh)
 
 ## Goal: 
 
@@ -144,7 +144,7 @@ $ cat lynis_findings.json
 
 ---
 
-# 3. Evidence-Based Remediation Queue
+# [3. Evidence-Based Remediation Queue](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/3-remediation_queue.sh)
 
 ## Goal: 
 
@@ -190,7 +190,7 @@ Queue saved to: remediation_queue.json
 
 ---
 
-# 4. The SSH Lockdown
+# [4. The SSH Lockdown](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/4-ssh_hardening.sh)
 
 ##Goal: 
 
@@ -260,7 +260,7 @@ Settings applied: 11
 
 ---
 
-# 5. The Kernel Shield
+# [5. The Kernel Shield](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/5-sysctl_hardening.sh)
 
 ## Goal: 
 
@@ -311,7 +311,7 @@ Verified FAIL: 0
 
 ---
 
-# 6. The Permission Sweep
+# [6. The Permission Sweep](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/6-filesystem_hardening.sh)
 
 ## Goal: 
 
@@ -361,7 +361,7 @@ SUID remediated: 5 | SGID remediated: 1 | World-writable fixed: 7
 
 ---
 
-# 7. The Service Minimizer
+# [7. The Service Minimizer](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/7-service_minimization.sh)
 
 ## Goal: 
 
@@ -410,7 +410,7 @@ Before: 24 | After: 9 | Disabled: 15
 
 ---
 
-# 8. The PAM Fortress
+# [8. The PAM Fortress](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/8-pam_hardening.sh)
 
 ## Goal: 
 
@@ -459,7 +459,7 @@ Password minimum length: 14 | Lockout: 5 attempts / 15 min | History: 12
 
 ---
 
-# 9. The AppArmor Enforcer
+# [9. The AppArmor Enforcer](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/9-apparmor_config.sh)
 
 ## Goal: 
 
@@ -504,7 +504,7 @@ Profiles in enforce: 4 | Complain: 0 | Unconfined: 1
 
 ---
 
-# 10. The Audit Engine
+# [10. The Audit Engine](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/10-auditd_config.sh)
 
 ## Goal: 
 
@@ -555,7 +555,7 @@ $ sudo ./10-auditd_config.sh
 
 ---
 
-# 11. Audit Telemetry Coverage Test
+# [11. Audit Telemetry Coverage Test](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/11-audit_coverage_test.sh)
 
 ## Goal: 
 
@@ -602,7 +602,7 @@ Report saved to: audit_validation.json
 
 ---
 
-# 12. The Log Architect
+# [12. The Log Architect](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/12-log_config.sh)
 
 ## Goal: 
 
@@ -647,7 +647,7 @@ Log sources configured: 2 | Rotation policies: 2 | Permissions: secured
 
 ---
 
-# 13. The Firewall Baseline
+# [13. The Firewall Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/13-firewall_baseline.sh)
 
 ## Goal: 
 
@@ -690,7 +690,7 @@ $ sudo ./13-firewall_baseline.sh
 
 ---
 
-# 14. Production Hardening Orchestrator
+# [14. Production Hardening Orchestrator](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/14-hardening_orchestrator.sh)
 
 ## Goal: 
 
@@ -741,7 +741,7 @@ Improvement saved to: hardening_improvement.json
 
 ---
 
-# 15. The Post-Hardening Validator
+# [15. The Post-Hardening Validator](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/15-validation.sh)
 
 ## Goal: 
 
@@ -782,7 +782,7 @@ $ sudo ./15-validation.sh
 
 ---
 
-# 16. Lynis Improvement Diff
+# [16. Lynis Improvement Diff](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/16-lynis_diff.sh)
 
 ## Goal: 
 
@@ -826,7 +826,7 @@ Report saved to: hardening_improvement.json
 
 ---
 
-# 17. Machine-Readable Compliance Evidence Bundle
+# [17. Machine-Readable Compliance Evidence Bundle](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/17-compliance_bundle.sh)
 
 ## Goal: 
 
