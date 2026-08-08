@@ -1,0 +1,257 @@
+﻿{
+    "report_time":  "2026-08-08T16:49:41Z",
+    "source_file":  "windows_events_export.json",
+    "total_events":  11601,
+    "time_window":  "24 hours",
+    "event_distribution":  [
+                               {
+                                   "event_id":  "PS-4103",
+                                   "count":  6683,
+                                   "percent":  57.6
+                               },
+                               {
+                                   "event_id":  "4688",
+                                   "count":  1329,
+                                   "percent":  11.5
+                               },
+                               {
+                                   "event_id":  "4624",
+                                   "count":  1003,
+                                   "percent":  8.6
+                               },
+                               {
+                                   "event_id":  "Sysmon-13",
+                                   "count":  978,
+                                   "percent":  8.4
+                               },
+                               {
+                                   "event_id":  "Sysmon-1",
+                                   "count":  869,
+                                   "percent":  7.5
+                               },
+                               {
+                                   "event_id":  "Sysmon-22",
+                                   "count":  369,
+                                   "percent":  3.2
+                               },
+                               {
+                                   "event_id":  "Sysmon-11",
+                                   "count":  210,
+                                   "percent":  1.8
+                               },
+                               {
+                                   "event_id":  "Sysmon-12",
+                                   "count":  58,
+                                   "percent":  0.5
+                               },
+                               {
+                                   "event_id":  "Sysmon-3",
+                                   "count":  47,
+                                   "percent":  0.4
+                               },
+                               {
+                                   "event_id":  "4648",
+                                   "count":  26,
+                                   "percent":  0.2
+                               },
+                               {
+                                   "event_id":  "Sysmon-255",
+                                   "count":  8,
+                                   "percent":  0.1
+                               },
+                               {
+                                   "event_id":  "1100",
+                                   "count":  4,
+                                   "percent":  0
+                               },
+                               {
+                                   "event_id":  "Sysmon-4",
+                                   "count":  4,
+                                   "percent":  0
+                               },
+                               {
+                                   "event_id":  "4696",
+                                   "count":  4,
+                                   "percent":  0
+                               },
+                               {
+                                   "event_id":  "4826",
+                                   "count":  4,
+                                   "percent":  0
+                               },
+                               {
+                                   "event_id":  "Sysmon-2",
+                                   "count":  3,
+                                   "percent":  0
+                               },
+                               {
+                                   "event_id":  "Sysmon-5",
+                                   "count":  2,
+                                   "percent":  0
+                               }
+                           ],
+    "channel_distribution":  {
+                                 "Security":  {
+                                                  "count":  2370,
+                                                  "percent":  20.4
+                                              },
+                                 "Sysmon":  {
+                                                "count":  2548,
+                                                "percent":  22
+                                            },
+                                 "PowerShell":  {
+                                                    "count":  6683,
+                                                    "percent":  57.6
+                                                }
+                             },
+    "time_coverage":  {
+                          "hours_total":  24,
+                          "hours_with_events":  6,
+                          "hours_without_events":  19,
+                          "events_per_hour":  [
+                                                  {
+                                                      "hour":  "2026-08-07T17:00",
+                                                      "count":  206
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T18:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T19:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T20:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T21:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T22:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-07T23:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T00:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T01:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T02:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T03:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T04:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T05:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T06:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T07:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T08:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T09:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T10:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T11:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T12:00",
+                                                      "count":  0
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T13:00",
+                                                      "count":  853
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T14:00",
+                                                      "count":  3062
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T15:00",
+                                                      "count":  394
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T16:00",
+                                                      "count":  276
+                                                  },
+                                                  {
+                                                      "hour":  "2026-08-08T17:00",
+                                                      "count":  6810
+                                                  }
+                                              ]
+                      },
+    "gap_detection":  {
+                          "gaps_detected":  1,
+                          "largest_gap_minutes":  1196,
+                          "gaps":  [
+                                       {
+                                           "start":  "2026-08-07T17:40:57Z",
+                                           "end":  "2026-08-08T13:37:20Z",
+                                           "minutes":  1196
+                                       }
+                                   ]
+                      },
+    "field_completeness":  {
+                               "command_line":  {
+                                                    "total":  2198,
+                                                    "populated":  2154,
+                                                    "percent":  98
+                                                },
+                               "source_ip":  {
+                                                 "total":  1003,
+                                                 "populated":  719,
+                                                 "percent":  71.7
+                                             },
+                               "script_block":  {
+                                                    "total":  0,
+                                                    "populated":  0,
+                                                    "percent":  0
+                                                },
+                               "required_fields":  {
+                                                       "total":  81207,
+                                                       "populated":  81207,
+                                                       "percent":  100
+                                                   }
+                           },
+    "quality_score":  {
+                          "score":  51.2,
+                          "assessment":  "poor",
+                          "components":  {
+                                             "coverage":  6.2,
+                                             "completeness":  0,
+                                             "continuity":  25,
+                                             "distribution":  20
+                                         }
+                      }
+}
