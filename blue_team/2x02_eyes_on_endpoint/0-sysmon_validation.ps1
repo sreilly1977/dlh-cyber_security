@@ -1,7 +1,7 @@
 <#
 .Notes
-    Name:        0-sysmon_validation.ps1
-    Purpose:     Validate Sysmon telemetry coverage by triggering and verifying five key Event IDs
+    name:        0-sysmon_validation.ps1
+    purpose:     Validate Sysmon telemetry coverage by triggering and verifying five key Event IDs
     Author:      Steve - Cybersecurity Engineer
     Date:        August 8, 2026
 
