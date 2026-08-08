@@ -20,15 +20,17 @@
     Key event types receive enriched fields extracted from event properties.
 
     Usage:
-        .\3-windows_telemetry_export.ps1             # Default: last 24 hours
-        .\3-windows_telemetry_export.ps1 -Hours 48   # Last 48 hours
-        .\3-windows_telemetry_export.ps1 -Hours 6    # Last 6 hours
+        .\3-windows_telemetry_export.ps1
+        .\3-windows_telemetry_export.ps1 -Hours 48
+        .\3-windows_telemetry_export.ps1 -StartTime "2026-08-07 00:00:00" -EndTime "2026-08-08 23:59:59"
 
     Output: windows_events_export.json
 #>
 
 param(
-    [int]$Hours = 24
+    [int]$Hours = 24,
+    [DateTime]$StartTime,
+    [DateTime]$EndTime
 )
 
 #Requires -RunAsAdministrator
@@ -352,25 +354,37 @@ function Export-TelemetryFromChannel {
         [string]$LogName,
         [string]$SourceType,
         [string]$ChannelLabel,
-        [DateTime]$StartTime
+        [DateTime]$StartTime,
+        $EndTime
     )
 
     $events = @()
     $allRecords = [System.Collections.ArrayList]::new()
 
+    $filter = @{
+        LogName   = $LogName
+        StartTime = $StartTime
+    }
+
+    if ($null -ne $EndTime) {
+        $filter.EndTime = $EndTime
+    }
+
     try {
-        $events = Get-WinEvent -FilterHashtable @{
-            LogName   = $LogName
-            StartTime = $StartTime
-        } -ErrorAction Stop
+        $events = Get-WinEvent -FilterHashtable $filter -MaxEvents 50000 -ErrorAction Stop
     }
     catch [System.Exception] {
         if ($_.Exception.Message -match 'No events were found') {
             Write-Host "$ChannelLabel events: 0"
-            return $allRecords
+            return @()
         }
         Write-Host "[!] Error reading $LogName : $($_.Exception.Message)"
-        return $allRecords
+        return @()
+    }
+
+    if ($null -eq $events -or @($events).Count -eq 0) {
+        Write-Host "$ChannelLabel events: 0"
+        return @()
     }
 
     $count = 0
@@ -397,7 +411,7 @@ function Export-TelemetryFromChannel {
     }
 
     Write-Host "$ChannelLabel events: $count"
-    return $allRecords
+    return @($allRecords)
 }
 
 function Get-TopEventIds {
@@ -461,41 +475,48 @@ function Export-JsonReport {
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 
-$startTime = (Get-Date).AddHours(-$Hours)
+# Calculate time window based on parameters
+if ($null -eq $StartTime) {
+    $StartTime = (Get-Date).AddHours(-$Hours)
+}
 
-Write-Host "[*] Exporting Windows telemetry from last $Hours hours..."
+$endLabel = if ($null -ne $EndTime) { $EndTime } else { 'now' }
+Write-Host "[*] Exporting Windows telemetry from $StartTime to $endLabel..."
 
 $allRecords = [System.Collections.ArrayList]::new()
 $counts = @{ hours = $Hours; security = 0; sysmon = 0; powershell = 0 }
 
 # Export Security log
-$securityRecords = Export-TelemetryFromChannel `
+$securityRecords = @(Export-TelemetryFromChannel `
     -LogName $script:Channels.Security.LogName `
     -SourceType $script:Channels.Security.SourceType `
     -ChannelLabel 'Security' `
-    -StartTime $startTime
+    -StartTime $StartTime `
+    -EndTime $EndTime)
 $counts.security = $securityRecords.Count
 if ($securityRecords.Count -gt 0) {
     $null = $allRecords.AddRange($securityRecords)
 }
 
 # Export Sysmon log
-$sysmonRecords = Export-TelemetryFromChannel `
+$sysmonRecords = @(Export-TelemetryFromChannel `
     -LogName $script:Channels.Sysmon.LogName `
     -SourceType $script:Channels.Sysmon.SourceType `
     -ChannelLabel 'Sysmon' `
-    -StartTime $startTime
+    -StartTime $StartTime `
+    -EndTime $EndTime)
 $counts.sysmon = $sysmonRecords.Count
 if ($sysmonRecords.Count -gt 0) {
     $null = $allRecords.AddRange($sysmonRecords)
 }
 
 # Export PowerShell log
-$psRecords = Export-TelemetryFromChannel `
+$psRecords = @(Export-TelemetryFromChannel `
     -LogName $script:Channels.PowerShell.LogName `
     -SourceType $script:Channels.PowerShell.SourceType `
     -ChannelLabel 'PowerShell' `
-    -StartTime $startTime
+    -StartTime $StartTime `
+    -EndTime $EndTime)
 $counts.powershell = $psRecords.Count
 if ($psRecords.Count -gt 0) {
     $null = $allRecords.AddRange($psRecords)
