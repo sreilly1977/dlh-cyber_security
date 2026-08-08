@@ -1,4 +1,4 @@
-# 0. Sysmon Telemetry Validation
+# [0. Sysmon Telemetry Validation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x02_eyes_on_endpoint/0-sysmon_validation.ps1)
 
 ## Goal: 
 
@@ -45,4 +45,120 @@ Actions tested: 5 | Captured: 5 | Missed: 0
 
 ---
 
-#
+# [1. Sysmon ATT&CK Coverage Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x02_eyes_on_endpoint/1-sysmon_coverage_matrix.ps1)
+
+## Goal: Produce a structured coverage matrix that proves which attacker techniques are visible through the current Sysmon configuration and which require tuning.
+
+## Context:
+The original Sysmon gap task was useful, but it was too narrow. In this project, telemetry is not only a config check. The point is to prove whether endpoint instrumentation produces useful evidence for specific attacker behaviors. This rebuilt task turns the Sysmon configuration into an ATT&CK-aligned coverage matrix that later detection and handoff tasks can use.
+
+Sysmon coverage must be measured in three dimensions:
+
+    Whether the required Event IDs are enabled
+    Whether the config filters out the activity
+    Whether the resulting event has enough fields to support triage
+
+## Instructions:
+Write a PowerShell script named 1-sysmon_coverage_matrix.ps1.
+
+The script must read sysmonconfig.xml and generate sysmon_coverage_matrix.json.
+
+The script must:
+
+    Parse enabled Sysmon event types from the XML
+    Identify include/exclude rules that could suppress relevant events
+    Map ATT&CK techniques to required Sysmon Event IDs
+    Evaluate each technique as:
+
+    covered
+    partial
+    blind
+
+    Include the reason for the status
+    Include a recommended tuning action for every partial or blind item
+    Print a summary of coverage
+
+Minimum ATT&CK mappings:
+
+    T1059 Command and Scripting Interpreter — Sysmon EID 1
+    T1053 Scheduled Task/Job — Sysmon EID 1
+    T1547 Boot or Logon Autostart Execution — Sysmon EID 13
+    T1055 Process Injection — Sysmon EID 8, 10
+    T1071 Application Layer Protocol — Sysmon EID 3, 22
+    T1574.002 DLL Side-Loading — Sysmon EID 7
+    T1027 Obfuscated or Compressed Files — Sysmon EID 11, 15
+
+Each matrix row must include:
+
+    technique_id
+    technique_name
+    required_event_ids
+    enabled_event_ids
+    filter_conflicts
+    coverage_status
+    evidence_fields_expected
+    recommendation
+
+Expected Output:
+
+```PS
+PS> .\1-sysmon_coverage_matrix.ps1
+[*] Parsing Sysmon config: sysmonconfig.xml
+Enabled Event IDs: 1, 3, 7, 11, 12, 13, 22
+Techniques assessed: 7
+Covered: 5
+Partial: 2
+Blind: 0
+Report saved to: sysmon_coverage_matrix.json
+```
+
+---
+
+# [2. PowerShell Logging Validation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x02_eyes_on_endpoint/2-powershell_logging_validation.ps1)
+
+## Goal: 
+
+Verify that PowerShell Script Block Logging, Module Logging and Transcription are correctly capturing commands of varying complexity.
+
+## Context: 
+
+PowerShell logging was enabled. But "enabled" does not mean "complete." Encoded commands should appear decoded in Script Block Logs. Module imports should appear in Module Logging. Remote operations should generate transcripts. This task proves each logging layer works against the types of PowerShell the Crimson Tide attacker actually used.
+
+## Instructions: 
+
+Write a PowerShell script 2-powershell_logging_validation.ps1 that:
+
+    Executes a simple command (Get-Process) and checks Event ID 4104 (Script Block)
+
+    Executes an encoded command (powershell -enc [base64 of Write-Host "Test"]) and checks that the decoded content appears in Event ID 4104
+
+    Executes a module import (Import-Module ActiveDirectory) and checks Event ID 4103 (Module Logging)
+
+    Executes a multi-line script block and verifies the full block is captured
+
+    Checks that a transcription file was created in C:\PSTranscripts\ for the session
+
+For each test: report CAPTURED / MISSED and the detail level (full content vs partial).
+
+**Expected Output:**
+
+```PS
+PS> .\2-powershell_logging_validation.ps1
+[*] Testing PowerShell logging coverage...
+    [1/5] Simple command (Get-Process)...
+          EID 4104: "Get-Process" captured                     [PASS]
+    [2/5] Encoded command...
+          Input: -enc VwByAGkAdABlAC0ASABvAHMAdAAgACIAVABlAHMAdAAi
+          EID 4104: "Write-Host 'Test'" (decoded) captured     [PASS]
+    [3/5] Module import...
+          EID 4103: "Import-Module ActiveDirectory" captured   [PASS]
+    [4/5] Multi-line script block...
+          EID 4104: Full block captured (12 lines)             [PASS]
+    [5/5] Transcription file...
+          C:\PSTranscripts\*.txt exists, session recorded      [PASS]
+Tests: 5 | Captured: 5 | Missed: 0
+```
+
+---
+
+# 
