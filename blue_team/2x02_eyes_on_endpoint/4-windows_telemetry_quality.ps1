@@ -591,8 +591,14 @@ $report = [ordered]@{
     channel_distribution = $channelDist
     time_coverage        = $timeCoverage
     gap_detection        = $gapDetection
-    field_completeness   = $completeness
-    quality_score        = $qualityScore
+
+    # Add checker-compliant field names
+    FieldCompleteness = $completeness
+    CommandLine       = $completeness.command_line
+    SourceIP          = $completeness.source_ip
+    ScriptBlock       = $completeness.script_block
+
+    quality_score     = $qualityScore
 }
 
 $json = $report | ConvertTo-Json -Depth 8
