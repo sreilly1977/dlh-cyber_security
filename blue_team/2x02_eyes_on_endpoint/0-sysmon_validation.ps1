@@ -24,17 +24,18 @@
 Set-StrictMode -Version Latest
 
 # ── Constants ────────────────────────────────────────────────────────────────
-$script:SysmonLogName   = 'Microsoft-Windows-Sysmon/Operational'
-$script:TestFilePath    = "$env:TEMP\sysmon_test.txt"
-$script:TestRegPath     = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
-$script:TestRegValue    = 'SysmonTest'
-$script:TestRegDisplay  = 'HKCU\...\Run\SysmonTest'
-$script:TestDomain      = 'google.com'
-$script:TestDestIp      = '1.1.1.1'
-$script:TestDestPort    = 53
-$script:TestFileDesktop = "$env:USERPROFILE\Desktop\sysmon_test.txt"
-$script:TestFileCTemp   = 'C:\Temp\sysmon_test.txt'
-$script:TestFileExe     = "$env:TEMP\sysmon_test.exe"
+$script:SysmonLogName       = 'Microsoft-Windows-Sysmon/Operational'
+$script:TestFilePath        = "$env:TEMP\sysmon_test.txt"
+$script:TestFileWinTemp     = 'C:\Windows\Temp\sysmon_test.exe'
+$script:TestRegPath         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+$script:TestRegValue        = 'SysmonTest'
+$script:TestRegDisplay      = 'HKCU\...\Run\SysmonTest'
+$script:TestDomain          = 'google.com'
+$script:TestDestIp          = '1.1.1.1'
+$script:TestDestPort        = 53
+$script:TestFileDesktop     = "$env:USERPROFILE\Desktop\sysmon_test.txt"
+$script:TestFileCTemp       = 'C:\Temp\sysmon_test.txt'
+$script:TestFileExe         = "$env:TEMP\sysmon_test.exe"
 
 # ── Results tracking ──────────────────────────────────────────────────────────
 $script:passCount = 0
@@ -196,12 +197,13 @@ function Test-FileCreation {
     Write-Host '    [3/5] File creation (Event ID 11)...'
 
     # SwiftOnSecurity uses FileCreate onmatch="include" with specific extension
-    # rules. A plain .txt file will not match. An .exe extension in TEMP is
-    # monitored because it detects executable drops in user-writable locations.
+    # rules. A plain .txt file will not match. An .exe extension is monitored
+    # because it detects executable drops in user-writable locations.
 
     # Remove any leftover files from previous runs
     $cleanupPaths = @(
         $script:TestFileExe,
+        $script:TestFileWinTemp,
         $script:TestFileDesktop,
         $script:TestFileCTemp,
         $script:TestFilePath
@@ -212,7 +214,7 @@ function Test-FileCreation {
         }
     }
 
-    # Attempt 1: .exe in TEMP (SwiftOnSecurity monitors executable drops in temp)
+    # Attempt 1: .exe in user TEMP (SwiftOnSecurity monitors executable drops in temp)
     $startTime = Get-Date
     $null = New-Item -Path $script:TestFileExe -ItemType File -Force
     Set-Content -Path $script:TestFileExe -Value 'Sysmon telemetry validation test file.'
@@ -221,7 +223,18 @@ function Test-FileCreation {
     $evt = Find-SysmonEvent -EventId 11 -SinceTime $startTime
     $displayPath = $script:TestFileExe
 
-    # Attempt 2: .exe on Desktop
+    # Attempt 2: .exe in C:\Windows\Temp
+    if ($null -eq $evt) {
+        $startTime = Get-Date
+        $null = New-Item -Path $script:TestFileWinTemp -ItemType File -Force
+        Set-Content -Path $script:TestFileWinTemp -Value 'Sysmon telemetry validation test file.'
+        Start-Sleep -Milliseconds 1000
+
+        $evt = Find-SysmonEvent -EventId 11 -SinceTime $startTime
+        $displayPath = $script:TestFileWinTemp
+    }
+
+    # Attempt 3: .exe on Desktop
     if ($null -eq $evt) {
         $desktopExe = "$env:USERPROFILE\Desktop\sysmon_test.exe"
         $startTime = Get-Date
@@ -233,7 +246,7 @@ function Test-FileCreation {
         $displayPath = $desktopExe
     }
 
-    # Attempt 3: .exe in C:\Temp
+    # Attempt 4: .exe in C:\Temp
     if ($null -eq $evt) {
         if (-not (Test-Path 'C:\Temp')) {
             New-Item -Path 'C:\Temp' -ItemType Directory -Force | Out-Null
@@ -297,15 +310,25 @@ function Test-DnsQuery {
 
     $startTime = Get-Date
 
-    # Use nslookup.exe to generate a DNS query
-    $null = Start-Process -FilePath 'nslookup.exe' -ArgumentList $script:TestDomain `
+    # Trigger 1: ping goes through the Windows DNS client, which Sysmon hooks
+    $null = Start-Process -FilePath 'ping.exe' -ArgumentList '-n', '1', $script:TestDomain `
         -WindowStyle Hidden -Wait -PassThru
 
     Start-Sleep -Milliseconds 1000
 
     $evt = Find-SysmonEvent -EventId 22 -SinceTime $startTime
+
+    # Trigger 2: nslookup as fallback
     if ($null -eq $evt) {
-        # Also try Invoke-WebRequest as a secondary trigger
+        $null = Start-Process -FilePath 'nslookup.exe' -ArgumentList $script:TestDomain `
+            -WindowStyle Hidden -Wait -PassThru
+
+        Start-Sleep -Milliseconds 1000
+        $evt = Find-SysmonEvent -EventId 22 -SinceTime $startTime
+    }
+
+    # Trigger 3: Invoke-WebRequest as last resort
+    if ($null -eq $evt) {
         try {
             $null = Invoke-WebRequest -Uri "http://$($script:TestDomain)/" -TimeoutSec 3 -UseBasicParsing
         }
@@ -344,10 +367,13 @@ function Invoke-Cleanup {
         $script:TestFileDesktop,
         $script:TestFileCTemp,
         $script:TestFileExe,
+        $script:TestFileWinTemp,
         "$env:USERPROFILE\Desktop\sysmon_test.exe",
         "$env:USERPROFILE\Desktop\sysmon_test.txt",
         'C:\Temp\sysmon_test.exe',
-        'C:\Temp\sysmon_test.txt'
+        'C:\Temp\sysmon_test.txt',
+        'C:\Windows\Temp\sysmon_test.exe',
+        'C:\Windows\Temp\sysmon_test.txt'
     )
     foreach ($p in $cleanupPaths) {
         if (Test-Path $p) {
