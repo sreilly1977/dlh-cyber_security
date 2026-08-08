@@ -152,6 +152,7 @@ Configuration templates for:
 - Compliance-aligned baselines
 
 > **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
+> wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
 ---
 
