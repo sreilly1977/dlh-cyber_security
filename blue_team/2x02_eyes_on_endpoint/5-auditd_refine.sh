@@ -134,11 +134,9 @@ main() {
         echo ""
         echo "# Process execution via execve"
         echo "-a always,exit -F arch=b64 -S execve -k process_exec"
-        echo "-a always,exit -F arch=b32 -S execve -k process_exec"
         echo ""
         echo "# Network socket creation"
         echo "-a always,exit -F arch=b64 -S socket -S connect -k network_connect"
-        echo "-a always,exit -F arch=b32 -S socket -S connect -k network_connect"
         echo ""
         echo "# SSH key file access (${ssh_count} directory/directories discovered)"
         while IFS= read -r dir; do
@@ -159,7 +157,7 @@ main() {
     log_added "Cron directory monitoring"
     log_added "sudoers.d monitoring"
 
-    # Step 3: Load rules with augenrules (NOT service restart)
+    # Step 3: Load rules with augenrules
     log_info "Loading rules..."
     augenrules --load 2>&1 | tail -1
     echo "    augenrules --load: OK"
