@@ -310,15 +310,28 @@ function Test-DnsQuery {
 
     $startTime = Get-Date
 
-    # Trigger 1: ping goes through the Windows DNS client, which Sysmon hooks
-    $null = Start-Process -FilePath 'ping.exe' -ArgumentList '-n', '1', $script:TestDomain `
-        -WindowStyle Hidden -Wait -PassThru
+    # Trigger 1: Resolve-DnsName uses the Windows DNS client resolver
+    try {
+        Resolve-DnsName -Name $script:TestDomain -ErrorAction SilentlyContinue | Out-Null
+    }
+    catch {
+        # Resolution failure still generates a DNS query event
+    }
 
     Start-Sleep -Milliseconds 1000
 
     $evt = Find-SysmonEvent -EventId 22 -SinceTime $startTime
 
-    # Trigger 2: nslookup as fallback
+    # Trigger 2: ping goes through the Windows DNS client
+    if ($null -eq $evt) {
+        $null = Start-Process -FilePath 'ping.exe' -ArgumentList '-n', '1', $script:TestDomain `
+            -WindowStyle Hidden -Wait -PassThru
+
+        Start-Sleep -Milliseconds 1000
+        $evt = Find-SysmonEvent -EventId 22 -SinceTime $startTime
+    }
+
+    # Trigger 3: nslookup as fallback
     if ($null -eq $evt) {
         $null = Start-Process -FilePath 'nslookup.exe' -ArgumentList $script:TestDomain `
             -WindowStyle Hidden -Wait -PassThru
@@ -327,7 +340,7 @@ function Test-DnsQuery {
         $evt = Find-SysmonEvent -EventId 22 -SinceTime $startTime
     }
 
-    # Trigger 3: Invoke-WebRequest as last resort
+    # Trigger 4: Invoke-WebRequest as last resort
     if ($null -eq $evt) {
         try {
             $null = Invoke-WebRequest -Uri "http://$($script:TestDomain)/" -TimeoutSec 3 -UseBasicParsing
