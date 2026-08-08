@@ -1,10 +1,16 @@
-# 0. Domain Reconnaissance
+# [0. Domain Reconnaissance](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/0-domain_baseline.ps1)
 
-Goal: Map the entire MedDefense Active Directory environment from a security perspective, establishing the Windows baseline equivalent of 2x00 Task 0.
+## Goal: 
 
-Context: Before you harden a Windows domain, you need to understand what you are working with. How many users? What groups? What service accounts? What GPOs exist? What are the current password and audit policies? This is the Windows equivalent of the Lynis baseline from 2x00 Task 0.
+Map the entire MedDefense Active Directory environment from a security perspective, establishing the Windows baseline equivalent of 2x00 Task 0.
 
-Instructions: Write a PowerShell script 0-domain_baseline.ps1 that captures the complete security state of the MedDefense domain and produces a structured report:
+## Context: 
+
+Before you harden a Windows domain, you need to understand what you are working with. How many users? What groups? What service accounts? What GPOs exist? What are the current password and audit policies? This is the Windows equivalent of the Lynis baseline from 2x00 Task 0.
+
+## Instructions: 
+
+Write a PowerShell script 0-domain_baseline.ps1 that captures the complete security state of the MedDefense domain and produces a structured report:
 
 - Domain information: domain name, forest level, domain controllers
 
@@ -47,13 +53,19 @@ Findings: 9 (Critical: 3, High: 4, Medium: 2)
 
 ---
 
-# 1. Domain Risk Findings Extractor
+# [1. Domain Risk Findings Extractor](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/1-domain_findings.ps1)
 
-Goal: Produce the actionable findings inventory that drives the Windows hardening workflow.
+## Goal: 
 
-Context: Task 0 maps the domain baseline, but baseline data alone is not enough. The security engineer needs a findings inventory that identifies exactly what must be remediated, which task remediates it, and how severe the risk is. This rebuilt task connects Active Directory weaknesses to password policy, audit policy, Kerberos hardening, service account control, GPO hardening, and stale object cleanup.
+Produce the actionable findings inventory that drives the Windows hardening workflow.
 
-Instructions: Write 1-domain_findings.ps1.
+## Context: 
+
+Task 0 maps the domain baseline, but baseline data alone is not enough. The security engineer needs a findings inventory that identifies exactly what must be remediated, which task remediates it, and how severe the risk is. This rebuilt task connects Active Directory weaknesses to password policy, audit policy, Kerberos hardening, service account control, GPO hardening, and stale object cleanup.
+
+## Instructions: 
+
+Write 1-domain_findings.ps1.
 
 The script must audit meddefense.local and generate domain_security_findings.json.
 
@@ -69,7 +81,7 @@ It must identify:
 
 Each finding object must include id, severity, category, asset, evidence, risk, recommended_remediation, and mapped_task.
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\1-domain_findings.ps1
@@ -91,13 +103,19 @@ Report saved to: domain_security_findings.json
 
 ---
 
-# 2. Windows Event Log Assessment
+# [2. Windows Event Log Assessment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/2-eventlog_assessment.ps1)
 
-Goal: Assess the current event logging capability by checking which critical Event IDs the domain is actually generating and identifying the visibility gaps.
+## Goal: 
 
-Context: You need to know what the domain is currently capable of seeing. If Event ID 4688 (process creation) is not being generated, then every process the attacker runs is invisible. If Event ID 4672 (special logon) is not logged, you cannot detect when someone uses admin privileges. This task quantifies the gap between what the domain sees now and what it needs to see.
+Assess the current event logging capability by checking which critical Event IDs the domain is actually generating and identifying the visibility gaps.
 
-Instructions: Write a PowerShell script 2-eventlog_assessment.ps1 that:
+## Context: 
+
+You need to know what the domain is currently capable of seeing. If Event ID 4688 (process creation) is not being generated, then every process the attacker runs is invisible. If Event ID 4672 (special logon) is not logged, you cannot detect when someone uses admin privileges. This task quantifies the gap between what the domain sees now and what it needs to see.
+
+## Instructions: 
+
+Write a PowerShell script 2-eventlog_assessment.ps1 that:
 
     Checks the current audit policy configuration using auditpol /get /category:*
 
@@ -105,7 +123,7 @@ Instructions: Write a PowerShell script 2-eventlog_assessment.ps1 that:
 
     Queries the Security log to confirm which Event IDs have actually been generated in the last 24 hours
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\2-eventlog_assessment.ps1
@@ -124,13 +142,19 @@ Event ID  Description               Audit Subcategory     Status
 
 ---
 
-# 3. Windows Telemetry Reference Builder
+# [3. Windows Telemetry Reference Builder](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/3-telemetry_reference.ps1)
 
-Goal: Build a machine-readable Windows event reference that connects security events to MedDefense detection use cases.
+## Goal: 
 
-Context: The original task was too static. This rebuilt task creates an operational reference mapping Event IDs to log source, audit dependency, detection meaning, Crimson Tide phase, triage priority, and validation method. This becomes the bridge between audit policy configuration, Sysmon deployment, PowerShell logging, and Module 3 detection work.
+Build a machine-readable Windows event reference that connects security events to MedDefense detection use cases.
 
-Instructions: Write 3-telemetry_reference.ps1.
+## Context: 
+
+The original task was too static. This rebuilt task creates an operational reference mapping Event IDs to log source, audit dependency, detection meaning, Crimson Tide phase, triage priority, and validation method. This becomes the bridge between audit policy configuration, Sysmon deployment, PowerShell logging, and Module 3 detection work.
+
+## Instructions: 
+
+Write 3-telemetry_reference.ps1.
 
 The script must generate windows_event_reference.json.
 
@@ -144,7 +168,7 @@ Sysmon log: 1, 3, 7, 11, 13, 22.
 
 For each event include event_id, event_name, log_source, audit_or_sensor_dependency, security_meaning, normal_frequency, triage_priority, crimson_tide_phase, example_suspicious_pattern, and validation_method.
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\3-telemetry_reference.ps1
@@ -157,13 +181,19 @@ Reference saved to: windows_event_reference.json
 
 ---
 
-# 4. Password and Lockout Policy
+# [4. Password and Lockout Policy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/4-password_policy.ps1)
 
-Goal: Deploy a CIS-compliant password and account lockout policy via Group Policy, fixing the two most critical findings from your domain assessment.
+## Goal: 
 
-Context: Finding password minimum length is 7, complexity disabled, no lockout. The Crimson Tide advisory documented that weak passwords and absent lockout enabled brute-force and credential harvesting in all 5 hospital breaches. This is the single highest-impact GPO you will create.
+Deploy a CIS-compliant password and account lockout policy via Group Policy, fixing the two most critical findings from your domain assessment.
 
-Instructions: Write a PowerShell script 4-password_policy.ps1 that:
+## Context: 
+
+Finding password minimum length is 7, complexity disabled, no lockout. The Crimson Tide advisory documented that weak passwords and absent lockout enabled brute-force and credential harvesting in all 5 hospital breaches. This is the single highest-impact GPO you will create.
+
+## Instructions: 
+
+Write a PowerShell script 4-password_policy.ps1 that:
 
     Creates a new GPO named "MedDefense - Password and Lockout Policy"
 
@@ -193,7 +223,7 @@ Instructions: Write a PowerShell script 4-password_policy.ps1 that:
 
     Verifies the policy is applied by querying the effective policy
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\4-password_policy.ps1
@@ -214,13 +244,19 @@ PS> .\4-password_policy.ps1
 
 ---
 
-# 5. Advanced Audit Policy
+# [5. Advanced Audit Policy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/5-audit_policy.ps1)
 
-Goal: Configure Advanced Audit Policies via GPO to generate the security events needed for detection, closing the visibility gaps identified in Task 2.
+## Goal: 
 
-Context: The default Windows audit policy logs almost nothing useful. Event ID 4688 (process creation) is not generated by default. Command-line logging in process events is disabled. Privilege use is not audited. This means that if an attacker runs PowerShell on a MedDefense workstation right now, there is zero evidence of what they executed. The Advanced Audit Policy replaces the basic policy with granular per-category configuration. This is what transforms Windows Event Logs from "noise" to "evidence."
+Configure Advanced Audit Policies via GPO to generate the security events needed for detection, closing the visibility gaps identified in Task 2.
 
-Instructions: Write a PowerShell script 5-audit_policy.ps1 that:
+## Context: 
+
+The default Windows audit policy logs almost nothing useful. Event ID 4688 (process creation) is not generated by default. Command-line logging in process events is disabled. Privilege use is not audited. This means that if an attacker runs PowerShell on a MedDefense workstation right now, there is zero evidence of what they executed. The Advanced Audit Policy replaces the basic policy with granular per-category configuration. This is what transforms Windows Event Logs from "noise" to "evidence."
+
+## Instructions: 
+
+Write a PowerShell script 5-audit_policy.ps1 that:
 
     Creates a GPO named "MedDefense - Advanced Audit Policy"
 
@@ -248,7 +284,7 @@ Instructions: Write a PowerShell script 5-audit_policy.ps1 that:
 
     Verifies with auditpol /get /category:*
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\5-audit_policy.ps1
@@ -269,13 +305,19 @@ PS> .\5-audit_policy.ps1
 
 ---
 
-# 6. PowerShell Security
+# [6. PowerShell Security](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/6-powershell_security.ps1)
 
-Goal: Configure PowerShell logging and execution restrictions to ensure every PowerShell command executed on MedDefense systems is captured, neutralizing the attacker's most powerful post-exploitation tool.
+## Goal: 
 
-Context: PowerShell is the most commonly abused legitimate tool in post-exploitation. The Crimson Tide advisory noted powershell.exe -enc [base64] in the process creation logs of compromised hospitals (Phase 3). Without Script Block Logging, encoded PowerShell commands are invisible. Without Module Logging, you cannot trace which capabilities the attacker loaded. Without Transcription, you have no complete record of the session.
+Configure PowerShell logging and execution restrictions to ensure every PowerShell command executed on MedDefense systems is captured, neutralizing the attacker's most powerful post-exploitation tool.
 
-Instructions: Write a PowerShell script 6-powershell_security.ps1 that:
+## Context: 
+
+PowerShell is the most commonly abused legitimate tool in post-exploitation. The Crimson Tide advisory noted powershell.exe -enc [base64] in the process creation logs of compromised hospitals (Phase 3). Without Script Block Logging, encoded PowerShell commands are invisible. Without Module Logging, you cannot trace which capabilities the attacker loaded. Without Transcription, you have no complete record of the session.
+
+## Instructions: 
+
+Write a PowerShell script 6-powershell_security.ps1 that:
 
     Creates a GPO named "MedDefense - PowerShell Security"
 
@@ -289,7 +331,7 @@ Instructions: Write a PowerShell script 6-powershell_security.ps1 that:
 
     Tests by running an encoded PowerShell command and verifying it appears decoded in Event ID 4104
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\6-powershell_security.ps1
@@ -311,13 +353,19 @@ PS> .\6-powershell_security.ps1
 
 ---
 
-# 7. Kerberos and Authentication Hardening
+# [7. Kerberos and Authentication Hardening](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/7-auth_hardening.ps1)
 
-Goal: Disable weak Kerberos encryption types and harden authentication protocols to block Kerberoasting and credential theft attacks.
+## Goal: 
 
-Context: Finding from 1x02: "Active Directory supports DES and RC4 Kerberos encryption types." The Crimson Tide advisory confirmed: "In 3 of 5 cases, the attacker exploited Kerberoasting (RC4-encrypted service tickets cracked offline)." RC4 tickets can be cracked in minutes with hashcat. AES-256 tickets take years. The fix is straightforward: disable DES and RC4, enforce AES-only. But if any legacy application authenticates using RC4, disabling it breaks that authentication.
+Disable weak Kerberos encryption types and harden authentication protocols to block Kerberoasting and credential theft attacks.
 
-Instructions: Write a PowerShell script 7-auth_hardening.ps1 that:
+## Context: 
+
+Finding from 1x02: "Active Directory supports DES and RC4 Kerberos encryption types." The Crimson Tide advisory confirmed: "In 3 of 5 cases, the attacker exploited Kerberoasting (RC4-encrypted service tickets cracked offline)." RC4 tickets can be cracked in minutes with hashcat. AES-256 tickets take years. The fix is straightforward: disable DES and RC4, enforce AES-only. But if any legacy application authenticates using RC4, disabling it breaks that authentication.
+
+## Instructions: 
+
+Write a PowerShell script 7-auth_hardening.ps1 that:
 
     Queries the current Kerberos encryption types supported by the domain
 
@@ -335,7 +383,7 @@ Instructions: Write a PowerShell script 7-auth_hardening.ps1 that:
 
     Verifies the new configuration
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\7-auth_hardening.ps1
@@ -360,13 +408,19 @@ PS> .\7-auth_hardening.ps1
 
 ---
 
-# 8. SMB and Protocol Hardening
+# [8. SMB and Protocol Hardening](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/8-smb_hardening.ps1)
 
-Goal: Disable SMBv1 and enforce SMB signing to eliminate one of the most commonly exploited lateral movement vectors in enterprise Windows environments.
+## Goal: 
 
-Context: SMBv1 is the protocol behind EternalBlue (WannaCry, NotPetya). The Crimson Tide advisory did not use EternalBlue, but SMBv1 remains enabled on MedDefense's domain controller. Disabling it costs nothing and removes an entire class of attacks. SMB signing prevents relay attacks. SMB encryption prevents network sniffing of file transfers.
+Disable SMBv1 and enforce SMB signing to eliminate one of the most commonly exploited lateral movement vectors in enterprise Windows environments.
 
-Instructions: Write a PowerShell script 8-smb_hardening.ps1 that:
+## Context: 
+
+SMBv1 is the protocol behind EternalBlue (WannaCry, NotPetya). The Crimson Tide advisory did not use EternalBlue, but SMBv1 remains enabled on MedDefense's domain controller. Disabling it costs nothing and removes an entire class of attacks. SMB signing prevents relay attacks. SMB encryption prevents network sniffing of file transfers.
+
+## Instructions: 
+
+Write a PowerShell script 8-smb_hardening.ps1 that:
 
     Checks current SMB configuration (v1 enabled, signing, encryption)
 
@@ -402,13 +456,19 @@ PS> .\8-smb_hardening.ps1
 
 ---
 
-# 9. Sysmon Deployment
+# [9. Sysmon Deployment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/9-sysmon_deploy.ps1)
 
-Goal: Install and configure Sysmon with a detection-optimized configuration, deploying the single most important endpoint detection tool on the Windows platform.
+## Goal: 
 
-Context: Windows Event Logs capture authentication and process creation. Sysmon captures everything else: network connections, DNS queries, file creation timestamps, registry modifications, driver loads, WMI events, named pipe connections. Sysmon transforms a Windows endpoint from "I know who logged in" to "I know what they ran, what it connected to, what files it created, what registry keys it modified and what network connections it made." Without Sysmon, detecting the Crimson Tide attacker's lateral movement (PsExec, WMI), data exfiltration (Rclone) and ransomware deployment would be nearly impossible.
+Install and configure Sysmon with a detection-optimized configuration, deploying the single most important endpoint detection tool on the Windows platform.
 
-Instructions: Write a PowerShell script 9-sysmon_deploy.ps1 that:
+## Context: 
+
+Windows Event Logs capture authentication and process creation. Sysmon captures everything else: network connections, DNS queries, file creation timestamps, registry modifications, driver loads, WMI events, named pipe connections. Sysmon transforms a Windows endpoint from "I know who logged in" to "I know what they ran, what it connected to, what files it created, what registry keys it modified and what network connections it made." Without Sysmon, detecting the Crimson Tide attacker's lateral movement (PsExec, WMI), data exfiltration (Rclone) and ransomware deployment would be nearly impossible.
+
+## Instructions: 
+
+Write a PowerShell script 9-sysmon_deploy.ps1 that:
 
     Downloads Sysmon from the Microsoft Sysinternals website
 
@@ -422,7 +482,7 @@ Instructions: Write a PowerShell script 9-sysmon_deploy.ps1 that:
 
 Produce the sysmonconfig.xml as a separate deliverable.
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\9-sysmon_deploy.ps1
@@ -441,13 +501,19 @@ PS> .\9-sysmon_deploy.ps1
 
 ---
 
-# 10. Sysmon Detection Tuning
+# [10. Sysmon Detection Tuning](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/10-sysmon_tune.ps1)
 
-Goal: Write custom Sysmon detection rules targeting MedDefense-specific threats, then validate each rule with a controlled trigger.
+## Goal: 
 
-Context: The SwiftOnSecurity config is a solid baseline, but it is generic. MedDefense has specific threats: Crimson Tide uses Rclone for exfiltration (Phase 4), PsExec for lateral movement (Phase 3), and encoded PowerShell for execution (Phase 3). Custom rules that detect THESE tools are more valuable than generic coverage. Adding rules for process creation from unusual paths, network connections to external IPs from server processes, file creation in startup directories and registry modifications to persistence keys makes the instrumentation specific to the MedDefense threat model.
+Write custom Sysmon detection rules targeting MedDefense-specific threats, then validate each rule with a controlled trigger.
 
-Instructions: Write a PowerShell script 10-sysmon_tune.ps1 that:
+## Context: 
+
+The SwiftOnSecurity config is a solid baseline, but it is generic. MedDefense has specific threats: Crimson Tide uses Rclone for exfiltration (Phase 4), PsExec for lateral movement (Phase 3), and encoded PowerShell for execution (Phase 3). Custom rules that detect THESE tools are more valuable than generic coverage. Adding rules for process creation from unusual paths, network connections to external IPs from server processes, file creation in startup directories and registry modifications to persistence keys makes the instrumentation specific to the MedDefense threat model.
+
+## Instructions: 
+
+Write a PowerShell script 10-sysmon_tune.ps1 that:
 
     Loads the current Sysmon configuration
 
@@ -469,7 +535,7 @@ Instructions: Write a PowerShell script 10-sysmon_tune.ps1 that:
 
 Produce the updated sysmonconfig.xml as a deliverable.
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\10-sysmon_tune.ps1
@@ -492,13 +558,19 @@ Custom rules: 5 added | Tests: 5/5 PASS
 
 ---
 
-# 11. Windows Firewall Lockdown
+# [11. Windows Firewall Lockdown](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/11-firewall_hardening.ps1)
 
-Goal: Configure Windows Firewall with a default-deny inbound policy and service-specific allow rules, implementing endpoint-level network segmentation.
+## Goal: 
 
-Context: The domain reconnaissance found: Domain profile ON but permissive, Private and Public profiles OFF. This means any application can listen on any port with no restriction. The firewall should enforce the principle of least privilege at the network level: only the services that MUST be reachable are allowed inbound.
+Configure Windows Firewall with a default-deny inbound policy and service-specific allow rules, implementing endpoint-level network segmentation.
 
-Instructions: Write a PowerShell script 11-firewall_hardening.ps1 that:
+## Context: 
+
+The domain reconnaissance found: Domain profile ON but permissive, Private and Public profiles OFF. This means any application can listen on any port with no restriction. The firewall should enforce the principle of least privilege at the network level: only the services that MUST be reachable are allowed inbound.
+
+## Instructions: 
+
+Write a PowerShell script 11-firewall_hardening.ps1 that:
 
     Captures the current firewall state
 
@@ -522,7 +594,7 @@ Instructions: Write a PowerShell script 11-firewall_hardening.ps1 that:
 
     Disables legacy allow rules that conflict with the new policy
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\11-firewall_hardening.ps1
@@ -547,13 +619,19 @@ PS> .\11-firewall_hardening.ps1
 
 ---
 
-# 12. AppLocker Policy
+# [12. AppLocker Policy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/12-applocker_config.ps1)
 
-Goal: Deploy AppLocker application allow-listing to prevent unauthorized executables from running, blocking the ransomware deployment mechanism used by Crimson Tide.
+## Goal: 
 
-Context: Crimson Tide deployed ransomware as an executable pushed via GPO. AppLocker would have blocked this: if only approved executables are allowed to run, a malicious payload dropped by GPO fails to execute. AppLocker is the control that would have stopped Phase 6 dead. But AppLocker has a clinical constraint: physicians use a medical imaging application (DicomViewer.exe) signed by a small medical software company. The policy must allow this while blocking everything else.
+Deploy AppLocker application allow-listing to prevent unauthorized executables from running, blocking the ransomware deployment mechanism used by Crimson Tide.
 
-Instructions: Write a PowerShell script 12-applocker_config.ps1 that:
+## Context: 
+
+Crimson Tide deployed ransomware as an executable pushed via GPO. AppLocker would have blocked this: if only approved executables are allowed to run, a malicious payload dropped by GPO fails to execute. AppLocker is the control that would have stopped Phase 6 dead. But AppLocker has a clinical constraint: physicians use a medical imaging application (DicomViewer.exe) signed by a small medical software company. The policy must allow this while blocking everything else.
+
+## Instructions: 
+
+Write a PowerShell script 12-applocker_config.ps1 that:
 
     Creates a GPO named "MedDefense - AppLocker Policy"
 
@@ -581,7 +659,7 @@ Instructions: Write a PowerShell script 12-applocker_config.ps1 that:
 
     Exports the AppLocker policy XML
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\12-applocker_config.ps1
@@ -607,13 +685,17 @@ Policy exported to: applocker_policy.xml
 
 ---
 
-# 13. RDP and Remote Access Reduction
+# [13. RDP and Remote Access Reduction](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/13-rdp_hardening.ps1)
 
-Goal: Secure Remote Desktop Protocol to prevent it from being a lateral movement entry point, restricting access to authorized administrators with strong session controls.
+## Goal: 
 
-Context: RDP was used for lateral movement in the Crimson Tide attack (Phase 3). MedDefense currently allows RDP from any user, with no Network Level Authentication requirement, no session timeout and no restriction on source IP. Clipboard and drive redirection allow an attacker to exfiltrate data directly through the RDP session.
+Secure Remote Desktop Protocol to prevent it from being a lateral movement entry point, restricting access to authorized administrators with strong session controls.
 
-Instructions:
+## Context: 
+
+RDP was used for lateral movement in the Crimson Tide attack (Phase 3). MedDefense currently allows RDP from any user, with no Network Level Authentication requirement, no session timeout and no restriction on source IP. Clipboard and drive redirection allow an attacker to exfiltrate data directly through the RDP session.
+
+## Instructions:
 
 Write a PowerShell script 13-rdp_hardening.ps1 that:
 
@@ -631,7 +713,7 @@ Write a PowerShell script 13-rdp_hardening.ps1 that:
 
     Verifies all settings
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\13-rdp_hardening.ps1
@@ -653,13 +735,19 @@ PS> .\13-rdp_hardening.ps1
 
 ---
 
-# 14. Service Account Control
+# [14. Service Account Control](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/14-service_accounts.ps1)
 
-Goal: Audit all MedDefense service accounts, identify security weaknesses and implement hardening measures that would have prevented the svcehr compromise.
+## Goal: 
 
-Context: The security findings (Task 1) revealed that service accounts have excessive privileges, old passwords and unconstrained delegation. The svc_ehr account's suspicious 3:17 AM logon suggests it may be compromised. Service accounts should never have interactive logon rights, should not be able to create user accounts, and should have delegation restricted to prevent impersonation attacks.
+Audit all MedDefense service accounts, identify security weaknesses and implement hardening measures that would have prevented the svcehr compromise.
 
-Instructions: Write a PowerShell script 14-service_accounts.ps1 that:
+## Context: 
+
+The security findings (Task 1) revealed that service accounts have excessive privileges, old passwords and unconstrained delegation. The svc_ehr account's suspicious 3:17 AM logon suggests it may be compromised. Service accounts should never have interactive logon rights, should not be able to create user accounts, and should have delegation restricted to prevent impersonation attacks.
+
+## Instructions: 
+
+Write a PowerShell script 14-service_accounts.ps1 that:
 
     Lists all service accounts with their current security posture: group memberships, password age, delegation settings, SPN configuration, last logon
 
@@ -673,7 +761,7 @@ Instructions: Write a PowerShell script 14-service_accounts.ps1 that:
 
         Remove from privileged groups they should not belong to
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\14-service_accounts.ps1
@@ -690,15 +778,21 @@ svc_sql:
 
 ---
 
-# 15. Master Validation Script
+# [15. Master Validation Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/15-master_validation.ps1)
 
-Goal: Produce the comprehensive validation script that checks every hardening setting, serving as the weekly compliance check for the Windows domain.
+## Goal: 
 
-Context: James Chen will run this every Friday. It makes no changes to the system. It reads every setting deployed, compares against expected values and produces a compliance dashboard. This is the Windows equivalent of 15-validation.sh from 2x00.
+Produce the comprehensive validation script that checks every hardening setting, serving as the weekly compliance check for the Windows domain.
 
-Instructions: Write a PowerShell script 15-master_validation.ps1 that checks every hardening setting, reports PASS/WARN/FAIL for each. The script must exit with code 0 if all critical checks pass, code 1 if any critical check fails.
+## Context: 
 
-Expected Output:
+James Chen will run this every Friday. It makes no changes to the system. It reads every setting deployed, compares against expected values and produces a compliance dashboard. This is the Windows equivalent of 15-validation.sh from 2x00.
+
+## Instructions: 
+
+Write a PowerShell script 15-master_validation.ps1 that checks every hardening setting, reports PASS/WARN/FAIL for each. The script must exit with code 0 if all critical checks pass, code 1 if any critical check fails.
+
+**Expected Output:**
 
 ```PS
 PS> .\15-master_validation.ps1
@@ -741,13 +835,19 @@ PS> .\15-master_validation.ps1
 
 ---
 
-# 16. Hardened Windows State Export
+# [16. Hardened Windows State Export](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/16-hardened_state_export.ps1)
 
-Goal: Export the final hardened Windows domain state into a structured evidence package that Module 3 analysts can use for validation, detection planning, and weekly drift checks.
+## Goal: 
 
-Context: Windows hardening is only useful if it can be proven, reviewed, and handed off. This final task turns the hardened domain into a machine-readable evidence artifact. It connects the defensive controls built across the project — GPOs, audit policy, PowerShell logging, Sysmon, firewall, AppLocker, RDP, authentication protocols, SMB, and service account posture — to the telemetry analysts should expect later.
+Export the final hardened Windows domain state into a structured evidence package that Module 3 analysts can use for validation, detection planning, and weekly drift checks.
 
-Instructions: Write 16-hardened_state_export.ps1.
+## Context: 
+
+Windows hardening is only useful if it can be proven, reviewed, and handed off. This final task turns the hardened domain into a machine-readable evidence artifact. It connects the defensive controls built across the project — GPOs, audit policy, PowerShell logging, Sysmon, firewall, AppLocker, RDP, authentication protocols, SMB, and service account posture — to the telemetry analysts should expect later.
+
+## Instructions: 
+
+Write 16-hardened_state_export.ps1.
 
 The script must generate windows_hardened_state.json.
 
@@ -767,7 +867,7 @@ The JSON export must include:
 
 The script must print progress for each exported section and finish by showing the output path.
 
-Expected Output:
+**Expected Output:**
 
 ```PS
 PS> .\16-hardened_state_export.ps1
