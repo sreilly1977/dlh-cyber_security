@@ -1,10 +1,16 @@
 # 0. The Baseline Snapshot
 
-Goal: Capture the complete security state of a system before any changes, establishing the measurement that every subsequent task will improve against.
+## Goal: 
 
-Context: You cannot prove hardening worked if you do not know where you started. This task captures the system as it is: unhardened, default configuration, every setting at its out-of-the-box value. Every number you record here is the number you will improve.
+Capture the complete security state of a system before any changes, establishing the measurement that every subsequent task will improve against.
 
-Instructions: Write a script 0-baseline_snapshot.sh that captures the complete security baseline of a Linux system. The script must:
+# Context: 
+
+You cannot prove hardening worked if you do not know where you started. This task captures the system as it is: unhardened, default configuration, every setting at its out-of-the-box value. Every number you record here is the number you will improve.
+
+## Instructions: 
+
+Write a script 0-baseline_snapshot.sh that captures the complete security baseline of a Linux system. The script must:
 
     Record system identification (hostname, OS, kernel version, uptime)
 
@@ -22,7 +28,7 @@ Instructions: Write a script 0-baseline_snapshot.sh that captures the complete s
 
     Record active user accounts and sudo group membership
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./0-baseline_snapshot.sh
@@ -39,13 +45,19 @@ World-writable files: 7
 
 # 1. MedDefense CIS Control Profile
 
-Goal: Build a threat-driven CIS hardening profile for MedDefense Linux servers that becomes the input for later remediation tasks.
+## Goal: 
 
-Context: The original CIS priority task leaned too heavily toward manual benchmark interpretation. In this project, scripts are the primary deliverable. This rebuilt task turns CIS prioritization into a structured, reusable control profile that later scripts can consume.
+Build a threat-driven CIS hardening profile for MedDefense Linux servers that becomes the input for later remediation tasks.
+
+## Context: 
+
+The original CIS priority task leaned too heavily toward manual benchmark interpretation. In this project, scripts are the primary deliverable. This rebuilt task turns CIS prioritization into a structured, reusable control profile that later scripts can consume.
 
 MedDefense does not need a generic list of CIS recommendations. It needs a focused control profile for billing-srv-01, web-srv-01, and log-srv-01, tied to the project's actual risks: SSH lateral movement, weak authentication, unnecessary services, missing audit visibility, exposed database services, and insufficient kernel hardening.
 
-Instructions: Write 1-cis_profile.sh.
+## Instructions: 
+
+Write 1-cis_profile.sh.
 
 The script must generate cis_profile.json containing exactly 15 controls. Each control must include:
 
@@ -61,7 +73,7 @@ The script must generate cis_profile.json containing exactly 15 controls. Each c
 
 The selected controls must cover SSH, kernel/sysctl hardening, PAM, service minimization, filesystem permissions, audit logging, firewall exposure, and log retention.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ ./1-cis_profile.sh
@@ -78,11 +90,17 @@ Report saved to: cis_profile.json
 
 # 2. The Lynis Audit Parser
 
-Goal: Parse a report file and produce a machine-readable JSON summary of the most important audit results.
+## Goal: 
 
-Context: Lynis stores the most important audit data in a key-value report file, usually lynis-report.dat. This file is easier to parse than the terminal output or the verbose log file. Converting it into JSON makes the audit results easier to inspect, filter, and reuse in a security workflow.
+Parse a report file and produce a machine-readable JSON summary of the most important audit results.
 
-Instructions: Run a full Lynis audit on the system. Then write a script 2-lynis_parse.sh that:
+## Context: 
+
+Lynis stores the most important audit data in a key-value report file, usually lynis-report.dat. This file is easier to parse than the terminal output or the verbose log file. Converting it into JSON makes the audit results easier to inspect, filter, and reuse in a security workflow.
+
+## Instructions:
+
+Run a full Lynis audit on the system. Then write a script 2-lynis_parse.sh that:
 
     accepts the path to a .dat report file as its first argument ("$1")
 
@@ -100,9 +118,9 @@ Instructions: Run a full Lynis audit on the system. Then write a script 2-lynis_
 
     produces a structured JSON report on standard output
 
-Hint: man jq
+**Hint: man jq**
 
-Expected Output:
+## Expected Output:
 
 ```bash
 $ ./2-lynis_parse.sh /var/log/lynis-report.dat | jq '.' > lynis_findings.json
@@ -128,11 +146,17 @@ $ cat lynis_findings.json
 
 # 3. Evidence-Based Remediation Queue
 
-Goal: Convert the CIS control profile and Lynis findings into a prioritized, evidence-backed remediation queue.
+## Goal: 
 
-Context: This task becomes the decision engine that explains why Tasks 4–13 are performed and in what order. Every remediation item must be backed by evidence, mapped to a later hardening script, and ordered by risk.
+Convert the CIS control profile and Lynis findings into a prioritized, evidence-backed remediation queue.
 
-Instructions: Write 3-remediation_queue.sh.
+## Context: 
+
+This task becomes the decision engine that explains why Tasks 4–13 are performed and in what order. Every remediation item must be backed by evidence, mapped to a later hardening script, and ordered by risk.
+
+## Instructions: 
+
+Write 3-remediation_queue.sh.
 
 The script must read cis_profile.json and lynis_findings.json, then produce gap_analysis.json and remediation_queue.json.
 
@@ -150,7 +174,7 @@ For every non-compliant or partially compliant control, include:
 
 The queue must be sorted by priority score descending.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ ./3-remediation_queue.sh
@@ -168,11 +192,17 @@ Queue saved to: remediation_queue.json
 
 # 4. The SSH Lockdown
 
-Goal: Harden SSH to eliminate password-based authentication and reduce the attack surface to the minimum required for MedDefense operations.
+##Goal: 
 
-Context: Finding 009 from your vulnerability assessment (1x02): "SSH on billing-srv-01 allows password-based authentication. Combined with no account lockout policy, this permits brute-force attacks." The Crimson Tide advisory confirmed: in 3 of 5 hospital breaches, the attacker used harvested credentials for SSH lateral movement (Phase 3). This is the first thing you fix.
+Harden SSH to eliminate password-based authentication and reduce the attack surface to the minimum required for MedDefense operations.
 
-Instructions: Write a script 4-ssh_hardening.sh that:
+## Context: 
+
+Finding 009 from your vulnerability assessment (1x02): "SSH on billing-srv-01 allows password-based authentication. Combined with no account lockout policy, this permits brute-force attacks." The Crimson Tide advisory confirmed: in 3 of 5 hospital breaches, the attacker used harvested credentials for SSH lateral movement (Phase 3). This is the first thing you fix.
+
+## Instructions: 
+
+Write a script 4-ssh_hardening.sh that:
 
     Backs up the current sshd_config to /etc/ssh/sshd_config.bak
 
@@ -204,7 +234,7 @@ Instructions: Write a script 4-ssh_hardening.sh that:
 
     If validation passes, restarts SSH. If it fails, restores the backup.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./4-ssh_hardening.sh
@@ -232,11 +262,17 @@ Settings applied: 11
 
 # 5. The Kernel Shield
 
-Goal: Harden the Linux kernel network stack and memory protections via sysctl to prevent the server from being used as a pivot point or exploitation target.
+## Goal: 
 
-Context: In the Crimson Tide attack chain (Phase 3), the attacker moved laterally across the flat network. If a compromised Linux server has IP forwarding enabled, it becomes a router for the attacker. If ICMP redirects are accepted, the attacker can reroute traffic. If ASLR is disabled, memory corruption exploits become trivially reliable. These are default-off settings that should never be on a production server.
+Harden the Linux kernel network stack and memory protections via sysctl to prevent the server from being used as a pivot point or exploitation target.
 
-Instructions: Write a script 5-sysctl_hardening.sh that:
+## Context: 
+
+In the Crimson Tide attack chain (Phase 3), the attacker moved laterally across the flat network. If a compromised Linux server has IP forwarding enabled, it becomes a router for the attacker. If ICMP redirects are accepted, the attacker can reroute traffic. If ASLR is disabled, memory corruption exploits become trivially reliable. These are default-off settings that should never be on a production server.
+
+## Instructions: 
+
+Write a script 5-sysctl_hardening.sh that:
 
     Backs up the current sysctl.conf
 
@@ -248,7 +284,7 @@ Instructions: Write a script 5-sysctl_hardening.sh that:
 
     Prints a PASS/FAIL for each setting
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./5-sysctl_hardening.sh
@@ -277,11 +313,17 @@ Verified FAIL: 0
 
 # 6. The Permission Sweep
 
-Goal: Audit and remediate dangerous filesystem permissions that could enable privilege escalation.
+## Goal: 
 
-Context: SUID binaries are how an attacker with low-privilege shell access escalates to root. World-writable files are how an attacker modifies scripts that run as root. Both are classic privilege escalation vectors that the Crimson Tide affiliate would use after initial access (Phase 3). The baseline snapshot from Task 0 found 23 SUID binaries and 7 world-writable files. Not all of them are necessary.
+Audit and remediate dangerous filesystem permissions that could enable privilege escalation.
 
-Instructions: Write a script 6-filesystem_hardening.sh that:
+## Context: 
+
+SUID binaries are how an attacker with low-privilege shell access escalates to root. World-writable files are how an attacker modifies scripts that run as root. Both are classic privilege escalation vectors that the Crimson Tide affiliate would use after initial access (Phase 3). The baseline snapshot from Task 0 found 23 SUID binaries and 7 world-writable files. Not all of them are necessary.
+
+## Instructions: 
+
+Write a script 6-filesystem_hardening.sh that:
 
     Finds all SUID binaries, compares against a hardcoded whitelist of known-safe binaries for Ubuntu 22.04, removes SUID from unexpected binaries
 
@@ -295,7 +337,7 @@ Instructions: Write a script 6-filesystem_hardening.sh that:
 
     Prints a full remediation summary
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./6-filesystem_hardening.sh
@@ -321,11 +363,17 @@ SUID remediated: 5 | SGID remediated: 1 | World-writable fixed: 7
 
 # 7. The Service Minimizer
 
-Goal: Identify and disable unnecessary services to reduce the attack surface to only what MedDefense operations require.
+## Goal: 
 
-Context: CIS Benchmark Section 2 covers service configuration. The principle: every running service is a potential entry point. A billing server does not need avahi-daemon, cups or rpcbind. The 1x02 scan found billing-srv-01 with unnecessary services exposed network-wide (Finding 006: MySQL on 0.0.0.0). The baseline snapshot counted 24 enabled services. A production billing server needs fewer than 10.
+Identify and disable unnecessary services to reduce the attack surface to only what MedDefense operations require.
 
-Instructions: Write a script 7-service_minimization.sh that:
+## Context: 
+
+CIS Benchmark Section 2 covers service configuration. The principle: every running service is a potential entry point. A billing server does not need avahi-daemon, cups or rpcbind. The 1x02 scan found billing-srv-01 with unnecessary services exposed network-wide (Finding 006: MySQL on 0.0.0.0). The baseline snapshot counted 24 enabled services. A production billing server needs fewer than 10.
+
+## Instructions: 
+
+Write a script 7-service_minimization.sh that:
 
     Lists all enabled services
 
@@ -337,7 +385,7 @@ Instructions: Write a script 7-service_minimization.sh that:
 
     Reports the before/after count
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./7-service_minimization.sh
@@ -364,11 +412,17 @@ Before: 24 | After: 9 | Disabled: 15
 
 # 8. The PAM Fortress
 
-Goal: Configure PAM to enforce password quality requirements and lock accounts after failed authentication attempts.
+## Goal: 
 
-Context: The Crimson Tide advisory documented that in 3 of 5 breaches, the attacker used harvested credentials (Phase 2) and Kerberoasting (Phase 3) to move laterally. Weak passwords are the root cause. PAM is where Linux enforces password policy. Currently, MedDefense has no password complexity requirements, no account lockout and no password history enforcement on its Linux servers.
+Configure PAM to enforce password quality requirements and lock accounts after failed authentication attempts.
 
-Instructions: Write a script 8-pam_hardening.sh that:
+## Context: 
+
+The Crimson Tide advisory documented that in 3 of 5 breaches, the attacker used harvested credentials (Phase 2) and Kerberoasting (Phase 3) to move laterally. Weak passwords are the root cause. PAM is where Linux enforces password policy. Currently, MedDefense has no password complexity requirements, no account lockout and no password history enforcement on its Linux servers.
+
+## Instructions: 
+
+Write a script 8-pam_hardening.sh that:
 
     Installs libpam-pwquality if not present
 
@@ -380,7 +434,7 @@ Instructions: Write a script 8-pam_hardening.sh that:
 
     Validates the PAM configuration by checking the relevant files
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./8-pam_hardening.sh
@@ -407,11 +461,17 @@ Password minimum length: 14 | Lockout: 5 attempts / 15 min | History: 12
 
 # 9. The AppArmor Enforcer
 
-Goal: Deploy and configure AppArmor profiles in enforce mode for all network-exposed services, implementing mandatory access control that limits damage even if a service is compromised.
+## Goal: 
 
-Context: When the crypto-miner compromised billing-srv-01 through Apache (1x00 incident), it had full access to the filesystem as www-data. AppArmor would have confined the Apache process to only the directories it needs. AppArmor is the difference between "the attacker got a shell on our web server" and "the attacker got a shell that can only access /var/www." A custom profile for the MedDefense billing application ensures that even a zero-day in the application cannot reach patient data directories.
+Deploy and configure AppArmor profiles in enforce mode for all network-exposed services, implementing mandatory access control that limits damage even if a service is compromised.
 
-Instructions: Write a script 9-apparmor_config.sh that:
+## Context: 
+
+When the crypto-miner compromised billing-srv-01 through Apache (1x00 incident), it had full access to the filesystem as www-data. AppArmor would have confined the Apache process to only the directories it needs. AppArmor is the difference between "the attacker got a shell on our web server" and "the attacker got a shell that can only access /var/www." A custom profile for the MedDefense billing application ensures that even a zero-day in the application cannot reach patient data directories.
+
+## Instructions: 
+
+Write a script 9-apparmor_config.sh that:
 
     Verifies AppArmor is installed and running
 
@@ -425,7 +485,7 @@ Instructions: Write a script 9-apparmor_config.sh that:
 
     Prints a summary with enforce/complain/unconfined counts
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./9-apparmor_config.sh
@@ -446,11 +506,17 @@ Profiles in enforce: 4 | Complain: 0 | Unconfined: 1
 
 # 10. The Audit Engine
 
-Goal: Deploy and configure auditd to monitor security-critical events, creating the audit trail that feeds future telemetry export.
+## Goal: 
 
-Context: Marcus Webb's notes from the 1x00 incident: "No SIEM or IDS was deployed. Attacker moved undetected for 5 days." auditd is the Linux kernel audit framework. It records system calls, file accesses and authentication events at the kernel level. The logs it generates become the primary Linux data source for the analyst work in Module 3. The rules you write here determine what the SOC can see.
+Deploy and configure auditd to monitor security-critical events, creating the audit trail that feeds future telemetry export.
 
-Instructions: Write a script 10-auditd_config.sh that:
+## Context: 
+
+Marcus Webb's notes from the 1x00 incident: "No SIEM or IDS was deployed. Attacker moved undetected for 5 days." auditd is the Linux kernel audit framework. It records system calls, file accesses and authentication events at the kernel level. The logs it generates become the primary Linux data source for the analyst work in Module 3. The rules you write here determine what the SOC can see.
+
+## Instructions: 
+
+Write a script 10-auditd_config.sh that:
 
     Installs and enables auditd
 
@@ -460,7 +526,7 @@ Instructions: Write a script 10-auditd_config.sh that:
 
     Tests by triggering an auditable event and checking the log
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./10-auditd_config.sh
@@ -491,11 +557,17 @@ $ sudo ./10-auditd_config.sh
 
 # 11. Audit Telemetry Coverage Test
 
-Goal: Prove that the audit rules deployed in Task 10 actually capture the security events MedDefense cares about.
+## Goal: 
 
-Context: The original audit validator encouraged risky system changes. This rebuilt version keeps the operational idea but makes the test safer, controlled, measurable, and usable as final compliance evidence.
+Prove that the audit rules deployed in Task 10 actually capture the security events MedDefense cares about.
 
-Instructions: Write 11-audit_coverage_test.sh.
+## Context: 
+
+The original audit validator encouraged risky system changes. This rebuilt version keeps the operational idea but makes the test safer, controlled, measurable, and usable as final compliance evidence.
+
+## Instructions: 
+
+Write 11-audit_coverage_test.sh.
 
 The script must produce audit_validation.json and test at least six controlled events:
 
@@ -510,7 +582,7 @@ For each test, record test name, expected audit key, command executed, timestamp
 
 The script must include cleanup logic and must not leave unsafe test accounts, files, or cron jobs behind.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./11-audit_coverage_test.sh
@@ -532,11 +604,17 @@ Report saved to: audit_validation.json
 
 # 12. The Log Architect
 
-Goal: Configure rsyslog for structured logging and set log rotation policies that ensure logs are preserved and exportable.
+## Goal: 
 
-Context: auditd handles kernel-level events, but authentication logs (auth.log), system logs (syslog) and service logs are handled by rsyslog. If rsyslog is misconfigured, SSH login attempts, PAM events and service failures disappear into /dev/null. If log rotation is too aggressive, evidence is destroyed before analysts can examine it. This task ensures that every log source on the hardened server is properly configured, retained and ready for the telemetry export you will build in 2x02.
+Configure rsyslog for structured logging and set log rotation policies that ensure logs are preserved and exportable.
 
-Instructions: Write a script 12-log_config.sh that:
+## Context: 
+
+auditd handles kernel-level events, but authentication logs (auth.log), system logs (syslog) and service logs are handled by rsyslog. If rsyslog is misconfigured, SSH login attempts, PAM events and service failures disappear into /dev/null. If log rotation is too aggressive, evidence is destroyed before analysts can examine it. This task ensures that every log source on the hardened server is properly configured, retained and ready for the telemetry export you will build in 2x02.
+
+## Instructions: 
+
+Write a script 12-log_config.sh that:
 
     Configures rsyslog to write auth events to /var/log/auth.log with structured formatting
 
@@ -548,7 +626,7 @@ Instructions: Write a script 12-log_config.sh that:
 
     Ensures log file permissions restrict access to root only
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./12-log_config.sh
@@ -571,11 +649,17 @@ Log sources configured: 2 | Rotation policies: 2 | Permissions: secured
 
 # 13. The Firewall Baseline
 
-Goal: Configure a host firewall with default-deny inbound policy, allowing only the services MedDefense requires.
+## Goal: 
 
-Context: The hardened services and the audit trail are useless if the server accepts connections on ports that no service is listening on. A default-deny firewall means the server only speaks when spoken to on approved channels. The 1x02 scan found billing-srv-01 with 11 open ports. After service minimization (Task 7), only 4 or 5 should be reachable. The firewall enforces this at the network layer, independent of the service configuration.
+Configure a host firewall with default-deny inbound policy, allowing only the services MedDefense requires.
 
-Instructions: Write a script 13-firewall_baseline.sh that:
+## Context: 
+
+The hardened services and the audit trail are useless if the server accepts connections on ports that no service is listening on. A default-deny firewall means the server only speaks when spoken to on approved channels. The 1x02 scan found billing-srv-01 with 11 open ports. After service minimization (Task 7), only 4 or 5 should be reachable. The firewall enforces this at the network layer, independent of the service configuration.
+
+## Instructions: 
+
+Write a script 13-firewall_baseline.sh that:
 
     Enables UFW (or configures nftables) with default-deny inbound, default-allow outbound
 
@@ -585,7 +669,7 @@ Instructions: Write a script 13-firewall_baseline.sh that:
 
     Validates the rules by listing the active ruleset
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./13-firewall_baseline.sh
@@ -608,11 +692,17 @@ $ sudo ./13-firewall_baseline.sh
 
 # 14. Production Hardening Orchestrator
 
-Goal: Create a safe master script that runs the hardening workflow in dependency order and records the before/after security delta.
+## Goal: 
 
-Context: A production-style hardening script must not run blindly. It must check prerequisites, stop safely, record failures, and generate evidence.
+Create a safe master script that runs the hardening workflow in dependency order and records the before/after security delta.
 
-Instructions: Write 14-hardening_orchestrator.sh.
+## Context: 
+
+A production-style hardening script must not run blindly. It must check prerequisites, stop safely, record failures, and generate evidence.
+
+## Instructions: 
+
+Write 14-hardening_orchestrator.sh.
 
 The script must run the hardening workflow in this order:
 
@@ -634,7 +724,7 @@ The script must verify required scripts exist, stop immediately on failure, reco
 
 It must be idempotent.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./14-hardening_orchestrator.sh
@@ -651,13 +741,19 @@ Improvement saved to: hardening_improvement.json
 
 ---
 
-15. The Post-Hardening Validator
+# 15. The Post-Hardening Validator
 
-Goal: Write a read-only script that independently verifies every hardening control is in its expected state.
+## Goal: 
 
-Context: Hardening is not a one-time event. Configuration drift happens: an admin changes a sysctl setting for debugging and forgets to revert. A software update overwrites sshd_config. This script is the continuous validation tool James Chen runs every Monday morning. It makes no changes to the system. It only reads and reports.
+Write a read-only script that independently verifies every hardening control is in its expected state.
 
-Instructions: Write a script 15-validation.sh that checks every hardening setting from Tasks 4-13 against its expected value. For each control:
+## Context: 
+
+Hardening is not a one-time event. Configuration drift happens: an admin changes a sysctl setting for debugging and forgets to revert. A software update overwrites sshd_config. This script is the continuous validation tool James Chen runs every Monday morning. It makes no changes to the system. It only reads and reports.
+
+## Instructions: 
+
+Write a script 15-validation.sh that checks every hardening setting from Tasks 4-13 against its expected value. For each control:
 
     Read the actual system state
 
@@ -667,7 +763,7 @@ Instructions: Write a script 15-validation.sh that checks every hardening settin
 
 The script must exit with code 0 if all checks pass, code 1 if any check fails.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./15-validation.sh
@@ -688,11 +784,17 @@ $ sudo ./15-validation.sh
 
 # 16. Lynis Improvement Diff
 
-Goal: Compare pre-hardening and post-hardening Lynis results and produce a structured improvement report.
+## Goal: 
 
-Context: Sarah Park needs a report that shows which findings disappeared, which remain, and whether hardening introduced new issues.
+Compare pre-hardening and post-hardening Lynis results and produce a structured improvement report.
 
-Instructions: Write 16-lynis_diff.sh.
+## Context: 
+
+Sarah Park needs a report that shows which findings disappeared, which remain, and whether hardening introduced new issues.
+
+## Instructions: 
+
+Write 16-lynis_diff.sh.
 
 The script must read lynis_findings.json and lynis_post_findings.json or generate the post-hardening file by running Lynis and parsing it.
 
@@ -709,7 +811,7 @@ The script must write hardening_improvement.json with:
     new_count
     residual_risk_summary
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ sudo ./16-lynis_diff.sh
@@ -726,11 +828,17 @@ Report saved to: hardening_improvement.json
 
 # 17. Machine-Readable Compliance Evidence Bundle
 
-Goal: Generate the final compliance artifact that proves what was selected, remediated, validated, and intentionally left unresolved.
+## Goal: 
 
-Context: This should not be a narrative report. It is an auditor-ready JSON artifact assembled from the outputs created throughout the project.
+Generate the final compliance artifact that proves what was selected, remediated, validated, and intentionally left unresolved.
 
-Instructions: Write 17-compliance_bundle.sh.
+## Context: 
+
+This should not be a narrative report. It is an auditor-ready JSON artifact assembled from the outputs created throughout the project.
+
+## Instructions: 
+
+Write 17-compliance_bundle.sh.
 
 The script must read:
 
@@ -745,7 +853,7 @@ The script must produce compliance_report.json with system identity, hardening d
 
 Every deviation must include control ID, reason, risk accepted, compensating control, and owner.
 
-Expected Output:
+**Expected Output:**
 
 ```bash
 $ ./17-compliance_bundle.sh
