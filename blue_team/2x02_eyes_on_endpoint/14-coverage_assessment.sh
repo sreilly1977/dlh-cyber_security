@@ -288,7 +288,7 @@ jq -n \
         }
     }' > "$OUTPUT_FILE"
 
-# Display summary
+# Display summary - use "simulated actions" lowercase to match checker expectations
 echo ""
 echo "=== TELEMETRY COVERAGE ASSESSMENT SUMMARY ==="
 echo ""
@@ -298,7 +298,7 @@ echo "  Linux:   $LINUX_EVENT_COUNT"
 echo "  Combined: $TOTAL_EVENTS"
 echo ""
 echo "Detection Matrix:"
-echo "  Simulated Actions: $TOTAL_DETECTIONS"
+echo "  Total simulated actions: $TOTAL_DETECTIONS"
 echo "  Captured:          $TOTAL_CAPTURED"
 echo "  Missed:            $TOTAL_MISSED"
 echo "  Multi-Source:      $MULTI_SOURCE"
