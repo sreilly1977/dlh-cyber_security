@@ -46,7 +46,6 @@ $actionCounter = 0
 $script:CleanupTaskName = $null
 $script:CleanupFilePath = $null
 $script:UserCreated = $false
-$script:UserCreationMethod = $null
 
 function Get-UTCTimestamp {
     return (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ").ToString()
@@ -83,38 +82,12 @@ try {
     Write-Host "    [$actionCounter/6] Creating local user '$Username'...      $Timestamp"
 
     try {
-        # Try AD cmdlets first (domain controller), fall back to net user
-        $adAvailable = $false
-        if (Get-Module -ListAvailable -Name ActiveDirectory) {
-            try {
-                Import-Module ActiveDirectory -ErrorAction Stop
-                $adAvailable = $true
-            } catch {
-                $adAvailable = $false
-            }
-        }
-
-        if ($adAvailable) {
-            # Get the default domain and OU path
-            $Domain = Get-ADDomain -ErrorAction Stop
-            $UserPath = "CN=Users,$($Domain.DistinguishedName)"
-            $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-
-            New-ADUser -Name $Username -SamAccountName $Username -UserPrincipalName "$Username@$($Domain.DNSRoot)" -AccountPassword $SecurePassword -Path $UserPath -Enabled $true -Description "Attacker sim user" -ErrorAction Stop
-            $script:UserCreated = $true
-            $script:UserCreationMethod = "AD"
-        } else {
-            # Fall back to net user via call operator (avoids ProcessStartInfo deadlock)
-            $output = & net.exe user $Username $Password /add /expires:never 2>&1
-            if ($LASTEXITCODE -ne 0) {
-                throw "net user failed (exit $LASTEXITCODE): $output"
-            }
-            $script:UserCreated = $true
-            $script:UserCreationMethod = "NET"
-        }
+        $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
+        New-LocalUser -Name $Username -Password $SecurePassword -AccountNeverExpires -Description "Attacker sim user" -ErrorAction Stop | Out-Null
+        $script:UserCreated = $true
 
         Add-GroundTruthEntry -ActionNumber $actionCounter `
-                             -Description "Created user account '$Username'" `
+                             -Description "Created local user account '$Username'" `
                              -Timestamp $Timestamp `
                              -ExpectedDetectionSources @("Security Event ID: 4720") `
                              -MitreTechniques @("T1136.001 - Account Creation: Local Account")
@@ -131,17 +104,27 @@ try {
 
     try {
         if ($script:UserCreated) {
-            if ($script:UserCreationMethod -eq "AD") {
-                # On a DC, Administrators is a builtin group in AD
-                # Use SID-based lookup to avoid localization issues
-                $AdminGroup = Get-ADGroup -Filter "SID -eq 'S-1-5-32-544'" -ErrorAction Stop
-                if ($null -eq $AdminGroup) {
-                    # Fallback to name lookup
-                    $AdminGroup = Get-ADGroup -Identity "Administrators" -ErrorAction Stop
+            # On a domain controller, Add-LocalGroupMember fails because
+            # built-in groups are AD-level. Use AD cmdlets as primary method,
+            # fall back to net localgroup if AD module unavailable.
+            $added = $false
+
+            if (Get-Module -ListAvailable -Name ActiveDirectory) {
+                try {
+                    Import-Module ActiveDirectory -ErrorAction Stop
+                    # Look up Administrators by well-known SID to avoid localization issues
+                    $AdminGroup = Get-ADGroup -Filter "SID -eq 'S-1-5-32-544'" -ErrorAction Stop
+                    if ($null -ne $AdminGroup) {
+                        Add-ADGroupMember -Identity $AdminGroup -Members $Username -ErrorAction Stop
+                        $added = $true
+                    }
+                } catch {
+                    # AD method failed, will try net localgroup below
                 }
-                Add-ADGroupMember -Identity $AdminGroup -Members $Username -ErrorAction Stop
-            } else {
-                # Fall back to net localgroup via call operator
+            }
+
+            if (-not $added) {
+                # Fallback: net localgroup via call operator (no deadlock risk)
                 $output = & net.exe localgroup administrators $Username /add 2>&1
                 if ($LASTEXITCODE -ne 0) {
                     throw "net localgroup failed (exit $LASTEXITCODE): $output"
@@ -269,14 +252,7 @@ try {
     # Remove user account
     if ($script:UserCreated) {
         try {
-            if ($script:UserCreationMethod -eq "AD") {
-                Remove-ADUser -Identity $Username -Confirm:$false -ErrorAction Stop
-            } else {
-                $output = & net.exe user $Username /delete 2>&1
-                if ($LASTEXITCODE -ne 0) {
-                    throw "net user delete failed (exit $LASTEXITCODE): $output"
-                }
-            }
+            Remove-LocalUser -Name $Username -ErrorAction Stop
             $Cleaned += "User removed"
         } catch {
             Write-Host "    [WARNING: Failed to remove user: $($_.Exception.Message)]" -ForegroundColor Yellow
@@ -321,7 +297,7 @@ try {
     }
 
 } catch {
-    Write-Host "[CRITICAL ERROR] Simulation interrupted: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[CRITICAL ERROR] Simulation interrupted: $($_.Exception.Message)]" -ForegroundColor Red
     Write-Host $_.ScriptStackTrace
     exit 1
 }
