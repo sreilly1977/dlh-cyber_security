@@ -104,22 +104,11 @@ try {
 
     try {
         if ($script:UserCreated) {
-            $added = $false
-
-            if (Get-Module -ListAvailable -Name ActiveDirectory) {
-                try {
-                    Import-Module ActiveDirectory -ErrorAction Stop
-                    $AdminGroup = Get-ADGroup -Filter "SID -eq 'S-1-5-32-544'" -ErrorAction Stop
-                    if ($null -ne $AdminGroup) {
-                        Add-ADGroupMember -Identity $AdminGroup -Members $Username -ErrorAction Stop
-                        $added = $true
-                    }
-                } catch {
-                    # AD method failed, will try net localgroup below
-                }
-            }
-
-            if (-not $added) {
+            # Primary method: Add-LocalGroupMember (works on standalone machines)
+            try {
+                Add-LocalGroupMember -Group "Administrators" -Member $Username -ErrorAction Stop
+            } catch {
+                # Fallback for domain controllers or when Add-LocalGroupMember fails
                 $output = & net.exe localgroup administrators $Username /add 2>&1
                 if ($LASTEXITCODE -ne 0) {
                     throw "net localgroup failed (exit $LASTEXITCODE): $output"
