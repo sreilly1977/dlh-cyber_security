@@ -175,14 +175,13 @@ try {
 
     try {
         $TaskName = "WinUpdateService_$([GUID]::NewGuid().ToString().Substring(0,8))"
-        $TaskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-WindowStyle Hidden -Command `"Write-Host 'Persistence task'`""
-        $TaskTrigger = New-ScheduledTaskTrigger -AtLogOn
 
-        # Use SYSTEM as principal to avoid dependency on the created user account
-        $TaskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
-        $TaskSettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+        # Use schtasks /create as required by the exercise
+        $output = & schtasks.exe /create /tn $TaskName /tr "powershell.exe -WindowStyle Hidden -Command Write-Host 'Persistence task'" /sc onlogon /ru SYSTEM /rl highest 2>&1
 
-        Register-ScheduledTask -TaskName $TaskName -Action $TaskAction -Trigger $TaskTrigger -Principal $TaskPrincipal -Settings $TaskSettings -ErrorAction Stop | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            throw "schtasks failed (exit $LASTEXITCODE): $output"
+        }
 
         $script:CleanupTaskName = $TaskName
 
@@ -259,11 +258,15 @@ try {
         }
     }
 
-    # Delete scheduled task
+    # Delete scheduled task using schtasks /delete
     if ($null -ne $script:CleanupTaskName) {
         try {
-            Unregister-ScheduledTask -TaskName $script:CleanupTaskName -Confirm:$false -ErrorAction Stop
-            $Cleaned += "task deleted"
+            $delOutput = & schtasks.exe /delete /tn "$($script:CleanupTaskName)" /f 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                $Cleaned += "task deleted"
+            } else {
+                Write-Host "    [WARNING: Failed to delete task: $delOutput]" -ForegroundColor Yellow
+            }
         } catch {
             Write-Host "    [WARNING: Failed to delete task: $($_.Exception.Message)]" -ForegroundColor Yellow
         }

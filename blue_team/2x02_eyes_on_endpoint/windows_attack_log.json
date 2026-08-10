@@ -2,7 +2,7 @@
     {
         "action_number":  1,
         "description":  "Created local user account \u0027support_update\u0027",
-        "timestamp":  "2026-08-10T19:36:56Z",
+        "timestamp":  "2026-08-10T19:43:06Z",
         "expected_detection_source":  [
                                           "Security Event ID: 4720"
                                       ],
@@ -13,7 +13,7 @@
     {
         "action_number":  2,
         "description":  "Added user \u0027support_update\u0027 to Administrators group",
-        "timestamp":  "2026-08-10T19:36:56Z",
+        "timestamp":  "2026-08-10T19:43:06Z",
         "expected_detection_source":  [
                                           "Security Event ID: 4732"
                                       ],
@@ -25,7 +25,7 @@
     {
         "action_number":  3,
         "description":  "Executed encoded PowerShell command (payload: Write-Host \u0027C2 beacon\u0027)",
-        "timestamp":  "2026-08-10T19:36:56Z",
+        "timestamp":  "2026-08-10T19:43:06Z",
         "expected_detection_source":  [
                                           "Security Event ID: 4688",
                                           "PowerShell Event ID: 4104",
@@ -38,8 +38,8 @@
     },
     {
         "action_number":  4,
-        "description":  "Created scheduled task \u0027WinUpdateService_2d33d675\u0027 for persistence",
-        "timestamp":  "2026-08-10T19:36:57Z",
+        "description":  "Created scheduled task \u0027WinUpdateService_54dc63d3\u0027 for persistence",
+        "timestamp":  "2026-08-10T19:43:07Z",
         "expected_detection_source":  [
                                           "Security Event ID: 4698",
                                           "Sysmon Event ID: 20"
@@ -51,7 +51,7 @@
     {
         "action_number":  5,
         "description":  "Initiated outbound connection to ",
-        "timestamp":  "2026-08-10T19:36:57Z",
+        "timestamp":  "2026-08-10T19:43:07Z",
         "expected_detection_source":  [
                                           "Sysmon Event ID: 3"
                                       ],
@@ -62,7 +62,7 @@
     {
         "action_number":  6,
         "description":  "Dropped file \u0027C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\update_helper.bat\u0027 in startup directory",
-        "timestamp":  "2026-08-10T19:36:57Z",
+        "timestamp":  "2026-08-10T19:43:07Z",
         "expected_detection_source":  [
                                           "Sysmon Event ID: 11"
                                       ],
