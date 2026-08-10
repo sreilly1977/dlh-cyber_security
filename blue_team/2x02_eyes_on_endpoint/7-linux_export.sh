@@ -5,6 +5,8 @@
 # Author:      Steve - Cybersecurity Engineer
 # Date:        August 8, 2026
 #
+# Parses: auth.log (SSH, sudo, su, PAM), audit.log (syscall events), syslog (service/error)
+# Outputs: linux_events_export.json in script directory with normalized ISO 8601 timestamps
 
 set -euo pipefail
 
@@ -99,6 +101,11 @@ parse_auth_log() {
         elif echo "$line" | grep -qE "Disconnected from|Connection closed|Connection reset"; then
             event_category="ssh_disconnect"
             src_ip=$(echo "$line" | grep -oP "(?:from|by) \K[0-9.]+") || src_ip=""
+            ssh_count=$((ssh_count + 1))
+        elif echo "$line" | grep -qiE "sshd.*Accepted|sshd.*Failed"; then
+            event_category="sshd_event"
+            user=$(echo "$line" | grep -oP "for \K\S+") || user=""
+            src_ip=$(echo "$line" | grep -oP "from \K[0-9.]+") || src_ip=""
             ssh_count=$((ssh_count + 1))
         elif echo "$line" | grep -qE ": COMMAND="; then
             event_category="sudo_command"
