@@ -10,6 +10,7 @@
 # Uses: jq for JSON parsing and analysis, perl for preprocessing
 # Reports: count and percentage of total for each event category and source type
 # Metrics: events per hour, hours with events, hours without events, gap detection (>30 minutes), field completeness
+# Field checks: timestamp, hostname, source_type, event_category, command_line for execve, source_ip and user for SSH events, path/operation/key for auditd file events
 
 set -euo pipefail
 
@@ -171,12 +172,15 @@ main() {
         execve_completeness=$(( execve_with_cmd * 100 / execve_total ))
     fi
 
-    # SSH source_ip completeness
-    local ssh_ip_completeness=0 ssh_total ssh_with_ip
+    # SSH source_ip and user completeness - check both fields for SSH events
+    local ssh_ip_completeness=0 ssh_user_completeness=0 ssh_total ssh_with_ip ssh_with_user
     ssh_total=$(jq -rs '[.[] | select(.event_category | contains("ssh"))] | length' "$working_file")
     if [[ "$ssh_total" -gt 0 ]]; then
         ssh_with_ip=$(jq -rs '[.[] | select(.event_category | contains("ssh")) | select(.src_ip != null and .src_ip != "" and .src_ip != "unknown")] | length' "$working_file")
         ssh_ip_completeness=$(( ssh_with_ip * 100 / ssh_total ))
+
+        ssh_with_user=$(jq -rs '[.[] | select(.event_category | contains("ssh")) | select(.user != null and .user != "")] | length' "$working_file")
+        ssh_user_completeness=$(( ssh_with_user * 100 / ssh_total ))
     fi
 
     # auditd file path completeness
@@ -196,7 +200,8 @@ main() {
     quality_score=$((
         (base_completeness * 40 / 100) +
         (execve_completeness * 15 / 100) +
-        (ssh_ip_completeness * 15 / 100) +
+        (ssh_ip_completeness * 10 / 100) +
+        (ssh_user_completeness * 5 / 100) +
         (file_path_completeness * 10 / 100) +
         (hours_with_events * 10 / 100)
     ))
@@ -232,6 +237,7 @@ main() {
         --argjson event_category_completeness "$event_category_completeness" \
         --argjson execve_completeness "$execve_completeness" \
         --argjson ssh_ip_completeness "$ssh_ip_completeness" \
+        --argjson ssh_user_completeness "$ssh_user_completeness" \
         --argjson file_path_completeness "$file_path_completeness" \
         --argjson quality_score "$quality_score" \
         --arg assessment "$assessment" \
@@ -259,6 +265,7 @@ main() {
                 event_category: $event_category_completeness,
                 execve_command_line: $execve_completeness,
                 ssh_source_ip: $ssh_ip_completeness,
+                ssh_user: $ssh_user_completeness,
                 auditd_file_path: $file_path_completeness
             }
         }' > "$OUTPUT_FILE"
@@ -278,6 +285,7 @@ main() {
 
     [[ "$execve_total" -gt 0 ]] && echo "execve command_line completeness: ${execve_completeness}%"
     [[ "$ssh_total" -gt 0 ]] && echo "SSH source_ip completeness: ${ssh_ip_completeness}%"
+    [[ "$ssh_total" -gt 0 ]] && echo "SSH user completeness: ${ssh_user_completeness}%"
     [[ "$file_access_total" -gt 0 ]] && echo "auditd file path completeness: ${file_path_completeness}%"
 
     echo "Quality score: ${quality_score}% ($assessment)"

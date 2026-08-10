@@ -39,6 +39,7 @@
     "event_category": 100,
     "execve_command_line": 100,
     "ssh_source_ip": 0,
+    "ssh_user": 0,
     "auditd_file_path": 0
   }
 }
