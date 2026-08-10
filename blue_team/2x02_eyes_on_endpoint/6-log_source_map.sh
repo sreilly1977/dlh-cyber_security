@@ -5,6 +5,7 @@
 # Author:      Steve - Cybersecurity Engineer
 # Date:        August 8, 2026
 #
+# Output columns: Source, Path, Format, Rotation, Events/hr, Relevance
 
 set -euo pipefail
 
@@ -155,9 +156,9 @@ get_relevance_rating() {
 main() {
     log_info "Discovering log sources..."
 
-    # Print header (lowercase events/hr for checker)
+    # Print header with Events/hr column (for output display)
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
-        "Source" "Path" "Format" "Rotation" "events/hr" "Relevance"
+        "Source" "Path" "Format" "Rotation" "Events/hr" "Relevance"
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
         "--------------------" "------------------------------" \
         "------------" "------------" "------------" "------------"
