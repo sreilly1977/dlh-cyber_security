@@ -13,8 +13,8 @@
         2. Add user to Administrators group
         3. Run encoded PowerShell command
         4. Create scheduled task for persistence
-        5. Initiate outbound network connection
-        6. Drop file in startup directory
+        5. Initiate outbound network connection (Sysmon Event ID 3)
+        6. Drop file in startup directory (Sysmon Event ID 11)
 
     After execution, all artifacts are cleaned up while preserving the ground truth log.
 
@@ -75,7 +75,7 @@ Write-Host "[*] Running Windows attacker simulation..."
 
 try {
     # =========================================================================
-    # Step 1: Create Local User Account
+    # Step 1: Create Local User Account (Security Event ID 4720)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -89,14 +89,14 @@ try {
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Created local user account '$Username'" `
                              -Timestamp $Timestamp `
-                             -ExpectedDetectionSources @("Security Event ID: 4720") `
+                             -ExpectedDetectionSources @("Security Event ID 4720") `
                              -MitreTechniques @("T1136.001 - Account Creation: Local Account")
     } catch {
         Write-Host "          [ERROR: $($_.Exception.Message)]" -ForegroundColor Red
     }
 
     # =========================================================================
-    # Step 2: Add User to Administrators Group
+    # Step 2: Add User to Administrators Group (Security Event ID 4732)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -104,15 +104,11 @@ try {
 
     try {
         if ($script:UserCreated) {
-            # On a domain controller, Add-LocalGroupMember fails because
-            # built-in groups are AD-level. Use AD cmdlets as primary method,
-            # fall back to net localgroup if AD module unavailable.
             $added = $false
 
             if (Get-Module -ListAvailable -Name ActiveDirectory) {
                 try {
                     Import-Module ActiveDirectory -ErrorAction Stop
-                    # Look up Administrators by well-known SID to avoid localization issues
                     $AdminGroup = Get-ADGroup -Filter "SID -eq 'S-1-5-32-544'" -ErrorAction Stop
                     if ($null -ne $AdminGroup) {
                         Add-ADGroupMember -Identity $AdminGroup -Members $Username -ErrorAction Stop
@@ -124,7 +120,6 @@ try {
             }
 
             if (-not $added) {
-                # Fallback: net localgroup via call operator (no deadlock risk)
                 $output = & net.exe localgroup administrators $Username /add 2>&1
                 if ($LASTEXITCODE -ne 0) {
                     throw "net localgroup failed (exit $LASTEXITCODE): $output"
@@ -134,7 +129,7 @@ try {
             Add-GroundTruthEntry -ActionNumber $actionCounter `
                                  -Description "Added user '$Username' to Administrators group" `
                                  -Timestamp $Timestamp `
-                                 -ExpectedDetectionSources @("Security Event ID: 4732") `
+                                 -ExpectedDetectionSources @("Security Event ID 4732") `
                                  -MitreTechniques @("T1078.001 - Valid Accounts: Domain Admins", "T1098 - Account Manipulation")
         } else {
             throw "Skipped: user creation failed"
@@ -144,7 +139,7 @@ try {
     }
 
     # =========================================================================
-    # Step 3: Run Encoded PowerShell Command
+    # Step 3: Run Encoded PowerShell Command (PowerShell Event ID 4104, Sysmon Event ID 1)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -160,14 +155,14 @@ try {
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Executed encoded PowerShell command (payload: Write-Host 'C2 beacon')" `
                              -Timestamp $Timestamp `
-                             -ExpectedDetectionSources @("Security Event ID: 4688", "PowerShell Event ID: 4104", "Sysmon Event ID: 1") `
+                             -ExpectedDetectionSources @("Security Event ID 4688", "PowerShell Event ID 4104", "Sysmon Event ID 1") `
                              -MitreTechniques @("T1059.001 - PowerShell", "T1140 - Deobfuscate/Decode Files or Information")
     } catch {
         Write-Host "          [ERROR: $($_.Exception.Message)]" -ForegroundColor Red
     }
 
     # =========================================================================
-    # Step 4: Create Scheduled Task for Persistence
+    # Step 4: Create Scheduled Task for Persistence (Sysmon Event ID 20, Security Event ID 4698)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -188,14 +183,14 @@ try {
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Created scheduled task '$TaskName' for persistence" `
                              -Timestamp $Timestamp `
-                             -ExpectedDetectionSources @("Security Event ID: 4698", "Sysmon Event ID: 20") `
+                             -ExpectedDetectionSources @("Security Event ID 4698", "Sysmon Event ID 20") `
                              -MitreTechniques @("T1053.005 - Scheduled Task/Job")
     } catch {
         Write-Host "          [ERROR: $($_.Exception.Message)]" -ForegroundColor Red
     }
 
     # =========================================================================
-    # Step 5: Initiate Outbound Network Connection
+    # Step 5: Initiate Outbound Network Connection (Sysmon Event ID 3)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -207,14 +202,14 @@ try {
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Initiated outbound connection to $SafeExternalIP:443" `
                              -Timestamp $Timestamp `
-                             -ExpectedDetectionSources @("Sysmon Event ID: 3") `
+                             -ExpectedDetectionSources @("Sysmon Event ID 3") `
                              -MitreTechniques @("T1071.001 - Application Layer Protocol: Web Protocols")
     } catch {
         Write-Host "          [ERROR: $($_.Exception.Message)]" -ForegroundColor Red
     }
 
     # =========================================================================
-    # Step 6: Drop File in Startup Directory
+    # Step 6: Drop File in Startup Directory (Sysmon Event ID 11)
     # =========================================================================
     $actionCounter++
     $Timestamp = Get-UTCTimestamp
@@ -235,7 +230,7 @@ try {
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Dropped file '$StartupFile' in startup directory" `
                              -Timestamp $Timestamp `
-                             -ExpectedDetectionSources @("Sysmon Event ID: 11") `
+                             -ExpectedDetectionSources @("Sysmon Event ID 11") `
                              -MitreTechniques @("T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder", "T1105 - Ingress Tool Transfer")
     } catch {
         Write-Host "          [ERROR: $($_.Exception.Message)]" -ForegroundColor Red
@@ -258,7 +253,7 @@ try {
         }
     }
 
-        # Delete scheduled task
+    # Delete scheduled task
     if ($null -ne $script:CleanupTaskName) {
         try {
             Unregister-ScheduledTask -TaskName $script:CleanupTaskName -Confirm:$false -ErrorAction Stop
@@ -273,15 +268,18 @@ try {
         try {
             Remove-Item -Path $script:CleanupFilePath -Force -ErrorAction Stop
             $Cleaned += "file removed"
-        } catch {
-            Write-Host "    [WARNING: Failed to remove file: $($_.Exception.Message)]" -ForegroundColor Yellow
-        }
-    }
+        } appear
 
+    appear
+
+    } catch {
+        Write-Host "    [WARNING: Failed to remove file: $($_.Exception.Message)]" -ForegroundColor Yellow
+    }
+    appear
     if ($Cleaned.Count -gt 0) {
         Write-Host "    $($Cleaned -join ', ')                           [CLEAN]" -ForegroundColor Green
     }
-
+    appear
     Write-Host "Actions executed: $actionCounter"
     Write-Host "Ground truth saved to: $OutputFile"
 
