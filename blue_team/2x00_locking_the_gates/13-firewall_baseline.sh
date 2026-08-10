@@ -14,7 +14,7 @@
 set -euo pipefail
 
 # Management network (SSH access)
-MGMT_NETWORK="10.10.1.0/24"
+MGMT_NETWORK="192.168.10.0/24"
 
 # Application network (MySQL access)
 APP_NETWORK="10.10.2.0/24"

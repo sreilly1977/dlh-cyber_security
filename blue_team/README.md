@@ -29,8 +29,8 @@ The curriculum follows a progressive learning path through eight modules across 
 |---|-----------|-------|-----------|
 | 7 | [`2x00_locking_the_gates`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Linux infrastructure hardening: baseline security snapshots, CIS control profiling, Lynis audit integration, evidence-based remediation queuing, SSH hardening, PAM fortress configuration, auditd deployment, log management (rsyslog), and host firewall baselines | 14 |
 | 8 | [`2x01_windows_fortress`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows endpoint hardening: security posture assessment, domain reconnaissance, GPO deployment for password/lockout policies, advanced audit policy, PowerShell security logging, Kerberos/authentication hardening, Sysmon, AppLocker, Windows Firewall lockdown, RDP security, and service account control | 15 |
+| 9 | [`2x02_eyes_on_endpoint`](2x02_eyes_on_endpoint) | EDR deployment, Sysmon configuration and telemetry validation, ATT&CK coverage matrix, PowerShell logging validation, and auditd rule refinement | TBD exercises | 16 |
 
-**Total: 121 exercises across 8 modules.**
 
 ### Course Materials
 
