@@ -200,9 +200,9 @@ main() {
 
     if [[ $sources_missing -gt 0 ]]; then
         echo ""
-        log_info "Missing expected sources:"
+        log_info "Missing expected sources (not generating events):"
         for missing in "${missing_sources[@]}"; do
-            echo "  - $missing"
+            echo "  - $missing is not generating events"
         done
     fi
 
@@ -217,7 +217,7 @@ main() {
 
     if [[ $critical_missing -gt 0 ]]; then
         echo ""
-        echo "[!] WARNING: $critical_missing critical log source(s) are missing or inactive"
+        echo "[!] WARNING: $critical_missing critical log source(s) are missing or not generating events"
         exit 1
     fi
 }
