@@ -8,17 +8,20 @@
     "per_category": [
       {
         "category": "execve",
-        "count": 6869
+        "count": 6869,
+        "percentage": 99
       },
       {
         "category": "network",
-        "count": 41
+        "count": 41,
+        "percentage": 0
       }
     ],
     "per_source": [
       {
         "source": "audit.log",
-        "count": 6910
+        "count": 6910,
+        "percentage": 100
       }
     ]
   },

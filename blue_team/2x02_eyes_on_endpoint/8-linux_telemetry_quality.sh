@@ -5,9 +5,10 @@
 # Author:      Steve - Cybersecurity Engineer
 # Date:        August 8, 2026
 #
-# Reads: linux_events_export.json
+# Reads: linux_events_export.json (NDJSON format)
 # Outputs: linux_telemetry_quality.json with distribution, coverage, gaps, completeness, and quality score
-# Uses: jq for JSON parsing and analysis
+# Uses: jq for JSON parsing and analysis, perl for preprocessing
+# Reports: count and percentage of total for each event category and source type
 
 set -euo pipefail
 
@@ -16,8 +17,7 @@ set -euo pipefail
 INPUT_FILE="${1:-linux_events_export.json}"
 OUTPUT_FILE="linux_telemetry_quality.json"
 MAX_GAP_MINUTES=30
-CLEANED_FILE="${INPUT_FILE}.cleaned"
-VALID_JSON_FILE="${INPUT_FILE}.valid.json"
+FIXED_FILE="${INPUT_FILE}.fixed"
 
 # ── Functions ─────────────────────────────────────────────────────────────────
 
@@ -30,82 +30,76 @@ die() {
     exit 1
 }
 
-# Remove control characters (0x00-0x1F except tab 0x09, newline 0x0A, carriage return 0x0D)
-clean_json_file() {
-    local input="$1"
-    local output="$2"
-    perl -pe 's/[\x00-\x08\x0B\x0C\x0E-\x1F]//g' "$input" > "$output"
-}
+# ── Preprocess: repair broken NDJSON lines ────────────────────────────────────
 
-# Extract valid JSON objects from potentially malformed NDJSON
-extract_valid_json() {
+fix_ndjson() {
     local input="$1"
     local output="$2"
 
-    echo "[" > "$output"
-    local first=true
-
-    while IFS= read -r line || [[ -n "$line" ]]; do
-        [[ -z "$line" ]] && continue
-        [[ ! "$line" =~ ^\{ ]] && continue
-
-        # Try to parse the line as JSON
-        if echo "$line" | jq -e '.' >/dev/null 2>&1; then
-            if [[ "$first" == true ]]; then
-                echo "$line" >> "$output"
-                first=false
-            else
-                # Add comma before subsequent entries
-                echo ",$line" >> "$output"
-            fi
-        fi
-    done < "$input"
-
-    echo "]" >> "$output"
+    # Remove control chars, then rejoin lines that don't start with { or [ or "
+    # This handles embedded newlines inside JSON string values
+    perl -0777 -pe '
+        s/[\x00-\x08\x0B\x0C\x0E-\x1F]//g;
+        s/\}\n\{/}\n{/g;
+    ' "$input" | perl -pe '
+        chomp;
+        if (!/^\{/) {
+            s/\n/ /g;
+        }
+    ' > "$output"
 }
 
 # ── Main Analysis ─────────────────────────────────────────────────────────────
 
 main() {
-    # Validate input file
     if [[ ! -f "$INPUT_FILE" ]]; then
         die "Input file not found: $INPUT_FILE"
     fi
 
     log_info "Analyzing $INPUT_FILE..."
 
-    # Step 1: Clean control characters
-    clean_json_file "$INPUT_FILE" "$CLEANED_FILE"
+    # Repair the NDJSON file
+    fix_ndjson "$INPUT_FILE" "$FIXED_FILE"
 
-    # Step 2: Extract valid JSON objects into a proper array
-    extract_valid_json "$CLEANED_FILE" "$VALID_JSON_FILE"
+    local working_file="$FIXED_FILE"
 
-    # Verify the result has data
+    # Count total events
     local total_events
-    total_events=$(jq 'length' "$VALID_JSON_FILE")
+    total_events=$(jq -s 'length' "$working_file")
 
     if [[ "$total_events" -eq 0 ]]; then
-        die "No valid JSON events found in $INPUT_FILE after cleaning"
+        die "No valid JSON events found in $INPUT_FILE"
     fi
 
     log_info "Processing $total_events events..."
 
-    # Cleanup intermediate files
-    rm -f "$CLEANED_FILE"
-
-    local working_file="$VALID_JSON_FILE"
-
     # ── Event Distribution ────────────────────────────────────────────────────
 
-    local category_counts_json source_counts_json
-    category_counts_json=$(jq 'group_by(.event_category) | map({category: .[0].event_category, count: length}) | sort_by(-.count)' "$working_file")
-    source_counts_json=$(jq 'group_by(.source_type) | map({source: .[0].source_type, count: length}) | sort_by(-.count)' "$working_file")
+    # Count per event category with percentage of total
+    local category_counts_json
+    category_counts_json=$(jq -s --argjson total "$total_events" '
+        group_by(.event_category) | map({
+            category: .[0].event_category,
+            count: length,
+            percentage: ((length * 100 / $total) | floor)
+        }) | sort_by(-.count)
+    ' "$working_file")
+
+    # Count per source type with percentage of total
+    local source_counts_json
+    source_counts_json=$(jq -s --argjson total "$total_events" '
+        group_by(.source_type) | map({
+            source: .[0].source_type,
+            count: length,
+            percentage: ((length * 100 / $total) | floor)
+        }) | sort_by(-.count)
+    ' "$working_file")
 
     # ── Time Coverage ─────────────────────────────────────────────────────────
 
     # Extract all valid timestamps to a temp file
     local ts_file="${working_file}.ts"
-    jq -r '.[].timestamp | select(. != null and . != "unknown" and . != "")' "$working_file" | sort > "$ts_file"
+    jq -rs '[.[] | .timestamp | select(. != null and . != "unknown" and . != "")] | sort | .[]' "$working_file" > "$ts_file"
 
     local first_ts last_ts
     first_ts=$(head -1 "$ts_file" 2>/dev/null || echo "")
@@ -113,7 +107,7 @@ main() {
 
     # Count unique hours with events
     local hours_with_events
-    hours_with_events=$(jq -r '.[].timestamp | select(. != null and . != "unknown" and . != "") | .[11:13]' "$working_file" | sort -u | wc -l)
+    hours_with_events=$(jq -rs '[.[] | .timestamp | select(. != null and . != "unknown" and . != "") | .[11:13]] | unique | length' "$working_file")
 
     local hours_without_events=0
     local events_per_hour=0
@@ -162,32 +156,32 @@ main() {
     # ── Field Completeness ────────────────────────────────────────────────────
 
     local timestamp_completeness hostname_completeness source_type_completeness event_category_completeness
-    timestamp_completeness=$(jq '([.[] | select(.timestamp != null and .timestamp != "" and .timestamp != "unknown")] | length) * 100 / length' "$working_file")
-    hostname_completeness=$(jq '([.[] | select(.hostname != null and .hostname != "")] | length) * 100 / length' "$working_file")
-    source_type_completeness=$(jq '([.[] | select(.source_type != null and .source_type != "")] | length) * 100 / length' "$working_file")
-    event_category_completeness=$(jq '([.[] | select(.event_category != null and .event_category != "")] | length) * 100 / length' "$working_file")
+    timestamp_completeness=$(jq -rs '([.[] | select(.timestamp != null and .timestamp != "" and .timestamp != "unknown")] | length) * 100 / length' "$working_file")
+    hostname_completeness=$(jq -rs '([.[] | select(.hostname != null and .hostname != "")] | length) * 100 / length' "$working_file")
+    source_type_completeness=$(jq -rs '([.[] | select(.source_type != null and .source_type != "")] | length) * 100 / length' "$working_file")
+    event_category_completeness=$(jq -rs '([.[] | select(.event_category != null and .event_category != "")] | length) * 100 / length' "$working_file")
 
     # execve command_line completeness
     local execve_completeness=0 execve_total execve_with_cmd
-    execve_total=$(jq '[.[] | select(.source_type == "audit.log" and .event_category == "execve")] | length' "$working_file")
+    execve_total=$(jq -rs '[.[] | select(.source_type == "audit.log" and .event_category == "execve")] | length' "$working_file")
     if [[ "$execve_total" -gt 0 ]]; then
-        execve_with_cmd=$(jq '[.[] | select(.source_type == "audit.log" and .event_category == "execve") | select(.command != null and .command != "")] | length' "$working_file")
+        execve_with_cmd=$(jq -rs '[.[] | select(.source_type == "audit.log" and .event_category == "execve") | select(.command != null and .command != "")] | length' "$working_file")
         execve_completeness=$(( execve_with_cmd * 100 / execve_total ))
     fi
 
     # SSH source_ip completeness
     local ssh_ip_completeness=0 ssh_total ssh_with_ip
-    ssh_total=$(jq '[.[] | select(.event_category | contains("ssh"))] | length' "$working_file")
+    ssh_total=$(jq -rs '[.[] | select(.event_category | contains("ssh"))] | length' "$working_file")
     if [[ "$ssh_total" -gt 0 ]]; then
-        ssh_with_ip=$(jq '[.[] | select(.event_category | contains("ssh")) | select(.src_ip != null and .src_ip != "" and .src_ip != "unknown")] | length' "$working_file")
+        ssh_with_ip=$(jq -rs '[.[] | select(.event_category | contains("ssh")) | select(.src_ip != null and .src_ip != "" and .src_ip != "unknown")] | length' "$working_file")
         ssh_ip_completeness=$(( ssh_with_ip * 100 / ssh_total ))
     fi
 
     # auditd file path completeness
     local file_path_completeness=0 file_access_total file_access_with_path
-    file_access_total=$(jq '[.[] | select(.source_type == "audit.log" and .event_category == "file_access")] | length' "$working_file")
+    file_access_total=$(jq -rs '[.[] | select(.source_type == "audit.log" and .event_category == "file_access")] | length' "$working_file")
     if [[ "$file_access_total" -gt 0 ]]; then
-        file_access_with_path=$(jq '[.[] | select(.source_type == "audit.log" and .event_category == "file_access") | select(.path != null and .path != "")] | length' "$working_file")
+        file_access_with_path=$(jq -rs '[.[] | select(.source_type == "audit.log" and .event_category == "file_access") | select(.path != null and .path != "")] | length' "$working_file")
         file_path_completeness=$(( file_access_with_path * 100 / file_access_total ))
     fi
 
@@ -268,7 +262,7 @@ main() {
         }' > "$OUTPUT_FILE"
 
     # Clean up temporary files
-    rm -f "$VALID_JSON_FILE"
+    rm -f "$FIXED_FILE"
 
     # ── Console Output ────────────────────────────────────────────────────────
 
