@@ -20,6 +20,8 @@
 #     Output: linux_detection_matrix.json
 #
 
+set -euo pipefail
+
 # Root check (needed for ausearch and reading system logs)
 if [[ $EUID -ne 0 ]]; then
     echo "[ERROR] This script requires root privileges. Please run with sudo." >&2

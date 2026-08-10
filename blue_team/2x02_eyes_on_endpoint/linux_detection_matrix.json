@@ -1,0 +1,193 @@
+{
+  "summary": {
+    "ground_truth_file": "linux_attack_log.json",
+    "analysis_timestamp": "2026-08-10T19:20:35Z",
+    "total_actions": 6,
+    "actions_captured": 6,
+    "capture_rate_percent": 100,
+    "multi_source_detections": 2,
+    "time_window_seconds": 30
+  },
+  "detection_matrix": [
+    {
+      "action_number": 1,
+      "action": "Created user account 'testattacker'",
+      "source": "auditd",
+      "audit_key": "identity",
+      "event_id": "identity",
+      "detail_level": "Full",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1136.001 - Account Creation: Local Account",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "identity",
+        "has_data": true,
+        "data_length": 19190,
+        "sample_line": "----"
+      }
+    },
+    {
+      "action_number": 1,
+      "action": "Created user account 'testattacker'",
+      "source": "auth.log",
+      "audit_key": "useradd",
+      "event_id": "useradd",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1136.001 - Account Creation: Local Account",
+      "key_fields": {
+        "source": "auth.log",
+        "audit_key": "useradd",
+        "has_data": true,
+        "data_length": 19926,
+        "sample_line": "Aug 10 21:06:09 billing-srv-01 audit[3273134]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=55c533314670 a1=55c533315020 a2=55c53330a590 a3=1b6 items=2 ppid=3273132 pid=3273134 auid=1000 uid"
+      }
+    },
+    {
+      "action_number": 1,
+      "action": "Created user account 'testattacker'",
+      "source": "syslog",
+      "audit_key": "useradd",
+      "event_id": "useradd",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1136.001 - Account Creation: Local Account",
+      "key_fields": {
+        "source": "syslog",
+        "audit_key": "useradd",
+        "has_data": true,
+        "data_length": 19926,
+        "sample_line": "Aug 10 21:06:09 billing-srv-01 audit[3273134]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=55c533314670 a1=55c533315020 a2=55c53330a590 a3=1b6 items=2 ppid=3273132 pid=3273134 auid=1000 uid"
+      }
+    },
+    {
+      "action_number": 2,
+      "action": "Modified sudoers for privilege escalation",
+      "source": "auditd",
+      "audit_key": "sudoers",
+      "event_id": "sudoers",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1548.003 - Sudo and Sudoers Abuse",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "sudoers",
+        "has_data": true,
+        "data_length": 1768,
+        "sample_line": "----"
+      }
+    },
+    {
+      "action_number": 3,
+      "action": "Executed binary from /tmp (suspicious execution)",
+      "source": "auditd",
+      "audit_key": "process_exec",
+      "event_id": "process_exec",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1059 - Command and Scripting Interpreter",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "process_exec",
+        "has_data": true,
+        "data_length": 177815,
+        "sample_line": "----"
+      }
+    },
+    {
+      "action_number": 4,
+      "action": "Attempted reverse shell connection to localhost",
+      "source": "auditd",
+      "audit_key": "network_connect",
+      "event_id": "network_connect",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "mitre_attack": "T1059 - Command and Scripting Interpreter",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "network_connect",
+        "has_data": true,
+        "data_length": 133823,
+        "sample_line": "----"
+      }
+    },
+    {
+      "action_number": 5,
+      "action": "Established cron job for persistence",
+      "source": "auditd",
+      "audit_key": "cron_persist",
+      "event_id": "cron_persist",
+      "detail_level": "Full",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "mitre_attack": "T1053.003 - Scheduled Task/Job",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "cron_persist",
+        "has_data": true,
+        "data_length": 999,
+        "sample_line": "----"
+      }
+    },
+    {
+      "action_number": 5,
+      "action": "Established cron job for persistence",
+      "source": "auth.log",
+      "audit_key": "cron",
+      "event_id": "cron",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "mitre_attack": "T1053.003 - Scheduled Task/Job",
+      "key_fields": {
+        "source": "auth.log",
+        "audit_key": "cron",
+        "has_data": true,
+        "data_length": 3224,
+        "sample_line": "Aug 10 21:06:10 billing-srv-01 audit[3273132]: SYSCALL arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=55c53330f230 a2=241 a3=1b6 items=2 ppid=3273131 pid=3273132 auid=1000 uid=0 gid=0 eui"
+      }
+    },
+    {
+      "action_number": 5,
+      "action": "Established cron job for persistence",
+      "source": "syslog",
+      "audit_key": "cron",
+      "event_id": "cron",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "mitre_attack": "T1053.003 - Scheduled Task/Job",
+      "key_fields": {
+        "source": "syslog",
+        "audit_key": "cron",
+        "has_data": true,
+        "data_length": 3224,
+        "sample_line": "Aug 10 21:06:10 billing-srv-01 audit[3273132]: SYSCALL arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=55c53330f230 a2=241 a3=1b6 items=2 ppid=3273131 pid=3273132 auid=1000 uid=0 gid=0 eui"
+      }
+    },
+    {
+      "action_number": 6,
+      "action": "Read sensitive file /etc/shadow",
+      "source": "auditd",
+      "audit_key": "identity",
+      "event_id": "identity",
+      "detail_level": "Partial",
+      "status": "CAPTURED",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "mitre_attack": "T1003 - OS Credential Dumping",
+      "key_fields": {
+        "source": "auditd",
+        "audit_key": "identity",
+        "has_data": true,
+        "data_length": 19190,
+        "sample_line": "----"
+      }
+    }
+  ]
+}
