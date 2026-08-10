@@ -25,7 +25,7 @@ Set-StrictMode -Version Latest
 # Configuration
 $GroundTruthFile = "windows_attack_log.json"
 $OutputFile = "windows_detection_matrix.json"
-$TimeWindowSeconds = 60
+$TimeWindowSeconds = 30
 
 # Action to expected detection mappings
 # Broadened Event IDs to cover domain controller variations

@@ -1,12 +1,12 @@
 ﻿{
     "Summary":  {
                     "GroundTruthFile":  "windows_attack_log.json",
-                    "AnalysisTimestamp":  "2026-08-10T20:37:27Z",
+                    "AnalysisTimestamp":  "2026-08-10T20:43:19Z",
                     "TotalActions":  6,
                     "ActionsCaptured":  6,
                     "CaptureRatePercent":  100,
                     "MultiSourceDetections":  2,
-                    "TimeWindowSeconds":  60
+                    "TimeWindowSeconds":  30
                 },
     "DetectionMatrix":  [
                             {
@@ -128,7 +128,7 @@
                                 "KeyFields":  {
                                                   "HasMessage":  true,
                                                   "EventID":  4104,
-                                                  "Timestamp":  "2026-08-10T20:37:13Z",
+                                                  "Timestamp":  "2026-08-10T20:37:27Z",
                                                   "MessageLength":  107,
                                                   "Provider":  "Microsoft-Windows-PowerShell"
                                               },
