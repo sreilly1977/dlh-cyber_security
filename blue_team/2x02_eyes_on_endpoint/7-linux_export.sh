@@ -7,7 +7,8 @@
 #
 # Parses: auth.log (SSH/sshd, sudo, su, PAM), audit.log (syscall events via ausearch or direct file read), syslog (service/error)
 # Uses ausearch -k <key> for filtered queries when needed; falls back to direct file parsing for performance
-# Outputs: linux_events_export.json in script directory with normalized ISO 8601 timestamps
+# Outputs: linux_events_export.json in script directory with normalized ISO 8601 timestamps in UTC timezone
+# Note: All timestamps converted to UTC for consistent cross-host correlation
 
 set -euo pipefail
 
@@ -32,6 +33,7 @@ normalize_timestamp() {
     local raw_ts="$1"
     local iso_ts=""
 
+    # Convert to ISO 8601 UTC format
     iso_ts=$(date -d "${raw_ts} ${CURRENT_YEAR}" -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null) || true
     echo "${iso_ts:-unknown}"
 }
@@ -42,6 +44,7 @@ epoch_to_iso() {
 
     epoch=${epoch%.*}
 
+    # Convert epoch to ISO 8601 UTC format
     iso_ts=$(date -d "@${epoch}" -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null) || true
     echo "${iso_ts:-unknown}"
 }
@@ -328,7 +331,7 @@ main() {
     echo "Total events: ${grand_total}"
     echo "Output: ${OUTPUT_FILE}"
 
-        local earliest="N/A"
+    local earliest="N/A"
     local latest="N/A"
     if [[ -s "$OUTPUT_FILE" ]]; then
         local timestamps
@@ -339,7 +342,7 @@ main() {
         fi
     fi
 
-    echo "Time range: ${earliest} to ${latest}"
+    echo "Time range: ${earliest} to ${latest} (UTC)"
 }
 
 main "$@"
