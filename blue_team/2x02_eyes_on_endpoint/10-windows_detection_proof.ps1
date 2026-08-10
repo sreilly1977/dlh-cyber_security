@@ -9,11 +9,11 @@
     This script correlates the Windows attack simulation log (ground truth from Task 9)
     against captured telemetry to prove which actions were detected by instrumentation.
 
-    For each simulated action, it searches Windows Event Logs within a 60-second window
+    For each simulated action, it searches Windows Event Logs within a 30-second window
     around the recorded timestamp and determines:
 
         - Which source captured it (Security, Sysmon, PowerShell)
-        - The Event ID that fired
+        - The event_id that fired
         - Detail level (Full/Partial/Missed)
         - Key fields present in the event
 
@@ -28,21 +28,20 @@ $OutputFile = "windows_detection_matrix.json"
 $TimeWindowSeconds = 30
 
 # Action to expected detection mappings
-# Broadened Event IDs to cover domain controller variations
 $DetectionMappings = @{
     "local user account" = @{
         Sources = @(
-            @{LogName="Security"; EventId=4720},  # User account created
-            @{LogName="Security"; EventId=4722},  # User account enabled
+            @{LogName="Security"; EventId=4720},
+            @{LogName="Security"; EventId=4722},
             @{LogName="Microsoft-Windows-Sysmon/Operational"; EventId=1}
         )
         Keywords = @("support_update", "account", "user", "created")
     }
     "Administrators group" = @{
         Sources = @(
-            @{LogName="Security"; EventId=4732},  # Member added to local group
-            @{LogName="Security"; EventId=4728},  # Member added to global group
-            @{LogName="Security"; EventId=4761}   # Member added to universal group
+            @{LogName="Security"; EventId=4732},
+            @{LogName="Security"; EventId=4728},
+            @{LogName="Security"; EventId=4761}
         )
         Keywords = @("Administrators", "support_update", "member", "added")
     }
@@ -145,20 +144,20 @@ function Get-KeyFields {
     }
 
     if ($null -ne $Event.Id) {
-        $Fields["EventID"] = $Event.Id
+        $Fields["event_id"] = $Event.Id
     }
 
     if ($null -ne $Event.TimeCreated) {
-        $Fields["Timestamp"] = $Event.TimeCreated.ToString("yyyy-MM-ddTHH:mm:ssZ")
+        $Fields["timestamp"] = $Event.TimeCreated.ToString("yyyy-MM-ddTHH:mm:ssZ")
     }
 
     if ($null -ne $Event.ProviderName) {
-        $Fields["Provider"] = $Event.ProviderName
+        $Fields["provider"] = $Event.ProviderName
     }
 
     if ($null -ne $Event.Message -and $Event.Message.Length -gt 0) {
-        $Fields["HasMessage"] = $true
-        $Fields["MessageLength"] = $Event.Message.Length
+        $Fields["has_message"] = $true
+        $Fields["message_length"] = $Event.Message.Length
     }
 
     return $Fields
@@ -194,7 +193,6 @@ try {
     Write-Host ($headerFormat -f "Action", "Source", "Event ID", "Detail", "Status") -ForegroundColor Cyan
     Write-Host ($headerFormat -f "------", "------", "--------", "------", "------") -ForegroundColor Cyan
 
-    # Use enumerator to avoid .Count issues
     $ActionEnumerator = $GroundTruth.GetEnumerator()
     while ($ActionEnumerator.MoveNext()) {
         $Action = $ActionEnumerator.Current
@@ -267,15 +265,16 @@ try {
             $EventIdDisplay = if ($MatchedEvent) { [string]$MatchedEvent.Id } else { "-" }
 
             $Result = [PSCustomObject]@{
-                Action       = $ActionDesc
-                Source       = $Source.LogName
-                SourceShort  = $ShortSource
-                EventId      = $EventIdDisplay
-                Detail       = $DetailLevel
-                Status       = $Status
-                KeyFields    = $KeyFields
-                Timestamp    = $ActionTimestamp
-                MitreTech    = $MitreTech
+                action_number  = $ActionNum
+                action         = $ActionDesc
+                source         = $Source.LogName
+                source_short   = $ShortSource
+                event_id       = $EventIdDisplay
+                detail_level   = $DetailLevel
+                status         = $Status
+                key_fields     = $KeyFields
+                timestamp      = $ActionTimestamp
+                mitre_attack   = $MitreTech
             }
 
             $ActionResults += $Result
@@ -310,19 +309,19 @@ try {
     Write-Host "Actions: $TotalActions | Captured: $CapturedCount/$TotalActions ($CapturePct%) | Multi-source: $MultiSourceCount" -ForegroundColor Green
 
     $Summary = [PSCustomObject]@{
-        GroundTruthFile       = $GroundTruthFile
-        AnalysisTimestamp     = Get-UTCTimestamp
-        TotalActions          = $TotalActions
-        ActionsCaptured       = $CapturedCount
-        CaptureRatePercent    = if ($TotalActions -gt 0) { [math]::Round($CapturedCount / $TotalActions * 100, 1) } else { 0 }
-        MultiSourceDetections = $MultiSourceCount
-        TimeWindowSeconds     = $TimeWindowSeconds
+        ground_truth_file       = $GroundTruthFile
+        analysis_timestamp      = Get-UTCTimestamp
+        total_actions           = $TotalActions
+        actions_captured        = $CapturedCount
+        capture_rate_percent    = if ($TotalActions -gt 0) { [math]::Round($CapturedCount / $TotalActions * 100, 1) } else { 0 }
+        multi_source_detections = $MultiSourceCount
+        time_window_seconds     = $TimeWindowSeconds
     }
 
     $Report = [PSCustomObject]@{
-        Summary         = $Summary
-        DetectionMatrix = $DetectionMatrix
-        GroundTruth     = $GroundTruth
+        summary          = $Summary
+        detection_matrix = $DetectionMatrix
+        ground_truth     = $GroundTruth
     }
 
     $Report | ConvertTo-Json -Depth 10 | Out-File $OutputFile -Encoding UTF8 -Force
@@ -351,10 +350,10 @@ try {
         }
         $CaptureStatus = "[MISSING]"
 
-        $FilteredMatrix = @($DetectionMatrix | Where-Object { $_.Action -eq $ActionDesc })
+        $FilteredMatrix = @($DetectionMatrix | Where-Object { $_.action -eq $ActionDesc })
         $HasCapture = $false
         foreach ($r in $FilteredMatrix) {
-            if ($r.Status -eq "CAPTURED") {
+            if ($r.status -eq "CAPTURED") {
                 $HasCapture = $true
                 break
             }
@@ -365,11 +364,11 @@ try {
 
         Write-Host "  $ActionNum. $ShortDesc $CaptureStatus" -ForegroundColor White
 
-        $CapturedResults = @($FilteredMatrix | Where-Object { $_.Status -eq "CAPTURED" })
+        $CapturedResults = @($FilteredMatrix | Where-Object { $_.status -eq "CAPTURED" })
         foreach ($cr in $CapturedResults) {
-            $EventId = if ($null -ne $cr.EventId) { $cr.EventId } else { "-" }
-            $Detail = if ($null -ne $cr.Detail) { $cr.Detail } else { "-" }
-            $SourceShort = if ($null -ne $cr.SourceShort) { $cr.SourceShort } else { "Unknown" }
+            $EventId = if ($null -ne $cr.event_id) { $cr.event_id } else { "-" }
+            $Detail = if ($null -ne $cr.detail_level) { $cr.detail_level } else { "-" }
+            $SourceShort = if ($null -ne $cr.source_short) { $cr.source_short } else { "Unknown" }
             Write-Host "      Source: $SourceShort | Event ID: $EventId | Detail: $Detail" -ForegroundColor Gray
         }
     }
@@ -378,15 +377,15 @@ try {
     Write-Host "Telemetry Source Statistics:" -ForegroundColor Cyan
     Write-Host "----------------------------" -ForegroundColor Cyan
 
-    $UniqueSources = @($DetectionMatrix | Select-Object -ExpandProperty SourceShort -Unique)
+    $UniqueSources = @($DetectionMatrix | Select-Object -ExpandProperty source_short -Unique)
     foreach ($Source in $UniqueSources) {
-        $SourceEvents = @($DetectionMatrix | Where-Object { $_.SourceShort -eq $Source })
+        $SourceEvents = @($DetectionMatrix | Where-Object { $_.source_short -eq $Source })
         $CapturedForSource = 0
         $TotalForSource = 0
 
         foreach ($se in $SourceEvents) {
             $TotalForSource++
-            if ($se.Status -eq "CAPTURED") {
+            if ($se.status -eq "CAPTURED") {
                 $CapturedForSource++
             }
         }
