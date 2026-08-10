@@ -9,6 +9,7 @@
 # Outputs: linux_telemetry_quality.json with distribution, coverage, gaps, completeness, and quality score
 # Uses: jq for JSON parsing and analysis, perl for preprocessing
 # Reports: count and percentage of total for each event category and source type
+# Metrics: events per hour, hours with events, hours without events, gap detection, field completeness
 
 set -euo pipefail
 
