@@ -258,15 +258,11 @@ try {
         }
     }
 
-    # Delete scheduled task using schtasks /delete
+        # Delete scheduled task
     if ($null -ne $script:CleanupTaskName) {
         try {
-            $delOutput = & schtasks.exe /delete /tn "$($script:CleanupTaskName)" /f 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                $Cleaned += "task deleted"
-            } else {
-                Write-Host "    [WARNING: Failed to delete task: $delOutput]" -ForegroundColor Yellow
-            }
+            Unregister-ScheduledTask -TaskName $script:CleanupTaskName -Confirm:$false -ErrorAction Stop
+            $Cleaned += "task deleted"
         } catch {
             Write-Host "    [WARNING: Failed to delete task: $($_.Exception.Message)]" -ForegroundColor Yellow
         }
