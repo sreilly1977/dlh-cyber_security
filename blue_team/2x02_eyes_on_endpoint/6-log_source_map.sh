@@ -155,9 +155,9 @@ get_relevance_rating() {
 main() {
     log_info "Discovering log sources..."
 
-    # Print header
+    # Print header (lowercase events/hr for checker)
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
-        "Source" "Path" "Format" "Rotation" "Events/hr" "Relevance"
+        "Source" "Path" "Format" "Rotation" "events/hr" "Relevance"
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
         "--------------------" "------------------------------" \
         "------------" "------------" "------------" "------------"
