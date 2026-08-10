@@ -2,48 +2,48 @@
   "simulation_info": {
     "hostname": "billing-srv-01",
     "platform": "Linux",
-    "timestamp": "2026-08-10T18:58:42Z"
+    "timestamp": "2026-08-10T19:06:10Z"
   },
   "actions": [
     {
       "action_number": 1,
       "description": "Created user account 'testattacker'",
-      "timestamp": "2026-08-10T18:58:41Z",
+      "timestamp": "2026-08-10T19:06:09Z",
       "expected_detection_source": "auditd EID: user_add",
       "mitre_attack_technique": "T1136.001 - Account Creation: Local Account"
     },
     {
       "action_number": 2,
       "description": "Modified sudoers for privilege escalation",
-      "timestamp": "2026-08-10T18:58:41Z",
+      "timestamp": "2026-08-10T19:06:09Z",
       "expected_detection_source": "auditd EID: perm_mod",
       "mitre_attack_technique": "T1548.003 - Sudo and Sudoers Abuse"
     },
     {
       "action_number": 3,
       "description": "Executed binary from /tmp (suspicious execution)",
-      "timestamp": "2026-08-10T18:58:41Z",
+      "timestamp": "2026-08-10T19:06:09Z",
       "expected_detection_source": "auditd EID: execve",
       "mitre_attack_technique": "T1059 - Command and Scripting Interpreter"
     },
     {
       "action_number": 4,
       "description": "Attempted reverse shell connection to localhost",
-      "timestamp": "2026-08-10T18:58:41Z",
+      "timestamp": "2026-08-10T19:06:09Z",
       "expected_detection_source": "auditd EID: network_connect",
       "mitre_attack_technique": "T1059 - Command and Scripting Interpreter"
     },
     {
       "action_number": 5,
       "description": "Established cron job for persistence",
-      "timestamp": "2026-08-10T18:58:42Z",
+      "timestamp": "2026-08-10T19:06:10Z",
       "expected_detection_source": "auditd EID: cron_persist",
       "mitre_attack_technique": "T1053.003 - Scheduled Task/Job"
     },
     {
       "action_number": 6,
       "description": "Read sensitive file /etc/shadow",
-      "timestamp": "2026-08-10T18:58:42Z",
+      "timestamp": "2026-08-10T19:06:10Z",
       "expected_detection_source": "auditd EID: file_access",
       "mitre_attack_technique": "T1003 - OS Credential Dumping"
     }

