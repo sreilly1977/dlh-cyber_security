@@ -392,7 +392,7 @@ Sources found: 7 | Missing: 0
 
 ---
 
-# [7. Linux Event Export](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/script 7-linux_export.sh)
+# [7. Linux Event Export](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x02_eyes_on_endpoint/7-linux_export.sh)
 
 ## Goal: 
 
