@@ -2,9 +2,9 @@
     {
         "action_number":  1,
         "description":  "Created local user account \u0027support_update\u0027",
-        "timestamp":  "2026-08-10T19:51:18Z",
+        "timestamp":  "2026-08-10T19:53:31Z",
         "expected_detection_source":  [
-                                          "Security Event ID: 4720"
+                                          "Security Event ID 4720"
                                       ],
         "mitre_attack_technique":  [
                                        "T1136.001 - Account Creation: Local Account"
@@ -13,9 +13,9 @@
     {
         "action_number":  2,
         "description":  "Added user \u0027support_update\u0027 to Administrators group",
-        "timestamp":  "2026-08-10T19:51:18Z",
+        "timestamp":  "2026-08-10T19:53:31Z",
         "expected_detection_source":  [
-                                          "Security Event ID: 4732"
+                                          "Security Event ID 4732"
                                       ],
         "mitre_attack_technique":  [
                                        "T1078.001 - Valid Accounts: Domain Admins",
@@ -25,11 +25,11 @@
     {
         "action_number":  3,
         "description":  "Executed encoded PowerShell command (payload: Write-Host \u0027C2 beacon\u0027)",
-        "timestamp":  "2026-08-10T19:51:18Z",
+        "timestamp":  "2026-08-10T19:53:31Z",
         "expected_detection_source":  [
-                                          "Security Event ID: 4688",
-                                          "PowerShell Event ID: 4104",
-                                          "Sysmon Event ID: 1"
+                                          "Security Event ID 4688",
+                                          "PowerShell Event ID 4104",
+                                          "Sysmon Event ID 1"
                                       ],
         "mitre_attack_technique":  [
                                        "T1059.001 - PowerShell",
@@ -38,11 +38,11 @@
     },
     {
         "action_number":  4,
-        "description":  "Created scheduled task \u0027WinUpdateService_8c9c1315\u0027 for persistence",
-        "timestamp":  "2026-08-10T19:51:19Z",
+        "description":  "Created scheduled task \u0027WinUpdateService_938015fe\u0027 for persistence",
+        "timestamp":  "2026-08-10T19:53:32Z",
         "expected_detection_source":  [
-                                          "Security Event ID: 4698",
-                                          "Sysmon Event ID: 20"
+                                          "Security Event ID 4698",
+                                          "Sysmon Event ID 20"
                                       ],
         "mitre_attack_technique":  [
                                        "T1053.005 - Scheduled Task/Job"
@@ -51,9 +51,9 @@
     {
         "action_number":  5,
         "description":  "Initiated outbound connection to ",
-        "timestamp":  "2026-08-10T19:51:19Z",
+        "timestamp":  "2026-08-10T19:53:32Z",
         "expected_detection_source":  [
-                                          "Sysmon Event ID: 3"
+                                          "Sysmon Event ID 3"
                                       ],
         "mitre_attack_technique":  [
                                        "T1071.001 - Application Layer Protocol: Web Protocols"
@@ -62,9 +62,9 @@
     {
         "action_number":  6,
         "description":  "Dropped file \u0027C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\update_helper.bat\u0027 in startup directory",
-        "timestamp":  "2026-08-10T19:51:19Z",
+        "timestamp":  "2026-08-10T19:53:32Z",
         "expected_detection_source":  [
-                                          "Sysmon Event ID: 11"
+                                          "Sysmon Event ID 11"
                                       ],
         "mitre_attack_technique":  [
                                        "T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder",

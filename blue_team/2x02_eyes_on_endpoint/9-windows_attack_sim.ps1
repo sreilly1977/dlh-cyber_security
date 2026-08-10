@@ -253,7 +253,7 @@ try {
         }
     }
 
-    # Delete scheduled task
+    # Delete scheduled task using Unregister-ScheduledTask
     if ($null -ne $script:CleanupTaskName) {
         try {
             Unregister-ScheduledTask -TaskName $script:CleanupTaskName -Confirm:$false -ErrorAction Stop
@@ -268,18 +268,15 @@ try {
         try {
             Remove-Item -Path $script:CleanupFilePath -Force -ErrorAction Stop
             $Cleaned += "file removed"
-        } appear
-
-    appear
-
-    } catch {
-        Write-Host "    [WARNING: Failed to remove file: $($_.Exception.Message)]" -ForegroundColor Yellow
+        } catch {
+            Write-Host "    [WARNING: Failed to remove file: $($_.Exception.Message)]" -ForegroundColor Yellow
+        }
     }
-    appear
+
     if ($Cleaned.Count -gt 0) {
         Write-Host "    $($Cleaned -join ', ')                           [CLEAN]" -ForegroundColor Green
     }
-    appear
+
     Write-Host "Actions executed: $actionCounter"
     Write-Host "Ground truth saved to: $OutputFile"
 
