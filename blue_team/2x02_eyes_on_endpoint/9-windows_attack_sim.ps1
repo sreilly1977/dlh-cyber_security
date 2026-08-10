@@ -155,7 +155,7 @@ try {
         $EncodedBytes = [System.Text.Encoding]::Unicode.GetBytes($Payload)
         $EncodedBase64 = [Convert]::ToBase64String($EncodedBytes)
 
-        Start-Process powershell.exe -ArgumentList "-WindowStyle Hidden -Enc $EncodedBase64" -Wait -ErrorAction Stop
+        Start-Process powershell.exe -ArgumentList "-WindowStyle Hidden -enc $EncodedBase64" -Wait -ErrorAction Stop
 
         Add-GroundTruthEntry -ActionNumber $actionCounter `
                              -Description "Executed encoded PowerShell command (payload: Write-Host 'C2 beacon')" `
