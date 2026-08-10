@@ -196,8 +196,8 @@ parse_audit_log() {
 
                 execve_count=$((execve_count + 1))
                 total=$((total + 1))
-                printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"execve","pid":"%s","uid":"%s","command":"%s","exe":"%s","key":"%s"}\n' \
-                    "$iso_ts" "$THIS_HOSTNAME" "$current_pid" "$current_uid" "$cmd_args" "$current_exe" "$current_key"
+                               printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"execve","pid":"%s","uid":"%s","command":"%s","exe":"%s","key":"%s"}\n' \
+                    "$iso_ts" "$THIS_HOSTNAME" "$(json_escape "$current_pid")" "$(json_escape "$current_uid")" "$cmd_args" "$(json_escape "$current_exe")" "$(json_escape "$current_key")"
                 ;;
             PATH)
                 local path_val
@@ -212,8 +212,8 @@ parse_audit_log() {
                     path_val=$(json_escape "$path_val")
                     file_access_count=$((file_access_count + 1))
                     total=$((total + 1))
-                    printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"file_access","pid":"%s","uid":"%s","path":"%s","key":"%s"}\n' \
-                        "$iso_ts" "$THIS_HOSTNAME" "$current_pid" "$current_uid" "$path_val" "$current_key"
+                                        printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"file_access","pid":"%s","uid":"%s","path":"%s","key":"%s"}\n' \
+                        "$iso_ts" "$THIS_HOSTNAME" "$(json_escape "$current_pid")" "$(json_escape "$current_uid")" "$path_val" "$(json_escape "$current_key")"
                 fi
                 ;;
             SOCKADDR)
@@ -228,8 +228,8 @@ parse_audit_log() {
                 saddr=$(json_escape "$saddr")
                 network_count=$((network_count + 1))
                 total=$((total + 1))
-                printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"network","pid":"%s","uid":"%s","saddr":"%s","key":"%s"}\n' \
-                    "$iso_ts" "$THIS_HOSTNAME" "$current_pid" "$current_uid" "$saddr" "$current_key"
+                                printf '{"timestamp":"%s","hostname":"%s","source_type":"audit.log","event_category":"network","pid":"%s","uid":"%s","saddr":"%s","key":"%s"}\n' \
+                    "$iso_ts" "$THIS_HOSTNAME" "$(json_escape "$current_pid")" "$(json_escape "$current_uid")" "$saddr" "$(json_escape "$current_key")"
                 ;;
             *)
                 other_count=$((other_count + 1))
