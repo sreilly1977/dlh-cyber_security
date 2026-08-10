@@ -1,0 +1,127 @@
+{
+  "combined_metadata": {
+    "platform": "cross-platform",
+    "export_timestamp": "2026-08-10T20:02:58Z",
+    "windows_source": "windows_attack_log.json",
+    "linux_source": "linux_attack_log.json"
+  },
+  "windows_actions": [
+    {
+      "action_number": 1,
+      "description": "Created local user account 'support_update'",
+      "timestamp": "2026-08-10T20:37:12Z",
+      "expected_detection_source": [
+        "Security Event ID 4720"
+      ],
+      "mitre_attack_technique": [
+        "T1136.001 - Account Creation: Local Account"
+      ]
+    },
+    {
+      "action_number": 2,
+      "description": "Added user 'support_update' to Administrators group",
+      "timestamp": "2026-08-10T20:37:12Z",
+      "expected_detection_source": [
+        "Security Event ID 4732"
+      ],
+      "mitre_attack_technique": [
+        "T1078.001 - Valid Accounts: Domain Admins",
+        "T1098 - Account Manipulation"
+      ]
+    },
+    {
+      "action_number": 3,
+      "description": "Executed encoded PowerShell command (payload: Write-Host 'C2 beacon')",
+      "timestamp": "2026-08-10T20:37:12Z",
+      "expected_detection_source": [
+        "Security Event ID 4688",
+        "PowerShell Event ID 4104",
+        "Sysmon Event ID 1"
+      ],
+      "mitre_attack_technique": [
+        "T1059.001 - PowerShell",
+        "T1140 - Deobfuscate/Decode Files or Information"
+      ]
+    },
+    {
+      "action_number": 4,
+      "description": "Created scheduled task 'WinUpdateService_8625b7ff' for persistence",
+      "timestamp": "2026-08-10T20:37:13Z",
+      "expected_detection_source": [
+        "Security Event ID 4698",
+        "Sysmon Event ID 20"
+      ],
+      "mitre_attack_technique": [
+        "T1053.005 - Scheduled Task/Job"
+      ]
+    },
+    {
+      "action_number": 5,
+      "description": "Initiated outbound connection to ",
+      "timestamp": "2026-08-10T20:37:13Z",
+      "expected_detection_source": [
+        "Sysmon Event ID 3"
+      ],
+      "mitre_attack_technique": [
+        "T1071.001 - Application Layer Protocol: Web Protocols"
+      ]
+    },
+    {
+      "action_number": 6,
+      "description": "Dropped file 'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\update_helper.bat' in startup directory",
+      "timestamp": "2026-08-10T20:37:13Z",
+      "expected_detection_source": [
+        "Sysmon Event ID 11"
+      ],
+      "mitre_attack_technique": [
+        "T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder",
+        "T1105 - Ingress Tool Transfer"
+      ]
+    }
+  ],
+  "linux_actions": [
+    {
+      "action_number": 1,
+      "description": "Created user account 'testattacker'",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "expected_detection_source": "auditd EID: user_add",
+      "mitre_attack_technique": "T1136.001 - Account Creation: Local Account"
+    },
+    {
+      "action_number": 2,
+      "description": "Modified sudoers for privilege escalation",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "expected_detection_source": "auditd EID: perm_mod",
+      "mitre_attack_technique": "T1548.003 - Sudo and Sudoers Abuse"
+    },
+    {
+      "action_number": 3,
+      "description": "Executed binary from /tmp (suspicious execution)",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "expected_detection_source": "auditd EID: execve",
+      "mitre_attack_technique": "T1059 - Command and Scripting Interpreter"
+    },
+    {
+      "action_number": 4,
+      "description": "Attempted reverse shell connection to localhost",
+      "timestamp": "2026-08-10T19:06:09Z",
+      "expected_detection_source": "auditd EID: network_connect",
+      "mitre_attack_technique": "T1059 - Command and Scripting Interpreter"
+    },
+    {
+      "action_number": 5,
+      "description": "Established cron job for persistence",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "expected_detection_source": "auditd EID: cron_persist",
+      "mitre_attack_technique": "T1053.003 - Scheduled Task/Job"
+    },
+    {
+      "action_number": 6,
+      "description": "Read sensitive file /etc/shadow",
+      "timestamp": "2026-08-10T19:06:10Z",
+      "expected_detection_source": "auditd EID: file_access",
+      "mitre_attack_technique": "T1003 - OS Credential Dumping"
+    }
+  ],
+  "total_actions": 12
+}
