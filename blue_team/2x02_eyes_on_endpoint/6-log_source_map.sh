@@ -6,6 +6,8 @@
 # Date:        August 8, 2026
 #
 # Output columns: Source, Path, Format, Rotation, Events/hr, Relevance
+# Description: Discovers log sources and documents their location, format type,
+#              rotation policy, security relevance, and estimated events/hr.
 
 set -euo pipefail
 
@@ -47,6 +49,7 @@ declare -A SECURITY_RELEVANCE=(
 
 # ── Functions ─────────────────────────────────────────────────────────────────
 
+# Estimate events/hr for a given log source
 log_info() {
     echo "[*] $*"
 }
@@ -156,7 +159,7 @@ get_relevance_rating() {
 main() {
     log_info "Discovering log sources..."
 
-    # Print header with Events/hr column (for output display)
+    # Print header with Events/hr column (matches expected output format)
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
         "Source" "Path" "Format" "Rotation" "Events/hr" "Relevance"
     printf "%-20s %-30s %-12s %-12s %-12s %-12s\n" \
