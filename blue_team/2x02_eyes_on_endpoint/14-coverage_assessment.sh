@@ -174,20 +174,20 @@ echo "[*] Identifying known gaps..."
 # Identify gaps from detection matrices
 WINDOW_GAPS=$(jq '[.detection_matrix[] | select(.status == "MISSING") | {
     description: ("Missing detection for: " + .action),
-    platform: "Windows",
-    technique: (.mitre_attack // "Unknown"),
+    impacted_platform: "Windows",
+    impacted_technique: (.mitre_attack // "Unknown"),
     source: (.source // "Unknown"),
     reason: "Event not captured within time window",
-    recommendation: ("Enable or tune logging for " + .source)
+    recommended_instrumentation_improvement: ("Enable or tune logging for " + .source)
 }] // []' "$WINDOWS_MATRIX" 2>/dev/null || echo "[]")
 
 LINUX_GAPS=$(jq '[.detection_matrix[] | select(.status == "MISSING") | {
     description: ("Missing detection for: " + .action),
-    platform: "Linux",
-    technique: (.mitre_attack // "Unknown"),
+    impacted_platform: "Linux",
+    impacted_technique: (.mitre_attack // "Unknown"),
     source: (.source // "Unknown"),
     reason: "Event not captured within time window",
-    recommendation: ("Enable or tune audit rules for " + .audit_key)
+    recommended_instrumentation_improvement: ("Enable or tune audit rules for " + .audit_key)
 }] // []' "$LINUX_MATRIX" 2>/dev/null || echo "[]")
 
 # Combine gaps

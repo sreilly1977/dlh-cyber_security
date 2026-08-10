@@ -1,6 +1,6 @@
 {
   "assessment_metadata": {
-    "generated_at": "2026-08-10T20:28:05Z",
+    "generated_at": "2026-08-10T20:30:31Z",
     "version": "1.0",
     "assessor": "Blue Team Automation"
   },
@@ -206,45 +206,45 @@
     "gaps": [
       {
         "description": "Missing detection for: Added user 'support_update' to Administrators group",
-        "platform": "Windows",
-        "technique": [
+        "impacted_platform": "Windows",
+        "impacted_technique": [
           "T1078.001 - Valid Accounts: Domain Admins",
           "T1098 - Account Manipulation"
         ],
         "source": "Security",
         "reason": "Event not captured within time window",
-        "recommendation": "Enable or tune logging for Security"
+        "recommended_instrumentation_improvement": "Enable or tune logging for Security"
       },
       {
         "description": "Missing detection for: Added user 'support_update' to Administrators group",
-        "platform": "Windows",
-        "technique": [
+        "impacted_platform": "Windows",
+        "impacted_technique": [
           "T1078.001 - Valid Accounts: Domain Admins",
           "T1098 - Account Manipulation"
         ],
         "source": "Security",
         "reason": "Event not captured within time window",
-        "recommendation": "Enable or tune logging for Security"
+        "recommended_instrumentation_improvement": "Enable or tune logging for Security"
       },
       {
         "description": "Missing detection for: Created scheduled task 'WinUpdateService_8625b7ff' for persistence",
-        "platform": "Windows",
-        "technique": [
+        "impacted_platform": "Windows",
+        "impacted_technique": [
           "T1053.005 - Scheduled Task/Job"
         ],
         "source": "Microsoft-Windows-Sysmon/Operational",
         "reason": "Event not captured within time window",
-        "recommendation": "Enable or tune logging for Microsoft-Windows-Sysmon/Operational"
+        "recommended_instrumentation_improvement": "Enable or tune logging for Microsoft-Windows-Sysmon/Operational"
       },
       {
         "description": "Missing detection for: Created scheduled task 'WinUpdateService_8625b7ff' for persistence",
-        "platform": "Windows",
-        "technique": [
+        "impacted_platform": "Windows",
+        "impacted_technique": [
           "T1053.005 - Scheduled Task/Job"
         ],
         "source": "Security",
         "reason": "Event not captured within time window",
-        "recommendation": "Enable or tune logging for Security"
+        "recommended_instrumentation_improvement": "Enable or tune logging for Security"
       }
     ]
   },
