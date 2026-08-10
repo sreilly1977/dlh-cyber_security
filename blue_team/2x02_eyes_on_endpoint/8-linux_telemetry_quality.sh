@@ -9,7 +9,7 @@
 # Outputs: linux_telemetry_quality.json with distribution, coverage, gaps, completeness, and quality score
 # Uses: jq for JSON parsing and analysis, perl for preprocessing
 # Reports: count and percentage of total for each event category and source type
-# Metrics: events per hour, hours with events, hours without events, gap detection, field completeness
+# Metrics: events per hour, hours with events, hours without events, gap detection (>30 minutes), field completeness
 
 set -euo pipefail
 
@@ -128,6 +128,7 @@ main() {
 
     # ── Gap Detection ─────────────────────────────────────────────────────────
 
+    # Detect any period longer than 30 minutes with no events
     local max_gap_minutes=0
     local gap_detected=false
 
