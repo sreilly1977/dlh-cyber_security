@@ -1,0 +1,363 @@
+{
+  "hostname": "billing-srv-01",
+  "generated_at": "2026-08-11T15:08:24Z",
+  "total_checks": 48,
+  "passed": 48,
+  "failed": 0,
+  "verdict": "PASS",
+  "summary": {
+    "service_state": {
+      "checked": 42,
+      "passed": 42
+    },
+    "listening_sockets": {
+      "checked": 3,
+      "passed": 3
+    },
+    "liveness_probes": {
+      "checked": 3,
+      "passed": 3
+    }
+  },
+  "details": [
+    {
+      "type": "service_state",
+      "name": "apache2.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "apparmor.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "apport.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "auditd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "cron.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "dbus.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "fix-log-permissions.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "kmod-static-nodes.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "lvm2-pvscan@8:3.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "mysql.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "packagekit.service",
+      "expected": "unknown",
+      "actual": "inactive",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-quit-wait.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-quit.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-read-write.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "polkit.service",
+      "expected": "unknown",
+      "actual": "inactive",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "rsyslog.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "ssh.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "sysctl-after-ufw.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-binfmt.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-fsck@dev-disk-by\\x2duuid-907d4524\\x2dc1c7\\x2d4387\\x2da530\\x2d8bfda4b27e0d.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-journal-flush.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-journald.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-logind.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-modules-load.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-networkd-wait-online.service",
+      "expected": "unknown",
+      "actual": "inactive",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-networkd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-random-seed.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-remount-fs.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-sysctl.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-sysusers.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-timesyncd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-tmpfiles-setup-dev.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-tmpfiles-setup.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-udev-trigger.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-udevd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-update-utmp.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-user-sessions.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "udisks2.service",
+      "expected": "unknown",
+      "actual": "inactive",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "ufw.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "upower.service",
+      "expected": "unknown",
+      "actual": "inactive",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "user-runtime-dir@1000.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "user@1000.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "listening_socket",
+      "service": "apache2.service",
+      "port": "80",
+      "protocol": "tcp",
+      "status": "pass"
+    },
+    {
+      "type": "listening_socket",
+      "service": "mysql.service",
+      "port": "3306",
+      "protocol": "tcp",
+      "status": "pass"
+    },
+    {
+      "type": "listening_socket",
+      "service": "ssh.service",
+      "port": "22",
+      "protocol": "tcp",
+      "status": "pass"
+    },
+    {
+      "type": "liveness_probe",
+      "service": "apache2.service",
+      "probe_type": "tcp_connect",
+      "target": "localhost",
+      "status": "pass",
+      "result": "Probe succeeded"
+    },
+    {
+      "type": "liveness_probe",
+      "service": "mysql.service",
+      "probe_type": "tcp_connect",
+      "target": "localhost",
+      "status": "pass",
+      "result": "Probe succeeded"
+    },
+    {
+      "type": "liveness_probe",
+      "service": "ssh.service",
+      "probe_type": "tcp_connect",
+      "target": "localhost",
+      "status": "pass",
+      "result": "Probe succeeded"
+    }
+  ]
+}

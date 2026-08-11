@@ -229,4 +229,106 @@ $ cat patch_plan.json
 
 ---
 
+# [4. The Safe Patch Execution](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/4-patch_execute.sh)
+
+## Goal: 
+
+Apply the planned patches in order, with per-patch pre-check and post-check, while recording every action as a structured execution log.
+
+## Context: 
+
+The plan is the intent. This task is the execution. Every patch that runs must log what it touched, how long it took, whether it succeeded and which services were affected. If the script is interrupted, the log must still be consistent up to the point of interruption.
+
+## Instructions: 
+
+Write a script 4-patch_execute.sh that consumes patch_plan.json and executes the plan safely. The script must:
+
+    Acquire an advisory lock in /var/lock/meddefense-patch.lock so that two instances cannot run concurrently
+
+    For each entry in patch_plan.json, in order:
+
+        Record pre block: installed version, service states for linked services
+
+        Run apt-get install --only-upgrade -y <package> with DEBIAN_FRONTEND=noninteractive
+
+        Record the exit status, stdout and stderr
+
+        Record post block: installed version, service states for linked services
+
+        If requires_restart is true and no reboot is needed: attempt systemctl try-restart on each affected service and record the result
+
+        If the apt call fails: mark the entry as failed, stop the loop and continue to finalization (do not abort the whole script)
+
+    Handle a busy dpkg lock gracefully: on E: Could not get lock, wait up to 120 seconds with exponential backoff, then fail the entry with a clear reason
+
+    Emit patch_execution_log.json containing: started_at, finished_at, hostname, plan_source_hash, entries (array of per-package objects with pre, post, status, duration_seconds, stdout_tail, stderr_tail)
+
+    Exit with code 0 if all entries succeeded, 1 if any entry failed, 2 if the lock could not be acquired
+
+Hint: use trap to ensure the lock is released even on abort.
+
+**Expected Output:**
+
+```bash
+$ sudo ./4-patch_execute.sh
+[*] Acquiring lock /var/lock/meddefense-patch.lock...  OK
+[*] Loading plan: patch_plan.json (6 entries)
+[1/6] linux-image-generic   emergency     apt-get ... OK (12.4s)
+[2/6] libssl3               urgent        apt-get ... OK (3.1s)
+      try-restart apache2.service         OK
+      try-restart ssh.service             OK
+      try-restart mysql.service           OK
+[3/6] openssh-server        urgent        apt-get ... OK (2.8s)
+      try-restart ssh.service             OK
+[4/6] curl                  urgent        apt-get ... OK (1.9s)
+[5/6] libpam-modules        scheduled     apt-get ... OK (2.2s)
+[6/6] tzdata                scheduled     apt-get ... OK (1.4s)
+Succeeded: 6  Failed: 0
+Log saved to: patch_execution_log.json
+```
+
+---
+
+# [5. The Post-Patch Service Validation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/5-post_patch_validate.sh)
+
+## Goal: 
+
+Prove that every critical service is running, listening on its expected port and responding correctly after the patch run, by comparing the current state to the pre-patch snapshot.
+
+## Context: 
+
+An apt command that exits 0 is not proof of anything. The package may have installed, but the service may have failed to restart, may now listen on a different socket or may refuse traffic. Validation closes the loop by comparing the actual post-patch behavior against the pre-patch baseline.
+
+## Instructions: 
+
+Write a script 5-post_patch_validate.sh that reads pre_patch_state.json and the live system, and emits a validation report. The script must:
+
+    For every service present in the pre-patch services block: verify it is in the same ActiveState or better (anything other than active is a regression)
+
+    For every socket present in the pre-patch listening block: verify the port is still listening
+
+    For every service marked critical in service_dependency_map.json: run a lightweight liveness probe defined in a companion service_probes.json file (curl URL, mysqladmin ping, ssh -o BatchMode=yes etc.)
+
+    Classify each check as pass, regression, or probe_failed
+
+    Emit post_patch_validation.json with: total_checks, passed, failed, details (array of per-check objects)
+
+    Exit with code 0 if all passed, 1 if any regression or probe failure is detected
+
+**Expected Output:**
+
+```bash
+$ sudo ./5-post_patch_validate.sh
+Service state checks:     24/24   PASS
+Listening socket checks:  11/11   PASS
+Critical liveness probes: 3/3     PASS
+VERDICT: PASS (38/38)
+Report saved to: post_patch_validation.json
+
+$ jq '.details[] | select(.status!="pass")' post_patch_validation.json
+# (empty, no regressions)
+```bash
+
+--- 
+
 # 
