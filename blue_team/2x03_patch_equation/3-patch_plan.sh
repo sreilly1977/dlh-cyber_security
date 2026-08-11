@@ -19,10 +19,10 @@ readonly DEPS_FILE="${BASE_DIR}/service_dependency_map.json"
 readonly OUTPUT_FILE="${BASE_DIR}/patch_plan.json"
 
 # Weights (constants as required by task)
-readonly CVSS_WEIGHT=0.8
-readonly KEV_WEIGHT=1.5
-readonly CRITICALITY_WEIGHT=0.5
-readonly EXPOSURE_WEIGHT=1.0
+readonly cvss_weight=0.8
+readonly kev_weight=1.5
+readonly criticality_weight=0.5
+readonly exposure_weight=1.0
 
 log() {
     echo "[*] $*"
@@ -108,10 +108,10 @@ def crit_val:
   (if ($pkg.in_cisa_kev == true) then 1 else 0 end) as $kev_val |
 
   # Priority score
-  (($cvss_w * ($pkg.max_cvss // 0)) +
-   ($kev_w * $kev_val) +
-   ($crit_w * $max_crit) +
-   ($exp_w * $exposure)) as $score |
+  (($cvss_weight * ($pkg.max_cvss // 0)) +
+   ($kev_weight * $kev_val) +
+   ($criticality_weight * $max_crit) +
+   ($exposure_weight * $exposure)) as $score |
 
   # Bucket
   (
@@ -163,10 +163,10 @@ to_entries | map(.value + {rank: (.key + 1)}) |
 {
   generated_at: $ts,
   weights: {
-    cvss: $cvss_w,
-    kev: $kev_w,
-    criticality: $crit_w,
-    exposure: $exp_w
+    cvss_weight: $cvss_weight,
+    kev_weight: $kev_weight,
+    criticality_weight: $criticality_weight,
+    exposure_weight: $exposure_weight
   },
   plan: $plan,
   summary: {
@@ -185,10 +185,10 @@ JQEOF
         --slurpfile vuln "$VULN_FILE" \
         --slurpfile deps "$DEPS_FILE" \
         --arg ts "$timestamp" \
-        --argjson cvss_w "$CVSS_WEIGHT" \
-        --argjson kev_w "$KEV_WEIGHT" \
-        --argjson crit_w "$CRITICALITY_WEIGHT" \
-        --argjson exp_w "$EXPOSURE_WEIGHT" \
+        --argjson cvss_weight "$cvss_weight" \
+        --argjson kev_weight "$kev_weight" \
+        --argjson criticality_weight "$criticality_weight" \
+        --argjson exposure_weight "$exposure_weight" \
         -f "$jq_program" > "$OUTPUT_FILE"; then
         log "ERROR: jq processing failed."
         rm -f "$jq_program"

@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-11T12:14:05Z",
+  "generated_at": "2026-08-11T12:23:13Z",
   "weights": {
-    "cvss": 0.8,
-    "kev": 1.5,
-    "criticality": 0.5,
-    "exposure": 1
+    "cvss_weight": 0.8,
+    "kev_weight": 1.5,
+    "criticality_weight": 0.5,
+    "exposure_weight": 1
   },
   "plan": [
     {
