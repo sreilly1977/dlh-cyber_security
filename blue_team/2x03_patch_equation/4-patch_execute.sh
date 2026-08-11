@@ -61,6 +61,7 @@ acquire_lock() {
     fi
 }
 
+# Handle busy dpkg lock: on "E: Could not get lock", wait with exponential backoff
 wait_for_dpkg_lock() {
     local waited=0
     local backoff=1
@@ -68,6 +69,7 @@ wait_for_dpkg_lock() {
     while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || \
           fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
         if [[ $waited -ge $DPKG_LOCK_WAIT ]]; then
+            warn "E: Could not get lock /var/lib/dpkg/lock-frontend after ${DPKG_LOCK_WAIT}s"
             return 1
         fi
         sleep "$backoff"
@@ -149,7 +151,7 @@ execute_patch_entry() {
     pre_block=$(jq -n --arg v "$pre_version" --argjson s "$pre_service_states" \
         '{installed_version:$v,service_states:$s}')
 
-    # Wait for dpkg lock
+    # Wait for dpkg lock (handles "E: Could not get lock" with exponential backoff)
     if ! wait_for_dpkg_lock; then
         echo " FAILED (dpkg lock busy)"
         jq -n --arg p "$package" --arg b "$bucket" --argjson sc "$score" \
