@@ -69,8 +69,6 @@ run_dpkg_audit() {
 }
 
 get_broken_packages() {
-    # Parse dpkg --audit output for package names
-    # Also check for packages in broken states
     local broken=''
 
     # Method 1: dpkg --audit output
@@ -78,14 +76,23 @@ get_broken_packages() {
     audit_output=$(dpkg --audit 2>/dev/null || true)
 
     if [[ -n "$audit_output" ]]; then
-        # Parse package names from audit output
         broken=$(echo "$audit_output" | grep -oE '^[a-zA-Z0-9][a-zA-Z0-9.+~-]*' | sort -u | tr '\n' ',' | sed 's/,$//')
     fi
 
     # Method 2: Query dpkg database for broken states
+    # Check for half-configured, half-installed, unpacked, and triggers-pending states
     local state_broken
-    state_broken=$(dpkg-query -W -f='${binary:Package} ${db:Status-Abbrev}\n' 2>/dev/null | \
-        awk '$2 ~ /[HUFW]/ || $2 ~ /..F/ || $2 ~ /..T/ {print $1}' | sort -u | tr '\n' ',' | sed 's/,$//' || true)
+    state_broken=$(dpkg-query -W -f='${binary:Package}\t${db:Status-Abbrev}\n' 2>/dev/null | \
+        awk -F'\t' '{
+            # First char = desired, Second char = status, Third char = error
+            # F = half-configured, H = half-installed, U = unpacked, T = triggers-pending
+            if ($2 ~ /F/) state="half-configured";
+            else if ($2 ~ /H/) state="half-installed";
+            else if ($2 ~ /U/) state="unpacked";
+            else if ($2 ~ /T/) state="triggers-pending";
+            else next;
+            print $1
+        }' | sort -u | tr '\n' ',' | sed 's/,$//' || true)
 
     # Merge both lists
     if [[ -n "$broken" ]] && [[ -n "$state_broken" ]]; then
