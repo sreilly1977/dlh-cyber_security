@@ -1,3 +1,48 @@
+# Introduction
+
+>    "If you know the enemy and know yourself, you need not fear the result of a hundred battles. If you know yourself but not the enemy, for every victory gained you will also suffer a defeat." 
+> 
+> — Sun Tzu, The Art of War
+
+Your Security Posture Assessment told MedDefense what it has, what protects it and where the gaps are. That is half the picture. The other half: who is on the other side ?
+
+The 2024 Ponemon Institute Healthcare Cybersecurity Report found that 89% of healthcare organizations experienced at least one cyberattack in the previous 12 months. Not because attackers are geniuses. Because healthcare is, structurally, the perfect target. Life-or-death urgency means hospitals will pay ransoms. Legacy medical devices create entry points that do not exist in other industries. Patient data sells for 10 to 40 times more than credit card numbers on underground markets. And most healthcare organizations are chronically understaffed in security.
+
+But "healthcare is targeted" is not actionable intelligence. The question that matters is: who specifically targets organizations like MedDefense, why, how and through which doors ?
+
+A nation-state APT stealing pharmaceutical research operates nothing like a ransomware affiliate buying credentials on a dark web marketplace. A disgruntled billing clerk exfiltrating patient records has a completely different attack profile from an opportunistic teenager scanning for default credentials. Each demands a different defensive response. Treating all threats as equal means defending against none of them effectively.
+
+This project will teach you to think like the adversary, not to become one, but because you cannot build a defense against something you do not understand. You will profile the actors who target hospitals, map the vectors they use, trace the attack paths into MedDefense's specific infrastructure and build threat scenarios that connect directly to the gaps you identified in your posture assessment.
+Why It Matters
+
+Threat intelligence is not an academic exercise. It is the difference between spending your security budget on the right things and spending it on the wrong ones. The Threat Landscape Report you produce here will directly shape the vulnerability assessment, the defense strategy and the incident response planning that follow in later projects. Every defensive decision MedDefense makes from this point forward should be informed by the question: "Which threat does this address, and how likely is that threat ?"
+
+Every SOC analyst who investigates an alert needs to know what kind of attacker would produce that pattern. Every incident responder who contains a breach needs to predict the attacker's next move. Every security architect who designs a control needs to know which attack it is designed to stop.
+
+The professionals who get hired are the ones who can answer: "Given what we know about our organization and the threat landscape, where should we focus ?"
+
+After this project, you will be one of them.
+
+## Context
+
+Week two at MedDefense Health Systems.
+
+Your Security Posture Assessment landed on the Board's desk last Friday. The reaction was exactly what James Chen hoped for: concern, but not panic. The CEO, Dr. Patricia Morales, called James directly afterward. Her question was pointed: "We now understand our weaknesses. But who are we weak against ? Are we a specific target or just another hospital that could get hit by accident ?"
+
+James walks into your office Monday morning carrying a laptop bag. He sets it on your desk.
+
+"This is Marcus's laptop. IT finally cleared it and gave it back to me. Remember his notes about starting a threat landscape analysis ? The files are on here. CISA advisories, HC3 briefs, some partially annotated ATT&CK mappings. He never finished the work, but the raw material is here."
+
+He opens the laptop and shows you a folder: C:\Users\marcus\Documents\Threat_Intel\
+
+Inside: six files, some annotated, some just downloaded PDFs, a half-written analysis document that stops mid-sentence.
+
+"The Board wants two things. First, they want to know who attacks hospitals like ours and how. Second, they want to know how those threats connect to the specific gaps we identified last week. If the ransomware groups that hit those three regional hospitals use VPN exploits as their primary vector, and we have an unpatched VPN endpoint, that is a very different conversation than a generic 'ransomware is bad' slide."
+
+"Build me a Threat Landscape Report. Make it specific to MedDefense. Make every finding connect back to our posture assessment. And make it something the Board can use to make decisions, not just worry."
+
+--- 
+
 # [0. The Intelligence Briefing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x01_know_your_enemy/0-threat_landscape_summary.md)
 
 ## Goal

@@ -1,3 +1,38 @@
+# Introduction
+
+>    "Attackers don't hack in. They log in." 
+>
+> — CISA Director Jen Easterly, 2023
+
+Linux is hardened. billing-srv-01, web-srv-01 and log-srv-01 are locked down, monitored by auditd and compliant with the CIS Benchmark to 84 points. That was the easy part. Because Linux runs 3 servers at MedDefense. Windows runs everything else.
+
+280 workstations across 3 sites. 2 domain controllers managing authentication for 2,000 staff. Active Directory controlling every login, every password policy, every security setting across the entire organization. Group Policy Objects that have never been reviewed, some dating back to when Marcus Webb was still here. Sysmon nowhere to be found. PowerShell Script Block Logging disabled. AppLocker non-existent. The Windows Firewall turned off on 2 of 3 profiles. And the Crimson Tide advisory (1x05) explicitly documented that in all 5 hospital breaches, the attacker used Group Policy to deploy ransomware across every Windows endpoint simultaneously.
+
+Windows is where the attacker lives after initial access. Active Directory is the crown jewel. If the attacker owns AD, they own everything: every workstation, every server, every user, every password. The 5 hospitals hit by Crimson Tide all had one thing in common: weak AD configurations that the attacker exploited for lateral movement, privilege escalation and ransomware deployment.
+
+This project teaches you to think in Windows. Not as a Windows administrator, but as a security engineer who uses Active Directory, Group Policy, Sysmon and PowerShell as defensive weapons. Every script you write will be in PowerShell. Every configuration will be deployed through GPO. Every detection capability will generate Windows Events that become the telemetry you export and analyze as an analyst in Module 3.
+Why this matters
+
+Linux hardening protects 3 servers. Windows hardening protects 280 workstations and the domain controllers that authenticate every human in the organization. The blast radius of a Windows misconfiguration is not one server. It is the entire enterprise. When the Crimson Tide attacker created a malicious GPO on the domain controller, that GPO executed on every Windows machine in the domain within 90 minutes. One misconfiguration. 280 compromised endpoints.
+
+## Context
+
+Week seven at MedDefense. Wednesday morning.
+
+James Chen walks in with a printed screenshot of the Crimson Tide advisory, Phase 6 highlighted in yellow:
+
+"Deployment method: Group Policy Object pushed from compromised Domain Controller. Payload: Modified BlackSuit variant. Encryption: AES-256-CBC with RSA-2048 wrapped key. Targets: All Windows systems."
+
+He sets it on your desk.
+
+"The attacker used GPO to deploy ransomware because GPO is how Windows pushes changes to every machine. If we do not lock down our GPOs, harden our AD, deploy Sysmon and monitor our domain controllers, the same GPO mechanism that we use to enforce security will be used against us to deploy the next payload."
+
+Sarah Park adds: "We have a Windows Server 2022 domain controller and the MedDefense domain is live. You have full Domain Admin access. The domain has 14 user accounts across 3 departments, 5 service accounts, and zero security hardening. The password policy minimum is 7 characters. There is no lockout. RC4 Kerberos is enabled. SMBv1 is enabled. I could go on, but I think you get the picture."
+
+James concludes: "I need this domain locked down. GPO hardening, Sysmon deployed, audit policies configured, AppLocker in place, Windows Firewall enforced, service accounts audited. And I need a PowerShell script that validates all of it, because I am going to run that script every week."
+
+--
+
 # [0. Domain Reconnaissance](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x01_windows_fortress/0-domain_baseline.ps1)
 
 ## Goal: 

@@ -1,3 +1,46 @@
+# Introduction
+
+>    "The enemy knows the system."
+>
+> - Auguste Kerckhoffs, 1883
+
+Four weeks of security work at MedDefense and you have never once encrypted a file. You have identified the gaps, profiled the adversaries, triaged the vulnerabilities, built the strategy and secured the budget. Now the Board has signed the check. The Security Strategy Document you wrote in Project 1x03 has "cryptographic controls" on the roadmap. Phase 1 begins this week.
+
+Here is the problem: recommending "encryption" is easy. Implementing encryption correctly is where organizations fail. The 2023 Thales Data Threat Report found that 62% of organizations with encryption programs still experienced a data breach involving encrypted assets. Not because the algorithms were broken, but because the keys were mismanaged, the protocols were misconfigured, the certificates expired or the wrong encryption level was chosen for the wrong data.
+
+MedDefense stores 50,000 patient records in a PostgreSQL database with zero encryption at rest. It transmits appointment data through a patient portal running TLS 1.0, a protocol broken since 2011. It backs up everything to a NAS that stores data in plaintext on the same network as every other device. Its medical imaging traffic flows unencrypted between the MRI workstation and the PACS server. Its Kerberos authentication still accepts DES, an algorithm broken since 1999.
+
+These are not theoretical problems. They are the findings from YOUR vulnerability assessment. And now YOU are the person who must fix them. Not by recommending that someone else fix them, but by understanding the cryptographic primitives well enough to choose the right algorithm, configure the right protocol, generate the right certificate and validate the right implementation.
+
+This project is fundamentally different from the four before it. You will spend more time in a terminal than in a text editor. You will generate keys, encrypt files, hash passwords, inspect certificates, configure TLS parameters, set up disk encryption and write scripts that automate cryptographic operations. Every concept you learn, from AES to X.509, will be learned by DOING it with OpenSSL, LUKS and real-world inspection tools, then connecting it back to the MedDefense environment you know inside and out.
+Why It Matters
+
+Every security control you recommended in your strategy depends on cryptography working correctly. Network segmentation means nothing if the traffic traversing the segments is unencrypted. MFA is useless if the authentication protocol is vulnerable to downgrade. Backup replication is a liability if the replicated data is plaintext. Cryptography is not a topic. It is the foundation under every other control you have designed.
+
+The professionals who get hired are not the ones who can say "use AES-256." They are the ones who can explain WHY AES-256, configure it correctly, verify it is working and diagnose it when it is not.
+
+## Context
+
+Week five at MedDefense Health Systems.
+
+The Board meeting went exactly as planned. Dr. Morales approved the $120,000 security budget. Robert Kim signed the check (reluctantly, but he signed it). The Security Strategy Document is now an active project plan.
+
+James Chen calls you into his office Monday morning. On the whiteboard, the 6-month roadmap is pinned next to a calendar with Phase 1 highlighted in red.
+
+"Phase 1 starts now. The first items on the roadmap are all crypto-related. We need to encrypt the patient database at rest. We need to fix the TLS configuration on the patient portal before that certificate expires in 18 days. We need to encrypt the backup storage. And we need to sort out the DICOM traffic."
+
+He pauses.
+
+"But before we touch a single production system, I need to be confident that you understand what you are configuring. A misconfigured TLS deployment on the patient portal locks out 800 patients. A botched database encryption breaks the EHR. A wrong cipher suite on the VPN disconnects all three sites."
+
+He slides a laptop toward you.
+
+"This week is your crypto lab. Learn the tools. Understand the primitives. Then we deploy to production next week with confidence, not hope."
+
+Sarah Park adds from the doorway: "And I need documentation. When the auditor asks why we chose AES-256-GCM instead of AES-256-CBC for the database, I want a written justification that references the actual properties of each mode, not 'because Google said so.'"
+
+---
+
 # [0. The Crypto Inventory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/1x04_crypto_foundation/0-crypto_inventory.md)
 
 ## Goal

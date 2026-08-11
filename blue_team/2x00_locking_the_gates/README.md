@@ -1,3 +1,42 @@
+# Introduction
+
+>    "Security is not a product. Security is a process." 
+>
+> — Bruce Schneier
+
+You spent weeks telling MedDefense what was wrong with its infrastructure. You wrote five reports. You quantified the risk. You calculated the ALE. You designed the strategy, secured the budget and presented to the Board.
+
+Now stop writing and start configuring.
+
+This project is the first line of code in MedDefense's defense. The Linux servers that run the patient portal, the billing system and the log collection host are exposed, misconfigured and running default settings that you yourself flagged in Finding 009 (SSH password auth), Finding 011 (Ubuntu 18.04 without ESM) and Finding 026 (outdated kernel with 47 known CVEs). The Crimson Tide advisory showed that every hospital breach started with a misconfigured service on a reachable server. Your servers are reachable. Your services are misconfigured. The difference between MedDefense and Hospital C (currently in FBI containment 45 miles away) is what you do in the next 22 hours.
+
+This project produces no report. It produces hardened systems and the scripts that harden them. Every deliverable is a shell script that produces structured JSON output or a measurable system state change. When you finish, billing-srv-01's Lynis hardening index will have risen from the low 50s to above 80. SSH will reject password authentication. Unnecessary SUID binaries will be stripped. auditd will log every privilege escalation attempt. AppArmor will confine every exposed service. And every change will be automated in a script that can harden the next server in minutes instead of hours.
+Why this matters
+
+Every SOC analyst who has worked a hospital breach will tell you the same thing: the attacker did not need a zero-day. They needed a default SSH config, an unnecessary service and a missing audit trail. Linux hardening is not glamorous work, but it is the work that eliminates the easy wins attackers depend on. The CIS Benchmark methodology you learn here is the same methodology you will apply to Windows, to firewalls, to network devices. This is your training ground. The method transfers everywhere.
+
+## Context
+
+Week seven at MedDefense Health Systems. Monday morning.
+
+The Board approved the security strategy on Friday. The 72-hour emergency plan from the Crimson Tide response is in Phase 2. James Chen has divided the roadmap into workstreams. Yours is infrastructure hardening.
+
+He hands you a printed checklist:
+
+"Three Linux servers. Three weeks of risk sitting in production. Here is what happens this week:"
+
+    billing-srv-01 (Ubuntu 22.04, fresh OS upgrade from 18.04, Apache 2.4.x, MySQL, SSH) -- the server that had the crypto-miner. The upgrade resolved Finding 011 but the system needs full hardening.
+
+    web-srv-01 (Ubuntu 22.04, Apache/Nginx, patient portal) -- internet-facing, TLS already improved (from 1x04 work), but OS-level hardening is zero.
+
+    log-srv-01 (Ubuntu 22.04, fresh build) -- the centralized log collection host. Must be the most hardened server in the environment because if the log server is compromised, the attacker can erase the evidence.
+
+"I want scripts, not notes. If billing-srv-01 burns tomorrow and we have to rebuild, I want to run one script and have a hardened server in 20 minutes. Document the exceptions, automate the rest."
+
+Sarah Park adds: "And the CIS Benchmark for Ubuntu is 800 pages. Do not try to implement all of it. Pick the controls that matter for our threat model, apply them, justify what you skip, and prove the system is harder to break than it was yesterday."
+
+---
+
 # [0. The Baseline Snapshot](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x00_locking_the_gates/0-baseline_snapshot.sh)
 
 ## Goal: 
