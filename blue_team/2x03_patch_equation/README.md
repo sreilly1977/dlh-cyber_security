@@ -92,4 +92,52 @@ $ cat service_dependency_map.json
 
 ---
 
+# [2. The Pre-Patch Snapshot](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/2-pre_patch_snapshot.sh)
+
+## Goal: 
+
+Capture the full state of the system before any patch operation, so that every subsequent change can be measured against an exact baseline.
+
+## Context: 
+
+The only way to prove that a patch fixed the problem without creating a new one is to compare the after-state against an exact before-state. This snapshot is the reference point for every validation task that follows. If you skip this step, you are flying blind.
+
+## Instructions: 
+
+Write a script 2-pre_patch_snapshot.sh that captures the state required to validate and roll back patch operations. The script must:
+
+    Record package versions for every installed package via dpkg'
+
+    Record service state for every active systemd service: ActiveState, SubState, MainPID
+
+    Record listening sockets via ss -tulnp
+
+    Record SHA-256 hashes of every configuration file under /etc that is tracked by a package (use dpkg' to obtain the list)
+
+    Record kernel release (uname -r) and any pending reboot indicator (/var/run/reboot-required presence)
+
+    Emit pre_patch_state.json with top-level keys: timestamp, hostname, kernel, packages, services, listening, conffile_hashes, reboot_required
+
+Hint: the JSON should be re-readable by later tasks. Keep the schema stable.
+
+**Expected Output:**
+
+```bash
+$ sudo ./2-pre_patch_snapshot.sh
+Snapshot: pre_patch_state.json
+Size: 214 KB
+Kernel: 5.15.0-91-generic
+Reboot required: false
+
+$ cat pre_patch_state.json
+{
+  "hostname": "billing-srv-01",
+  "kernel": "5.15.0-91-generic",
+  "packages": 1247,
+  "services": 24
+}
+```
+
+---
+
 # 
