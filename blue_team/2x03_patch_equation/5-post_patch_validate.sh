@@ -43,18 +43,20 @@ validate_prerequisites() {
     fi
 }
 
+# Get current service active state from systemctl
 get_current_service_state() {
     local service="$1"
     systemctl show "$service" --property=ActiveState --value 2>/dev/null || echo "unknown"
 }
 
+# Check if a port is currently listening (TCP or UDP) using ss -tulnp
 check_port_listening() {
     local port="$1"
 
     if command -v ss >/dev/null 2>&1; then
-        ss -tlnp 2>/dev/null | grep -q ":${port} " && return 0
+        ss -tulnp 2>/dev/null | grep -q ":${port} " && return 0
     elif command -v netstat >/dev/null 2>&1; then
-        netstat -tlnp 2>/dev/null | grep -q ":${port} " && return 0
+        netstat -tulnp 2>/dev/null | grep -q ":${port} " && return 0
     fi
 
     return 1
