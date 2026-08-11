@@ -133,7 +133,10 @@ perform_drift_detection() {
     local expected_drift=0
     local unexpected_drift=0
 
-    declare -a files_array=()
+    local files_temp
+    files_temp=$(mktemp)
+    echo '[' > "$files_temp"
+    local first_entry=true
 
     # ============================================
     # STEP 1: Load conffile hashes from pre_patch_state.json
@@ -154,7 +157,9 @@ perform_drift_detection() {
     # ============================================
     local upgraded_pkgs
     upgraded_pkgs=$(get_upgraded_packages)
-    log "Packages upgraded in this run: $(echo "$upgraded_pkgs" | wc -l)"
+    local upgraded_count
+    upgraded_count=$(echo "$upgraded_pkgs" | grep -c . 2>/dev/null || echo 0)
+    log "Packages upgraded in this run: ${upgraded_count}"
 
     # ============================================
     # STEP 3: Build current conffile lookup (path -> package)
@@ -235,7 +240,12 @@ perform_drift_detection() {
                 diff: $diff
             }')
 
-        files_array+=("$file_entry")
+        if [[ "$first_entry" == true ]]; then
+            echo "$file_entry" >> "$files_temp"
+            first_entry=false
+        else
+            echo ",$file_entry" >> "$files_temp"
+        fi
 
     done < <(echo "$pre_conffiles_json" | jq -c '.[]')
 
@@ -286,22 +296,32 @@ perform_drift_detection() {
                 diff: $diff
             }')
 
-        files_array+=("$file_entry")
+        if [[ "$first_entry" == true ]]; then
+            echo "$file_entry" >> "$files_temp"
+            first_entry=false
+        else
+            echo ",$file_entry" >> "$files_temp"
+        fi
 
     done < <(get_current_conffiles)
+
+    echo ']' >> "$files_temp"
 
     # ============================================
     # STEP 6: Emit config_drift.json
     # ============================================
     local total=$((unchanged_count + modified_count + missing_count + new_count))
 
-    local files_json='[]'
-    for entry in "${files_array[@]:-}"; do
-        [[ -z "$entry" ]] && continue
-        files_json=$(echo "$files_json" | jq ". + [$entry]")
-    done
+    log "Config drift detection complete."
+    log "  Unchanged: ${unchanged_count}"
+    log "  Modified:  ${modified_count}"
+    log "  Missing:   ${missing_count}"
+    log "  New:       ${new_count}"
+    log "  Expected drift:     ${expected_drift}"
+    log "  Unexpected drift:   ${unexpected_drift}"
 
-    jq -n \
+    # Pipe files via stdin to avoid ARG_MAX limits
+    cat "$files_temp" | jq \
         --argjson total "$total" \
         --argjson unchanged "$unchanged_count" \
         --argjson modified "$modified_count" \
@@ -309,7 +329,6 @@ perform_drift_detection() {
         --argjson new "$new_count" \
         --argjson expected "$expected_drift" \
         --argjson unexpected "$unexpected_drift" \
-        --argjson files "$files_json" \
         '{
             summary: {
                 total: $total,
@@ -320,16 +339,11 @@ perform_drift_detection() {
                 expected_drift: $expected,
                 unexpected_drift: $unexpected
             },
-            files: $files
-        }' > "$OUTPUT_FILE"
+            files: .
+        }' > "$OUTPUT_FILE" || echo '{"summary":{"total":0,"unchanged":0,"modified":0,"missing":0,"new":0,"expected_drift":0,"unexpected_drift":0},"files":[]}' > "$OUTPUT_FILE"
 
-    log "Config drift detection complete."
-    log "  Unchanged: ${unchanged_count}"
-    log "  Modified:  ${modified_count}"
-    log "  Missing:   ${missing_count}"
-    log "  New:       ${new_count}"
-    log "  Expected drift:     ${expected_drift}"
-    log "  Unexpected drift:   ${unexpected_drift}"
+    rm -f "$files_temp"
+
     log "Report saved to: $OUTPUT_FILE"
 
     if [[ $unexpected_drift -gt 0 ]]; then
