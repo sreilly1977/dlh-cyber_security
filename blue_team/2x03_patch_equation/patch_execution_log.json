@@ -1,0 +1,2533 @@
+{
+  "started_at": "2026-08-11T14:20:05Z",
+  "finished_at": "2026-08-11T14:32:58Z",
+  "hostname": "billing-srv-01",
+  "plan_source_hash": "232c89d25c01e52ded2049709b36245ac3fd8a49f644b6ab893d8b06f8ba6734",
+  "entries": [
+    {
+      "package": "openssh-client",
+      "bucket": "emergency",
+      "score": 8.08,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:8.9p1-3ubuntu0.14",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:8.9p1-3ubuntu0.16",
+        "service_states": []
+      },
+      "duration_seconds": 6,
+      "stdout_tail": "Unpacking openssh-server (1:8.9p1-3ubuntu0.16) over (1:8.9p1-3ubuntu0.14) ...\r\nPreparing to unpack .../openssh-client_1%3a8.9p1-3ubuntu0.16_amd64.deb ...\r\nUnpacking openssh-client (1:8.9p1-3ubuntu0.16) over (1:8.9p1-3ubuntu0.14) ...\r\nSetting up openssh-client (1:8.9p1-3ubuntu0.16) ...\r\nSetting up openssh-sftp-server (1:8.9p1-3ubuntu0.16) ...\r\nSetting up openssh-server (1:8.9p1-3ubuntu0.16) ...\r\nrescue-ssh.target is a disabled or a static unit not running, not starting it.\r\nssh.socket is a disabled or a static unit not running, not starting it.\r\nProcessing triggers for man-db (2.10.2-1) ...\r\nProcessing triggers for ufw (0.36.1-4ubuntu0.1) ...\r\n\nRunning kernel seems to be up-to-date.\n\nNo services need to be restarted.\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:8.9p1-3ubuntu0.14"
+    },
+    {
+      "package": "openssh-server",
+      "bucket": "emergency",
+      "score": 8.08,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:8.9p1-3ubuntu0.16",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:8.9p1-3ubuntu0.16",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nopenssh-server is already the newest version (1:8.9p1-3ubuntu0.16).\n0 upgraded, 0 newly installed, 0 to remove and 173 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:8.9p1-3ubuntu0.14"
+    },
+    {
+      "package": "openssh-sftp-server",
+      "bucket": "emergency",
+      "score": 8.08,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:8.9p1-3ubuntu0.16",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:8.9p1-3ubuntu0.16",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nopenssh-sftp-server is already the newest version (1:8.9p1-3ubuntu0.16).\n0 upgraded, 0 newly installed, 0 to remove and 173 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:8.9p1-3ubuntu0.14"
+    },
+    {
+      "package": "ncurses-base",
+      "bucket": "emergency",
+      "score": 7.94,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.3-2ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.3-2ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "  ncurses-base\n1 upgraded, 0 newly installed, 0 to remove and 172 not upgraded.\nNeed to get 20.1 kB of archives.\nAfter this operation, 1,024 B of additional disk space will be used.\nGet:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ncurses-base all 6.3-2ubuntu0.2 [20.1 kB]\nFetched 20.1 kB in 0s (181 kB/s)\n(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 83662 files and directories currently installed.)\r\nPreparing to unpack .../ncurses-base_6.3-2ubuntu0.2_all.deb ...\r\nUnpacking ncurses-base (6.3-2ubuntu0.2) over (6.3-2ubuntu0.1) ...\r\nSetting up ncurses-base (6.3-2ubuntu0.2) ...\r\n\nRunning kernel seems to be up-to-date.\n\nNo services need to be restarted.\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.3-2ubuntu0.1"
+    },
+    {
+      "package": "ncurses-bin",
+      "bucket": "emergency",
+      "score": 7.94,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.3-2ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.3-2ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "1 upgraded, 0 newly installed, 0 to remove and 171 not upgraded.\nNeed to get 184 kB of archives.\nAfter this operation, 1,024 B of additional disk space will be used.\nGet:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ncurses-bin amd64 6.3-2ubuntu0.2 [184 kB]\nFetched 184 kB in 0s (931 kB/s)\n(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 83662 files and directories currently installed.)\r\nPreparing to unpack .../ncurses-bin_6.3-2ubuntu0.2_amd64.deb ...\r\nUnpacking ncurses-bin (6.3-2ubuntu0.2) over (6.3-2ubuntu0.1) ...\r\nSetting up ncurses-bin (6.3-2ubuntu0.2) ...\r\nProcessing triggers for man-db (2.10.2-1) ...\r\n\nRunning kernel seems to be up-to-date.\n\nNo services need to be restarted.\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.3-2ubuntu0.1"
+    },
+    {
+      "package": "ncurses-term",
+      "bucket": "emergency",
+      "score": 7.94,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.3-2ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.3-2ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 13,
+      "stdout_tail": "  ncurses-term\n1 upgraded, 0 newly installed, 0 to remove and 170 not upgraded.\nNeed to get 267 kB of archives.\nAfter this operation, 1,024 B of additional disk space will be used.\nGet:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 ncurses-term all 6.3-2ubuntu0.2 [267 kB]\nFetched 267 kB in 0s (1,379 kB/s)\n(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 83662 files and directories currently installed.)\r\nPreparing to unpack .../ncurses-term_6.3-2ubuntu0.2_all.deb ...\r\nUnpacking ncurses-term (6.3-2ubuntu0.2) over (6.3-2ubuntu0.1) ...\r\nSetting up ncurses-term (6.3-2ubuntu0.2) ...\r\n\nRunning kernel seems to be up-to-date.\n\nNo services need to be restarted.\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.3-2ubuntu0.1"
+    },
+    {
+      "package": "libc-bin",
+      "bucket": "emergency",
+      "score": 7.84,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.35-0ubuntu3.13",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.35-0ubuntu3.14",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "1 upgraded, 0 newly installed, 0 to remove and 169 not upgraded.\nNeed to get 706 kB of archives.\nAfter this operation, 0 B of additional disk space will be used.\nGet:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 libc-bin amd64 2.35-0ubuntu3.14 [706 kB]\nFetched 706 kB in 0s (2,973 kB/s)\n(Reading database ... \r(Reading database ... 5%\r(Reading database ... 10%\r(Reading database ... 15%\r(Reading database ... 20%\r(Reading database ... 25%\r(Reading database ... 30%\r(Reading database ... 35%\r(Reading database ... 40%\r(Reading database ... 45%\r(Reading database ... 50%\r(Reading database ... 55%\r(Reading database ... 60%\r(Reading database ... 65%\r(Reading database ... 70%\r(Reading database ... 75%\r(Reading database ... 80%\r(Reading database ... 85%\r(Reading database ... 90%\r(Reading database ... 95%\r(Reading database ... 100%\r(Reading database ... 83662 files and directories currently installed.)\r\nPreparing to unpack .../libc-bin_2.35-0ubuntu3.14_amd64.deb ...\r\nUnpacking libc-bin (2.35-0ubuntu3.14) over (2.35-0ubuntu3.13) ...\r\nSetting up libc-bin (2.35-0ubuntu3.14) ...\r\nProcessing triggers for man-db (2.10.2-1) ...\r\n\nRunning kernel seems to be up-to-date.\n\nNo services need to be restarted.\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.35-0ubuntu3.13"
+    },
+    {
+      "package": "libc-dev-bin",
+      "bucket": "emergency",
+      "score": 7.84,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.35-0ubuntu3.13",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.35-0ubuntu3.14",
+        "service_states": []
+      },
+      "duration_seconds": 9,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.35-0ubuntu3.13"
+    },
+    {
+      "package": "libc-devtools",
+      "bucket": "emergency",
+      "score": 7.84,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.35-0ubuntu3.13",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.35-0ubuntu3.14",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.35-0ubuntu3.13"
+    },
+    {
+      "package": "locales",
+      "bucket": "emergency",
+      "score": 7.84,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.35-0ubuntu3.13",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.35-0ubuntu3.14",
+        "service_states": []
+      },
+      "duration_seconds": 9,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.35-0ubuntu3.13"
+    },
+    {
+      "package": "curl",
+      "bucket": "emergency",
+      "score": 7.38,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "7.81.0-1ubuntu1.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "7.81.0-1ubuntu1.25",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "7.81.0-1ubuntu1.23"
+    },
+    {
+      "package": "openssl",
+      "bucket": "urgent",
+      "score": 6.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.0.2-0ubuntu1.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.0.2-0ubuntu1.26",
+        "service_states": []
+      },
+      "duration_seconds": 5,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.0.2-0ubuntu1.23"
+    },
+    {
+      "package": "tar",
+      "bucket": "urgent",
+      "score": 6.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.34+dfsg-1ubuntu0.1.22.04.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.34+dfsg-1ubuntu0.1.22.04.6",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.34+dfsg-1ubuntu0.1.22.04.2"
+    },
+    {
+      "package": "mysql-client-8.0",
+      "bucket": "urgent",
+      "score": 5.3,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.0.45-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.0.45-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "mysql-client-core-8.0",
+      "bucket": "urgent",
+      "score": 5.3,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.0.45-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.0.45-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "mysql-server",
+      "bucket": "urgent",
+      "score": 5.3,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.0.45-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.0.45-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "mysql-server-8.0",
+      "bucket": "urgent",
+      "score": 5.3,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.0.45-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 52,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.0.45-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "mysql-server-core-8.0",
+      "bucket": "urgent",
+      "score": 5.3,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.0.46-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nmysql-server-core-8.0 is already the newest version (8.0.46-0ubuntu0.22.04.3).\n0 upgraded, 0 newly installed, 0 to remove and 155 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.0.45-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "linux-generic",
+      "bucket": "scheduled",
+      "score": 1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.15.0.174.162",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.15.0.187.167",
+        "service_states": []
+      },
+      "duration_seconds": 194,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.15.0.174.162"
+    },
+    {
+      "package": "linux-headers-generic",
+      "bucket": "scheduled",
+      "score": 1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.15.0.187.167",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.15.0.187.167",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nlinux-headers-generic is already the newest version (5.15.0.187.167).\n0 upgraded, 0 newly installed, 0 to remove and 152 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.15.0.174.162"
+    },
+    {
+      "package": "linux-image-generic",
+      "bucket": "scheduled",
+      "score": 1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.15.0.187.167",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.15.0.187.167",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nlinux-image-generic is already the newest version (5.15.0.187.167).\n0 upgraded, 0 newly installed, 0 to remove and 152 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.15.0.174.162"
+    },
+    {
+      "package": "systemd",
+      "bucket": "scheduled",
+      "score": 1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "249.11-0ubuntu3.19",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "duration_seconds": 10,
+      "stdout_tail": " systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "249.11-0ubuntu3.19"
+    },
+    {
+      "package": "systemd-sysv",
+      "bucket": "scheduled",
+      "score": 1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nsystemd-sysv is already the newest version (249.11-0ubuntu3.22).\n0 upgraded, 0 newly installed, 0 to remove and 146 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "249.11-0ubuntu3.19"
+    },
+    {
+      "package": "apache2",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.52-1ubuntu4.19",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "duration_seconds": 10,
+      "stdout_tail": " systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.52-1ubuntu4.19"
+    },
+    {
+      "package": "apache2-bin",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\napache2-bin is already the newest version (2.4.52-1ubuntu4.23).\n0 upgraded, 0 newly installed, 0 to remove and 142 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.52-1ubuntu4.19"
+    },
+    {
+      "package": "apache2-data",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\napache2-data is already the newest version (2.4.52-1ubuntu4.23).\n0 upgraded, 0 newly installed, 0 to remove and 142 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.52-1ubuntu4.19"
+    },
+    {
+      "package": "apache2-utils",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.52-1ubuntu4.23",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\napache2-utils is already the newest version (2.4.52-1ubuntu4.23).\n0 upgraded, 0 newly installed, 0 to remove and 142 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.52-1ubuntu4.19"
+    },
+    {
+      "package": "apt",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.13",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.14",
+        "service_states": []
+      },
+      "duration_seconds": 7,
+      "stdout_tail": " systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.13"
+    },
+    {
+      "package": "apt-utils",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.4.14",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.4.14",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\napt-utils is already the newest version (2.4.14).\n0 upgraded, 0 newly installed, 0 to remove and 139 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.4.13"
+    },
+    {
+      "package": "bind9-dnsutils",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:9.18.39-0ubuntu0.22.04.3"
+    },
+    {
+      "package": "bind9-host",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nbind9-host is already the newest version (1:9.18.39-0ubuntu0.22.04.4).\n0 upgraded, 0 newly installed, 0 to remove and 136 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:9.18.39-0ubuntu0.22.04.3"
+    },
+    {
+      "package": "ca-certificates",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "20240203~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "20260601~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 6,
+      "stdout_tail": " systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart rsyslog.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "20240203~22.04.1"
+    },
+    {
+      "package": "cloud-init",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "25.1.4-0ubuntu0~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "26.1-0ubuntu1~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 6,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "25.1.4-0ubuntu0~22.04.1"
+    },
+    {
+      "package": "cryptsetup",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:2.4.3-1ubuntu1.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:2.4.3-1ubuntu1.3",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:2.4.3-1ubuntu1.2"
+    },
+    {
+      "package": "cryptsetup-bin",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:2.4.3-1ubuntu1.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:2.4.3-1ubuntu1.3",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:2.4.3-1ubuntu1.2"
+    },
+    {
+      "package": "cryptsetup-initramfs",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:2.4.3-1ubuntu1.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:2.4.3-1ubuntu1.3",
+        "service_states": []
+      },
+      "duration_seconds": 15,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:2.4.3-1ubuntu1.2"
+    },
+    {
+      "package": "distro-info-data",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.52ubuntu0.7",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.72-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.52ubuntu0.7"
+    },
+    {
+      "package": "dmeventd",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:1.02.175-2.1ubuntu4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:1.02.175-2.1ubuntu5",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:1.02.175-2.1ubuntu4"
+    },
+    {
+      "package": "dmidecode",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.3-3ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.3-3ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.3-3ubuntu0.1"
+    },
+    {
+      "package": "dmsetup",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:1.02.175-2.1ubuntu4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:1.02.175-2.1ubuntu5",
+        "service_states": []
+      },
+      "duration_seconds": 14,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:1.02.175-2.1ubuntu4"
+    },
+    {
+      "package": "dnsmasq",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.90-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.90-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.90-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "dnsmasq-base",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.90-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.90-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.90-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "dnsutils",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:9.18.39-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:9.18.39-0ubuntu0.22.04.3"
+    },
+    {
+      "package": "ethtool",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:5.16-1ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:5.16-1ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:5.16-1ubuntu0.1"
+    },
+    {
+      "package": "fwupd",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.7.9-1~22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.0.20-1ubuntu2~22.04.2",
+        "service_states": []
+      },
+      "duration_seconds": 7,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.7.9-1~22.04.3"
+    },
+    {
+      "package": "gawk",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:5.1.0-1ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:5.1.0-1ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:5.1.0-1ubuntu0.1"
+    },
+    {
+      "package": "gir1.2-packagekitglib-1.0",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.2.5-2ubuntu2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.2.5-2ubuntu3.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.2.5-2ubuntu2"
+    },
+    {
+      "package": "gzip",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.10-4ubuntu4.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.10-4ubuntu4.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.10-4ubuntu4.1"
+    },
+    {
+      "package": "initramfs-tools",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.140ubuntu13.4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.140ubuntu13.5",
+        "service_states": []
+      },
+      "duration_seconds": 16,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.140ubuntu13.4"
+    },
+    {
+      "package": "initramfs-tools-bin",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.140ubuntu13.5",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.140ubuntu13.5",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\ninitramfs-tools-bin is already the newest version (0.140ubuntu13.5).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libmbim-glib4 libmbim-proxy\n  libmm-glib0 libqmi-glib5 libqmi-proxy libsmbios-c2 libtcl8.6 modemmanager\n  tcl tcl8.6 usb-modeswitch usb-modeswitch-data\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 114 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.140ubuntu13.4"
+    },
+    {
+      "package": "initramfs-tools-core",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.140ubuntu13.5",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.140ubuntu13.5",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\ninitramfs-tools-core is already the newest version (0.140ubuntu13.5).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libmbim-glib4 libmbim-proxy\n  libmm-glib0 libqmi-glib5 libqmi-proxy libsmbios-c2 libtcl8.6 modemmanager\n  tcl tcl8.6 usb-modeswitch usb-modeswitch-data\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 114 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.140ubuntu13.4"
+    },
+    {
+      "package": "iproute2",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.15.0-1ubuntu2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.15.0-1ubuntu2.2",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.15.0-1ubuntu2"
+    },
+    {
+      "package": "jq",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.6-2.1ubuntu3.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.6-2.1ubuntu3.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": "Services to be restarted:\n systemctl restart auditd.service\n systemctl restart cron.service\n systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.6-2.1ubuntu3.1"
+    },
+    {
+      "package": "kmod",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "29-1ubuntu1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "29-1ubuntu1.1",
+        "service_states": []
+      },
+      "duration_seconds": 15,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "29-1ubuntu1"
+    },
+    {
+      "package": "landscape-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "23.02-0ubuntu1~22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "23.02-0ubuntu1~22.04.7",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "23.02-0ubuntu1~22.04.3"
+    },
+    {
+      "package": "libapache2-mod-php8.1",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 11,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "libcap2-bin",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:2.44-1ubuntu0.22.04.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:2.44-1ubuntu0.22.04.3",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:2.44-1ubuntu0.22.04.2"
+    },
+    {
+      "package": "libhttp-daemon-perl",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.13-1ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.13-1ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.13-1ubuntu0.1"
+    },
+    {
+      "package": "libhttp-date-perl",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.05-1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.05-1ubuntu0.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.05-1"
+    },
+    {
+      "package": "libldap-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.5.18+dfsg-0ubuntu0.22.04.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.5.20+dfsg-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.5.18+dfsg-0ubuntu0.22.04.2"
+    },
+    {
+      "package": "libluajit-5.1-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.1.0~beta3+dfsg-6",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.1.0~beta3+dfsg-6ubuntu0.1",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.1.0~beta3+dfsg-6"
+    },
+    {
+      "package": "libmbim-proxy",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.28.0-1~ubuntu20.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.28.0-1~ubuntu20.04.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.28.0-1~ubuntu20.04.1"
+    },
+    {
+      "package": "libntfs-3g89",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:2021.8.22-3ubuntu1.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:2021.8.22-3ubuntu1.4",
+        "service_states": []
+      },
+      "duration_seconds": 16,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:2021.8.22-3ubuntu1.2"
+    },
+    {
+      "package": "libopeniscsiusr",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.1.5-1ubuntu1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.1.5-1ubuntu1.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.1.5-1ubuntu1"
+    },
+    {
+      "package": "libpam-modules-bin",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.4.0-11ubuntu2.6",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.4.0-11ubuntu2.7",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.4.0-11ubuntu2.6"
+    },
+    {
+      "package": "libpam-runtime",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.4.0-11ubuntu2.6",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.4.0-11ubuntu2.7",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.4.0-11ubuntu2.6"
+    },
+    {
+      "package": "libwww-perl",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.61-1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.61-1ubuntu0.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.61-1"
+    },
+    {
+      "package": "linux-base",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "4.5ubuntu9",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "4.5ubuntu9+22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "4.5ubuntu9"
+    },
+    {
+      "package": "lshw",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "02.19.git.2021.06.19.996aaad9c7-2build1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "02.19.git.2021.06.19.996aaad9c7-2ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "02.19.git.2021.06.19.996aaad9c7-2build1"
+    },
+    {
+      "package": "lvm2",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.03.11-2.1ubuntu4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.03.11-2.1ubuntu5",
+        "service_states": []
+      },
+      "duration_seconds": 16,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.03.11-2.1ubuntu4"
+    },
+    {
+      "package": "mailcap",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.70+nmu1ubuntu1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.70+nmu1ubuntu1.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.70+nmu1ubuntu1"
+    },
+    {
+      "package": "modemmanager",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.20.0-1~ubuntu22.04.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.20.0-1~ubuntu22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.20.0-1~ubuntu22.04.3"
+    },
+    {
+      "package": "nano",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "6.2-1ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "6.2-1ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "6.2-1ubuntu0.1"
+    },
+    {
+      "package": "netplan.io",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.106.1-7ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.107.1-3ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.106.1-7ubuntu0.22.04.4"
+    },
+    {
+      "package": "ntfs-3g",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:2021.8.22-3ubuntu1.4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:2021.8.22-3ubuntu1.4",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nntfs-3g is already the newest version (1:2021.8.22-3ubuntu1.4).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 80 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:2021.8.22-3ubuntu1.2"
+    },
+    {
+      "package": "open-iscsi",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.1.5-1ubuntu1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.1.5-1ubuntu1.1",
+        "service_states": []
+      },
+      "duration_seconds": 15,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.1.5-1ubuntu1"
+    },
+    {
+      "package": "packagekit",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.2.5-2ubuntu2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.2.5-2ubuntu3.1",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.2.5-2ubuntu2"
+    },
+    {
+      "package": "packagekit-tools",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.2.5-2ubuntu3.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.2.5-2ubuntu3.1",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\npackagekit-tools is already the newest version (1.2.5-2ubuntu3.1).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 76 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.2.5-2ubuntu2"
+    },
+    {
+      "package": "pci.ids",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.0~2022.01.22-1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.0~2022.01.22-1ubuntu0.1",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.0~2022.01.22-1"
+    },
+    {
+      "package": "perl",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.34.0-3ubuntu1.5",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.34.0-3ubuntu1.7",
+        "service_states": []
+      },
+      "duration_seconds": 13,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.34.0-3ubuntu1.5"
+    },
+    {
+      "package": "perl-base",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.34.0-3ubuntu1.7",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.34.0-3ubuntu1.7",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nperl-base is already the newest version (5.34.0-3ubuntu1.7).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 71 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.34.0-3ubuntu1.5"
+    },
+    {
+      "package": "perl-modules-5.34",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.34.0-3ubuntu1.7",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.34.0-3ubuntu1.7",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nperl-modules-5.34 is already the newest version (5.34.0-3ubuntu1.7).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 71 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.34.0-3ubuntu1.5"
+    },
+    {
+      "package": "php8.1",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.23",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "php8.1-cli",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nphp8.1-cli is already the newest version (8.1.2-1ubuntu2.25).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 70 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "php8.1-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nphp8.1-common is already the newest version (8.1.2-1ubuntu2.25).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 70 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "php8.1-opcache",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nphp8.1-opcache is already the newest version (8.1.2-1ubuntu2.25).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 70 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "php8.1-readline",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.1.2-1ubuntu2.25",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nphp8.1-readline is already the newest version (8.1.2-1ubuntu2.25).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 70 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.1.2-1ubuntu2.23"
+    },
+    {
+      "package": "powermgmt-base",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.36",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.36ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.36"
+    },
+    {
+      "package": "python3-attr",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "21.2.0-1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "21.2.0-1ubuntu1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "21.2.0-1"
+    },
+    {
+      "package": "python3-distupgrade",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:22.04.20",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:22.04.21",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:22.04.20"
+    },
+    {
+      "package": "python3-httplib2",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "0.20.2-2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "0.20.2-2ubuntu0.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "0.20.2-2"
+    },
+    {
+      "package": "python3-idna",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.3-1ubuntu0.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.3-1ubuntu0.2",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.3-1ubuntu0.1"
+    },
+    {
+      "package": "python3-twisted",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "22.1.0-2ubuntu2.6",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "22.1.0-2ubuntu2.7",
+        "service_states": []
+      },
+      "duration_seconds": 8,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "22.1.0-2ubuntu2.6"
+    },
+    {
+      "package": "python3-update-manager",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:22.04.21",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:22.04.22",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:22.04.21"
+    },
+    {
+      "package": "python3-urllib3",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.26.5-1~exp1ubuntu0.6",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.26.5-1~exp1ubuntu0.7",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.26.5-1~exp1ubuntu0.6"
+    },
+    {
+      "package": "python3.10",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.10.12-1~22.04.15",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.10.12-1~22.04.16",
+        "service_states": []
+      },
+      "duration_seconds": 7,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.10.12-1~22.04.15"
+    },
+    {
+      "package": "python3.10-minimal",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.10.12-1~22.04.16",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.10.12-1~22.04.16",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\npython3.10-minimal is already the newest version (3.10.12-1~22.04.16).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 54 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.10.12-1~22.04.15"
+    },
+    {
+      "package": "python3.10-venv",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.10.12-1~22.04.16",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.10.12-1~22.04.16",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\npython3.10-venv is already the newest version (3.10.12-1~22.04.16).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 54 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.10.12-1~22.04.15"
+    },
+    {
+      "package": "rsync",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "3.2.7-0ubuntu0.22.04.4",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "3.2.7-0ubuntu0.22.04.7",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "3.2.7-0ubuntu0.22.04.4"
+    },
+    {
+      "package": "rsyslog",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "8.2112.0-2ubuntu2.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "8.2112.0-2ubuntu2.4",
+        "service_states": []
+      },
+      "duration_seconds": 4,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "8.2112.0-2ubuntu2.2"
+    },
+    {
+      "package": "sed",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "4.8-1ubuntu2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "4.8-1ubuntu2.1",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "4.8-1ubuntu2"
+    },
+    {
+      "package": "snapd",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2.76+ubuntu22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2.76+ubuntu22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nsnapd is already the newest version (2.76+ubuntu22.04.1).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 51 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2.73+ubuntu22.04.1"
+    },
+    {
+      "package": "sosreport",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "4.5.6-0ubuntu1~22.04.2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "4.10.2-0ubuntu0~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 5,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "4.5.6-0ubuntu1~22.04.2"
+    },
+    {
+      "package": "systemd-hwe-hwdb",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "249.11.5",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "249.11.6",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "249.11.5"
+    },
+    {
+      "package": "systemd-timesyncd",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nsystemd-timesyncd is already the newest version (249.11-0ubuntu3.22).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 49 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "249.11-0ubuntu3.19"
+    },
+    {
+      "package": "tzdata",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2025b-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2026c-0ubuntu0.22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 8,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2025b-0ubuntu0.22.04.1"
+    },
+    {
+      "package": "ubuntu-advantage-tools",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nubuntu-advantage-tools is already the newest version (37.2ubuntu~22.04.1).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 48 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "33.2~22.04"
+    },
+    {
+      "package": "ubuntu-drivers-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:0.9.6.2~0.22.04.8",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:0.9.6.2~0.22.04.11",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:0.9.6.2~0.22.04.8"
+    },
+    {
+      "package": "ubuntu-minimal",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.481.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.481.5",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.481.3"
+    },
+    {
+      "package": "ubuntu-pro-client",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nubuntu-pro-client is already the newest version (37.2ubuntu~22.04.1).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 46 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "33.2~22.04"
+    },
+    {
+      "package": "ubuntu-pro-client-l10n",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "37.2ubuntu~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nubuntu-pro-client-l10n is already the newest version (37.2ubuntu~22.04.1).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 46 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "33.2~22.04"
+    },
+    {
+      "package": "ubuntu-release-upgrader-core",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:22.04.21",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:22.04.21",
+        "service_states": []
+      },
+      "duration_seconds": 1,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nubuntu-release-upgrader-core is already the newest version (1:22.04.21).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 46 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:22.04.20"
+    },
+    {
+      "package": "ubuntu-server",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.481.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.481.5",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.481.3"
+    },
+    {
+      "package": "ubuntu-server-minimal",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.481.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.481.5",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.481.3"
+    },
+    {
+      "package": "ubuntu-standard",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.481.3",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.481.5",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart systemd-udevd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.481.3"
+    },
+    {
+      "package": "udev",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "249.11-0ubuntu3.19",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "249.11-0ubuntu3.22",
+        "service_states": []
+      },
+      "duration_seconds": 16,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "249.11-0ubuntu3.19"
+    },
+    {
+      "package": "update-manager-core",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1:22.04.22",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1:22.04.22",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nupdate-manager-core is already the newest version (1:22.04.22).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 41 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1:22.04.21"
+    },
+    {
+      "package": "vim",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:8.2.3995-1ubuntu2.27",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "duration_seconds": 11,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:8.2.3995-1ubuntu2.27"
+    },
+    {
+      "package": "vim-common",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nvim-common is already the newest version (2:8.2.3995-1ubuntu2.34).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:8.2.3995-1ubuntu2.27"
+    },
+    {
+      "package": "vim-runtime",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nvim-runtime is already the newest version (2:8.2.3995-1ubuntu2.34).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:8.2.3995-1ubuntu2.27"
+    },
+    {
+      "package": "vim-tiny",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "duration_seconds": 0,
+      "stdout_tail": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nvim-tiny is already the newest version (2:8.2.3995-1ubuntu2.34).\nThe following packages were automatically installed and are no longer required:\n  libfwupd2 libfwupdplugin5 libgcab-1.0-0 libgusb2 libsmbios-c2\nUse 'sudo apt autoremove' to remove them.\n0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:8.2.3995-1ubuntu2.27"
+    },
+    {
+      "package": "wget",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "1.21.2-2ubuntu1.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "1.21.2-2ubuntu1.4",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "1.21.2-2ubuntu1.1"
+    },
+    {
+      "package": "wireless-regdb",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2025.10.07-0ubuntu1~22.04.1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2026.02.04-0ubuntu1~22.04.1",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2025.10.07-0ubuntu1~22.04.1"
+    },
+    {
+      "package": "xfsprogs",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.13.0-1ubuntu2",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.13.0-1ubuntu2.1",
+        "service_states": []
+      },
+      "duration_seconds": 14,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.13.0-1ubuntu2"
+    },
+    {
+      "package": "xxd",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "2:8.2.3995-1ubuntu2.27",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "2:8.2.3995-1ubuntu2.34",
+        "service_states": []
+      },
+      "duration_seconds": 3,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "2:8.2.3995-1ubuntu2.27"
+    },
+    {
+      "package": "xz-utils",
+      "bucket": "scheduled",
+      "score": 0.1,
+      "status": "success",
+      "apt_exit_code": 0,
+      "pre": {
+        "installed_version": "5.2.5-2ubuntu1",
+        "service_states": []
+      },
+      "post": {
+        "installed_version": "5.2.5-2ubuntu1.1",
+        "service_states": []
+      },
+      "duration_seconds": 2,
+      "stdout_tail": " systemctl restart packagekit.service\n systemctl restart polkit.service\n systemctl restart ssh.service\n systemctl restart systemd-journald.service\n /etc/needrestart/restart.d/systemd-manager\n systemctl restart systemd-networkd.service\n systemctl restart systemd-timesyncd.service\n systemctl restart udisks2.service\n systemctl restart upower.service\n\nService restarts being deferred:\n /etc/needrestart/restart.d/dbus.service\n systemctl restart systemd-logind.service\n systemctl restart user@1000.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+      "stderr_tail": "",
+      "service_restarts": [],
+      "rollback_target_version": "5.2.5-2ubuntu1"
+    }
+  ],
+  "summary": {
+    "total_attempted": 126,
+    "succeeded": 126,
+    "failed": 0
+  }
+}
