@@ -496,4 +496,64 @@ Report saved to: unattended_config.json
 
 ---
 
+# [9. The Rollback Capability](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/9-rollback.sh)
+
+## Goal: 
+
+Implement a package downgrade workflow that restores a specific package to its pre-patch version, validates that dependent services come back up, and proves that rollback is a real capability rather than a promise.
+
+## Context: 
+
+Every patch you apply must be reversible. The rollback path is not optional and it is not a runbook entry that somebody reads at 03:00. It is a script that takes a package name as an argument and returns that package to the version recorded in the pre-patch snapshot.
+
+## Instructions: 
+
+Write a script 9-rollback.sh that downgrades a package to its pre-patch version. The script must:
+
+    Accept a single positional argument: the package name.
+
+    Load the target version from pre_patch_state.json using packages[<name>].
+
+    Fail with a clear message if the package is not present in pre_patch_state.json.
+
+    Confirm the target version is available in the local package cache or resolvable from the repository using apt-cache madison.
+
+    Execute the rollback using:
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades <package>=<version>
+
+    Apply apt-mark hold <package> after a successful downgrade so that unattended-upgrades does not immediately re-upgrade it.
+
+    Re-run the lightweight probes from Task 5 for every service in service_dependency_map.json whose linked_packages contains the rolled-back package.
+
+    Print a clear rollback summary showing:
+
+    package name
+    current version before rollback
+    target version from the snapshot
+    whether version availability was confirmed
+    whether downgrade succeeded
+    whether package hold was applied
+    affected service probe results
+
+    Exit 0 only if the downgrade, hold, and all affected service probes succeed.
+
+    Exit 1 on any failure.
+
+**Expected Output:**
+
+```bash
+$ sudo ./9-rollback.sh <package>
+[*] Target version from pre_patch_state.json: <version>
+[*] Version available in cache or repository: yes
+[*] Downgrading <package>...                              OK
+[*] apt-mark hold <package>                               OK
+[*] Re-running probes for affected services...
+    <service-name> probe                                  PASS
+ROLLBACK: success
+from <current_version> to <target_version>
+```
+
+---
+
 # 

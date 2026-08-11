@@ -1,0 +1,15 @@
+{
+  "package": "cloud-init",
+  "versions": {
+    "before_rollback": "26.1-0ubuntu1~22.04.1",
+    "target": "25.1.4-0ubuntu0~22.04.1",
+    "after_rollback": "25.1.4-0ubuntu0~22.04.1"
+  },
+  "version_available": true,
+  "downgrade_succeeded": true,
+  "hold_applied": true,
+  "service_probes": [],
+  "success": true,
+  "duration_seconds": 7,
+  "timestamp": "2026-08-11T17:33:18Z"
+}
