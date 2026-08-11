@@ -46,4 +46,50 @@ $ jq '.packages[] | select(.in_cisa_kev==true)' vulnerability_inventory.json
 
 ---
 
+# [1. The Service Dependency Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/1-service_deps.sh)
+
+## Goal: 
+
+Map each installed package to the services that depend on it, so that a patch to a library tells you which services will need a restart or a regression test.
+
+## Context: 
+
+A patch to libssl3 does not touch libssl3 in isolation. It touches every service that links against it: openssh-server, apache2, postgresql, curl. Before you plan a patch rollout, you need to know which services each package update will disturb. This task produces that map.
+
+## Instructions: 
+
+Write a script 1-service_deps.sh that builds a service-to-package dependency map for the current host. The script must:
+
+    List every active systemd unit of type service using systemct
+
+    For each service, resolve the executable path from the unit file (ExecStart=) or from systemctl show -p MainPID plus readlink /proc/<pid>/exe
+
+    For each executable, resolve the owning package via dpkg -S
+
+    For each executable, list its dynamic library dependencies with ldd and resolve each library to its owning package via dpkg -S
+
+    Tag each service with a criticality label driven by a provided service_criticality.json file (values: critical, high, medium, low). Services not listed default to low.
+
+    Emit service_dependency_map.json with one entry per service containing: service, exec_path, owning_package, linked_packages (array), criticality, restart_required_on_patch (boolean). Parse it with jq
+
+Hint: needrestart -b can cross-check your result.
+
+**Expected Output:**
+
+```bash
+$ sudo ./1-service_deps.sh
+
+$ cat service_dependency_map.json
+{
+  "service": "apache2.service",
+  "linked_packages": ["apache2", "libc6", "libssl3"]
+}
+{
+  "service": "ssh.service",
+  "linked_packages": ["openssh-server", "libc6", "libssl3"]
+}
+```
+
+---
+
 # 
