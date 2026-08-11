@@ -327,8 +327,48 @@ Report saved to: post_patch_validation.json
 
 $ jq '.details[] | select(.status!="pass")' post_patch_validation.json
 # (empty, no regressions)
-```bash
+```
 
 --- 
+
+# [6. The Configuration Drift Detector](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/6-config_drift.sh)
+
+## Goal: 
+
+Detect every configuration file that changed during the patch run, distinguishing expected changes introduced by the new package versions from unexpected modifications that require investigation.
+
+## Context: 
+
+Patches often ship updated configuration defaults. Most of the time the package manager asks whether to keep the existing config or use the new one, and a noninteractive run defaults to keeping yours. But sometimes a patch silently updates an auxiliary config file under /etc, and that change can reintroduce a previously hardened setting. Drift detection catches this.
+
+## Instructions: 
+
+Write a script 6-config_drift.sh that compares pre_patch_state.json conffile hashes against current hashes. The script must:
+
+    Load the conffile_hashes block from pre_patch_state.json
+
+    Recompute the SHA-256 of every file still present in the list
+
+    Classify each file as unchanged, modified, missing, or new (for tracked conffiles added by the patch)
+
+    For each modified file, capture a unified diff truncated to 40 lines via diff -u
+
+    Cross-reference modifications against patch_execution_log.json to mark drift as expected (the owning package was upgraded during this run) or unexpected (drifted without an owning upgrade)
+
+    Emit config_drift.json containing summary (counts per classification) and files (array of per-file objects)
+
+    Exit with code 0 if there is no unexpected drift, 1 otherwise
+
+**Expected Output:**
+
+```bash
+$ sudo ./6-config_drift.sh
+
+$ cat config_drift.json
+{"path":"/etc/ssh/sshd_config","owning_package":"openssh-server","expected":true}
+{"path":"/etc/ssl/openssl.cnf","owning_package":"openssl","expected":true}
+```
+
+---
 
 # 
