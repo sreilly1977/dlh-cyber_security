@@ -527,7 +527,21 @@ do_check() {
     generate_report "$tz" "$active_window" "$decision" "$exit_code" "$next_window_name" "$seconds_until"
     log "Report saved to: $OUTPUT_FILE"
 
-    exit "$exit_code"
+    # Exit with explicit codes: 0=proceed, 10=emergency_only, 20=defer
+    case "$exit_code" in
+        0)
+            exit 0
+            ;;
+        10)
+            exit 10
+            ;;
+        20)
+            exit 20
+            ;;
+        *)
+            exit 20
+            ;;
+    esac
 }
 
 # ============================================
