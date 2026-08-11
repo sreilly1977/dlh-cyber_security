@@ -2,6 +2,7 @@
 #
 # Name:        4-patch_execute.sh
 # Purpose:     Execute patch plan safely with pre/post checks and structured logging
+#              Captures installed version and service states before and after each patch
 # Author:      Steve - Cybersecurity Engineer
 # Date:        August 11, 2026
 #
@@ -82,6 +83,7 @@ get_package_version() {
     dpkg-query -W -f='${Version}' "$package" 2>/dev/null || echo "not-installed"
 }
 
+# Get current state for a single service (active_state, sub_state, main_pid)
 get_service_state() {
     local service="$1"
     local active sub pid
@@ -94,6 +96,7 @@ get_service_state() {
         '{service:$s,active_state:$a,sub_state:$b,main_pid:$p}'
 }
 
+# Capture service states array for all linked services (pre or post snapshot)
 capture_service_states() {
     local services_json="$1"
     local states='[]'
@@ -112,7 +115,6 @@ capture_service_states() {
     echo "$states"
 }
 
-# Write last 20 lines of a file to another file as a raw string for jq --rawfile
 write_tail_file() {
     local src="$1"
     local dst="$2"
@@ -140,7 +142,7 @@ execute_patch_entry() {
 
     printf '[%d/%d] %-30s %-12s' "$rank" "$total" "$package" "$bucket"
 
-    # Pre-block
+    # Record PRE state: installed version and service states for linked services
     local pre_version pre_service_states pre_block
     pre_version=$(get_package_version "$package")
     pre_service_states=$(capture_service_states "$affected_services")
@@ -173,7 +175,7 @@ execute_patch_entry() {
     end_time=$(date +%s)
     duration=$((end_time - start_time))
 
-    # Post-block
+    # Record POST state: installed version and service states for linked services
     local post_version post_service_states post_block
     post_version=$(get_package_version "$package")
     post_service_states=$(capture_service_states "$affected_services")
@@ -198,7 +200,7 @@ execute_patch_entry() {
         printf ' apt-get ... FAILED (%ds)\n' "$duration"
     fi
 
-    # Service restarts
+    # Service restarts when required and no reboot needed
     local restart_results='[]'
     if [[ "$status" == "success" && "$requires_restart" == "true" && "$requires_reboot" == "false" ]]; then
         local svc_count
