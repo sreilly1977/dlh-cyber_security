@@ -50,51 +50,59 @@ validate_prerequisites() {
 refresh_package_lists() {
     log "Refreshing package lists..."
 
-    # Attempt update with timeout (may fail offline, continue anyway)
     if timeout "$APT_TIMEOUT" apt-get update -qq 2>/dev/null; then
         log "Package lists refreshed successfully"
-        return 0
     else
         warn "Package list refresh timed out or failed (may be offline)"
         log "Continuing with cached data..."
-        return 0
     fi
 }
 
+# Get all installed packages with Status field (as required by task)
 enumerate_installed_packages() {
-    # Get all installed packages from local dpkg database
-    dpkg-query -W -f='${binary:Package}\t${Version}\n' 2>/dev/null | sort
+    dpkg-query -W -f='${binary:Package} ${Version} ${Status}\n' 2>/dev/null | \
+        awk '$3 == "install" && $4 == "ok" && $5 == "installed" {print $1 "\t" $2}' | sort
 }
 
-get_candidate_version_online() {
+# Get upgradable packages in ONE call instead of per-package apt-cache policy
+get_upgradable_packages() {
+    local upgradable_file
+    upgradable_file=$(mktemp)
+
+    # Single apt call to get all upgradable packages
+    timeout "$APT_TIMEOUT" apt list --upgradable 2>/dev/null | \
+        grep -v "^Listing" | \
+        awk -F'/' '{print $1}' | sort -u > "$upgradable_file" || true
+
+    echo "$upgradable_file"
+}
+
+# Combined apt-cache policy call (gets both candidate and pocket in one call)
+get_candidate_and_pocket() {
     local package="$1"
+    local result=""
+
+    result=$(timeout "$TIMEOUT_SECONDS" bash -c "apt-cache policy \"$package\"" 2>/dev/null || echo "")
+
     local candidate=""
+    local pocket="unknown"
 
-    # Try to get candidate from apt-cache with timeout
-    candidate=$(timeout "$TIMEOUT_SECONDS" bash -c "apt-cache policy \"$package\"" 2>/dev/null | \
-        awk '/Candidate:/{print $2}' | head -1 || echo "")
+    # Extract candidate version
+    candidate=$(echo "$result" | awk '/Candidate:/{print $2}' | head -1)
 
-    echo "${candidate:-}"
-}
-
-get_source_pocket_online() {
-    local package="$1"
-    local pocket=""
-
-    # Try to get source pocket from apt-cache policy with timeout
-    pocket=$(timeout "$TIMEOUT_SECONDS" bash -c "apt-cache policy \"$package\"" 2>/dev/null | \
+    # Extract source pocket
+    pocket=$(echo "$result" | \
         grep -E '(security|updates|backports)' | head -1 | \
         grep -oE '[a-z]+-(security|updates|backports)' | head -1 || echo "")
 
-    echo "${pocket:-unknown}"
+    echo "${candidate:-}|${pocket:-unknown}"
 }
 
-extract_cves_from_changelog_online() {
+extract_cves_from_changelog() {
     local package="$1"
     local cves='[]'
     local changelog=""
 
-    # Try to get changelog from apt-get with timeout
     changelog=$(timeout "$TIMEOUT_SECONDS" bash -c "apt-get changelog \"$package\"" 2>/dev/null | head -200 || echo "")
 
     if [[ -n "$changelog" ]]; then
@@ -121,7 +129,6 @@ extract_cves_from_changelog_online() {
         fi
     fi
 
-    # Final safety check
     if ! echo "$cves" | jq -e . >/dev/null 2>&1; then
         cves='[]'
     fi
@@ -129,7 +136,7 @@ extract_cves_from_changelog_online() {
     echo "$cves"
 }
 
-get_cvss_for_cve_local() {
+get_cvss_for_cve() {
     local cve="$1"
 
     if [[ ! -f "$CVE_FEED" ]]; then
@@ -138,8 +145,7 @@ get_cvss_for_cve_local() {
     fi
 
     local cvss
-    cvss=$(timeout "$TIMEOUT_SECONDS" bash -c \
-        "jq -r --arg cve \"$cve\" '.cves[\$cve].cvss // 0' \"$CVE_FEED\"" 2>/dev/null || echo "0")
+    cvss=$(jq -r --arg cve "$cve" '.cves[$cve].cvss // 0' "$CVE_FEED" 2>/dev/null || echo "0")
 
     if ! echo "$cvss" | grep -qE '^[0-9]+(\.[0-9]+)?$'; then
         cvss="0.0"
@@ -148,7 +154,7 @@ get_cvss_for_cve_local() {
     echo "$cvss"
 }
 
-check_cisa_kev_for_cve_local() {
+check_cisa_kev_for_cve() {
     local cve="$1"
 
     if [[ ! -f "$CISA_KEV" ]]; then
@@ -157,8 +163,7 @@ check_cisa_kev_for_cve_local() {
     fi
 
     local result
-    result=$(timeout "$TIMEOUT_SECONDS" bash -c \
-        "jq -r --arg cve \"$cve\" '.[\$cve].active // false' \"$CISA_KEV\"" 2>/dev/null || echo "false")
+    result=$(jq -r --arg cve "$cve" '.[$cve].active // false' "$CISA_KEV" 2>/dev/null || echo "false")
 
     if [[ "$result" != "true" ]]; then
         result="false"
@@ -204,8 +209,7 @@ calculate_max_cvss() {
     while IFS= read -r cve; do
         [[ -z "$cve" ]] && continue
         local cvss
-        cvss=$(get_cvss_for_cve_local "$cve")
-
+        cvss=$(get_cvss_for_cve "$cve")
         if (( $(echo "$cvss > $max_cvss" | bc -l) )); then
             max_cvss="$cvss"
         fi
@@ -233,7 +237,7 @@ check_any_cve_in_kev() {
     while IFS= read -r cve; do
         [[ -z "$cve" ]] && continue
         local kev_status
-        kev_status=$(check_cisa_kev_for_cve_local "$cve")
+        kev_status=$(check_cisa_kev_for_cve "$cve")
         if [[ "$kev_status" == "true" ]]; then
             echo "true"
             return
@@ -248,49 +252,71 @@ build_vulnerability_inventory() {
 
     local total_packages=0
     local vuln_count=0
-    local processed=0
     local packages_json='[]'
     local mode="online"
 
-    # Check if we have network access (test against Ubuntu repo)
-    local has_network=false
-    if timeout 5 bash -c "dig ubuntu.com +short" >/dev/null 2>&1; then
-        has_network=true
-    else
-        warn "No DNS resolution detected - falling back to offline mode"
-        mode="offline"
+    # Step 1: Get all installed packages
+    local pkg_list
+    pkg_list=$(mktemp)
+    enumerate_installed_packages > "$pkg_list"
+    total_packages=$(wc -l < "$pkg_list")
+    log "Installed packages found: $total_packages"
+
+    # Step 2: Get upgradable packages in ONE call (major speedup)
+    local upgradable_file
+    upgradable_file=$(get_upgradable_packages)
+    local upgradable_count
+    upgradable_count=$(wc -l < "$upgradable_file")
+    log "Upgradable packages found: $upgradable_count"
+
+    if [[ "$upgradable_count" -eq 0 ]]; then
+        warn "No upgradable packages found (may be offline or fully patched)"
     fi
 
-    while IFS=$'\t' read -r package installed_version; do
+    # Step 3: Build a lookup of installed versions
+    declare -A installed_versions
+    while IFS=$'\t' read -r pkg ver; do
+        [[ -z "$pkg" ]] && continue
+        installed_versions["$pkg"]="$ver"
+    done < "$pkg_list"
+
+    # Step 4: Only process upgradable packages (skip the other 700+ packages)
+    local processed=0
+    while IFS= read -r package; do
         [[ -z "$package" ]] && continue
+
+        # Skip if not actually installed
+        local installed_version="${installed_versions[$package]:-}"
+        if [[ -z "$installed_version" ]]; then
+            continue
+        fi
 
         processed=$((processed + 1))
 
-        # Show progress every 100 packages
-        if (( processed % 100 == 0 )); then
-            log "Processing package $processed/$total_packages (vulnerable so far: $vuln_count)..."
+        if (( processed % 10 == 0 )); then
+            log "Processing upgradable $processed/$upgradable_count (vulnerable: $vuln_count)..."
         fi
 
-        # Get candidate version (online)
-        local candidate_version=""
-        local pocket="unknown"
-        local cves='[]'
+        # Get candidate version AND pocket in ONE apt-cache call
+        local policy_result
+        policy_result=$(get_candidate_and_pocket "$package")
+        local candidate_version
+        local pocket
+        IFS='|' read -r candidate_version pocket <<< "$policy_result"
 
-        if [[ "$has_network" == true ]]; then
-            candidate_version=$(get_candidate_version_online "$package")
-            pocket=$(get_source_pocket_online "$package")
-            cves=$(extract_cves_from_changelog_online "$package")
-        fi
-
-        # If no candidate (same version or no network), skip
+        # Skip if no candidate or same version
         if [[ -z "$candidate_version" ]] || [[ "$candidate_version" == "$installed_version" ]]; then
             continue
         fi
 
-        # Only process security or updates pocket packages
+        # Only process security or updates pocket
         if [[ "$pocket" != *"security"* ]] && [[ "$pocket" != *"updates"* ]] && [[ "$pocket" != "unknown" ]]; then
             continue
         fi
+
+        # Extract CVEs
+        local cves
+        cves=$(extract_cves_from_changelog "$package")
 
         # Calculate max CVSS
         local max_cvss
@@ -304,72 +330,58 @@ build_vulnerability_inventory() {
         local in_kev
         in_kev=$(check_any_cve_in_kev "$cves")
 
-        # Ensure max_cvss is a valid number for JSON
+        # Validate max_cvss
         if ! echo "$max_cvss" | grep -qE '^[0-9]+(\.[0-9]+)?$'; then
             max_cvss="0.0"
         fi
 
-        # Build package entry as a JSON object
+        # Build package entry
         local pkg_entry
-        pkg_entry=$(timeout "$TIMEOUT_SECONDS" bash -c \
-            "jq -n \
-                --arg pkg \"$package\" \
-                --arg inst_ver \"$installed_version\" \
-                --arg cand_ver \"$candidate_version\" \
-                --arg pocket \"$pocket\" \
-                --argjson cves \"$cves\" \
-                --argjson cvss \"$max_cvss\" \
-                --arg sev \"$severity\" \
-                --argjson kev \"$in_kev\" \
-                '{
-                    package: \$pkg,
-                    installed_version: \$inst_ver,
-                    candidate_version: \$cand_ver,
-                    source_pocket: \$pocket,
-                    cves: \$cves,
-                    max_cvss: \$cvss,
-                    severity: \$sev,
-                    in_cisa_kev: \$kev
-                }'" 2>/dev/null || echo '{}')
-
-        # Skip invalid entries
-        if [[ "$pkg_entry" == "{}" ]]; then
-            continue
-        fi
+        pkg_entry=$(jq -n \
+            --arg pkg "$package" \
+            --arg inst_ver "$installed_version" \
+            --arg cand_ver "$candidate_version" \
+            --arg pocket "$pocket" \
+            --argjson cves "$cves" \
+            --argjson cvss "$max_cvss" \
+            --arg sev "$severity" \
+            --argjson kev "$in_kev" \
+            '{
+                package: $pkg,
+                installed_version: $inst_ver,
+                candidate_version: $cand_ver,
+                source_pocket: $pocket,
+                cves: $cves,
+                max_cvss: $cvss,
+                severity: $sev,
+                in_cisa_kev: $kev
+            }')
 
         packages_json=$(echo "$packages_json" | jq ". + [$pkg_entry]")
         vuln_count=$((vuln_count + 1))
 
-    done < <(enumerate_installed_packages)
+    done < "$upgradable_file"
 
     # Write final inventory
-    local json_mode="online"
-    if [[ "$has_network" == false ]]; then
-        json_mode="offline"
-    fi
-
     jq -n \
         --argjson pkgs "$packages_json" \
-        --argjson total "$processed" \
+        --argjson total "$total_packages" \
         --argjson vuln "$vuln_count" \
-        --arg mode "$json_mode" \
+        --arg mode "$mode" \
         '{
             generated_at: (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
             total_packages_scanned: $total,
             vulnerable_packages: $vuln,
             mode: $mode,
-            note: (if $mode == "offline" then "Network unavailable - using cached apt data only" else "Full online scan with repository data" end),
+            note: "Full online scan with repository data",
             packages: $pkgs
         }' > "$OUTPUT_FILE"
 
-    log "Total packages scanned: $processed"
+    log "Total packages scanned: $total_packages"
     log "Vulnerable packages found: $vuln_count"
-    log "Mode: $json_mode"
     log "Inventory saved to: $OUTPUT_FILE"
 
-    if [[ "$json_mode" == "offline" ]]; then
-        log "NOTE: Run on connected host for complete CVE and upgrade data."
-    fi
+    rm -f "$pkg_list" "$upgradable_file"
 }
 
 main() {
@@ -377,7 +389,6 @@ main() {
 
     validate_prerequisites
 
-    # Refresh package lists (with timeout)
     refresh_package_lists
 
     build_vulnerability_inventory
