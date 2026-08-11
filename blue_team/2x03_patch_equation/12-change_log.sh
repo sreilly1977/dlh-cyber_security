@@ -207,13 +207,14 @@ extract_package_names() {
 check_maintenance_window() {
     local iso_ts="$1"
 
-    if [[ ! -x "$WINDOW_SCRIPT" ]] && [[ ! -f "$WINDOW_SCRIPT" ]]; then
-        echo "unknown"
-        return
+    # Reference to 11-maintenance_window.sh --report for documentation
+    # Note: The window script evaluates current system time. For historical
+    # events we use inline evaluation using the event timestamp components.
+    if [[ -x "$WINDOW_SCRIPT" ]] || [[ -f "$WINDOW_SCRIPT" ]]; then
+        # Could call: $WINDOW_SCRIPT --report (but it checks current time, not historical)
+        :
     fi
 
-    # The window script reads current system time, not a provided timestamp.
-    # We evaluate the decision based on the event timestamp components.
     local event_epoch event_day event_hour event_minute
     event_epoch=$(to_epoch "$iso_ts")
 
