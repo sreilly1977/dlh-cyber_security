@@ -441,4 +441,59 @@ Report saved to: apt_recovery.json
 
 ---
 
+# [8. The Unattended Upgrades Configuration](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/8-unattended_config.sh)
+
+## Goal: 
+
+Configure unattended-upgrades so that low-risk security patches land automatically, while critical packages are protected by blacklist and automatic reboots are suppressed for healthcare systems.
+
+## Context: 
+
+Not every patch needs a human in the loop. Library updates, utility patches, minor security fixes in non-critical packages are the kind of work that should happen on its own, every night, without asking. But automation without guardrails is how billing-srv-01 got broken in the first place. This task builds the guardrails.
+
+## Instructions: 
+
+Write a script 8-unattended_config.sh that configures unattended-upgrades for MedDefense. The script must:
+
+    Install unattended-upgrades if it is not present
+
+    Write /etc/apt/apt.conf.d/50unattended-upgrades with:
+
+        Allowed origins: ${distro_id}:${distro_codename}-security only
+
+        Unattended-Upgrade::Package-Blacklist containing: linux-image*, linux-headers*, mysql-server*, apache2*, libapache2-mod-php*
+
+        Unattended-Upgrade::Automatic-Reboot "false";
+
+        Unattended-Upgrade::Remove-Unused-Kernel-Packages "false";
+
+        Mail notifications disabled (no mail system assumed in lab)
+
+    Write /etc/apt/apt.conf.d/20auto-upgrades enabling the daily timer
+
+    Enable and start apt-daily.timer and apt-daily-upgrade.timer
+
+    Execute unattended-upgrades --dry-run --debug and parse its output to confirm that blacklisted packages are correctly skipped
+
+    Emit unattended_config.json with: installed, config_paths, blacklist, timer_state, dry_run_summary (counts: would_upgrade, skipped_blacklisted, skipped_held)
+
+Note: the script must be idempotent. Re-running it must not duplicate entries in the config files.
+
+**Expected Output:**
+
+```bash
+$ sudo ./8-unattended_config.sh
+[*] unattended-upgrades: already installed
+[*] Writing /etc/apt/apt.conf.d/50unattended-upgrades...   OK
+[*] Writing /etc/apt/apt.conf.d/20auto-upgrades...         OK
+[*] Enabling timers...                                     OK
+[*] Dry run...
+would upgrade:       4
+skipped (blacklist): 2 (linux-image-generic, apache2)
+skipped (held):      0
+Report saved to: unattended_config.json
+```
+
+---
+
 # 
