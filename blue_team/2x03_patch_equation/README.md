@@ -371,4 +371,74 @@ $ cat config_drift.json
 
 ---
 
+# [7. The Broken Upgrade Recovery](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/7-apt_recovery.sh)
+
+## Goal: 
+
+Diagnose and repair a Linux system left in a broken package state by an interrupted upgrade, restoring every service to a working state and emitting a structured recovery report.
+
+## Context: 
+
+James mentioned it: billing-srv-01 has leftover damage from Mike Torres's aborted apt upgrade -y. dpkg is locked, apache2 is half-configured, libapache2-mod-php is unpacked but not set up. Recovery is a specific sequence: never the same command twice, never out of order. One wrong step and you make it worse.
+
+## Instructions: 
+
+Write a script 7-apt_recovery.sh that diagnoses and repairs a broken apt/dpkg state. The script must:
+
+    Diagnose before changing anything:
+
+        Check for live dpkg or apt processes with pgrep -fa
+
+        Inspect /var/lib/dpkg/lock-frontend, /var/lib/dpkg/lock, /var/cache/apt/archives/lock
+
+        Run dpkg --audit and parse the output
+
+        List packages in half-configured, half-installed, unpacked or triggers-pending state via dpkg'
+
+        Check free space on / and /var
+
+    Refuse to proceed if a live dpkg or apt process is detected: emit the diagnosis and exit with code 2
+
+    Repair in a strict order:
+
+        Remove only stale lock files (and only after confirming no live process holds them)
+
+        Run dpkg --configure -a
+
+        Run apt-get --fix-broken install -y with noninteractive
+
+        Re-run dpkg --audit and confirm the output is empty
+
+    Restart any service listed in service_dependency_map.json whose package was in the broken set
+
+    Emit apt_recovery.json with: initial_diagnosis, actions_taken (ordered array), final_state, recovered (boolean), duration_seconds
+
+    Exit 0 on success, 1 on residual broken state
+
+Hint: the lab ships a broken-state setup script. Run it, then run your recovery, then re-run the diagnosis to confirm clean.
+
+**Expected Output:**
+
+```bash
+$ sudo ./7-apt_recovery.sh
+[*] Diagnosing...
+    live dpkg/apt processes: none
+    stale locks: /var/lib/dpkg/lock-frontend, /var/lib/dpkg/lock
+    dpkg --audit: apache2, libapache2-mod-php8.1, mysql-server-8.0
+    broken packages: 3
+[*] Repairing...
+    remove stale locks                     OK
+    dpkg --configure -a                    OK
+    apt-get --fix-broken install           OK
+    dpkg --audit (re-run)                  clean
+[*] Restarting affected services...
+    apache2.service                        active
+    mysql.service                          active
+RECOVERED: yes
+Duration: 38s
+Report saved to: apt_recovery.json
+```
+
+---
+
 # 
