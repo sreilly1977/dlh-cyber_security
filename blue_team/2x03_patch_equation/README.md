@@ -662,4 +662,49 @@ $ echo $?
 
 ---
 
+# [12. The Change Tracking Log](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/12-change_log.sh)
+
+## Goal: 
+
+Produce a canonical, structured change log for every patching activity on the host: what was changed, when, by whom, with what outcome and whether it respected the maintenance window.
+
+## Context: 
+
+Auditors ask one question: "show me every change to this system in the last 30 days and prove it was authorized". A change log written by humans is never complete. A change log produced by a script from /var/log/dpkg.log, /var/log/apt/history.log and the JSON artifacts from earlier tasks is always complete, because it is the same source of truth the system itself uses.
+
+## Instructions: 
+
+Write a script 12-change_log.sh that produces a structured change log for the host. The script must:
+
+    Parse /var/log/apt/history.log* (including rotated files) to extract every apt transaction: start-date, commandline, requested-by, upgrade, install, remove
+
+    Group transactions into "change events" by proximity (transactions within 15 minutes of each other are one event)
+
+    For each change event, enrich it with:
+
+        user from the Requested-By: field
+
+        within_window: call 11-maintenance_window.sh --report against the event timestamp and read the decision
+
+        linked_execution_log: path to patch_execution_log.json if the event timestamps overlap
+
+        cves_resolved: cross-reference against vulnerability_inventory.json entries that are no longer present after the event
+
+    Emit patch_change_log.json with: period_start, period_end, events (ordered array), summary (counts: total_events, inside_window, outside_window, cves_resolved)
+
+    Output must be idempotent across runs: running the script twice on the same logs must produce identical JSON
+
+**Expected Output:**
+
+```bash
+$ sudo ./12-change_log.sh
+
+$ cat patch_change_log.json
+{"started":"2026-03-21T23:01:05+01:00","user":"mike","within_window":"outside","packages":47}
+{"started":"2026-03-28T02:03:12+01:00","user":"analyst","within_window":"inside","packages":6}
+{"started":"2026-03-28T02:15:44+01:00","user":"analyst","within_window":"inside","packages":1}
+```
+
+---
+
 # 
