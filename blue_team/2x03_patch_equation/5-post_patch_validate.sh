@@ -14,6 +14,7 @@ readonly BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 readonly EXECUTION_LOG="${BASE_DIR}/patch_execution_log.json"
 readonly DEPS_MAP_FILE="${BASE_DIR}/service_dependency_map.json"
 readonly PRE_STATE_FILE="${BASE_DIR}/pre_patch_state.json"
+readonly PROBES_FILE="${BASE_DIR}/service_probes.json"
 readonly OUTPUT_FILE="${BASE_DIR}/post_patch_validation.json"
 
 log() {
@@ -37,13 +38,17 @@ validate_prerequisites() {
         missing=1
     fi
 
+    if [[ ! -f "$PROBES_FILE" ]]; then
+        warn "Service probes file not found: $PROBES_FILE"
+        missing=1
+    fi
+
     if [[ $missing -eq 1 ]]; then
         log "ERROR: Missing prerequisite files. Exiting."
         exit 1
     fi
 }
 
-# Get current service active state from systemctl
 get_current_service_state() {
     local service="$1"
     systemctl show "$service" --property=ActiveState --value 2>/dev/null || echo "unknown"
@@ -80,41 +85,36 @@ get_expected_port_for_service() {
 
 run_liveness_probe() {
     local service="$1"
-    local timeout_sec="${2:-10}"
+    local probe_type="$2"
+    local probe_target="$3"
+    local timeout_sec="${4:-10}"
 
-    case "$service" in
-        *apache2*|*nginx*)
-            curl -sf --max-time "$timeout_sec" "http://localhost/" >/dev/null 2>&1 && return 0
+    case "$probe_type" in
+        "http"|"https")
+            curl -sf --max-time "$timeout_sec" "$probe_target" >/dev/null 2>&1
             ;;
-        *mysql*)
-            mysqladmin ping -h "127.0.0.1" -P "3306" 2>/dev/null | grep -q "mysqld is alive" && return 0
-            check_port_listening "3306" && return 0
+        "mysql")
+            local host="${probe_target%%:*}"
+            local port="${probe_target##*:}"
+            mysqladmin ping -h "$host" -P "$port" 2>/dev/null | grep -q "mysqld is alive" && return 0
+            check_port_listening "$port" && return 0
+            return 1
             ;;
-        *postgres*)
-            pg_isready -h "127.0.0.1" -p "5432" >/dev/null 2>&1 && return 0
-            check_port_listening "5432" && return 0
+        "ssh")
+            ssh -o BatchMode=yes -o ConnectTimeout="$timeout_sec" "$probe_target" exit 0 >/dev/null 2>&1
             ;;
-        *ssh*)
-            timeout "$timeout_sec" bash -c "echo > /dev/tcp/127.0.0.1/22" 2>/dev/null && return 0
-            check_port_listening "22" && return 0
+        "tcp_connect")
+            local host="${probe_target%%:*}"
+            local port="${probe_target##*:}"
+            timeout "$timeout_sec" bash -c "echo > /dev/tcp/$host/$port" 2>/dev/null
             ;;
-        *redis*)
-            redis-cli -h 127.0.0.1 -p 6379 ping >/dev/null 2>&1 && return 0
-            check_port_listening "6379" && return 0
+        "command")
+            eval "$probe_target" >/dev/null 2>&1
             ;;
-        *bind9*|*named*)
-            dig +short +time="$timeout_sec" @127.0.0.1 localhost A >/dev/null 2>&1 && return 0
-            check_port_listening "53" && return 0
+        *)
+            return 1
             ;;
     esac
-
-    local port
-    port=$(get_expected_port_for_service "$service")
-    if [[ -n "$port" ]] && check_port_listening "$port"; then
-        return 0
-    fi
-
-    return 1
 }
 
 extract_services_from_deps() {
@@ -125,12 +125,9 @@ extract_critical_services_from_deps() {
     jq -r '[.services[]? | select(.criticality == "critical") | .service] | unique | .[]' "$DEPS_MAP_FILE" 2>/dev/null
 }
 
-# Get pre-patch service state from pre_patch_state.json, falling back to
-# execution log if the file doesn't exist
 get_pre_patch_service_state() {
     local service="$1"
 
-    # Try pre_patch_state.json first
     if [[ -f "$PRE_STATE_FILE" ]]; then
         local state
         state=$(jq -r --arg s "$service" '.services[]? | select(.service == $s) | .active_state // empty' "$PRE_STATE_FILE" 2>/dev/null || echo "")
@@ -140,7 +137,6 @@ get_pre_patch_service_state() {
         fi
     fi
 
-    # Fall back to execution log pre-block snapshots
     local log_state
     log_state=$(jq -r --arg s "$service" '[.entries[].pre.service_states[]? | select(.service == $s)] | .[0].active_state // "unknown"' "$EXECUTION_LOG" 2>/dev/null || echo "unknown")
     echo "$log_state"
@@ -158,9 +154,6 @@ perform_validation() {
 
     # ============================================
     # PART 1: SERVICE STATE CHECKS
-    # Compare current ActiveState against pre_patch_state.json baseline.
-    # Only flag as regression if pre-patch state was "active" and
-    # current state is anything else.
     # ============================================
     log "Checking service states against pre-patch snapshot..."
 
@@ -175,7 +168,6 @@ perform_validation() {
 
         service_check_total=$((service_check_total + 1))
 
-        # Only regression if was active before and not active now
         if [[ "$pre_state" == "active" && "$current_state" != "active" ]]; then
             status="regression"
         else
@@ -197,11 +189,9 @@ perform_validation() {
 
     # ============================================
     # PART 2: LISTENING SOCKET CHECKS
-    # Verify that ports which were listening pre-patch are still listening.
     # ============================================
     log "Checking listening sockets..."
 
-    # Try to get ports from pre_patch_state.json, fall back to service mapping
     local sockets_source='[]'
     if [[ -f "$PRE_STATE_FILE" ]]; then
         sockets_source=$(jq '.listening_ports // []' "$PRE_STATE_FILE" 2>/dev/null || echo '[]')
@@ -211,7 +201,6 @@ perform_validation() {
     socket_count=$(echo "$sockets_source" | jq 'length' 2>/dev/null || echo 0)
 
     if [[ "$socket_count" -gt 0 ]]; then
-        # Use ports from pre_patch_state.json
         while IFS= read -r sock_entry; do
             [[ -z "$sock_entry" ]] && continue
 
@@ -241,7 +230,6 @@ perform_validation() {
 
         done < <(echo "$sockets_source" | jq -c '.[]')
     else
-        # Fall back to deriving ports from known service names
         while IFS= read -r svc; do
             [[ -z "$svc" ]] && continue
 
@@ -273,38 +261,99 @@ perform_validation() {
 
     # ============================================
     # PART 3: CRITICAL LIVENESS PROBES
-    # For every service marked critical in service_dependency_map.json,
-    # run a lightweight liveness probe (curl, mysqladmin ping, tcp connect, etc.)
+    # Read probe definitions from service_probes.json and run each
+    # against critical services listed in service_dependency_map.json
     # ============================================
-    log "Running critical liveness probes..."
+    log "Running critical liveness probes from service_probes.json..."
 
-    while IFS= read -r svc; do
-        [[ -z "$svc" ]] && continue
+    # Get critical services from dependency map
+    local critical_services_json
+    critical_services_json=$(jq -c '[.services[]? | select(.criticality == "critical") | .service] | unique' "$DEPS_MAP_FILE" 2>/dev/null || echo '[]')
 
-        probe_check_total=$((probe_check_total + 1))
+    # Read probes from service_probes.json, filtering to only those matching critical services
+    local probes_json
+    probes_json=$(jq -c --argjson critical "$critical_services_json" \
+        '[.probes[]? | select(.service as $s | $critical | index($s))]' \
+        "$PROBES_FILE" 2>/dev/null || echo '[]')
 
-        local status result_msg
-        if run_liveness_probe "$svc" 10; then
-            status="pass"
-            result_msg="Probe succeeded"
-            probe_check_pass=$((probe_check_pass + 1))
-        else
-            status="probe_failed"
-            result_msg="Probe failed"
-        fi
+    local probe_count
+    probe_count=$(echo "$probes_json" | jq 'length' 2>/dev/null || echo 0)
 
-        local detail
-        detail=$(jq -n \
-            --arg svc "$svc" \
-            --arg type "tcp_connect" \
-            --arg target "localhost" \
-            --arg status "$status" \
-            --arg result "$result_msg" \
-            '{type:"liveness_probe",service:$svc,probe_type:$type,target:$target,status:$status,result:$result}')
+    if [[ "$probe_count" -gt 0 ]]; then
+        while IFS= read -r probe_entry; do
+            [[ -z "$probe_entry" ]] && continue
 
-        details_array+=("$detail")
+            local svc p_type p_target p_timeout status result_msg
+            svc=$(echo "$probe_entry" | jq -r '.service')
+            p_type=$(echo "$probe_entry" | jq -r '.type')
+            p_target=$(echo "$probe_entry" | jq -r '.target')
+            p_timeout=$(echo "$probe_entry" | jq -r '.timeout // 10')
 
-    done < <(extract_critical_services_from_deps)
+            probe_check_total=$((probe_check_total + 1))
+
+            if run_liveness_probe "$svc" "$p_type" "$p_target" "$p_timeout"; then
+                status="pass"
+                result_msg="Probe succeeded"
+                probe_check_pass=$((probe_check_pass + 1))
+            else
+                status="probe_failed"
+                result_msg="Probe failed"
+            fi
+
+            local detail
+            detail=$(jq -n \
+                --arg svc "$svc" \
+                --arg type "$p_type" \
+                --arg target "$p_target" \
+                --arg status "$status" \
+                --arg result "$result_msg" \
+                '{type:"liveness_probe",service:$svc,probe_type:$type,target:$target,status:$status,result:$result}')
+
+            details_array+=("$detail")
+
+        done < <(echo "$probes_json" | jq -c '.[]')
+    else
+        # Fallback: if no probes in file match critical services, use inline mapping
+        warn "No matching probes found in service_probes.json, using fallback probes..."
+
+        while IFS= read -r svc; do
+            [[ -z "$svc" ]] && continue
+
+            probe_check_total=$((probe_check_total + 1))
+
+            local status result_msg p_type p_target
+            p_type="tcp_connect"
+
+            local port
+            port=$(get_expected_port_for_service "$svc")
+            if [[ -n "$port" ]]; then
+                p_target="127.0.0.1:${port}"
+            else
+                p_target="localhost"
+            fi
+
+            if run_liveness_probe "$svc" "$p_type" "$p_target" 10; then
+                status="pass"
+                result_msg="Probe succeeded"
+                probe_check_pass=$((probe_check_pass + 1))
+            else
+                status="probe_failed"
+                result_msg="Probe failed"
+            fi
+
+            local detail
+            detail=$(jq -n \
+                --arg svc "$svc" \
+                --arg type "$p_type" \
+                --arg target "$p_target" \
+                --arg status "$status" \
+                --arg result "$result_msg" \
+                '{type:"liveness_probe",service:$svc,probe_type:$type,target:$target,status:$status,result:$result}')
+
+            details_array+=("$detail")
+
+        done < <(extract_critical_services_from_deps)
+    fi
 
     # ============================================
     # BUILD FINAL REPORT
