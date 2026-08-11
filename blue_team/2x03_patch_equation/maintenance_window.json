@@ -1,0 +1,13 @@
+{
+  "now": "2026-08-11T20:01:16+02:00",
+  "now_display": "2026-08-11 20:01 (Tue)",
+  "timezone": "Europe/Paris",
+  "active_window": "emergency",
+  "decision": "emergency_requires_override",
+  "next_window": {
+    "name": "emergency",
+    "at": "null"
+  },
+  "seconds_until_next": 0,
+  "exit_code": 10
+}

@@ -604,4 +604,62 @@ Report saved to: hold_management.json
 
 ---
 
+# [11. The Maintenance Window Enforcement](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/11-maintenance_window.sh)
+
+## Goal: 
+
+Implement maintenance window control as code: a guard script that refuses to run patch operations outside defined windows and defers them with a machine-readable rationale.
+
+## Context: 
+
+The policy ("only patch inside the window") means nothing if the enforcement is a human being reading the clock. This task turns the window into a predicate: before any patch script runs, it calls the guard. If the guard says "out of window", the operation does not proceed.
+
+## Instructions: 
+
+Write a script 11-maintenance_window.sh that acts as a maintenance window guard. The script must:
+
+    Read a declarative maintenance_windows.json file with the schema:
+
+    { "timezone": "Europe/Paris",
+      "windows": [
+        {"name": "standard",  "days": ["Sat"],       "start": "02:00", "end": "06:00"},
+        {"name": "extended",  "days": ["Sat"],       "start": "00:00", "end": "08:00", "week_of_month": 1},
+        {"name": "emergency", "always": true}
+      ]}
+
+    Accept a mode argument: --check (exit only), --wait <seconds> (poll until a window opens or timeout), --report (emit JSON only)
+
+    In --check mode: exit 0 if inside a standard or extended window, exit 10 if only emergency applies (requires override env var MEDDEFENSE_EMERGENCY=1), exit 20 if outside all windows
+
+    Emit maintenance_window.json with: now, timezone, active_window (name or null), next_window (name and ISO timestamp), seconds_until_next, decision
+
+    Never change package state. This script is pure decision logic.
+
+Hint: date +%u for day of week, date +%H:%M for local time. Respect the timezone field via TZ=<zone>.
+
+**Expected Output:**
+
+```bash
+$ ./11-maintenance_window.sh --check
+now:            2026-03-28 14:07 Europe/Paris (Sat)
+active window:  standard
+decision:       proceed
+Report saved to: maintenance_window.json
+
+$ echo $?
+0
+
+$ ./11-maintenance_window.sh --check
+now:            2026-03-30 10:22 Europe/Paris (Mon)
+active window:  (none)
+next window:    standard  at 2026-04-04 02:00
+seconds until:  403080
+decision:       defer
+
+$ echo $?
+20
+```
+
+---
+
 # 
