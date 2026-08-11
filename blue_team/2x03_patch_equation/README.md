@@ -556,4 +556,52 @@ from <current_version> to <target_version>
 
 ---
 
+# [10. The Version Hold Management](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/10-version_hold.sh)
+
+## Goal: 
+
+Manage apt-mark holds and preference pins as data, so that every held package has a recorded reason, a review date and a single source of truth readable by automation.
+
+## Context: 
+
+A held package without a recorded reason becomes permanent by accident. Six months later nobody remembers why mysql-server is pinned and nobody dares touch it. Hold management is the discipline that prevents this: every hold has an entry in a JSON registry with a reason, an owner and a review date, and the script is the only thing that changes the state.
+
+## Instructions: Write a script 10-version_hold.sh that manages package holds and pins as a data-driven operation. The script must:
+
+    Read a declarative input file hold_registry.json with the schema:
+
+    { "holds": [
+        {"package": "mysql-server-8.0", "reason": "billing app v8.0.35 dependency",
+         "owner": "analyst", "review_date": "2026-05-28", "pin_version": "8.0.35-0ubuntu0.22.04.1"}
+    ]}
+
+    For each entry: apply apt-mark hold <package> and write an apt_preferences fragment to /etc/apt/preferences.d/meddefense-pins with Pin-Priority: 1001
+
+    Remove any hold currently present on the system that is not in hold_registry.json (convergence mode)
+
+    For each hold, compute days_to_review from review_date minus today's date
+
+    Emit hold_management.json with: applied (array), released (array), overdue_reviews (array where days_to_review < 0), total_held
+
+Note: the script is the only writer. Never edit apt-mark state or /etc/apt/preferences.d/meddefense-pins manually.
+
+**Expected Output:**
+
+```bash
+$ sudo ./10-version_hold.sh
+[*] Reading hold_registry.json...           (4 entries)
+[*] Reading current apt-mark showhold...    (1 entry)
+Applying holds:
+  mysql-server-8.0        hold + pin 8.0.35-0ubuntu0.22.04.1   OK
+  mysql-client-8.0        hold + pin 8.0.35-0ubuntu0.22.04.1   OK
+  libapache2-mod-php8.1   hold + pin 8.1.2-1ubuntu2.14         OK
+  php8.1-mysql            hold + pin 8.1.2-1ubuntu2.14         OK
+Releasing holds no longer in registry:
+  (none)
+Overdue reviews: 0
+Report saved to: hold_management.json
+```
+
+---
+
 # 
