@@ -1,4 +1,4 @@
-# Memory Forensics Step-by-Step Guide: Analyzing Windows Minidumps on Linux
+# Memory Forensics Week 14 Challenge: Analyzing Windows Minidumps on Linux
 
 ## Prerequisites
 
