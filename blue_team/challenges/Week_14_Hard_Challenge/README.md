@@ -291,12 +291,23 @@ python3 -m minidump notepad.DMP --memory
 **Expected output (filtered):**
 
 ```bash
-BaseAddress    | AllocationBase | AllocationProtect | RegionSize  | State       | Protect                | Type       
+...
+== MinidumpMemoryInfoList ==
+BaseAddress    | AllocationBase | AllocationProtect | RegionSize     | State       | Protect                | Type       
 -------------------------------------------------------------------------------------------------------------------------
-0xb120870000   | 0xb120870000   | 64               | 0x1000      | MEM_COMMIT  | PAGE_EXECUTE_READWRITE | MEM_PRIVATE
-0xb1221a0000   | 0xb1221a0000   | 64               | 0x4e000     | MEM_COMMIT  | PAGE_EXECUTE_READWRITE | MEM_PRIVATE
-0xb123bd0000   | 0xb123bd0000   | 64               | 0x400000    | MEM_COMMIT  | PAGE_EXECUTE_READWRITE | MEM_PRIVATE
-```bash
+0x0            | 0x0            | 0                 | 0x7ffe0000     | MEM_FREE    | PAGE_NOACCESS          | N/A        
+0x7ffe0000     | 0x7ffe0000     | 2                 | 0x1000         | MEM_COMMIT  | PAGE_READONLY          | MEM_PRIVATE
+0x7ffe1000     | 0x7ffe0000     | 2                 | 0xf000         | MEM_RESERVE | NONE                   | MEM_PRIVATE
+0x7fff0000     | 0x0            | 0                 | 0xb0a06d0000   | MEM_FREE    | PAGE_NOACCESS          | N/A        
+0xb1206c0000   | 0xb1206c0000   | 4                 | 0x10000        | MEM_COMMIT  | PAGE_READWRITE         | MEM_MAPPED 
+0xb1206d0000   | 0xb1206d0000   | 4                 | 0x2000         | MEM_COMMIT  | PAGE_READWRITE         | MEM_PRIVATE
+0xb1206d2000   | 0xb1206d0000   | 4                 | 0x5000         | MEM_RESERVE | NONE                   | MEM_PRIVATE
+0xb1206d7000   | 0x0            | 0                 | 0x9000         | MEM_FREE    | PAGE_NOACCESS          | N/A        
+0xb1206e0000   | 0xb1206e0000   | 2                 | 0x14000        | MEM_COMMIT  | PAGE_READONLY          | MEM_MAPPED 
+0xb1206f4000   | 0x0            | 0                 | 0xc000         | MEM_FREE    | PAGE_NOACCESS          | N/A        
+0xb120700000   | 0xb120700000   | 4                 | 0x6c000        | MEM_RESERVE | NONE                   | MEM_PRIVATE
+...
+```
 
 **Filter command to isolate RWX regions:**
 
