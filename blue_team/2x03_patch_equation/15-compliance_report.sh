@@ -350,7 +350,8 @@ main() {
     log "Pipeline deferred: ${pipeline_deferred}"
 
     # ============================================
-    # STEP 4: Classify each CVE
+    # STEP 4: Classify each CVE — determine its current state
+    # (resolved, open, deferred_held, deferred_window)
     # ============================================
     log "Classifying CVE states..."
 
