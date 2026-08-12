@@ -318,6 +318,12 @@ Cache-Control: no-cache
 
 The attacker used two ports: port 8023 for the initial beacon from update.exe, and port 8891 for communications from the injected notepad.exe (visible in notepad.DMP strings).
 
+```bash
+strings notepad.DMP | grep -oE "https?://[^ \"'<>]+" | grep ":8891" | sort -u
+http://101.10.25.4:8891/ca
+http://101.10.25.4:8891/submit.php?id=1019752184
+http://101.10.25.4:8891/w2pD
+```
 
 ## Q9: C2 Framework Used by the Threat Actor
 
