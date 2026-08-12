@@ -1,0 +1,12 @@
+{
+  "scenario": "simulated CVE advisory",
+  "started_at": "2026-08-12T06:30:01+00:00",
+  "finished_at": "2026-08-12T06:31:05+00:00",
+  "stages_ok": 6,
+  "total_stages": 8,
+  "pipeline_status": "failed",
+  "status_valid": false,
+  "plan_matches_expected": true,
+  "diff": [],
+  "verdict": "fail"
+}

@@ -753,4 +753,59 @@ Report saved to: pipeline_run.json
 
 ---
 
+# [14. The Pipeline Test Against a Simulated Advisory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/14-pipeline_test.sh)
+
+## Goal: 
+
+Prove that the pipeline handles a fresh advisory correctly by running it against a simulated CVE feed, a new set of upgradable packages and a second, deterministic execution.
+
+## Context: 
+
+The pipeline worked against today's data. Will it work against tomorrow's ? This task replaces cve_feed.json with a simulated advisory and runs the pipeline against a fresh pre-snapshot, validating that the outputs reflect the new input without any code changes.
+
+## Instructions: 
+
+Write a script 14-pipeline_test.sh that executes an end-to-end pipeline test. The script must:
+
+    Save the current cve_feed.json to cve_feed.json.bak
+
+    Copy the provided cve_feed.simulated.json to cve_feed.json
+
+    Invoke 13-patch_pipeline.sh with environment variable PIPELINE_TEST=1 (which causes 4-patch_execute.sh to run with --dry-run instead of applying)
+
+    Compare the produced patch_plan.json against an expected patch_plan.expected.json shipped with the project. Comparison must normalize timestamps to a placeholder before the diff.
+
+    Validate that the pipeline_run.json exit status is ok or deferred, and that every stage emitted a non-empty JSON artifact
+
+    Restore the original cve_feed.json
+
+    Emit pipeline_test_results.json with: scenario, started_at, finished_at, stages_ok, plan_matches_expected (boolean), diff (empty array if match, otherwise unified-diff-style array), verdict (pass or fail)
+
+    Exit 0 on pass, 1 on fail
+
+**Expected Output:**
+
+```bash
+$ sudo ./14-pipeline_test.sh
+[*] Scenario: simulated CVE advisory
+[*] Backing up cve_feed.json...              OK
+[*] Injecting cve_feed.simulated.json...     OK
+[*] Running pipeline (PIPELINE_TEST=1)...
+[1/9] 0-vuln_inventory.sh           OK
+[2/9] 1-service_deps.sh             OK
+[3/9] 2-pre_patch_snapshot.sh       OK
+[4/9] 3-patch_plan.sh               OK
+[5/9] 11-maintenance_window.sh      OK
+[6/9] 4-patch_execute.sh            OK
+[7/9] 5-post_patch_validate.sh      OK
+[8/9] 6-config_drift.sh             OK
+[9/9] 12-change_log.sh              OK
+[*] Comparing patch_plan.json to expected...  match
+[*] Restoring cve_feed.json...                OK
+VERDICT: pass
+Report saved to: pipeline_test_results.json
+```
+
+---
+
 # 
