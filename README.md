@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Security+ Badge](https://img.shields.io/badge/CompTIA-Security%2B-yellow)
-![Luxembourg CS Academy Badge](https://img.shields.io/badge/Academy-blue)
+![Academy Badge](https://img.shields.io/badge/Luxembourg_CS_Academy-blue)
 
 </div>
 
