@@ -325,6 +325,28 @@ http://101.10.25.4:8891/submit.php?id=1019752184
 http://101.10.25.4:8891/w2pD
 ```
 
+```bash
+strings notepad.DMP | grep -B2 -A2 "8891"
+http://101.10.25.4:8891/submit.php?id=1019752184
+...
+GET /w2pD HTTP/1.1
+Host101.10.25.4:8891GET /w2pD HTTP/1.1s
+ConnectionKeep-Alive
+...
+POST /submit.php?id=1019752184 HTTP/1.1
+Content-Typeapplication/octet-stream
+Host101.10.25.4:8891
+```
+
+This shows the injected notepad.exe beacon communicating with the same C2 IP (101.10.25.4) but on a different port (8891) using three URI paths:
+
+| URI Path | HTTP Method | Purpose |
+|----------|-------------|---------|
+| `/w2pD` | GET | Beacon check-in / task polling |
+| `/submit.php?id=1019752184` | POST | Data exfiltration / results submission |
+| `/ca` | GET | Command acknowledgment |
+
+
 ## Q9: C2 Framework Used by the Threat Actor
 
 **Commands:**
