@@ -67,6 +67,7 @@ collect_inventory_files() {
         echo "$VULN_INVENTORY"
     fi
 
+    # Also check ./history for rotated vulnerability inventory copies
     if [[ -d "$HISTORY_DIR" ]]; then
         find "$HISTORY_DIR" -name 'vulnerability_inventory*.json' -type f 2>/dev/null | sort
     fi
