@@ -1,5 +1,21 @@
 # Memory Forensics Week 14 Challenge: Analyzing Windows Minidumps on Linux
 
+## I was provided with two minidumps that I needed to analys and answer the following questions:
+
+1/ Provide the operating system version.
+2/ Provide the full path of the malicious executable used to gain initial access.
+3/ How many threads did the malicious process use?
+4/ Provide the named pipe (IPC channel) used by the malicious process.
+5/ Provide the PID of the injected process. Provide the Answer in decimal.
+6/ At what time was the last thread created for the injected process? Provide the timestamp in UTC.
+7/ Provide the BaseAddress of the injected shellcode.
+8/ Provide the C2 server IP address.
+9/ Provide the name of the C2 framework used by the threat actor.
+
+### What is a minidump?
+
+A minidump is a compressed snapshot of a process's memory, threads, handles, and loaded modules at a specific point in time, typically captured for debugging or forensic analysis. They don't only exist on Windows, but the formal MINIDUMP format is Windows-specific. On Linux they're usually refereed to as core dumps (look up magnetic core memory for why they're called that).
+
 ## Prerequisites
 
 ```bash
