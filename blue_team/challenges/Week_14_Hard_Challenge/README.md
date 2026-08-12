@@ -129,6 +129,10 @@ How it works: The --threads flag parses the ThreadListStream from the minidump. 
 
 ## Q4: Named Pipe (IPC Channel) Used by the Malicious Process
 
+### What is a named pipe?
+
+A **named pipe** is an inter-process communication (IPC) mechanism that allows separate processes to exchange data through a special file in the filesystem that acts like a communication channel.
+
 **Commands:**
 
 ```bash
