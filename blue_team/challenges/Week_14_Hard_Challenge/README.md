@@ -35,6 +35,11 @@ paru -S python-minidump
 
 # Verify installation
 python3 -m minidump --help
+
+# Both dumps are present
+ls *.DMP
+notepad.DMP
+update.DMP
 ```
 
 ## Q1: Operating System Version
