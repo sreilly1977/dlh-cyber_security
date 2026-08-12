@@ -537,34 +537,24 @@ main() {
     local hostname_val
     hostname_val=$(hostname 2>/dev/null || echo "unknown")
 
-        jq -n \
-        --arg generated_at "$started_at" \
+    jq -n \
+        --arg generated_at "$generated_at" \
         --arg hostname "$hostname_val" \
-        --arg kernel "$kernel_val" \
-        --argjson resolved "$resolved_count" \
-        --argjson open "$open_count" \
-        --argjson deferred_held "$deferred_held_count" \
-        --argjson deferred_window "$deferred_window_count" \
-        --arg score "$score" \
-        --arg target_score "$target_score" \
-        --argjson overdue "$overdue_count" \
-        --argjson total "$total_cves" \
-        --slurpfile cves "$cves_temp" \
+        --argjson total_events "$event_count" \
+        --argjson inside_count "$inside_count" \
+        --argjson outside_count "$outside_count" \
+        --argjson total_cves "$total_cves" \
+        --argjson events "$events_json" \
         '{
             generated_at: $generated_at,
             hostname: $hostname,
-            kernel: $kernel,
             summary: {
-                resolved: $resolved,
-                open: $open,
-                deferred_held: $deferred_held,
-                deferred_window: $deferred_window,
-                total: $total,
-                score: ($score | tonumber),
-                target_score: ($target_score | tonumber),
-                overdue: $overdue
+                total_events: $total_events,
+                inside_window: $inside_count,
+                outside_window: $outside_count,
+                cves_resolved: $total_cves
             },
-            cves: $cves
+            events: $events
         }' > "$OUTPUT_FILE"
 
     rm -f "$parsed_file" "$events_file"
