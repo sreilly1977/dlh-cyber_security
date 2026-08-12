@@ -96,7 +96,7 @@ ThreadId | SuspendCount | PriorityClass | Priority | Teb
 
 **Answer:** 6
 
-How it works: The --threads flag parses the ThreadListStream from the minidump. Each row represents one thread. Since we confirmed update.exe is the malicious executable in Q2, we count its threads (6) rather than notepad's (4). Some of these threads belong to the Cobalt Strike beacon, which creates additional worker threads for C2 communication and task execution.
+How it works: The --threads flag parses the ThreadListStream from the minidump. Each row represents one thread. Since we confirmed update.exe is the malicious executable in Q2, we count its threads (6) rather than notepad's (4).
 
 ## Q4: Named Pipe (IPC Channel) Used by the Malicious Process
 
@@ -116,7 +116,7 @@ strings update.DMP | grep -i '\\\\.\\\\pipe\\\\' | sort -u
 
 **Answer:** \\.\pipe\MSSE-1641-server
 
-**How it works:** It searches the raw process memory (extracted via strings) for the Windows named pipe naming convention \\.\pipe\<name>. The \\.\pipe\MSSE-1641-server pipe is exclusive to update.DMP (it does not appear in notepad.DMP), confirming it belongs to the malicious process. The MSSE-1641-server naming pattern mimics Microsoft Security Essentials and is a known Cobalt Strike pipe naming convention.
+**How it works:** It searches the raw process memory (extracted via strings) for the Windows named pipe naming convention \\.\pipe\<name>. The \\.\pipe\MSSE-1641-server pipe is exclusive to update.DMP (it does not appear in notepad.DMP), confirming it belongs to the malicious process. The MSSE-1641-server naming pattern mimics Microsoft Security Essentials.
 
 **Verification command:**
 
