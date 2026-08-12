@@ -481,6 +481,18 @@ Each framework leaves recognizable signatures in:
     Registry (persistence mechanisms)
     Named pipes (communication channels)
 
+| Framework | Type | Primary Use | Key Artifact Signature |
+|-----------|------|-------------|------------------------|
+| Cobalt Strike | Commercial | Red team / APT emulation | `beacon.dll`, `MSSE-*` pipes |
+| Metasploit | Open-source | Penetration testing | `meterpreter`, `metsvc` |
+| Sliver | Open-source | Post-exploitation | gRPC, unique CA certs |
+| Empire | Open-source | PowerShell-based attacks | `PowerView`, registry keys |
+| Covenant | Open-source | .NET-based C2 | `SharpShell`, C# artifacts |
+| Havoc | Open-source | Modern post-exploitation | `havoc` config files |
+| Merlin | Open-source | Cross-platform C2 | HTTP/HTTPS profiles |
+| Brute Ratel | Commercial | Stealth-focused operations | Unique memory patterns |
+| RATel | Open-source | Lightweight RAT | Minimal footprint |
+
 ---
 
 ## Cross-Dump Correlation Summary
@@ -527,4 +539,4 @@ echo -e "\n=== Q9: C2 Framework ==="
 strings update.DMP | grep -ioE "cobalt|beacon|meterpreter|sliver|empire|havoc|covenant|merlin|brute|ratel" | sort -u
 ```
 
-
+---
