@@ -183,16 +183,11 @@ ProcessKernelTime 0
 
 Notepad is a simple text editor. A clean notepad.exe process typically has one thread (the main GUI thread). Finding four threads, with three pointing to foreign memory regions, is strong evidence that:
 
-    Someone allocated new executable memory inside notepad's address space
-    They created threads that begin executing from that foreign memory
+***Someone allocated new executable memory inside notepad's address space. They created threads that begin executing from that foreign memory***
     
 **How Normal Threads Work**
 
-When Windows launches a process like notepad.exe, it:
-
-    Loads the executable into memory at the image base (0x7ff78dc10000)
-    Creates the main thread with a StartAddress pointing into that image (typically the entry point, e.g. 0x7ff78dc23fe0, which sits ~0x13FE0 bytes into the image)
-    Any subsequent legitimate threads (created by notepad itself) also have StartAddress values pointing into loaded DLLs or the notepad image, all within known, mapped regions
+***When Windows launches a process like notepad.exe, it Loads the executable into memory at the image base (0x7ff78dc10000). Creates the main thread with a StartAddress pointing into that image (typically the entry point, e.g. 0x7ff78dc23fe0, which sits ~0x13FE0 bytes into the image). Any subsequent legitimate threads (created by notepad itself) also have StartAddress values pointing into loaded DLLs or the notepad image, all within known, mapped regions***
 
 **The key principle:** legitimate threads start execution from code that lives in legitimately loaded modules (MEM_IMAGE regions).
 
@@ -200,9 +195,11 @@ When Windows launches a process like notepad.exe, it:
 
 When an attacker injects code into a process, they typically:
 
-    Allocate new memory inside the victim process using VirtualAllocEx with PAGE_EXECUTE_READWRITE
-    Write shellcode or a DLL into that newly allocated region
-    Create a thread (via CreateRemoteThread or similar) with StartAddress pointing to that injected memory
+***Allocate new memory inside the victim process using VirtualAllocEx with PAGE_EXECUTE_READWRITE***
+
+***Write shellcode or a DLL into that newly allocated region***
+
+***Create a thread (via CreateRemoteThread or similar) with StartAddress pointing to that injected memory***
 
 **The result:** the new thread's StartAddress points to a MEM_PRIVATE region, completely separate from the process's normal image base and loaded DLLs.
 
