@@ -146,7 +146,7 @@ generate_diff_array() {
 }
 
 # ============================================
-# VALIDATE PIPELINE ARTIFACTS
+# VALIDATE ARTIFACTS: confirm every stage produced a non-empty JSON artifact
 # ============================================
 validate_artifacts() {
     local pipeline_json="$1"
