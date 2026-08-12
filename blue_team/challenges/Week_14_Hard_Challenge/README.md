@@ -288,6 +288,42 @@ Three RWX private regions exist. The smallest (0xb120870000, 4KB) is the shellco
 **Commands:**
 
 ```bash
+# Method 1: Extract URL patterns to find C2 endpoints
+strings update.DMP | grep -oE "https?://[^ \"'<>]+" | sort -u | grep -v "microsoft\|w3\.org\|bing\|passport\|modern\.ie"
+
+# Method 2: Get context around candidate IPs to confirm C2 communication
+strings update.DMP | grep -B2 -A2 "101.10.25.4"
+```
+
+**Expected output (Method 1):**
+
+```bash
+http://101.10.25.4:8023/j.ad
+http://101.10.25.4:8023/submit.php?id=2080607144
+```
+
+**Expected output (Method 2):**
+
+```bash
+Cookie: GdZd3Wqvq2keF0QKl2bP6T+QQijxNJjhbbbacZDivNla...
+User-Agent: Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)
+Host: 101.10.25.4:8023
+Connection: Keep-Alive
+Cache-Control: no-cache
+```
+
+**Answer:** 101.10.25.4
+
+**How it works:** Often the C2 configuration is encrypted in memory, so the IP may not appear as a standalone string. However, the beacon constructs HTTP requests at runtime, and those request strings remain in process memory. Method 1 is precise: it extracts full URLs, which reveal the C2 IP along with the port and URI path. Method 2 provides surrounding context (HTTP headers, cookies, User-Agent) to confirm the IP is actively used for C2 communication.
+
+The attacker used two ports: port 8023 for the initial beacon from update.exe, and port 8891 for communications from the injected notepad.exe (visible in notepad.DMP strings).
+
+
+## Q9: C2 Framework Used by the Threat Actor
+
+**Commands:**
+
+```bash
 # Method 1: Search for known C2 framework signatures
 strings update.DMP | grep -ioE "cobalt|beacon|meterpreter|sliver|empire|havoc|covenant|merlin|brute|ratel" | sort -u
 
