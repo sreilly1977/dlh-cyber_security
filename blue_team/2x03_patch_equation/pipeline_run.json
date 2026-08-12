@@ -1,0 +1,107 @@
+{
+  "started_at": "2026-08-12T06:20:02+00:00",
+  "finished_at": "2026-08-12T06:21:05+00:00",
+  "hostname": "billing-srv-01",
+  "pipeline_status": "failed",
+  "duration_seconds": 63,
+  "stages": [
+    {
+      "script": "0-vuln_inventory.sh",
+      "description": "Vulnerability Inventory",
+      "artifact": "vulnerability_inventory.json",
+      "exit_code": 0,
+      "duration_seconds": 1,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "1-service_deps.sh",
+      "description": "Service Dependencies",
+      "artifact": "service_dependency_map.json",
+      "exit_code": 0,
+      "duration_seconds": 3,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "2-pre_patch_snapshot.sh",
+      "description": "Pre-Patch Snapshot",
+      "artifact": "pre_patch_state.json",
+      "exit_code": 0,
+      "duration_seconds": 8,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "3-patch_plan.sh",
+      "description": "Patch Plan",
+      "artifact": "patch_plan.json",
+      "exit_code": 0,
+      "duration_seconds": 0,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "11-maintenance_window.sh",
+      "description": "Maintenance Window Check",
+      "artifact": "maintenance_window.json",
+      "exit_code": 10,
+      "duration_seconds": 1,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "4-patch_execute.sh",
+      "description": "Patch Execution",
+      "artifact": "patch_execution_log.json",
+      "exit_code": 0,
+      "duration_seconds": 0,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "5-post_patch_validate.sh",
+      "description": "Post-Patch Validation",
+      "artifact": "post_patch_validation.json",
+      "exit_code": 0,
+      "duration_seconds": 2,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "6-config_drift.sh",
+      "description": "Config Drift Detection",
+      "artifact": "config_drift.json",
+      "exit_code": 1,
+      "duration_seconds": 48,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "artifacts": {
+    "0-vuln_inventory.sh": "/home/analyst/scripts/patch_equation/vulnerability_inventory.json",
+    "1-service_deps.sh": "/home/analyst/scripts/patch_equation/service_dependency_map.json",
+    "2-pre_patch_snapshot.sh": "/home/analyst/scripts/patch_equation/pre_patch_state.json",
+    "3-patch_plan.sh": "/home/analyst/scripts/patch_equation/patch_plan.json",
+    "11-maintenance_window.sh": "/home/analyst/scripts/patch_equation/maintenance_window.json",
+    "4-patch_execute.sh": "/home/analyst/scripts/patch_equation/patch_execution_log.json",
+    "5-post_patch_validate.sh": "/home/analyst/scripts/patch_equation/post_patch_validation.json",
+    "6-config_drift.sh": "/home/analyst/scripts/patch_equation/config_drift.json"
+  }
+}

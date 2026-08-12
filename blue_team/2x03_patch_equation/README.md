@@ -707,4 +707,50 @@ $ cat patch_change_log.json
 
 ---
 
+# [13. The End-to-End Patch Pipeline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/13-patch_pipeline.sh)
+
+## Goal: 
+
+Chain every preceding task into a single idempotent pipeline that can be executed by hand today, by cron tomorrow and by another analyst next week, with identical results on identical input state.
+
+## Context: 
+
+You have the parts. The pipeline is the assembly: inventory, dependency map, snapshot, plan, window check, execute, validate, drift, change log. One script, one exit code, one composite JSON artifact that tells the operator what happened.
+
+## Instructions: 
+
+Write a script 13-patch_pipeline.sh that orchestrates the full patch workflow. The script must:
+
+    Run the stages in this exact order, stopping on any stage failure: 0-vuln_inventory.sh, 1-service_deps.sh, 2-pre_patch_snapshot.sh, 3-patch_plan.sh, 11-maintenance_window.sh --check, 4-patch_execute.sh, 5-post_patch_validate.sh, 6-config_drift.sh, 12-change_log.sh
+
+    If 11-maintenance_window.sh --check returns 20 (out of window) and MEDDEFENSE_EMERGENCY is not set: skip stages 4 through 6 and mark the pipeline as deferred
+
+    Capture stdout, stderr, exit code and duration of every stage
+
+    Emit pipeline_run.json with: started_at, finished_at, hostname, pipeline_status (ok, deferred, failed), stages (ordered array), artifacts (map of stage → output JSON path)
+
+    Be idempotent: running the pipeline twice in a row on a clean system must not re-apply already-installed upgrades and must not rewrite unchanged JSON files with different content
+
+    Exit 0 on ok or deferred, 1 on any stage failure
+
+**Expected Output:**
+
+```bash
+$ sudo ./13-patch_pipeline.sh
+[1/9] 0-vuln_inventory.sh           OK  (2.1s)
+[2/9] 1-service_deps.sh             OK  (3.4s)
+[3/9] 2-pre_patch_snapshot.sh       OK  (4.8s)
+[4/9] 3-patch_plan.sh               OK  (0.3s)
+[5/9] 11-maintenance_window.sh      OK  (standard window active)
+[6/9] 4-patch_execute.sh            OK  (27.6s, 6 packages)
+[7/9] 5-post_patch_validate.sh      OK  (2.9s, 38/38 checks)
+[8/9] 6-config_drift.sh             OK  (1.4s, no unexpected drift)
+[9/9] 12-change_log.sh              OK  (0.8s, 1 event)
+PIPELINE: ok
+Duration: 43.3s
+Report saved to: pipeline_run.json
+```
+
+---
+
 # 
