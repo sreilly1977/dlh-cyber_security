@@ -288,7 +288,7 @@ python3 -m minidump notepad.DMP --memory
 
 ***What to look for:*** In the MinidumpMemoryInfoList section, find entries with PAGE_EXECUTE_READWRITE protection and MEM_PRIVATE type.
 
-**Expected output (filtered):**
+**Expected output (truncated):**
 
 ```bash
 ...
