@@ -388,15 +388,15 @@ HTTP/1.1 200 OK
 
 **Answer:** Cobalt Strike
 
-**How it works:** Three independent indicators converge on Cobalt Strike:
+**How it works:** Four independent indicators converge on Cobalt Strike:
 
-    **Beacon DLL names:** The strings beacon.dll and beacon.x64.dll are the Cobalt Strike beacon payload filenames. These are loaded into the injected process memory.
+**Beacon DLL names:** The strings beacon.dll and beacon.x64.dll are the Cobalt Strike beacon payload filenames. These are loaded into the injected process memory.
 
-    **Named pipe convention:** The \\.\pipe\MSSE-1641-server pipe follows Cobalt Strike's known pipe naming pattern. Cobalt Strike uses named pipes for SMB beacon communication and commonly disguises them with names mimicking Microsoft Security Essentials (MSSE-<number>-server).
+**Named pipe convention:** The \\.\pipe\MSSE-1641-server pipe follows Cobalt Strike's known pipe naming pattern. Cobalt Strike uses named pipes for SMB beacon communication and commonly disguises them with names mimicking Microsoft Security Essentials (MSSE-<number>-server).
 
-    **PowerShell cradle pattern:** The string IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/') is a Cobalt Strike PowerShell inject pattern used for executing PowerShell commands through the beacon without writing to disk. The 127.0.0.1:%u local loopback pattern is characteristic of Cobalt Strike's powerpick and execute-assembly commands.
+**PowerShell cradle pattern:** The string IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/') is a Cobalt Strike PowerShell inject pattern used for executing PowerShell commands through the beacon without writing to disk. The 127.0.0.1:%u local loopback pattern is characteristic of Cobalt Strike's powerpick and execute-assembly commands.
 
-    **C2 URI patterns:** The URIs /j.ad, /ca, and /submit.php match Cobalt Strike's configurable beacon HTTP profile for check-in, command acknowledgment, and data submission.
+**C2 URI patterns:** The URIs /j.ad, /ca, and /submit.php match Cobalt Strike's configurable beacon HTTP profile for check-in, command acknowledgment, and data submission.
 
     
 **Why These Nine Specifically?** 
