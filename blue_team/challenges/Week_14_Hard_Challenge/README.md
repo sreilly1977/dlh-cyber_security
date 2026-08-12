@@ -117,7 +117,7 @@ ThreadId | SuspendCount | PriorityClass | Priority | Teb
 -------------------------------------------------------------------
 0xbdc    | 0            | 32            | 0        | 0x7ff5ffffd000
 0x3ec    | 0            | 32            | 0        | 0x7ff5ffff9000
-0xa14    | 0            | 32            | 0        | 7ff5ffff7000
+0xa14    | 0            | 32            | 0        | 0x7ff5ffff7000
 0xe30    | 0            | 32            | 0        | 0x7ff5ffff4000
 0x448    | 0            | 32            | 0        | 0x7ff5ffffb000
 0x8      | 0            | 32            | 0        | 0x7ff5ffece000
