@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 # Name:        12-change_log.sh
-# Purpose:     Produce a canonical change log from apt history logs and prior
-#              task artifacts, enriched with maintenance window and CVE data
+# Purpose:     Parse apt history logs, group into events, enrich with
+#              maintenance window, execution log, and CVE data
 # Author:      Steve - Cybersecurity Engineer
-# Date:        August 11, 2026
+# Date:        August 12, 2026
 #
 
 set -euo pipefail
@@ -12,19 +12,15 @@ set -euo pipefail
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-readonly APT_HISTORY_GLOB="/var/log/apt/history.log*"
-readonly DPKG_LOG="/var/log/dpkg.log"
-readonly EXECUTION_LOG="${BASE_DIR}/patch_execution_log.json"
-readonly VULN_INVENTORY="${BASE_DIR}/vulnerability_inventory.json"
-readonly WINDOW_SCRIPT="${BASE_DIR}/11-maintenance_window.sh"
 readonly OUTPUT_FILE="${BASE_DIR}/patch_change_log.json"
+readonly VULN_INVENTORY="${BASE_DIR}/vulnerability_inventory.json"
+readonly CVE_FEED="${BASE_DIR}/cve_feed.json"
+readonly WINDOW_SCRIPT="${BASE_DIR}/11-maintenance_window.sh"
+readonly EXECUTION_LOG="${BASE_DIR}/patch_execution_log.json"
+readonly WINDOWS_FILE="${BASE_DIR}/maintenance_windows.json"
 
 log() {
     echo "[*] $*"
-}
-
-info() {
-    echo "    $*"
 }
 
 warn() {
@@ -32,161 +28,15 @@ warn() {
 }
 
 # ============================================
-# PARSE APT HISTORY LOGS
+# CONVERT ISO TIMESTAMP TO EPOCH
 # ============================================
-parse_apt_history() {
-    local temp_file
-    temp_file=$(mktemp)
-
-    # Process all history log files including rotated (.1, .2, etc.)
-    for hist_file in $APT_HISTORY_GLOB; do
-        [[ ! -f "$hist_file" ]] && continue
-
-        # Decompress .gz files
-        if [[ "$hist_file" == *.gz ]]; then
-            zcat "$hist_file" 2>/dev/null
-        else
-            cat "$hist_file" 2>/dev/null
-        fi
-    done | awk '
-    BEGIN {
-        in_transaction = 0
-        start_date = ""
-        commandline = ""
-        requested_by = ""
-        upgrades = ""
-        installs = ""
-        removes = ""
-    }
-
-    /^Start-Date:/ {
-        if (in_transaction == 1) {
-            print start_date "\t" commandline "\t" requested_by "\t" upgrades "\t" installs "\t" removes
-        }
-        in_transaction = 1
-        start_date = substr($0, 13)
-        gsub(/^[ \t]+/, "", start_date)
-        commandline = ""
-        requested_by = ""
-        upgrades = ""
-        installs = ""
-        removes = ""
-        next
-    }
-
-    /^Commandline:/ {
-        commandline = substr($0, 13)
-        gsub(/^[ \t]+/, "", commandline)
-        next
-    }
-
-    /^Requested-By:/ {
-        requested_by = substr($0, 15)
-        gsub(/^[ \t]+/, "", requested_by)
-        next
-    }
-
-    /^Upgrade:/ {
-        upgrades = substr($0, 10)
-        gsub(/^[ \t]+/, "", upgrades)
-        next
-    }
-
-    /^Install:/ {
-        installs = substr($0, 10)
-        gsub(/^[ \t]+/, "", installs)
-        next
-    }
-
-    /^Remove:/ {
-        removes = substr($0, 9)
-        gsub(/^[ \t]+/, "", removes)
-        next
-    }
-
-    /^End-Date:/ {
-        if (in_transaction == 1) {
-            print start_date "\t" commandline "\t" requested_by "\t" upgrades "\t" installs "\t" removes
-        }
-        in_transaction = 0
-        next
-    }
-    ' >> "$temp_file"
-
-    echo "$temp_file"
-}
-
-# ============================================
-# CONVERT TIMESTAMP TO ISO 8601
-# ============================================
-normalize_timestamp() {
-    local raw="$1"
-    # apt history uses: 2026-03-28  02:03:12
-    local cleaned
-    cleaned=$(echo "$raw" | sed 's/  */ /g' | xargs)
-    date -d "$cleaned" -Iseconds 2>/dev/null || echo "$raw"
-}
-
-# Convert to epoch seconds for grouping
 to_epoch() {
-    local iso_ts="$1"
-    date -d "$iso_ts" '+%s' 2>/dev/null || echo 0
+    local ts="$1"
+    date -d "$ts" '+%s' 2>/dev/null || echo 0
 }
 
 # ============================================
-# EXTRACT USER FROM REQUESTED-BY FIELD
-# ============================================
-extract_user() {
-    local requested_by="$1"
-
-    if [[ -z "$requested_by" ]]; then
-        echo "system"
-        return
-    fi
-
-    # Format is typically: "user (uid)" or just "user"
-    local user
-    user=$(echo "$requested_by" | sed 's/ (.*//' | sed 's/^[ \t]*//')
-    [[ -z "$user" ]] && user="system"
-    echo "$user"
-}
-
-# ============================================
-# COUNT PACKAGES IN A TRANSACTION
-# ============================================
-count_packages() {
-    local upgrades="$1"
-    local installs="$2"
-    local removes="$3"
-    local count=0
-
-    # Count entries in each field (comma-separated within parentheses)
-    if [[ -n "$upgrades" ]] && [[ "$upgrades" != "" ]]; then
-        local u
-        u=$(echo "$upgrades" | grep -oE '\([^)]*\)' | wc -l || true)
-        [[ -z "$u" ]] && u=0
-        count=$((count + u))
-    fi
-
-    if [[ -n "$installs" ]] && [[ "$installs" != "" ]]; then
-        local i
-        i=$(echo "$installs" | grep -oE '\([^)]*\)' | wc -l || true)
-        [[ -z "$i" ]] && i=0
-        count=$((count + i))
-    fi
-
-    if [[ -n "$removes" ]] && [[ "$removes" != "" ]]; then
-        local r
-        r=$(echo "$removes" | grep -oE '\([^)]*\)' | wc -l || true)
-        [[ -z "$r" ]] && r=0
-        count=$((count + r))
-    fi
-
-    echo "$count"
-}
-
-# ============================================
-# EXTRACT PACKAGE NAMES FROM TRANSACTION FIELDS
+# EXTRACT PACKAGE NAMES FROM APT HISTORY FIELD
 # ============================================
 extract_package_names() {
     local field="$1"
@@ -196,7 +46,6 @@ extract_package_names() {
         return
     fi
 
-    # apt history format: "pkgname:arch (oldver, newver), pkgname2:arch (oldver, newver)"
     # Split by "), " then strip everything from "(" onwards, then strip ":arch" suffix
     echo "$field" | sed 's/), /\n/g' | sed 's/(.*//' | sed 's/:.*//' | sed 's/^[ \t]*//;s/[ \t]*$//' | grep -v '^$' | sort -u
 }
@@ -207,37 +56,21 @@ extract_package_names() {
 check_maintenance_window() {
     local iso_ts="$1"
 
-    # Reference to 11-maintenance_window.sh --report for documentation
-    # Note: The window script evaluates current system time. For historical
-    # events we use inline evaluation using the event timestamp components.
     if [[ -x "$WINDOW_SCRIPT" ]] || [[ -f "$WINDOW_SCRIPT" ]]; then
-        # Could call: $WINDOW_SCRIPT --report (but it checks current time, not historical)
         :
     fi
 
-    local event_epoch event_day event_hour event_minute
+    local event_epoch
     event_epoch=$(to_epoch "$iso_ts")
 
-    local event_date
-    event_date=$(date -d "@$event_epoch" '+%Y-%m-%d' 2>/dev/null || echo "")
-    local event_day_num
-    event_day_num=$(date -d "@$event_epoch" '+%u' 2>/dev/null || echo "0")
-    event_hour=$(date -d "@$event_epoch" '+%H' 2>/dev/null | sed 's/^0//' || echo "0")
-    event_minute=$(date -d "@$event_epoch" '+%M' 2>/dev/null | sed 's/^0//' || echo "0")
-
-    [[ -z "$event_hour" ]] && event_hour=0
-    [[ -z "$event_minute" ]] && event_minute=0
-
-    local windows_file="${BASE_DIR}/maintenance_windows.json"
-    if [[ ! -f "$windows_file" ]]; then
+    if [[ ! -f "$WINDOWS_FILE" ]]; then
         echo "unknown"
         return
     fi
 
     local tz
-    tz=$(jq -r '.timezone // "UTC"' "$windows_file" 2>/dev/null)
+    tz=$(jq -r '.timezone // "UTC"' "$WINDOWS_FILE" 2>/dev/null)
 
-    # Evaluate in the configured timezone
     local tz_day_num tz_hour tz_minute
     tz_day_num=$(TZ="$tz" date -d "@$event_epoch" '+%u' 2>/dev/null || echo "0")
     tz_hour=$(TZ="$tz" date -d "@$event_epoch" '+%H' 2>/dev/null | sed 's/^0//' || echo "0")
@@ -261,7 +94,6 @@ check_maintenance_window() {
             continue
         fi
 
-        # Check day match
         local days_json
         days_json=$(echo "$window" | jq -r '.days // []')
         local day_match=false
@@ -283,7 +115,6 @@ check_maintenance_window() {
             continue
         fi
 
-        # Check week_of_month if specified
         local week_of_month
         week_of_month=$(echo "$window" | jq -r '.week_of_month // empty')
         if [[ -n "$week_of_month" ]]; then
@@ -296,7 +127,6 @@ check_maintenance_window() {
             fi
         fi
 
-        # Check time window
         local start_time end_time
         start_time=$(echo "$window" | jq -r '.start // "00:00"')
         end_time=$(echo "$window" | jq -r '.end // "23:59"')
@@ -322,7 +152,7 @@ check_maintenance_window() {
             break
         fi
 
-    done < <(jq -c '.windows[]' "$windows_file" 2>/dev/null)
+    done < <(jq -c '.windows[]' "$WINDOWS_FILE" 2>/dev/null)
 
     if [[ "$result" == "outside" ]] && [[ "$emergency_only" == "true" ]]; then
         result="emergency_only"
@@ -332,157 +162,220 @@ check_maintenance_window() {
 }
 
 # ============================================
-# CHECK LINKED EXECUTION LOG
+# CHECK FOR LINKED EXECUTION LOG
 # ============================================
 check_linked_execution_log() {
-    local event_epoch="$1"
-    local event_end_epoch="$2"
+    local start_epoch="$1"
+    local end_epoch="$2"
 
     if [[ ! -f "$EXECUTION_LOG" ]]; then
         echo ""
         return
     fi
 
-    # Check if any entry in the execution log has a timestamp within 15 min of the event
-    local has_match
-    has_match=$(jq -r '
-        .entries[]? |
-        .timestamp // .executed_at // .start_time // empty
+    local linked
+    linked=$(jq -r --argjson start "$start_epoch" --argjson end "$end_epoch" '
+        .executions[]? |
+        select(
+            ((.started | todate | fromdate) >= $start and (.started | todate | fromdate) <= $end)
+        ) |
+        .log_file // .id // empty
     ' "$EXECUTION_LOG" 2>/dev/null | head -1 || echo "")
 
-    if [[ -z "$has_match" ]]; then
-        # If we can not parse timestamps, just link if file exists
-        echo "$EXECUTION_LOG"
-        return
-    fi
+    echo "$linked"
+}
 
-    # Try to match timestamps
-    local log_epoch
-    while IFS= read -r ts; do
-        [[ -z "$ts" ]] && continue
-        log_epoch=$(date -d "$ts" '+%s' 2>/dev/null || echo 0)
-        if [[ "$log_epoch" -gt 0 ]]; then
-            local diff=$((log_epoch - event_epoch))
-            if [[ ${diff#-} -le 900 ]]; then
-                echo "$EXECUTION_LOG"
-                return
+# ============================================
+# PARSE APT HISTORY LOG ENTRIES
+# ============================================
+parse_apt_history() {
+    local temp_file
+    temp_file=$(mktemp)
+
+    local hist_files=()
+    if [[ -f /var/log/apt/history.log ]]; then
+        hist_files+=(/var/log/apt/history.log)
+    fi
+    while IFS= read -r f; do
+        [[ -z "$f" ]] && continue
+        hist_files+=("$f")
+    done < <(ls /var/log/apt/history.log.* 2>/dev/null | sort -r || true)
+
+    for hist_file in "${hist_files[@]:-}"; do
+        [[ -z "$hist_file" ]] && continue
+        [[ ! -f "$hist_file" ]] && continue
+
+        local cat_cmd="cat"
+        if [[ "$hist_file" == *.gz ]]; then
+            cat_cmd="zcat"
+        fi
+
+        local content
+        content=$($cat_cmd "$hist_file" 2>/dev/null || true)
+
+        local in_record=false
+        local start_date=""
+        local end_date=""
+        local cmd=""
+        local user="root"
+        local tx_count=0
+        local upgrades=""
+        local installs=""
+
+        while IFS= read -r line; do
+            case "$line" in
+                Start-Date:*)
+                    if [[ "$in_record" == "true" ]] && [[ -n "$start_date" ]]; then
+                        local epoch_start epoch_end
+                        epoch_start=$(to_epoch "$start_date")
+                        epoch_end=$(to_epoch "$end_date")
+
+                        local pkg_names="$upgrades"
+                        if [[ -n "$installs" ]]; then
+                            if [[ -n "$pkg_names" ]]; then
+                                pkg_names="${pkg_names},${installs}"
+                            else
+                                pkg_names="$installs"
+                            fi
+                        fi
+
+                        if [[ "$tx_count" -gt 0 ]]; then
+                            printf '%s\t%s\t%s\t%s\t%s\n' \
+                                "$epoch_start" "$epoch_end" "$user" "$tx_count" "$pkg_names" >> "$temp_file"
+                        fi
+                    fi
+
+                    in_record=true
+                    start_date=$(echo "$line" | sed 's/^Start-Date: *//')
+                    end_date=""
+                    cmd=""
+                    user="root"
+                    tx_count=0
+                    upgrades=""
+                    installs=""
+                    ;;
+                End-Date:*)
+                    end_date=$(echo "$line" | sed 's/^End-Date: *//')
+                    ;;
+                Commandline:*)
+                    cmd=$(echo "$line" | sed 's/^Commandline: *//')
+                    ;;
+                Requested-By:*)
+                    user=$(echo "$line" | sed 's/^Requested-By: *//' | sed 's/ *$//' | tr -d '(')
+                    ;;
+                Upgrade:*|Install:*|Remove:*)
+                    tx_count=$((tx_count + 1))
+                    local pkg_line
+                    pkg_line=$(echo "$line" | sed 's/^[^:]*: *//')
+
+                    if [[ "$line" == Upgrade:* ]]; then
+                        if [[ -n "$upgrades" ]]; then
+                            upgrades="${upgrades},${pkg_line}"
+                        else
+                            upgrades="$pkg_line"
+                        fi
+                    elif [[ "$line" == Install:* ]]; then
+                        if [[ -n "$installs" ]]; then
+                            installs="${installs},${pkg_line}"
+                        else
+                            installs="$pkg_line"
+                        fi
+                    fi
+                    ;;
+            esac
+        done <<< "$content"
+
+        # Save final record
+        if [[ "$in_record" == "true" ]] && [[ -n "$start_date" ]]; then
+            local epoch_start epoch_end
+            epoch_start=$(to_epoch "$start_date")
+            epoch_end=$(to_epoch "$end_date")
+
+            local pkg_names="$upgrades"
+            if [[ -n "$installs" ]]; then
+                if [[ -n "$pkg_names" ]]; then
+                    pkg_names="${pkg_names},${installs}"
+                else
+                    pkg_names="$installs"
+                fi
+            fi
+
+            if [[ "$tx_count" -gt 0 ]]; then
+                printf '%s\t%s\t%s\t%s\t%s\n' \
+                    "$epoch_start" "$epoch_end" "$user" "$tx_count" "$pkg_names" >> "$temp_file"
             fi
         fi
-    done < <(jq -r '.entries[]? | .timestamp // .executed_at // .start_time // empty' "$EXECUTION_LOG" 2>/dev/null)
+    done
 
-    echo ""
+    echo "$temp_file"
 }
 
 # ============================================
-# CROSS-REFERENCE CVEs RESOLVED
-# ============================================
-get_cves_resolved() {
-    local package_names="$1"
-
-    if [[ ! -f "$VULN_INVENTORY" ]]; then
-        echo "[]"
-        return
-    fi
-
-    local cves_json='[]'
-
-    while IFS= read -r pkg; do
-        [[ -z "$pkg" ]] && continue
-
-        # Look up CVEs for this package in the vulnerability inventory
-        local pkg_cves
-        pkg_cves=$(jq -c --arg p "$pkg" '
-            [.vulnerabilities[]? | select(.package == $p) | .cve // empty] | unique
-        ' "$VULN_INVENTORY" 2>/dev/null || echo '[]')
-
-        if [[ "$pkg_cves" != "[]" ]] && [[ -n "$pkg_cves" ]]; then
-            cves_json=$(echo "$cves_json" | jq ". + $pkg_cves" 2>/dev/null || echo "$cves_json")
-        fi
-
-    done <<< "$package_names"
-
-    # Deduplicate
-    cves_json=$(echo "$cves_json" | jq 'unique' 2>/dev/null || echo '[]')
-
-    echo "$cves_json"
-}
-
-# ============================================
-# GROUP TRANSACTIONS INTO CHANGE EVENTS
+# GROUP TRANSACTIONS INTO EVENTS
 # ============================================
 group_into_events() {
     local parsed_file="$1"
+    local events_file
+    events_file=$(mktemp)
 
-    local events_temp
-    events_temp=$(mktemp)
-
-    local prev_epoch=0
-    local current_event_start=""
-    local current_event_end_epoch=0
-    local current_user=""
-    local current_tx_count=0
-    local current_packages=""
-
-    while IFS=$'\t' read -r start_date cmdline req_by upgrades installs removes; do
-        local iso_ts
-        iso_ts=$(normalize_timestamp "$start_date")
-        local epoch
-        epoch=$(to_epoch "$iso_ts")
-
-        if [[ "$epoch" -eq 0 ]]; then
-            continue
-        fi
-
-        # Grouping: if within 15 minutes (900 sec) of previous transaction, same event
-        local diff=$((epoch - prev_epoch))
-        if [[ $diff -le 900 ]] && [[ $diff -ge 0 ]] && [[ $prev_epoch -gt 0 ]]; then
-            # Same event — accumulate
-            current_event_end_epoch="$epoch"
-            current_tx_count=$((current_tx_count + 1))
-            # Append package names
-            local pkg_names
-            pkg_names=$(extract_package_names "${upgrades} ${installs}")
-            [[ -n "$pkg_names" ]] && current_packages="${current_packages}"$'\n'"${pkg_names}"
-        else
-            # New event — flush previous if exists
-            if [[ $prev_epoch -gt 0 ]] && [[ -n "$current_event_start" ]]; then
-                local event_user
-                event_user=$(extract_user "$current_user")
-                local start_epoch_val
-                start_epoch_val=$(to_epoch "$current_event_start")
-                # Sort packages unique and join with comma
-                local pkgs_joined
-                pkgs_joined=$(echo "$current_packages" | sort -u | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
-                printf '%s\t%s\t%s\t%s\t%s\n' "$start_epoch_val" "$current_event_end_epoch" "$event_user" "$current_tx_count" "$pkgs_joined" >> "$events_temp"
-            fi
-
-            # Start new event
-            current_event_start="$iso_ts"
-            current_event_end_epoch="$epoch"
-            current_user="$req_by"
-            current_tx_count=1
-            current_packages=$(extract_package_names "${upgrades}${installs}")
-        fi
-
-        prev_epoch="$epoch"
-    done < <(sort -t$'\t' -k1,1 "$parsed_file")
-
-    # Flush last event
-    if [[ $prev_epoch -gt 0 ]] && [[ -n "$current_event_start" ]]; then
-        local event_user
-        event_user=$(extract_user "$current_user")
-        local start_epoch_val
-        start_epoch_val=$(to_epoch "$current_event_start")
-        local pkgs_joined
-        pkgs_joined=$(echo "$current_packages" | sort -u | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
-        printf '%s\t%s\t%s\t%s\t%s\n' "$start_epoch_val" "$current_event_end_epoch" "$event_user" "$current_tx_count" "$pkgs_joined" >> "$events_temp"
+    if [[ ! -s "$parsed_file" ]]; then
+        echo "$events_file"
+        return
     fi
 
-    echo "$events_temp"
+    # Sort by start timestamp, then group transactions within 15 minutes
+    sort -t$'\t' -k1,1n "$parsed_file" | awk -F'\t' '
+    BEGIN {
+        OFS="\t"
+        event_start=0
+        event_end=0
+        event_user=""
+        tx_count=0
+        all_upgrades=""
+        first=1
+    }
+    {
+        curr_start=$1
+        curr_end=$2
+        curr_user=$3
+        curr_tx=$4
+        curr_packages=$5
+
+        if (first) {
+            event_start=curr_start
+            event_end=curr_end
+            event_user=curr_user
+            tx_count=curr_tx
+            all_packages=curr_packages
+            first=0
+        } else if ((curr_start - event_end) <= 900) {
+            if (curr_end > event_end) event_end=curr_end
+            tx_count += curr_tx
+            if (curr_packages != "") {
+                if (all_packages != "") all_packages=all_packages "," curr_packages
+                else all_packages=curr_packages
+            }
+        } else {
+            print event_start, event_end, event_user, tx_count, all_packages
+            event_start=curr_start
+            event_end=curr_end
+            event_user=curr_user
+            tx_count=curr_tx
+            all_packages=curr_packages
+        }
+    }
+    END {
+        if (!first) {
+            print event_start, event_end, event_user, tx_count, all_packages
+        }
+    }
+    ' > "$events_file" 2>/dev/null
+
+    echo "$events_file"
 }
 
 # ============================================
-# BUILD EVENTS JSON
+# BUILD EVENTS JSON WITH ENRICHMENT
 # ============================================
 build_events_json() {
     local events_file="$1"
@@ -497,46 +390,39 @@ build_events_json() {
 
     while IFS=$'\t' read -r start_epoch end_epoch user tx_count packages; do
         [[ -z "$start_epoch" ]] && continue
+        [[ "$start_epoch" == "0" ]] && continue
 
         local iso_start iso_end
         iso_start=$(date -d "@$start_epoch" -Iseconds 2>/dev/null || echo "")
         iso_end=$(date -d "@$end_epoch" -Iseconds 2>/dev/null || echo "")
 
-        # Check maintenance window
         local within_window
         within_window=$(check_maintenance_window "$iso_start")
 
-        # Map to inside/outside for summary
         local window_label="outside"
         if [[ "$within_window" == "inside" ]]; then
             window_label="inside"
         fi
 
-        # Check linked execution log
         local linked_log
         linked_log=$(check_linked_execution_log "$start_epoch" "$end_epoch")
 
-                # Get CVEs resolved from packages list - querying .packages (not .vulnerable_packages)
         local cves_resolved='[]'
         local cves_count=0
 
-        if [[ -f "$VULN_INVENTORY" ]] && [[ -n "$packages" ]]; then
-            # Create temp file with normalized package names (strip :arch suffix)
+        if [[ -n "$packages" ]]; then
             local pkg_list_temp
             pkg_list_temp=$(mktemp)
             echo "$packages" | tr ',' '\n' | sed 's/^[ \t]*//;s/[ \t]*$//' | sed 's/:.*$//' | grep -v '^$' | sort -u > "$pkg_list_temp"
 
             log "  Searching CVEs for: $(cat "$pkg_list_temp" | tr '\n' ' ')" >&2
 
-            # Query vulnerability inventory for matching CVEs
-            # Note: Uses .packages[], not .vulnerable_packages (which is just a count)
             local all_cves_temp
             all_cves_temp=$(mktemp)
 
             while IFS= read -r search_pkg; do
                 [[ -z "$search_pkg" ]] && continue
 
-                # Query .packages array for CVEs matching this package name
                 local found_cves
                 found_cves=$(jq -r --arg p "$search_pkg" '
                     [.packages[]? |
@@ -547,9 +433,22 @@ build_events_json() {
                 if [[ -n "$found_cves" ]]; then
                     echo "$found_cves" >> "$all_cves_temp"
                 fi
+
+                local feed_cves
+                if [[ -f "$CVE_FEED" ]]; then
+                    feed_cves=$(jq -r --arg p "$search_pkg" '
+                        .cves | to_entries[] |
+                        select(any(.value.affected_packages[]?; . == $p or (split(":")[0]) == $p)) |
+                        .key
+                    ' "$CVE_FEED" 2>/dev/null || echo "")
+                fi
+
+                if [[ -n "$feed_cves" ]]; then
+                    echo "$feed_cves" >> "$all_cves_temp"
+                fi
+
             done < "$pkg_list_temp"
 
-            # Deduplicate and format as JSON array
             if [[ -s "$all_cves_temp" ]]; then
                 cves_resolved=$(sort -u "$all_cves_temp" | jq -R -s 'split("\n") | map(select(length > 0))' 2>/dev/null || echo '[]')
             else
@@ -558,7 +457,6 @@ build_events_json() {
 
             rm -f "$pkg_list_temp" "$all_cves_temp"
 
-            # Ensure valid JSON
             if ! echo "$cves_resolved" | jq empty 2>/dev/null; then
                 cves_resolved='[]'
             fi
@@ -567,7 +465,6 @@ build_events_json() {
             log "  Found ${cves_count} unique CVEs" >&2
         fi
 
-        # Build event JSON (compact, single line)
         jq -nc \
             --arg started "$iso_start" \
             --arg ended "$iso_end" \
@@ -590,7 +487,6 @@ build_events_json() {
 
     done < "$events_file"
 
-    # Read all event lines and build array
     if [[ -s "$events_temp" ]]; then
         jq -s '.' "$events_temp" 2>/dev/null || echo '[]'
     else
@@ -606,92 +502,78 @@ build_events_json() {
 main() {
     log "Building change log from apt history logs..."
 
-    # ============================================
-    # STEP 1: Parse apt history logs
-    # ============================================
     log "Parsing /var/log/apt/history.log*..."
     local parsed_file
     parsed_file=$(parse_apt_history)
 
-    local tx_count
-    tx_count=$(grep -c . "$parsed_file" 2>/dev/null || true)
-    [[ -z "$tx_count" ]] && tx_count=0
+    local tx_count=0
+    if [[ -s "$parsed_file" ]]; then
+        tx_count=$(wc -l < "$parsed_file")
+    fi
     log "Parsed ${tx_count} transactions"
 
-    # ============================================
-    # STEP 2: Group into change events
-    # ============================================
     log "Grouping transactions into events (15-min proximity)..."
     local events_file
     events_file=$(group_into_events "$parsed_file")
 
-    local event_count
-    event_count=0
+    local event_count=0
     if [[ -s "$events_file" ]]; then
-        event_count=$(grep -c . "$events_file" 2>/dev/null || true)
-        [[ -z "$event_count" ]] && event_count=0
+        event_count=$(wc -l < "$events_file")
     fi
     log "Found ${event_count} change events"
 
-    # ============================================
-    # STEP 3: Build enriched events JSON
-    # ============================================
     log "Enriching events with window, execution log, and CVE data..."
     local events_json
     events_json=$(build_events_json "$events_file")
 
-    # ============================================
-    # STEP 4: Compute period and summary
-    # ============================================
-    local period_start="null"
-    local period_end="null"
-    local total_events=0
-    local inside_window=0
-    local outside_window=0
-    local cves_resolved_total=0
+    local inside_count outside_count total_cves
+    inside_count=$(echo "$events_json" | jq '[.[] | select(.within_window == "inside")] | length' 2>/dev/null || echo 0)
+    outside_count=$(echo "$events_json" | jq '[.[] | select(.within_window == "outside")] | length' 2>/dev/null || echo 0)
+    total_cves=$(echo "$events_json" | jq '[.[]?.cves_resolved[]?] | unique | length' 2>/dev/null || echo 0)
 
-    total_events=$(echo "$events_json" | jq 'length' 2>/dev/null || echo 0)
+    local generated_at
+    generated_at=$(date -u -Iseconds 2>/dev/null || date '+%Y-%m-%dT%H:%M:%SZ')
 
-    if [[ "$total_events" -gt 0 ]]; then
-        period_start=$(echo "$events_json" | jq -r '.[0].started' 2>/dev/null || echo "null")
-        period_end=$(echo "$events_json" | jq -r '.[-1].ended // .[-1].started' 2>/dev/null || echo "null")
-        inside_window=$(echo "$events_json" | jq '[.[] | select(.within_window == "inside")] | length' 2>/dev/null || echo 0)
-        outside_window=$(echo "$events_json" | jq '[.[] | select(.within_window == "outside")] | length' 2>/dev/null || echo 0)
-        cves_resolved_total=$(echo "$events_json" | jq '[.[].cves_resolved[]?] | unique | length' 2>/dev/null || echo 0)
-    fi
+    local hostname_val
+    hostname_val=$(hostname 2>/dev/null || echo "unknown")
 
-    # ============================================
-    # STEP 5: Emit patch_change_log.json
-    # ============================================
-    local events_input
-    events_input=$(echo "$events_json")
-
-    echo "$events_input" | jq \
-        --arg period_start "$period_start" \
-        --arg period_end "$period_end" \
-        --argjson total "$total_events" \
-        --argjson inside "$inside_window" \
-        --argjson outside "$outside_window" \
-        --argjson cves "$cves_resolved_total" \
+        jq -n \
+        --arg generated_at "$started_at" \
+        --arg hostname "$hostname_val" \
+        --arg kernel "$kernel_val" \
+        --argjson resolved "$resolved_count" \
+        --argjson open "$open_count" \
+        --argjson deferred_held "$deferred_held_count" \
+        --argjson deferred_window "$deferred_window_count" \
+        --arg score "$score" \
+        --arg target_score "$target_score" \
+        --argjson overdue "$overdue_count" \
+        --argjson total "$total_cves" \
+        --slurpfile cves "$cves_temp" \
         '{
-            period_start: (if $period_start == "null" then null else $period_start end),
-            period_end: (if $period_end == "null" then null else $period_end end),
-            events: .,
+            generated_at: $generated_at,
+            hostname: $hostname,
+            kernel: $kernel,
             summary: {
-                total_events: $total,
-                inside_window: $inside,
-                outside_window: $outside,
-                cves_resolved: $cves
-            }
+                resolved: $resolved,
+                open: $open,
+                deferred_held: $deferred_held,
+                deferred_window: $deferred_window,
+                total: $total,
+                score: ($score | tonumber),
+                target_score: ($target_score | tonumber),
+                overdue: $overdue
+            },
+            cves: $cves
         }' > "$OUTPUT_FILE"
 
     rm -f "$parsed_file" "$events_file"
 
     log "Change log saved to: $OUTPUT_FILE"
-    log "  Total events:    ${total_events}"
-    log "  Inside window:   ${inside_window}"
-    log "  Outside window:  ${outside_window}"
-    log "  CVEs resolved:   ${cves_resolved_total}"
+    log "  Total events:    ${event_count}"
+    log "  Inside window:   ${inside_count}"
+    log "  Outside window:  ${outside_count}"
+    log "  CVEs resolved:   ${total_cves}"
 }
 
 main "$@"

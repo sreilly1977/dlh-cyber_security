@@ -808,4 +808,47 @@ Report saved to: pipeline_test_results.json
 
 ---
 
-# 
+# [15. The Patch Compliance Artifact](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x03_patch_equation/15-compliance_report.sh)
+
+## Goal: 
+
+Generate the compliance artifact that proves, at a specific moment, which CVEs affect the host, which have been resolved, which are deferred with justification and which require the next maintenance window.
+
+## Context: 
+
+The pipeline runs. The logs accumulate. But a compliance artifact is the single JSON document you can hand to an auditor, a regulator or Dr. Morales that answers the question "where are we, right now, with respect to every known CVE on this host". It is not a report in prose. It is a machine-readable statement of the current posture.
+
+## Instructions: 
+
+Write a script 15-compliance_report.sh that generates a patch compliance artifact. The script must:
+
+    Read vulnerability_inventory.json, patch_change_log.json, hold_management.json and pipeline_run.json
+
+    For every CVE ever present in vulnerability_inventory.json history (current run and any previous rotated copies under ./history/): determine its current state (resolved, open, deferred_held, deferred_window)
+
+    Compute a compliance score: resolved_critical_high / total_critical_high for the host (percentage, two decimals)
+
+    Identify overdue items: any open CVE classified critical or high that has been open for more than 7 days (use patch_change_log.json for the clock)
+
+    Emit patch_compliance.json with: generated_at, hostname, kernel, summary (counts by state, score, target_score 95.00, overdue count), cves (array of per-CVE objects with id, package, severity, state, first_seen, resolved_at, justification)
+
+    Exit 0 if compliance score meets or exceeds the target, 1 otherwise
+
+**Expected Output:**
+
+```bash
+$ ./15-compliance_report.sh
+
+$ cat patch_compliance.json
+{
+  "resolved": 6,
+  "open": 1,
+  "deferred_held": 1,
+  "deferred_window": 1,
+  "score": 87.50,
+  "target_score": 95.00,
+  "overdue": 1
+}
+```
+
+---

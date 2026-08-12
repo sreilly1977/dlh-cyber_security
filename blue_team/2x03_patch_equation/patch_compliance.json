@@ -1,0 +1,317 @@
+{
+  "generated_at": "2026-08-12T07:56:07+00:00",
+  "hostname": "billing-srv-01",
+  "kernel": "5.15.0-187-generic",
+  "summary": {
+    "resolved": 28,
+    "open": 2,
+    "deferred_held": 0,
+    "deferred_window": 0,
+    "total": 30,
+    "score": 92.59,
+    "target_score": 95,
+    "overdue": 0
+  },
+  "cves": [
+    {
+      "id": "CVE-2022-3216",
+      "package": "gnupg",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2022-48303",
+      "package": "tar",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-2650",
+      "package": "libxml2",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-29491",
+      "package": "perl",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-39615",
+      "package": "xz-utils",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-4807",
+      "package": "libexpat1",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-4809",
+      "package": "libssl3",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-4863",
+      "package": "libwebp7",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-4911",
+      "package": "libc6",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-50386",
+      "package": "bind9",
+      "severity": "high",
+      "state": "open",
+      "first_seen": null,
+      "resolved_at": null,
+      "justification": "Open vulnerability awaiting remediation",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-5363",
+      "package": "libssl3",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-6546",
+      "package": "linux-image-generic",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T12:36:34+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2023-6597",
+      "package": "libpython3.10",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-0565",
+      "package": "linux-image-generic",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T12:36:34+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-0727",
+      "package": "libssl3",
+      "severity": "medium",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-1086",
+      "package": "linux-image-generic",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T12:36:34+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-20952",
+      "package": "mysql-server",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-21096",
+      "package": "mysql-client",
+      "severity": "medium",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-2398",
+      "package": "curl",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-2399",
+      "package": "libcurl4",
+      "severity": "medium",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-25062",
+      "package": "libxml2",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-2511",
+      "package": "libssl3",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-28182",
+      "package": "libxml2",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-3094",
+      "package": "liblzma5",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-34159",
+      "package": "golang-1.18",
+      "severity": "high",
+      "state": "open",
+      "first_seen": null,
+      "resolved_at": null,
+      "justification": "Open vulnerability awaiting remediation",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-38475",
+      "package": "apache2",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-38476",
+      "package": "apache2",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-38477",
+      "package": "apache2",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2026-04-14T15:06:08+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-5535",
+      "package": "libxml2",
+      "severity": "critical",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    },
+    {
+      "id": "CVE-2024-6387",
+      "package": "openssh-client",
+      "severity": "high",
+      "state": "resolved",
+      "first_seen": null,
+      "resolved_at": "2024-09-11T14:21:54+02:00",
+      "justification": "Resolved by package upgrade during patch run",
+      "overdue": false
+    }
+  ]
+}
