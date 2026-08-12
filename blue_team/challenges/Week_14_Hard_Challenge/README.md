@@ -405,11 +405,36 @@ rateL
 **Expected output (Method 3):**
 
 ```bash
+winhttp.pdb
 beacon.dll
-beacon.x64.dll
 Could not connect to pipe (%s): %d
+Could not connect to pipe: %d
+could not connect to pipe: %d
+could not connect to pipe
+Maximum links reached. Disconnect one
 IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/')
+IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/'); %s
 HTTP/1.1 200 OK
+DisconnectNamedPipe
+ConnectNamedPipe
+InternetConnectA
+HttpOpenRequestA
+HttpAddRequestHeadersA
+HttpSendRequestA
+HttpQueryInfoA
+beacon.x64.dll
+LOGONSERVER=\\DESKTOP-TIT3D2T
+beacon.dll
+Could not connect to pipe (%s): %d
+Could not connect to pipe: %d
+could not connect to pipe: %d
+could not connect to pipe
+Maximum links reached. Disconnect one
+IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/')
+IEX (New-Object Net.Webclient).DownloadString('http://127.0.0.1:%u/'); %s
+HTTP/1.1 200 OK
+DisconnectNamedPipe
+ConnectNamedPipe
 ```
 
 **Answer:** Cobalt Strike
