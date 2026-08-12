@@ -36,6 +36,9 @@ warn() {
     echo "[!] $*" >&2
 }
 
+# ============================================
+# RESTORE: restore original cve_feed.json from backup
+# ============================================
 cleanup() {
     # Restore original cve_feed.json if backup exists
     if [[ -f "$CVE_FEED_BAK" ]]; then
