@@ -10,9 +10,9 @@ Cybersecurity defensive operations and blue team study materials. Covers threat 
 
 ### Scenario Modules
 
-The curriculum follows a progressive learning path through eight modules across two series, each building on the previous:
+The curriculum follows a progressive learning path through ten modules across two series, each building on the previous:
 
-#### Series 1 — Foundations (Modules 1–6)
+#### Part 1 — Foundations (Modules 1–6)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
@@ -23,13 +23,14 @@ The curriculum follows a progressive learning path through eight modules across 
 | 5 | [`1x04_crypto_foundation`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Symmetric/asymmetric encryption (AES, RSA, ECC, ChaCha20-Poly1305), hashing, digital signatures, PKI/certificate management, TLS hardening, disk encryption (LUKS), steganography as a threat vector, and key management (TPM/HSM) | 14 |
 | 6 | [`1x05_board_briefing`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive synthesis: Crimson Tide attack chain overlay, control interception mapping, gap analysis, crypto emergency assessment, budget ROI analysis, and technical proficiency demonstration | 6 |
 
-#### Series 2 — Applied Hardening (Modules 7–8)
+#### Part 2 — Applied Hardening (Modules 7–10)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
 | 7 | [`2x00_locking_the_gates`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Linux infrastructure hardening: baseline security snapshots, CIS control profiling, Lynis audit integration, evidence-based remediation queuing, SSH hardening, PAM fortress configuration, auditd deployment, log management (rsyslog), and host firewall baselines | 14 |
 | 8 | [`2x01_windows_fortress`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows endpoint hardening: security posture assessment, domain reconnaissance, GPO deployment for password/lockout policies, advanced audit policy, PowerShell security logging, Kerberos/authentication hardening, Sysmon, AppLocker, Windows Firewall lockdown, RDP security, and service account control | 15 |
-| 9 | [`2x02_eyes_on_endpoint`](2x02_eyes_on_endpoint) | EDR deployment, Sysmon configuration and telemetry validation, ATT&CK coverage matrix, PowerShell logging validation, and auditd rule refinement | TBD exercises | 16 |
+| 9 | [`2x02_eyes_on_endpoint`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | EDR deployment, Sysmon configuration and telemetry validation, ATT&CK coverage matrix, PowerShell logging validation, and auditd rule refinement | 16 |
+| 10 | [`2x03_patch_equation`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x03_patch_equation) | Vulnerability management lifecycle, patch prioritization, deployment strategies, and compliance scanning | 16 |
 
 
 ### Course Materials

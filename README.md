@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Security+ Badge](https://img.shields.io/badge/CompTIA-Security%2B-yellow)
-![Academy Badge](https://img.shields.io/badge/Luxembourg_CS_Academy-blue)
+![Academy Badge](https://img.shields.io/badge/Luxembourg-CS_Academy-blue)
 
 </div>
 
@@ -21,9 +21,9 @@ A comprehensive cybersecurity study repository structured around two primary lea
 
 ## `blue_team/`
 
-Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Twelve modules build practical SOC analyst skills from incident classification through executive briefing.
+Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Ten modules build practical SOC analyst skills from incident classification through executive briefing.
 
-### Part 1 — Scenario Modules
+### Part 1 — Foundations (Modules 1–6)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
@@ -31,17 +31,17 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`1x01_know_your_enemy/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x01_know_your_enemy) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
 | [`1x02_the_weak_links/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x02_the_weak_links) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
 | [`1x03_defense_blueprint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x03_defense_blueprint) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
-| [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | TBD |
-| [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | TBD |
+| [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | 14 |
+| [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | 6 |
 
-### Part 2 — Implementation Modules
+### Part 2 — Applied Hardening (Modules 7–10)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | TBD |
-| [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | TBD |
-| [`2x02_eyes_on_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | Endpoint detection and response, EDR configuration, Sysmon deployment, host-based monitoring | TBD |
-| [`2x03_patch_equation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x03_patch_equation) | Vulnerability management lifecycle, patch prioritization, deployment strategies, compliance scanning | TBD |
+| [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | 14 |
+| [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | 15 |
+| [`2x02_eyes_on_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | Endpoint detection and response, EDR configuration, Sysmon deployment, host-based monitoring | 16 |
+| [`2x03_patch_equation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x03_patch_equation) | Vulnerability management lifecycle, patch prioritization, deployment strategies, compliance scanning | 16 |
 
 ### Reference Libraries
 
