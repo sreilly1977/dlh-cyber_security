@@ -292,7 +292,9 @@ fi
 # ---------------------------------------------------------------
 # Verify the load with nft list ruleset
 # Count rules, chains, and sets to confirm the ruleset loaded correctly
+# Compare loaded rule count against expected total from segmentation_rules.json
 # ---------------------------------------------------------------
+EXPECTED_TOTAL=$(jq '.summary.flow_count' "$SEGMENTATION_FILE")
 echo "Verifying ruleset with nft list ruleset..."
 LOADED_RULESET=$(nft list ruleset 2>/dev/null)
 
@@ -333,6 +335,7 @@ FINAL_JSON=$(jq -n \
     --argjson allow_count "$ALLOW_COUNT" \
     --argjson deny_count "$DENY_COUNT" \
     --argjson zone_count "$ZONE_COUNT" \
+    --argjson expected_total "$EXPECTED_TOTAL" \
     --argjson skipped "$SKIP_APPLY" \
     '{
         timestamp: $ts,
@@ -343,6 +346,7 @@ FINAL_JSON=$(jq -n \
         chains: $chain_count,
         zone_sets: $set_count,
         rules_loaded: $rule_count,
+        expected_total: $expected_total,
         log_prefix_rules: $log_rule_count,
         allow_flows_rendered: $allow_count,
         deny_flows_rendered: $deny_count,
@@ -364,6 +368,7 @@ echo "Table loaded:       $TABLE_PRESENT"
 echo "Chains:             $CHAIN_COUNT"
 echo "Zone sets:          $SET_COUNT"
 echo "Rules loaded:       $RULE_COUNT_LOADED"
+echo "Expected total:     $EXPECTED_TOTAL"
 echo "Log prefix rules:   $LOG_RULE_COUNT"
 echo "Allow flows:        $ALLOW_COUNT"
 echo "Deny flows:         $DENY_COUNT"
