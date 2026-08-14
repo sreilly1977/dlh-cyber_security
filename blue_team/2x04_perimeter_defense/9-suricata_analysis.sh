@@ -10,6 +10,14 @@ set -euo pipefail
 
 # Configuration
 DEFAULT_PCAP="/home/analyst/MedDefense_Lab/PCAPs/mixed_traffic.pcap"
+
+# Accept PCAP path as argument (default: mixed_traffic.pcap)
+if [[ -n "${1:-}" ]]; then
+    PCAP_PATH="$1"
+else
+    PCAP_PATH="$DEFAULT_PCAP"
+fi
+
 PCAP_PATH="${1:-$DEFAULT_PCAP}"
 CONFIG_FILE="./suricata.yaml"
 LAB_DIR="/home/analyst/MedDefense_Lab"
