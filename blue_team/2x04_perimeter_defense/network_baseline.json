@@ -1,0 +1,139 @@
+{
+  "timestamp": "2026-08-14T13:21:18Z",
+  "hostname": "billing-srv-01",
+  "interfaces": [
+    {
+      "name": "lo",
+      "mac": "00:00:00:00:00:00",
+      "state": "UNKNOWN",
+      "addresses": [
+        "127.0.0.1"
+      ]
+    },
+    {
+      "name": "enp0s3",
+      "mac": "08:00:27:f2:02:af",
+      "state": "UP",
+      "addresses": [
+        "192.168.10.9",
+        "fe80::a00:27ff:fef2:2af"
+      ]
+    },
+    {
+      "name": "enp0s8",
+      "mac": "08:00:27:62:95:88",
+      "state": "UP",
+      "addresses": [
+        "10.10.1.10",
+        "10.10.3.1",
+        "fe80::a00:27ff:fe62:9588"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "destination": "default",
+      "gateway": "192.168.10.1",
+      "device": "enp0s3",
+      "protocol": "static",
+      "scope": null,
+      "metric": null
+    },
+    {
+      "destination": "10.10.1.0/24",
+      "gateway": null,
+      "device": "enp0s8",
+      "protocol": "kernel",
+      "scope": "link",
+      "metric": null
+    },
+    {
+      "destination": "10.10.3.0/24",
+      "gateway": null,
+      "device": "enp0s8",
+      "protocol": "kernel",
+      "scope": "link",
+      "metric": null
+    },
+    {
+      "destination": "192.168.10.0/24",
+      "gateway": null,
+      "device": "enp0s3",
+      "protocol": "kernel",
+      "scope": "link",
+      "metric": null
+    }
+  ],
+  "neighbors": [
+    {
+      "ip": "192.168.10.2",
+      "mac": "9c:6b:00:ba:05:04",
+      "state": "REACHABLE"
+    },
+    {
+      "ip": "192.168.10.1",
+      "mac": "3c:37:12:b4:99:ea",
+      "state": "STALE"
+    }
+  ],
+  "listening_sockets": [
+    {
+      "proto": "tcp",
+      "local_addr": "127.0.0.1",
+      "local_port": 33060,
+      "process": "mysqld",
+      "pid": 742
+    },
+    {
+      "proto": "tcp",
+      "local_addr": "0.0.0.0",
+      "local_port": 3306,
+      "process": "mysqld",
+      "pid": 742
+    },
+    {
+      "proto": "tcp",
+      "local_addr": "0.0.0.0",
+      "local_port": 22,
+      "process": "sshd",
+      "pid": 735
+    },
+    {
+      "proto": "tcp",
+      "local_addr": "::",
+      "local_port": 22,
+      "process": "sshd",
+      "pid": 735
+    },
+    {
+      "proto": "tcp",
+      "local_addr": "*",
+      "local_port": 80,
+      "process": "apache2",
+      "pid": null
+    }
+  ],
+  "established_connections": [
+    {
+      "local_addr": "192.168.10.2",
+      "local_port": 49960,
+      "peer_addr": "users",
+      "peer_port": null,
+      "process": "sshd",
+      "pid": null
+    }
+  ],
+  "dns_resolvers": [
+    "192.168.10.1",
+    "8.8.8.8",
+    "1.1.1.1"
+  ],
+  "summary": {
+    "up_interfaces": [
+      "enp0s3",
+      "enp0s8"
+    ],
+    "listeners": 5,
+    "resolved_status": "inactive"
+  }
+}

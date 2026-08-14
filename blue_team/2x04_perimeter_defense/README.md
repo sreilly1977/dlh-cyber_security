@@ -42,7 +42,7 @@ Sarah Park adds one more thing.
 
 ---
 
-# 0. The Network Baseline
+# [0. The Network Baseline]()
 
 ## Goal: 
 
