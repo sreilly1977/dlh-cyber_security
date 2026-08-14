@@ -124,7 +124,7 @@ BLOCK_DOMAIN=$(awk '!/^#/ && !/^[[:space:]]*$/ {print; exit}' "$BLOCKLIST_FILE" 
 BLOCK_DOMAIN=${BLOCK_DOMAIN:-c2.crimson-tide-ops.xyz}
 
 # Use a domain not in either list for upstream validation (pick one clearly outside both)
-UPSTREAM_DOMAIN="example.net"
+UPSTREAM_DOMAIN="ubuntu.com"
 
 # Verify it's not in the blocklist or allowlist
 if grep -q "$UPSTREAM_DOMAIN" "$BLOCKLIST_FILE" 2>/dev/null || grep -q "$UPSTREAM_DOMAIN" "$ALLOWLIST_FILE" 2>/dev/null; then
