@@ -87,4 +87,52 @@ $ cat network_baseline.json
 
 ---
 
+# [1. The Attack Surface Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/1-attack_surface.sh)
+
+## Goal: 
+
+Enumerate every network-reachable service on the endpoint, map each one to its function and criticality and flag the ones that should not be exposed at all.
+
+## Context: 
+
+The baseline tells you which ports are open. It does not tell you which ones should be open. A listener on tcp/3306 is normal on a database server and hostile on a workstation. The attack surface map answers the "should it be here" question, package by package, socket by socket. It is the input to the segmentation design in T2.
+
+## Instructions: 
+
+Write a script 1-attack_surface.sh that classifies every listening socket captured in network_baseline.json and produces a machine-readable attack surface report. The script must:
+
+    Read network_baseline.json from T0 as its primary input
+
+    For each listening socket, resolve the owning binary, the owning package via dpkg -S and the configured service unit via systemctl show when the owner is a systemd service
+
+    Tag each socket with a function label drawn from a provided service_catalog.json (values include database, web, ssh, dns, ntp, rpc, smb, print, telemetry, unknown)
+
+    Tag each socket with a criticality label from a provided service_criticality.json (values: critical, high, medium, low)
+
+    Flag every socket that matches at least one "should not be exposed" rule: bound to 0.0.0.0 on a service tagged database or rpc, or on any socket whose function is telnet, ftp, snmpv1, snmpv2c, rlogin, or nfs v2/v3
+
+    Emit attack_surface.json with generated_at, hostname, sockets (array with proto, port, bind_addr, process, package, function, criticality, exposure_flags) and a summary block counting flagged sockets by severity
+
+Note: unknown functions are allowed in the output but must be counted separately in the summary so that the analyst can triage them later.
+
+**Expected Output:**
+
+```bash
+$ sudo ./1-attack_surface.sh
+
+$ cat attack_surface.json
+{
+  "port": 3306,
+  "process": "mysqld",
+  "exposure_flags": ["bound_0.0.0.0", "database_exposed"]
+}
+{
+  "port": 161,
+  "process": "snmpd",
+  "exposure_flags": ["insecure_protocol_snmpv2c"]
+}
+```
+
+---
+
 # 

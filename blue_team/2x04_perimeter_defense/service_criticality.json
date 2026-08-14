@@ -1,0 +1,18 @@
+{
+  "database": "critical",
+  "web": "high",
+  "ssh": "high",
+  "dns": "medium",
+  "ntp": "low",
+  "rpc": "high",
+  "smb": "high",
+  "print": "low",
+  "telemetry": "medium",
+  "telnet": "low",
+  "ftp": "low",
+  "snmpv1": "low",
+  "snmpv2c": "low",
+  "rlogin": "low",
+  "nfs": "high",
+  "unknown": "medium"
+}
