@@ -10,6 +10,7 @@ set -euo pipefail
 
 # Configuration
 LAB_DIR="/home/analyst/MedDefense_Lab"
+# Rules source: /home/analyst/MedDefense_Lab/suricata/rules
 RULES_SRC="${LAB_DIR}/suricata/rules"
 RULES_DST="/var/lib/suricata/rules"
 SMOKE_PCAP="${LAB_DIR}/PCAPs/smoke.pcap"
