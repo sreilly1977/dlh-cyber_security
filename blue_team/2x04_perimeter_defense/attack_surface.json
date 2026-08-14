@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T14:14:33Z",
+  "generated_at": "2026-08-14T14:17:32Z",
   "hostname": "billing-srv-01",
   "sockets": [
     {
@@ -37,7 +37,10 @@
       "package": "openssh-server",
       "function": "ssh",
       "criticality": "high",
-      "exposure_flags": [],
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "ssh_exposed"
+      ],
       "service_unit": "ssh.service",
       "binary_path": "/usr/sbin/sshd"
     },
@@ -49,7 +52,10 @@
       "package": "openssh-server",
       "function": "ssh",
       "criticality": "high",
-      "exposure_flags": [],
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "ssh_exposed"
+      ],
       "service_unit": "ssh.service",
       "binary_path": "/usr/sbin/sshd"
     },
@@ -71,11 +77,11 @@
   ],
   "summary": {
     "total_sockets": 5,
-    "flagged_sockets": 2,
+    "flagged_sockets": 4,
     "unknown_functions": 0,
     "by_severity": {
       "critical": 1,
-      "high": 1,
+      "high": 3,
       "medium": 0,
       "low": 0
     }
