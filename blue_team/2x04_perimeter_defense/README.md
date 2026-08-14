@@ -394,4 +394,138 @@ $ cat suricata_alerts.json
 
 ---
 
-# 
+# [10. The Custom MedDefense Rules](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/10-rule_validation.sh)
+
+## Goal: 
+
+Write Suricata rules that detect MedDefense-specific threats not covered by the community ruleset and validate that each rule fires against its target capture.
+
+## Context: 
+
+Community rules detect common attack patterns on common infrastructure. They do not know that MedDefense has a medical device VLAN that must never talk to the Internet, that the PACS server on tcp/4242 is a legitimate DICOM endpoint and that a SMB session from a clinical workstation to the server VLAN is expected while the same session from the guest network is an incident. Those constraints belong in custom rules.
+
+## Instructions: 
+
+Write a rule file meddefense.rules containing at least six custom rules and a validation script 10-rule_validation.sh that proves each rule fires against a labeled PCAP. The rules must cover:
+
+    Med device to Internet: any TCP or UDP traffic originating from 10.10.4.0/24 to an address outside $HOME_NET on any port other than udp/123 (NTP)
+
+    Unauthorized SMB from guest: tcp/445 traffic where the source is 10.10.5.0/24 (guest) and the destination is $HOME_NET
+
+    Large outbound from server: a threshold-based rule that fires when a host in 10.10.1.0/24 pushes more than 50 MB of TCP payload to a single external host inside a 300-second window
+
+    DNS tunneling: a dns.query content rule that fires on any DNS query where the leftmost label exceeds 50 characters
+
+    Clinical workstation to database: tcp/3306 traffic from 10.10.2.0/24 that is not destined to the authorized billing database host (use a negated address expression)
+
+    Telnet cleartext to medical device: tcp/23 traffic to 10.10.4.0/24 from any source
+
+Each rule must use a sid in the 9000000 range, a rev:1 and a classtype drawn from the Suricata classification config. The validation script must:
+
+    For each labeled PCAP in /home/analyst/MedDefense_Lab/PCAPs/labels/, run Suricata with meddefense.rules loaded and confirm that the expected rule sid appears in eve.json
+
+    Exit non-zero if any rule failed to fire against its target PCAP
+
+Hint: test each rule against its own PCAP first. A rule that never fires is worse than no rule at all.
+
+**Expected Output:**
+
+```bash
+$ sudo ./10-rule_validation.sh
+[*] Loading meddefense.rules...          6 rules
+[*] Running validation against labeled PCAPs...
+
+sid 9000001 MEDDEV to Internet
+  target: meddev_egress.pcap
+  expected: fire
+  observed: fire (4 hits)                PASS
+
+sid 9000002 Guest to SMB
+  target: guest_smb.pcap
+  expected: fire
+  observed: fire (2 hits)                PASS
+
+sid 9000003 Large Outbound From Server
+  target: large_outbound.pcap
+  expected: fire
+  observed: fire (1 hit)                 PASS
+
+sid 9000004 DNS Tunneling Long Label
+  target: dns_tunnel.pcap
+  expected: fire
+  observed: fire (17 hits)               PASS
+
+sid 9000005 Clinical to Unauthorized DB
+  target: clinical_wrong_db.pcap
+  expected: fire
+  observed: fire (3 hits)                PASS
+
+sid 9000006 Telnet to MEDDEV
+  target: telnet_meddev.pcap
+  expected: fire
+  observed: fire (2 hits)                PASS
+
+Rules:  6
+Passed: 6
+Failed: 0
+```
+
+---
+
+# [11. The PCAP Investigation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/11-pcap_investigation.sh)
+
+## Goal: 
+
+Investigate a suspicious session in a provided PCAP and extract the conversation timeline, protocol breakdown, DNS queries and file transfer indicators as a single structured finding report.
+
+## Context: 
+
+One of the Suricata alerts in T9 pointed at a session between 10.10.1.10 and 185.220.101.42. Alerts are pointers. They do not replace investigation. In this task you do what a Tier 2 analyst does next: open the packet capture, extract the exact conversation, walk the protocol stack and characterize the activity. No alert, no signature, no ruleset. Just bytes.
+
+## Instructions: 
+
+Write a script 11-pcap_investigation.sh that takes a PCAP path and produces a structured investigation report. The script must:
+
+    Accept a PCAP path as argument (default /home/analyst/MedDefense_Lab/PCAPs/suspicious_session.pcap)
+
+    Use tshark to extract, in order:
+
+        Conversation statistics for tcp and udp via tshark -q -z conv,tcp and tshark -q -z conv,udp and parse the top 10 conversations
+
+        DNS queries via tshark -Y dns.flags.response==0 -T fields -e frame.time_epoch -e ip.src -e dns.qry.name -e dns.qry.type
+
+        HTTP requests via tshark -Y http.request -T fields -e frame.time_epoch -e ip.src -e ip.dst -e http.host -e http.request.method -e http.request.uri
+
+        TLS SNI via tshark -Y tls.handshake.type==1 -T fields -e frame.time_epoch -e ip.src -e ip.dst -e tls.handshake.extensions_server_name
+
+        File transfers via tshark -Y "http.content_type or smb2.filename" -T fields -e frame.time_epoch -e ip.src -e ip.dst -e http.file_data -e smb2.filename
+
+        Protocol distribution via tshark -q -z io,phs
+
+    Print a short stdout summary listing the top 5 conversations and any DNS query longer than 50 characters on the leftmost label
+
+Note: keep the script resilient. If a given tshark query returns zero rows, the field must still appear in the JSON as an empty array.
+
+**Expected Output:**
+
+```bash
+$ sudo ./11-pcap_investigation.sh
+[*] PCAP: /home/analyst/MedDefense_Lab/PCAPs/suspicious_session.pcap
+[*] Duration: 482.14 s     Packets: 18,402
+[*] Extracting TCP conversations...      (14)
+[*] Extracting UDP conversations...      (7)
+[*] Extracting DNS queries...            (214)
+[*] Extracting HTTP requests...          (12)
+[*] Extracting TLS SNI...                (8)
+[*] Extracting file transfers...         (4)
+[*] Protocol distribution...             (tcp 78%, udp 20%, icmp 1%, other 1%)
+Top conversations:
+  10.10.1.10 <-> 185.220.101.42  tcp  1,218 pkts  1.4 MB
+  10.10.1.10 <-> 10.10.1.50      tcp    614 pkts  218 KB
+  10.10.1.10 <-> 8.8.8.8         udp    214 pkts   42 KB
+Long DNS labels (> 50 chars):
+  ZG9jdW1lbnQuZXhlLm1kZC5jcmltc29uLXRpZGUtb3BzLnh5eg.c2.example.  (58 chars)
+```
+
+---
+
