@@ -42,7 +42,7 @@ Sarah Park adds one more thing.
 
 ---
 
-# [0. The Network Baseline]()
+# [0. The Network Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/0-network_baseline.sh)
 
 ## Goal: 
 
