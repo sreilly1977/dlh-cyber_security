@@ -149,7 +149,7 @@ Write-Host ("  [{0} removed]" -f $removedCount)
 # For each allow flow that terminates on this host (dst_zone matches
 # local zone), create a New-NetFirewallRule with:
 #   DisplayName: MedDefense-<src_zone>-<proto>-<dport>
-#   Direction: Inbound, Action: Allow
+#   Direction Inbound, Action Allow
 #   Protocol and LocalPort from the flow
 #   RemoteAddress from the source zone CIDR
 #   Profile: Any
