@@ -15,6 +15,7 @@ RULES_FILE="/home/analyst/scripts/perimeter/meddefense.rules"
 PCAPS_DIR="${LAB_DIR}/PCAPs/labels"
 CONFIG_FILE="./suricata.yaml"
 OUTPUT_DIR="/tmp/meddefense-validation-$$"
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Mapping of PCAP to expected SID and description
 declare -A PCAP_SID_MAP
@@ -109,6 +110,26 @@ done
 echo "Rules:  $RULE_COUNT"
 echo "Passed: $PASSED"
 echo "Failed: $FAILED"
+echo "Output: rule_validation.json"
+
+# ---------------------------------------------------------------
+# Emit rule_validation.json with structured results
+# ---------------------------------------------------------------
+VALIDATION_JSON=$(jq -n \
+    --arg ts "$TIMESTAMP" \
+    --argjson rule_count "$RULE_COUNT" \
+    --argjson passed "$PASSED" \
+    --argjson failed "$FAILED" \
+    '{
+        timestamp: $ts,
+        rules_file: "meddefense.rules",
+        rule_count: $rule_count,
+        passed: $passed,
+        failed: $failed,
+        status: (if $failed == 0 then "all_passed" else "failures_detected" end)
+    }')
+
+echo "$VALIDATION_JSON" > "rule_validation.json"
 
 # Cleanup
 rm -rf "$OUTPUT_DIR"
