@@ -18,7 +18,7 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $SegmentationFile = Join-Path $PSScriptRoot "segmentation_rules.json"
-$OutputJson = Join-Path $PSScriptRoot "windows_firewall_evidence.json"
+$OutputJson = Join-Path $PSScriptRoot "windows_firewall_rules.json"
 $LogFileName = "%systemroot%\system32\LogFiles\Firewall\meddefense.log"
 
 # Verify input exists

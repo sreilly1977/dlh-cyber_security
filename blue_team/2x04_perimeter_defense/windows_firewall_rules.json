@@ -1,5 +1,5 @@
 ﻿{
-    "rules_removed":  13,
+    "rules_removed":  6,
     "profile_settings":  [
                              {
                                  "profile":  "Domain",
@@ -23,14 +23,14 @@
                                  "log_filename":  "%systemroot%\\system32\\LogFiles\\Firewall\\meddefense.log"
                              }
                          ],
-    "generated_at":  "2026-08-14T15:54:01Z",
+    "generated_at":  "2026-08-14T16:01:20Z",
     "local_zone":  "MGMT",
     "segmentation_source":  "segmentation_rules.json",
     "summary":  {
                     "deny_flows":  4,
                     "total_flows":  19,
                     "rules_created":  6,
-                    "rules_removed":  13,
+                    "rules_removed":  6,
                     "allow_flows":  15
                 },
     "hostname":  "DC01",
