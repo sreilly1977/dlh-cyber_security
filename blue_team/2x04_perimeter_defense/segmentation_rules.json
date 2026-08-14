@@ -1,0 +1,199 @@
+{
+  "generated_at": "2026-08-14T14:29:24Z",
+  "zones": [
+    {
+      "name": "DMZ",
+      "cidr": "10.10.2.0/24",
+      "purpose": "Public-facing services",
+      "default_inbound": "drop",
+      "default_outbound": "accept"
+    },
+    {
+      "name": "INTERNAL",
+      "cidr": "10.10.1.0/24",
+      "purpose": "Clinical applications and databases",
+      "default_inbound": "drop",
+      "default_outbound": "accept"
+    },
+    {
+      "name": "MGMT",
+      "cidr": "192.168.10.0/24",
+      "purpose": "Administration and management",
+      "default_inbound": "drop",
+      "default_outbound": "accept"
+    },
+    {
+      "name": "MEDDEV",
+      "cidr": "10.10.3.0/24",
+      "purpose": "Medical device VLAN",
+      "default_inbound": "drop",
+      "default_outbound": "accept",
+      "outbound_restrictions": [
+        "no_dmz_access",
+        "no_public_internet_access"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "action": "allow",
+      "src_zone": "MGMT",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 22,
+      "justification": "Administration access to clinical servers"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MGMT",
+      "dst_zone": "DMZ",
+      "proto": "tcp",
+      "dport": 22,
+      "justification": "Administration access to DMZ hosts"
+    },
+    {
+      "action": "allow",
+      "src_zone": "INTERNAL",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 443,
+      "justification": "Clinical workstations to INTERNAL server hosts (HTTPS)"
+    },
+    {
+      "action": "allow",
+      "src_zone": "INTERNAL",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 3306,
+      "justification": "Clinical workstations to INTERNAL database servers"
+    },
+    {
+      "action": "allow",
+      "src_zone": "DMZ",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 3306,
+      "justification": "DMZ application hosts to INTERNAL databases",
+      "exception_for": "dmz_app_hosts_only",
+      "src_restriction": "named_dmz_application_hosts"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MEDDEV",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 4242,
+      "justification": "DICOM imaging to PACS"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MEDDEV",
+      "dst_zone": "INTERNAL",
+      "proto": "tcp",
+      "dport": 443,
+      "justification": "EHR web integration for device display"
+    },
+    {
+      "action": "allow",
+      "src_zone": "DMZ",
+      "dst_zone": "MGMT",
+      "proto": "udp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "DMZ",
+      "dst_zone": "MGMT",
+      "proto": "tcp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "INTERNAL",
+      "dst_zone": "MGMT",
+      "proto": "udp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "INTERNAL",
+      "dst_zone": "MGMT",
+      "proto": "tcp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MEDDEV",
+      "dst_zone": "MGMT",
+      "proto": "udp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MEDDEV",
+      "dst_zone": "MGMT",
+      "proto": "tcp",
+      "dport": 53,
+      "justification": "DNS resolution to MGMT resolver"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MGMT",
+      "dst_zone": "MEDDEV",
+      "proto": "tcp",
+      "dport": 22,
+      "justification": "Administration access to medical devices"
+    },
+    {
+      "action": "allow",
+      "src_zone": "MGMT",
+      "dst_zone": "MEDDEV",
+      "proto": "tcp",
+      "dport": 4242,
+      "justification": "DICOM management to medical devices"
+    },
+    {
+      "action": "deny_all",
+      "src_zone": "DMZ",
+      "dst_zone": "MEDDEV",
+      "proto": "any",
+      "dport": 0,
+      "justification": "No flows from DMZ to MEDDEV (medical device isolation)"
+    },
+    {
+      "action": "deny_all",
+      "src_zone": "INTERNAL",
+      "dst_zone": "DMZ",
+      "proto": "any",
+      "dport": 0,
+      "justification": "No flows from INTERNAL to DMZ (segmentation enforcement)"
+    },
+    {
+      "action": "deny_all",
+      "src_zone": "INTERNAL",
+      "dst_zone": "MEDDEV",
+      "proto": "any",
+      "dport": 0,
+      "justification": "No flows from INTERNAL to MEDDEV (medical device isolation)"
+    },
+    {
+      "action": "deny_all",
+      "src_zone": "MEDDEV",
+      "dst_zone": "DMZ",
+      "proto": "any",
+      "dport": 0,
+      "justification": "No flows from MEDDEV to DMZ or public Internet"
+    }
+  ],
+  "summary": {
+    "flow_count": 19,
+    "allow_count": 15,
+    "deny_count": 4,
+    "cross_zone_pairs": 12
+  }
+}

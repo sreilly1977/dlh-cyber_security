@@ -135,4 +135,68 @@ $ cat attack_surface.json
 
 ---
 
+# [2. The Segmentation Design]https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/2-segmentation_rules.sh)
+
+## Goal: 
+
+Translate the MedDefense zone model into a structured rule set that the firewall implementation tasks will consume as their source of truth.
+
+## Context: 
+
+The MedDefense topology has four zones that every downstream task needs to agree on: DMZ for public-facing services, INTERNAL for clinical applications and databases, MGMT for administration, MEDDEV for the medical device VLAN. Each zone has an IP range, a purpose and a small list of flows that must be allowed across its boundary. This task does not implement anything. It produces the data file that every other block reads.
+
+## Instructions: 
+
+Write a script 2-segmentation_rules.sh that emits the structured rule set. The script must:
+
+    Define four zones with name, cidr, purpose, default_inbound (drop) and default_outbound (accept with specific restrictions)
+
+    Define each cross-zone allow flow with src_zone, dst_zone, proto, dport, justification and exception_for (optional tag used by the change log if a flow was granted as a temporary exception)
+
+    Include the following minimum flows at a minimum:
+
+        MGMT to INTERNAL on tcp/22 for administration
+
+        MGMT to DMZ on tcp/22 for administration
+
+        INTERNAL clinical workstations to INTERNAL server hosts on tcp/443 and tcp/3306
+
+        DMZ to INTERNAL databases on tcp/3306 only from named DMZ application hosts
+
+        MEDDEV to INTERNAL hosts on tcp/4242 (DICOM) and tcp/443 (EHR web) only
+
+        ALL to MGMT resolver on udp/53 and tcp/53
+
+        No flows from MEDDEV to DMZ or the public Internet
+
+        No flows from any zone into MEDDEV except MGMT on tcp/22 and tcp/4242
+
+    Define an explicit deny_all at the end of each zone pair that has no allow flows
+
+    Emit segmentation_rules.json with zones (array), flows (array) and summary (flow count, allow count, deny count, cross-zone pairs)
+
+Hint: this is the contract. Both the nftables task and the Windows Firewall task must be able to consume this file and produce matching rules.
+
+**Expected Output:**
+
+```bash
+$ ./2-segmentation_rules.sh
+
+$ cat segmentation_rules.json
+{
+  "dst_zone": "INTERNAL",
+  "proto": "tcp",
+  "dport": 4242,
+  "justification": "DICOM imaging to PACS"
+}
+{
+  "dst_zone": "INTERNAL",
+  "proto": "tcp",
+  "dport": 443,
+  "justification": "EHR web integration for device display"
+}
+```
+
+---
+
 # 
