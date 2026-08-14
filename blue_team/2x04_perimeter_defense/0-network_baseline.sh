@@ -18,6 +18,7 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 HOSTNAME=$(hostname)
 
 # 2. Interfaces (ip -j addr show)
+# Captures: name, MAC address, link state, and all assigned addresses
 if command -v jq &>/dev/null; then
     INTERFACES_JSON=$(ip -j addr show | jq '
         [
