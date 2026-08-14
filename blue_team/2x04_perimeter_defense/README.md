@@ -199,6 +199,111 @@ $ cat segmentation_rules.json
 
 ---
 
+# [3. The Protocol Exposure Evidence Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/3-protocol_audit.sh)
+### advanced
+
+## Goal: 
+
+Probe every high-risk listener identified by the attack surface map and produce a structured evidence record showing which protocols are safe, insecure, accepted exceptions or remediation candidates.
+
+## Context: 
+
+The attack surface map tells you which ports are open. It does not prove what is happening on those ports. A listener on tcp/21 might be plain FTP leaking credentials or an FTPS service with TLS. A listener on tcp/389 might reject anonymous simple bind or accept cleartext LDAP. A listener on tcp/80 might be harmless public HTTP or a forgotten administrative panel.
+
+## Instructions: 
+
+Write a script 3-protocol_audit.sh.
+
+The script must read network_baseline.json and attack_surface.json, then probe only local or project-defined targets. It must not modify system state.
+
+The script must audit candidate ports:
+
+    21 FTP
+    23 Telnet
+    25 SMTP banner
+    80 HTTP administrative surfaces
+    110 POP3
+    143 IMAP
+    161 SNMP
+    389 LDAP
+    512, 513, 514 r-services
+    636 LDAPS certificate/signature check
+    3389 RDP encryption level
+
+For each candidate protocol, run a non-destructive probe:
+
+1. FTP, Telnet, POP3, IMAP, SMTP and r-services:
+
+    connect with nc -w 3
+    capture only a short banner or connection result
+    classify cleartext service exposure
+
+2. SNMP:
+
+    run snmpget -v1 -c public and snmpget -v2c -c public
+    use a short timeout
+    mark community as guessable if either returns data
+
+3. LDAP:
+
+    run ldapsearch -x -H ldap://... against RootDSE
+    mark insecure if simple bind succeeds without STARTTLS
+
+4. LDAPS:
+
+    verify TLS certificate availability using openssl s_client
+    record failure if the TLS handshake fails
+
+5. HTTP administrative surface:
+
+    read /home/analyst/MedDefense_Lab/protocols/admin_surfaces.json
+    request only configured admin URLs
+    mark insecure if the admin surface returns 200 over cleartext HTTP
+
+6. RDP:
+
+    check whether the port is reachable
+    record that encryption posture requires Windows-side validation if not locally testable
+
+Each finding must include:
+
+    protocol
+    port
+    target
+    status (secure, insecure, accepted_exception, not_present, not_testable)
+    severity
+    evidence
+    secure_alternative
+    remediation_command
+    exception_accepted
+    source_task
+
+Emit protocol_audit.json with:
+
+    generated_at
+    hostname
+    findings
+    summary
+    high_unaccepted_count
+
+**Expected Output:**
+
+```bash
+$ sudo ./3-protocol_audit.sh
+[*] Loading network_baseline.json and attack_surface.json...
+[*] Candidate listeners: 4
+[HIGH] telnet on tcp/23: cleartext banner observed
+[HIGH] snmpv2c on udp/161: public community returned sysDescr
+[MEDIUM] http-admin on tcp/80: /admin returned 200 without TLS
+[INFO] ldaps on tcp/636: TLS handshake OK
+
+Findings: 4
+High unaccepted: 2
+Report saved to: protocol_audit.json
+```
+
+---
+
 # [4. The nftables Ruleset](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/script 4-nftables_config.sh)
 
 ## Goal: 
