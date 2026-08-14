@@ -294,4 +294,61 @@ PS> .\6-windows_firewall.ps1
 
 ---
 
+# [8. The Suricata Offline Setup](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/8-suricata_setup.sh)
+
+## Goal: 
+
+Install Suricata, configure it for offline PCAP replay and load the provided ruleset so that T9 through T11 have a working engine to analyze captures with.
+
+## Context: 
+
+Suricata is usually taught as a live IDS on an interface. In this project it is used exclusively in replay mode: the binary is pointed at a PCAP file with -r, the alerts land in eve.json on disk and the analyst reads them offline. That mode has three advantages: it does not depend on network hardware, it is deterministic (the same PCAP always produces the same alerts) and it mirrors the way a Tier 2 analyst actually uses the tool during an investigation.
+
+## Instructions: 
+
+Write a script 8-suricata_setup.sh that prepares Suricata for offline replay on the hardened endpoint. The script must:
+
+    Install suricata and jq from the distribution repository if not already present (idempotent)
+
+    Copy the provided ruleset from /home/analyst/MedDefense_Lab/suricata/rules/ into /var/lib/suricata/rules/ and verify the file count
+
+    Render a minimal suricata.yaml in the project directory with the following overrides:
+
+        default-rule-path: /var/lib/suricata/rules
+
+        rule-files listing each provided file and a placeholder for meddefense.rules
+
+        default-log-dir: /var/log/suricata
+
+        outputs: enable eve-log with type json, filename eve.json and at least alert, http, dns, tls, fileinfo
+
+        pcap-file: enabled (replay mode)
+
+        HOME_NET: "[10.10.0.0/16]" and EXTERNAL_NET: "!$HOME_NET"
+
+    Run suricata -T -c ./suricata.yaml -v and capture the test-config exit code
+
+    Run one quick end-to-end check: suricata -c ./suricata.yaml -r /home/analyst/MedDefense_Lab/PCAPs/smoke.pcap -l /tmp/suricata-smoke/ and verify that eve.json contains at least one alert record
+
+    Emit setup_verification.json with installed_version, rule_files_loaded, rule_count, config_test_exit, smoke_pcap, smoke_alerts
+
+Hint: do not start the suricata.service systemd unit. This project does not run the daemon.
+
+**Expected Output:**
+
+```bash
+$ sudo ./8-suricata_setup.sh
+
+
+$ cat setup_verification.json
+{
+  "installed_version": "6.0.14",
+  "rule_count": 34219,
+  "config_test_exit": 0,
+  "smoke_alerts": 4
+}
+```
+
+---
+
 # 
