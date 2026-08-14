@@ -529,3 +529,59 @@ Long DNS labels (> 50 chars):
 
 ---
 
+# [13. The DNS Filtering Layer](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/13-dns_filtering.sh)
+
+## Goal: 
+
+Configure local DNS filtering so that known malicious domains return a sinkhole answer while legitimate traffic is unaffected, and validate both paths.
+
+## Context: 
+
+DNS is the quietest attack surface on the network. It is almost never blocked and almost never inspected. The Suricata alerts in T9 showed a long DNS TXT query that pointed at a probable tunneling session. A local DNS filter cuts the channel off at the source. This task configures the filter and produces the evidence that it works.
+
+## Instructions: 
+
+Write a script 13-dns_filtering.sh that configures a local DNS filter and validates the configuration. The script must:
+
+    Install dnsmasq from the distribution repository if not present (idempotent)
+
+    Read a provided blocklist from /home/analyst/MedDefense_Lab/dns/blocklist.txt containing one domain per line
+
+    Render a dnsmasq configuration that:
+
+        Forwards every query to a configured upstream (defined in /etc/dnsmasq.d/meddefense-upstream.conf, shipped with the project)
+
+        Returns 0.0.0.0 for every domain on the blocklist via a generated /etc/dnsmasq.d/meddefense-blocklist.conf
+
+        Logs every query with log-queries to /var/log/dnsmasq.log
+
+    Restart dnsmasq and verify via systemctl is-active that the service is running
+
+    Run the following validation queries using dig @127.0.0.1:
+
+        A known-allowed domain from a provided allowlist.txt, expect a non-sinkhole answer
+
+        A known-blocked domain from blocklist.txt, expect 0.0.0.0
+
+        A domain that does not appear in either list, expect normal resolution via the upstream
+
+Note: do not rewrite /etc/resolv.conf. This task configures dnsmasq on the loopback and leaves the decision to route through it to the deployment step, which is outside the scope of this project.
+
+**Expected Output:**
+
+```bash
+$ sudo ./13-dns_filtering.sh
+[*] Ensuring dnsmasq is installed...     dnsmasq 2.86
+[*] Rendering blocklist...               (814 domains)
+[*] Restarting dnsmasq.service...        active
+[*] Validation queries...
+  dig @127.0.0.1 billing.meddefense.local
+      -> 10.10.1.10            expected allow      PASS
+  dig @127.0.0.1 c2.crimson-tide-ops.xyz
+      -> 0.0.0.0               expected sinkhole   PASS
+  dig @127.0.0.1 ubuntu.com
+      -> 185.125.190.39        expected allow      PASS
+```
+
+---
+
