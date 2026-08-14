@@ -77,6 +77,7 @@ TCP_CONV_JSON="[]"
 TCP_RAW=$(tshark -r "$PCAP_PATH" -q -z conv,tcp 2>/dev/null || true)
 
 if [[ -n "$TCP_RAW" ]]; then
+    # Get the top 10 TCP conversations by packet count
     TCP_CONVS=$(echo "$TCP_RAW" | grep '<->' | head -10 | sed 's/bytes//g' | awk '
     {
         for(i=1; i<=NF; i++) {
@@ -120,6 +121,7 @@ UDP_CONV_JSON="[]"
 UDP_RAW=$(tshark -r "$PCAP_PATH" -q -z conv,udp 2>/dev/null || true)
 
 if [[ -n "$UDP_RAW" ]]; then
+    # Get the top 10 UDP conversations by packet count
     UDP_CONVS=$(echo "$UDP_RAW" | grep '<->' | head -10 | sed 's/bytes//g' | awk '
     {
         for(i=1; i<=NF; i++) {
