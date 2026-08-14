@@ -6,5 +6,5 @@
     "upstream": "/etc/dnsmasq.d/meddefense-upstream.conf"
   },
   "service_status": "active",
-  "generated_at": "2026-08-14T19:27:21Z"
+  "generated_at": "2026-08-14T19:36:40Z"
 }

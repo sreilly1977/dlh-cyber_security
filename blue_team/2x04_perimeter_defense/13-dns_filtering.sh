@@ -188,9 +188,9 @@ jq -n \
         },
         service_status: $service_status,
         generated_at: $timestamp
-    }' > dnsmasq-audit-summary.json 2>/dev/null || true
+    }' > dns_filter_report.json 2>/dev/null || true
 
-echo "  Audit summary written to dnsmasq-audit-summary.json"
+echo "  DNS filter report written to dns_filter_report.json"
 echo ""
 echo "Configuration files:"
 echo "  Blocklist:  $BLOCKLIST_CONF"
