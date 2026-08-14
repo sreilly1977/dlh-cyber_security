@@ -351,4 +351,47 @@ $ cat setup_verification.json
 
 ---
 
+# [9. The Suricata Replay Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/9-suricata_analysis.sh)
+
+## Goal: 
+
+Run Suricata against a provided PCAP containing mixed benign and malicious traffic, parse every alert from eve.json and classify the output by severity and kind.
+
+## Context: 
+
+The provided PCAP is /home/analyst/MedDefense_Lab/PCAPs/mixed_traffic.pcap. It contains a mix of normal MedDefense traffic, reconnaissance probes, a SMB lateral movement attempt and a DNS tunneling session. The engine will fire dozens of alerts. Your job is not to read them one by one. It is to build the parser that groups them, ranks them and surfaces the ones a Tier 1 analyst must escalate.
+
+## Instructions: 
+
+Write a script 9-suricata_analysis.sh that replays a PCAP through Suricata and classifies the resulting alerts. The script must:
+
+    Accept a PCAP path as argument (default /home/analyst/MedDefense_Lab/PCAPs/mixed_traffic.pcap)
+
+    Run suricata -c ./suricata.yaml -r <pcap> -l <tmpdir> and wait for completion
+
+    Parse <tmpdir>/eve.json with jq or a streaming reader and retain only event_type=="alert" records
+
+    For each alert, extract: timestamp, src_ip, src_port, dst_ip, dst_port, proto, alert.signature, alert.signature_id, alert.category, alert.severity
+
+    Compute: total alerts, unique signatures, alert count per signature, alert count per source IP, alert count per destination IP and severity distribution
+
+    Classify each signature into one of: reconnaissance, exploit, lateral_movement, exfiltration, malware_c2, policy_violation, other using a provided signature_categories.json map shipped with the project
+
+    Emit suricata_alerts.json with pcap, started_at, finished_at, total_alerts, unique_signatures, severity_distribution, by_category, top_sources, top_destinations, alerts (full array)
+
+Note: do not write custom detection logic. The ruleset is authoritative; this task is a reader.
+
+**Expected Output:**
+
+```bash
+$ sudo ./9-suricata_analysis.sh
+
+$ cat suricata_alerts.json
+{"sig":"ET EXPLOIT PsExec Service Install","src":"10.10.1.99","dst":"10.10.1.10"}
+{"sig":"ET TROJAN Cobalt Strike Beacon","src":"10.10.1.10","dst":"185.220.101.42"}
+{"sig":"ET DNS Exfiltration Long TXT Query","src":"10.10.1.10","dst":"8.8.8.8"}
+```
+
+---
+
 # 

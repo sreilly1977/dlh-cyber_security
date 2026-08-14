@@ -1,0 +1,297 @@
+{
+  "pcap": "/home/analyst/MedDefense_Lab/PCAPs/mixed_traffic.pcap",
+  "started_at": "2026-08-14T17:00:53Z",
+  "finished_at": "2026-08-14T17:01:19Z",
+  "total_alerts": 18,
+  "unique_signatures": 8,
+  "severity_distribution": {
+    "1": 10,
+    "2": 8
+  },
+  "by_category": [
+    {
+      "category": "malware_c2",
+      "count": 9
+    },
+    {
+      "category": "other",
+      "count": 6
+    },
+    {
+      "category": "exfiltration",
+      "count": 1
+    },
+    {
+      "category": "lateral_movement",
+      "count": 1
+    },
+    {
+      "category": "policy_violation",
+      "count": 1
+    }
+  ],
+  "top_sources": [
+    {
+      "src_ip": "10.10.1.10",
+      "count": 10
+    },
+    {
+      "src_ip": "185.220.101.42",
+      "count": 6
+    },
+    {
+      "src_ip": "10.10.1.99",
+      "count": 2
+    }
+  ],
+  "top_destinations": [
+    {
+      "dst_ip": "185.220.101.42",
+      "count": 9
+    },
+    {
+      "dst_ip": "10.10.1.10",
+      "count": 8
+    },
+    {
+      "dst_ip": "8.8.8.8",
+      "count": 1
+    }
+  ],
+  "alerts": [
+    {
+      "timestamp": "2025-08-13T17:46:50.360000+0200",
+      "src_ip": "10.10.1.99",
+      "src_port": 41900,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 23,
+      "proto": "TCP",
+      "signature": "MEDDEFENSE LOCAL POLICY Cleartext Telnet Session Observed",
+      "signature_id": 9500005,
+      "category": "Potential Corporate Privacy Violation",
+      "severity": 1,
+      "category_class": "policy_violation"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:00.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55000,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Exit Node Traffic group 43",
+      "signature_id": 2520042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:00.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55000,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Relay/Router (Not Exit) Node Traffic group 43",
+      "signature_id": 2522042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55000,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET MALWARE Adaptix C2 X-Beacon-Id HTTP Header Observed",
+      "signature_id": 2063045,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55000,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET HUNTING Suspicious Fake Windows User-Agent in HTTP Header",
+      "signature_id": 2063592,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55000,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "MEDDEFENSE LOCAL TROJAN Cobalt Strike Style Beacon Check-in",
+      "signature_id": 9500003,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:50.000000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 57948,
+      "dst_ip": "8.8.8.8",
+      "dst_port": 53,
+      "proto": "UDP",
+      "signature": "MEDDEFENSE LOCAL DNS Long Label Possible Tunneling/Exfil",
+      "signature_id": 9500004,
+      "category": "Potentially Bad Traffic",
+      "severity": 2,
+      "category_class": "exfiltration"
+    },
+    {
+      "timestamp": "2025-08-13T17:46:53.350000+0200",
+      "src_ip": "10.10.1.99",
+      "src_port": 44521,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 445,
+      "proto": "TCP",
+      "signature": "ET POLICY PsExec service created",
+      "signature_id": 2010781,
+      "category": "A suspicious filename was detected",
+      "severity": 2,
+      "category_class": "lateral_movement"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:30.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55001,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Exit Node Traffic group 43",
+      "signature_id": 2520042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:30.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55001,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Relay/Router (Not Exit) Node Traffic group 43",
+      "signature_id": 2522042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:30.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55001,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET MALWARE Adaptix C2 X-Beacon-Id HTTP Header Observed",
+      "signature_id": 2063045,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:30.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55001,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET HUNTING Suspicious Fake Windows User-Agent in HTTP Header",
+      "signature_id": 2063592,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:47:30.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55001,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "MEDDEFENSE LOCAL TROJAN Cobalt Strike Style Beacon Check-in",
+      "signature_id": 9500003,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:48:00.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55002,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Exit Node Traffic group 43",
+      "signature_id": 2520042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:48:00.050000+0200",
+      "src_ip": "185.220.101.42",
+      "src_port": 8080,
+      "dst_ip": "10.10.1.10",
+      "dst_port": 55002,
+      "proto": "TCP",
+      "signature": "ET TOR Known Tor Relay/Router (Not Exit) Node Traffic group 43",
+      "signature_id": 2522042,
+      "category": "Misc Attack",
+      "severity": 2,
+      "category_class": "other"
+    },
+    {
+      "timestamp": "2025-08-13T17:48:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55002,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET MALWARE Adaptix C2 X-Beacon-Id HTTP Header Observed",
+      "signature_id": 2063045,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:48:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55002,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "ET HUNTING Suspicious Fake Windows User-Agent in HTTP Header",
+      "signature_id": 2063592,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    },
+    {
+      "timestamp": "2025-08-13T17:48:00.300000+0200",
+      "src_ip": "10.10.1.10",
+      "src_port": 55002,
+      "dst_ip": "185.220.101.42",
+      "dst_port": 8080,
+      "proto": "TCP",
+      "signature": "MEDDEFENSE LOCAL TROJAN Cobalt Strike Style Beacon Check-in",
+      "signature_id": 9500003,
+      "category": "A Network Trojan was detected",
+      "severity": 1,
+      "category_class": "malware_c2"
+    }
+  ]
+}
