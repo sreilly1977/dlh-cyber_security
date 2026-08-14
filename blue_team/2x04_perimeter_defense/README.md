@@ -237,4 +237,61 @@ Hint: test the render step before the apply step. nft -c -f nftables.conf perfor
 
 ---
 
+# [6. The Windows Firewall Alignment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/6-windows_firewall.ps1)
+
+## Goal: 
+
+Translate the same segmentation_rules.json into a Windows Firewall ruleset on a domain-joined host and emit the rules as structured JSON for downstream comparison.
+
+## Context: 
+
+MedDefense runs both Linux and Windows on the same zone model. The nftables and Windows Firewall rulesets must match. This task consumes the same contract (segmentation_rules.json) and produces an equivalent Windows Firewall configuration via PowerShell, then exports the resulting rules as JSON so that downstream automation can diff the two platforms.
+
+## Instructions: 
+
+Write a PowerShell script 6-windows_firewall.ps1 that aligns Windows Firewall to the segmentation design. The script must:
+
+    Read segmentation_rules.json from the project directory
+
+    For each profile (Domain, Private, Public) set DefaultInboundAction = Block and DefaultOutboundAction = Allow via Set-NetFirewallProfile
+
+    For each inbound flow in the rule file that terminates on this host, create a New-NetFirewallRule with:
+
+        DisplayName of the form MedDefense-<src_zone>-<proto>-<dport>
+
+        Direction Inbound
+
+        Action Allow
+
+        Protocol and LocalPort from the flow
+
+        RemoteAddress from the cidr of the source zone
+
+        Profile Any
+
+    Remove any pre-existing rule whose DisplayName starts with MedDefense- before re-creating the ruleset so that the script is idempotent
+
+    Enable dropped connection logging via Set-NetFirewallProfile -LogBlocked True -LogFileName "%systemroot%\system32\LogFiles\Firewall\meddefense.log"
+
+**Expected Output:**
+
+```bash
+PS> .\6-windows_firewall.ps1
+[*] Reading segmentation_rules.json...
+[*] Setting profile defaults...
+  Domain:  DefaultInboundAction=Block  LogBlocked=True   [SET]
+  Private: DefaultInboundAction=Block  LogBlocked=True   [SET]
+  Public:  DefaultInboundAction=Block  LogBlocked=True   [SET]
+[*] Clearing previous MedDefense-* rules...              [6 removed]
+[*] Creating rules from flow matrix...
+  MedDefense-MGMT-TCP-22       Inbound Allow tcp 22    [CREATED]
+  MedDefense-INTERNAL-TCP-443  Inbound Allow tcp 443   [CREATED]
+  MedDefense-INTERNAL-TCP-3306 Inbound Allow tcp 3306  [CREATED]
+  MedDefense-DMZ-TCP-3306      Inbound Allow tcp 3306  [CREATED]
+  MedDefense-MEDDEV-TCP-4242   Inbound Allow tcp 4242  [CREATED]
+  MedDefense-MEDDEV-TCP-443    Inbound Allow tcp 443   [CREATED]
+```
+
+---
+
 # 

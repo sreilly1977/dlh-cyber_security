@@ -1,0 +1,111 @@
+﻿{
+    "rules_removed":  13,
+    "profile_settings":  [
+                             {
+                                 "profile":  "Domain",
+                                 "log_blocked":  true,
+                                 "default_outbound":  "Allow",
+                                 "default_inbound":  "Block",
+                                 "log_filename":  "%systemroot%\\system32\\LogFiles\\Firewall\\meddefense.log"
+                             },
+                             {
+                                 "profile":  "Private",
+                                 "log_blocked":  true,
+                                 "default_outbound":  "Allow",
+                                 "default_inbound":  "Block",
+                                 "log_filename":  "%systemroot%\\system32\\LogFiles\\Firewall\\meddefense.log"
+                             },
+                             {
+                                 "profile":  "Public",
+                                 "log_blocked":  true,
+                                 "default_outbound":  "Allow",
+                                 "default_inbound":  "Block",
+                                 "log_filename":  "%systemroot%\\system32\\LogFiles\\Firewall\\meddefense.log"
+                             }
+                         ],
+    "generated_at":  "2026-08-14T15:54:01Z",
+    "local_zone":  "MGMT",
+    "segmentation_source":  "segmentation_rules.json",
+    "summary":  {
+                    "deny_flows":  4,
+                    "total_flows":  19,
+                    "rules_created":  6,
+                    "rules_removed":  13,
+                    "allow_flows":  15
+                },
+    "hostname":  "DC01",
+    "rules_created":  [
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-DMZ-UDP-53",
+                              "src_zone":  "DMZ",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "udp",
+                              "remote_address":  "10.10.2.0/24"
+                          },
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-DMZ-TCP-53",
+                              "src_zone":  "DMZ",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "tcp",
+                              "remote_address":  "10.10.2.0/24"
+                          },
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-INTERNAL-UDP-53",
+                              "src_zone":  "INTERNAL",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "udp",
+                              "remote_address":  "10.10.1.0/24"
+                          },
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-INTERNAL-TCP-53",
+                              "src_zone":  "INTERNAL",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "tcp",
+                              "remote_address":  "10.10.1.0/24"
+                          },
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-MEDDEV-UDP-53",
+                              "src_zone":  "MEDDEV",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "udp",
+                              "remote_address":  "10.10.3.0/24"
+                          },
+                          {
+                              "profile":  "Any",
+                              "action":  "Allow",
+                              "display_name":  "MedDefense-MEDDEV-TCP-53",
+                              "src_zone":  "MEDDEV",
+                              "direction":  "Inbound",
+                              "justification":  "DNS resolution to MGMT resolver",
+                              "local_port":  53,
+                              "dst_zone":  "MGMT",
+                              "protocol":  "tcp",
+                              "remote_address":  "10.10.3.0/24"
+                          }
+                      ]
+}
