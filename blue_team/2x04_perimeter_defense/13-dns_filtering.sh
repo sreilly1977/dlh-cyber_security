@@ -5,6 +5,8 @@
 # Author:      Steve - Cybersecurity Engineer
 # Date:        August 14, 2026
 #
+# Note: This script configures dnsmasq locally; do not rewrite /etc/resolv.conf
+#
 
 set -euo pipefail
 
