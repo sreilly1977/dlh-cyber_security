@@ -152,7 +152,7 @@ Write-Host ("  [{0} removed]" -f $removedCount)
 #   Direction Inbound, Action Allow
 #   Protocol and LocalPort from the flow
 #   RemoteAddress from the source zone CIDR
-#   Profile: Any
+#   Profile Any
 # ---------------------------------------------------------------
 Write-Host "[*] Creating rules from flow matrix..."
 
