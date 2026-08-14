@@ -140,9 +140,12 @@ for ((i = 0; i < SOCKET_COUNT; i++)); do
         fi
     fi
 
-    # Fallback 3: try systemctl list-units to find matching service
+    # Fallback 3: try systemctl show to find matching service
     if [[ -z "$service_unit" && -n "$process" ]]; then
-        service_unit=$(systemctl list-units --type=service --no-pager 2>/dev/null | grep -iP "$process" | awk '{print $1}' | head -1 || echo "")
+        service_unit=$(systemctl show -p Id --value "$(basename "$process").service" 2>/dev/null || echo "")
+        if [[ -z "$service_unit" || "$service_unit" == "" ]]; then
+            service_unit=$(systemctl list-units --type=service --no-pager 2>/dev/null | grep -iP "$process" | awk '{print $1}' | head -1 || echo "")
+        fi
     fi
 
     # ---------------------------------------------------------------
