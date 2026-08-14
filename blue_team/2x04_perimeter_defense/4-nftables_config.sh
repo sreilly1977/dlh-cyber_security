@@ -35,6 +35,7 @@ mkdir -p "$BACKUP_DIR"
 
 # ---------------------------------------------------------------
 # Determine local zone by matching interface IPs to zone CIDRs
+# Zones defined in segmentation_rules.json: DMZ, INTERNAL, MGMT, MEDDEV
 # ---------------------------------------------------------------
 LOCAL_ZONE=$(python3 -c "
 import json, ipaddress, subprocess
@@ -63,6 +64,7 @@ print('INTERNAL')
 " 2>/dev/null || echo "INTERNAL")
 
 echo "Detected local zone: $LOCAL_ZONE"
+echo "Available zones from segmentation: DMZ, INTERNAL, MGMT, MEDDEV"
 
 # ---------------------------------------------------------------
 # Read zone and flow data from JSON

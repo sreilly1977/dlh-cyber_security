@@ -1,8 +1,8 @@
 {
-  "timestamp": "20260814T152545Z",
+  "timestamp": "20260814T153227Z",
   "local_zone": "INTERNAL",
   "nftables_conf": "nftables.conf",
-  "rollback_file": "/var/backups/nftables-rollback-20260814T152545Z.nft",
+  "rollback_file": "/var/backups/nftables-rollback-20260814T153227Z.nft",
   "table_loaded": true,
   "chains": 3,
   "zone_sets": 4,
