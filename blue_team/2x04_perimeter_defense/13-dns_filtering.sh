@@ -164,6 +164,31 @@ else
     echo "      -> $UPSTREAM_RESULT            expected allow      FAIL"
 fi
 
+# ---------------------------------------------------------------
+# 6. Output summary as JSON for audit trail
+# ---------------------------------------------------------------
+echo ""
+echo "[*] Generating audit summary..."
+
+jq -n \
+    --arg version "$DNMASQ_VERSION" \
+    --arg domains "$DOMAIN_COUNT" \
+    --arg blocklist "$BLOCKLIST_CONF" \
+    --arg upstream "$UPSTREAM_TARGET" \
+    --arg service_status "$(systemctl is-active dnsmasq.service 2>/dev/null || echo 'inactive')" \
+    --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    '{
+        dnsmasq_version: $version,
+        blocked_domains: ($domains | tonumber),
+        config_files: {
+            blocklist: $blocklist,
+            upstream: $upstream
+        },
+        service_status: $service_status,
+        generated_at: $timestamp
+    }' > dnsmasq-audit-summary.json 2>/dev/null || true
+
+echo "  Audit summary written to dnsmasq-audit-summary.json"
 echo ""
 echo "Configuration files:"
 echo "  Blocklist:  $BLOCKLIST_CONF"
