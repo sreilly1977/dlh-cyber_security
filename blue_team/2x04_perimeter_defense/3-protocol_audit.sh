@@ -12,6 +12,7 @@ set -euo pipefail
 # Configuration — literal strings documented for checker
 # ==============================================================================
 
+# Do not modify system state — this script probes only, makes no changes
 NETWORK_BASELINE="network_baseline.json"
 ATTACK_SURFACE="attack_surface.json"
 # Literal path expected by checker: /home/analyst/MedDefense_Lab/protocols/admin_surfaces.json
