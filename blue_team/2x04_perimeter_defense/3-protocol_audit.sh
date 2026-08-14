@@ -2,7 +2,7 @@
 #
 # Name:        3-protocol_audit.sh
 # Purpose:     Probe high-risk listeners and produce structured protocol evidence record
-# Author:      Stephen Reilly - Cybersecurity Engineer
+# Author:      Steve - Cybersecurity Engineer
 # Date:        August 14, 2026
 #
 
@@ -195,7 +195,10 @@ audit_http_admin() {
 
     local http_code
     http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 \
-        "http://${LOCAL_HOST}${admin_path}" 2>/dev/null || echo "000")
+    "http://${LOCAL_HOST}${admin_path}" 2>/dev/null || true)
+        if [[ -z "$http_code" ]]; then
+        http_code="000"
+    fi
 
     if [[ "$http_code" == "200" ]]; then
         echo "[MEDIUM] http-admin on tcp/${port}: ${admin_path} returned 200 without TLS"
@@ -256,6 +259,60 @@ audit_imap() {
     fi
 }
 
+audit_rservices() {
+    # Port 512 - rexec
+    local port="512"
+    local banner
+    banner=$(first_banner_line "$LOCAL_HOST" "$port")
+    if [[ -n "$banner" ]]; then
+        echo "[HIGH] rexec on tcp/${port}: cleartext banner observed"
+        add_finding "rexec" "$port" "$LOCAL_HOST" "insecure" "high" \
+            "Banner: ${banner}" \
+            "SSH (Port 22)" \
+            "systemctl disable --now rexec; apt purge -y rexec"
+    else
+        echo "[INFO] rexec on tcp/${port}: not_present"
+        add_finding "rexec" "$port" "$LOCAL_HOST" "not_present" "low" \
+            "No banner received" \
+            "SSH (Port 22)" \
+            "N/A"
+    fi
+
+    # Port 513 - rlogin
+    port="513"
+    banner=$(first_banner_line "$LOCAL_HOST" "$port")
+    if [[ -n "$banner" ]]; then
+        echo "[HIGH] rlogin on tcp/${port}: cleartext banner observed"
+        add_finding "rlogin" "$port" "$LOCAL_HOST" "insecure" "high" \
+            "Banner: ${banner}" \
+            "SSH (Port 22)" \
+            "systemctl disable --now rlogind; apt purge -y rsh-redone-server"
+    else
+        echo "[INFO] rlogin on tcp/${port}: not_present"
+        add_finding "rlogin" "$port" "$LOCAL_HOST" "not_present" "low" \
+            "No banner received" \
+            "SSH (Port 22)" \
+            "N/A"
+    fi
+
+    # Port 514 - rsh (TCP) / syslog (UDP)
+    port="514"
+    banner=$(first_banner_line "$LOCAL_HOST" "$port")
+    if [[ -n "$banner" ]]; then
+        echo "[HIGH] rsh on tcp/${port}: cleartext banner observed"
+        add_finding "rsh" "$port" "$LOCAL_HOST" "insecure" "high" \
+            "Banner: ${banner}" \
+            "SSH (Port 22)" \
+            "systemctl disable --now rshd; apt purge -y rsh-redone-server"
+    else
+        echo "[INFO] rsh on tcp/${port}: not_present"
+        add_finding "rsh" "$port" "$LOCAL_HOST" "not_present" "low" \
+            "No banner received" \
+            "SSH (Port 22)" \
+            "N/A"
+    fi
+}
+
 audit_snmp() {
     local port="161"
 
@@ -299,12 +356,8 @@ audit_snmp() {
 audit_ldap() {
     local port="389"
 
-    # Domain controllers typically run LDAP on 389 - may be accepted exposure
-    local dc_ldap_exposure=false
-
     if ! command -v ldapsearch >/dev/null 2>&1; then
         echo "[INFO] ldap on tcp/${port}: ldapsearch not installed, skipping"
-        # On DC, LDAP exposure is expected but should be noted as accepted
         echo "[NOTE] Domain Controller detected - LDAP port 389 is expected service"
         add_finding "ldap" "$port" "$WINDOWS_HOST" "accepted_exception" "medium" \
             "LDAP port exposed on Domain Controller - requires TLS restriction" \
@@ -319,7 +372,6 @@ audit_ldap() {
 
     if [[ -n "$result" ]]; then
         echo "[MEDIUM] ldap on tcp/${port}: anonymous bind succeeded without STARTTLS"
-        # If target is Windows DC, note it differently
         if [[ "$LOCAL_HOST" != "127.0.0.1" ]]; then
             echo "[NOTE] Target appears to be external server - verify LDAP security posture"
         fi
@@ -359,7 +411,6 @@ audit_ldaps() {
             "N/A" \
             "N/A"
     elif echo "$tls_output" | grep -q "verify error"; then
-        # On DC, certificate issues are more critical
         echo "[MEDIUM] ldaps on tcp/${port}: TLS certificate verification failed"
         add_finding "ldaps" "$port" "$LOCAL_HOST" "insecure" "medium" \
             "Certificate verification failed - check CA trust chain" \
@@ -367,7 +418,6 @@ audit_ldaps() {
             "Issue certificate from trusted internal CA; update CA trust store"
     else
         echo "[INFO] ldaps on tcp/${port}: TLS handshake failed or not present"
-        # On DC, LDAPS absence is concerning
         echo "[NOTE] Domain Controllers should have LDAPS enabled on port 636"
         add_finding "ldaps" "$port" "$LOCAL_HOST" "not_present" "medium" \
             "No TLS response on port 636 - critical for Domain Controller security" \
@@ -380,11 +430,9 @@ audit_rdp() {
     local port="3389"
     local result=""
 
-    # Check port reachability via nc timeout
     result=$(timeout 3 nc -zv "$WINDOWS_HOST" "$port" 2>&1 || true)
 
     if echo "$result" | grep -qi "succeeded\|open"; then
-        # RDP open on DC is HIGH risk - administrative access point
         echo "[HIGH] rdp on tcp/${port}: reachable at ${WINDOWS_HOST} (Domain Controller - elevated risk)"
         add_finding "rdp" "$port" "$WINDOWS_HOST" "insecure" "high" \
             "RDP port 3389 reachable at Domain Controller ${WINDOWS_HOST}; requires NLA and MFA" \
@@ -392,7 +440,6 @@ audit_rdp() {
             "Restrict RDP via GPO to jump hosts only; require MFA; implement Just-in-Time access"
     else
         echo "[INFO] rdp on tcp/${port}: not reachable at ${WINDOWS_HOST} (positive security posture)"
-        # RDP closed on DC is acceptable if administrative access uses alternative methods
         add_finding "rdp" "$port" "$WINDOWS_HOST" "accepted_exception" "low" \
             "RDP port 3389 unreachable at Domain Controller ${WINDOWS_HOST}" \
             "Administrative access via secure jump host or Windows Admin Center" \
@@ -420,6 +467,7 @@ audit_smtp
 audit_http_admin
 audit_pop3
 audit_imap
+audit_rservices
 audit_snmp
 audit_ldap
 audit_ldaps
@@ -431,10 +479,8 @@ audit_rdp
 
 echo "[*] Building protocol_audit.json..."
 
-# Count high severity findings
 HIGH_COUNT=$(grep -c '"severity": "high"' "$TMP_FINDINGS" 2>/dev/null || echo "0")
 
-# Validate HIGH_COUNT is numeric
 if ! [[ "$HIGH_COUNT" =~ ^[0-9]+$ ]]; then
     HIGH_COUNT="0"
 fi
@@ -442,7 +488,7 @@ fi
 jq -nc \
     --arg generated_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg hostname "$(hostname)" \
-    --slurpfile findings <(cat "$TMP_FINDINGS" | jq -s '.') \
+    --slurpfile findings <(jq -s '.' "$TMP_FINDINGS") \
     --argjson high_unaccepted_count "$HIGH_COUNT" \
     '{
         generated_at: $generated_at,
