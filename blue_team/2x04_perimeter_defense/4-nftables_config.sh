@@ -15,6 +15,7 @@ BACKUP_DIR="/var/backups"
 OUTPUT_JSON="nftables_evidence.json"
 HASH_FILE="${BACKUP_DIR}/nftables-meddefense.hash"
 TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
+# Rollback file saved to /var/backups/nftables-rollback-<timestamp>.nft
 ROLLBACK_FILE="${BACKUP_DIR}/nftables-rollback-${TIMESTAMP}.nft"
 LOG_PREFIX="nft-meddefense"
 
