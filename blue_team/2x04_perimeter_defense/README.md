@@ -22,11 +22,13 @@ Mike Torres, the network engineer, drops a printed arp -a dump and a manual trac
 
 He sketches a diagram on a legal pad.
 
+<pre>
   [ guest wifi ]  ─┐
                    │
   [ clinical ws ]  ┼── flat L2 ──┬── [ server zone ]
                    │             │
   [ mgmt ws ]  ────┘             └── [ medical device zone ]
+</pre>
 
 "Every line is an allowed path. Not because we chose to allow it. Because we never chose to block it. That is the problem."
 
