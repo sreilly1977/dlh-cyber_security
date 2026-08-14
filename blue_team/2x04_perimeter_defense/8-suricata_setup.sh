@@ -197,6 +197,8 @@ echo "    defrag: yes"
 echo "    use-mmap: yes"
 echo "    tpacket-v3: yes"
 echo ""
+# Live capture disabled - offline replay only
+# This script does NOT start suricata.service as a systemd daemon
 echo "# Live capture disabled - offline replay only"
 echo "capture:"
 echo "  kernel-packet-filter: false"
