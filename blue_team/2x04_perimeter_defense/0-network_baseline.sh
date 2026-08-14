@@ -90,6 +90,7 @@ fi
 
 # ---------------------------------------------------------------
 # Listening Sockets (ss -tulnpH)
+# Captures: protocol, local address/port, process name, and PID
 # ---------------------------------------------------------------
 LISTENING_JSON="[]"
 
@@ -149,6 +150,7 @@ LISTENER_COUNT=$(echo "$LISTENING_JSON" | jq 'length')
 
 # ---------------------------------------------------------------
 # Established Connections (ss -tnpH state established)
+# Captures: local/peer address/port, process name, and PID
 # ---------------------------------------------------------------
 ESTABLISHED_CONN_JSON="[]"
 
