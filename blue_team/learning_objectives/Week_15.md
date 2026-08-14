@@ -20,6 +20,8 @@
 
 **A:** IDS monitors and alerts without blocking, while IPS actively blocks threats; offline replay allows safe forensic analysis of captured traffic without risking service disruption, whereas inline IPS introduces potential latency and false-positive outages.
 
+---
+
 ### Secure Protocols
 
 **Q: How can insecure protocols like telnet, FTP, cleartext HTTP, SNMPv1/v2c, and plain LDAP be detected and replaced with secure equivalents?**
@@ -29,6 +31,8 @@
 **Q: How do DNS filtering and query validation reduce the attack surface exposed by resolver infrastructure?**
 
 **A:** Filtering blocks malicious domains and query validation prevents spoofing and tunneling, reducing the risk of command-and-control communication and data exfiltration via DNS.
+
+---
 
 ### Enterprise Capabilities
 
@@ -55,3 +59,5 @@
 **Q: How do you package network evidence (firewall logs, Suricata alerts, PCAP summaries, connection metadata) as a structured artifact bundle for downstream analysts?**
 
 **A:** Aggregate logs into a dated tarball with a manifest index, normalize timestamps to UTC, and include README documentation detailing data sources, collection times, and relevant IOCs.
+
+---
