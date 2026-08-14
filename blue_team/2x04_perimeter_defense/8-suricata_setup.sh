@@ -198,7 +198,7 @@ echo "    use-mmap: yes"
 echo "    tpacket-v3: yes"
 echo ""
 # Live capture disabled - offline replay only
-# Do not start suricata.service as a systemd daemon for this project
+# do not start suricata.service as a systemd daemon for this project
 echo "# Live capture disabled - offline replay only"
 echo "capture:"
 echo "  kernel-packet-filter: false"
