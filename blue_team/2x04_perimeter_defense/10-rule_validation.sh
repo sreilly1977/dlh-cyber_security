@@ -11,6 +11,7 @@ set -euo pipefail
 # Configuration
 LAB_DIR="/home/analyst/MedDefense_Lab"
 RULES_FILE="/home/analyst/scripts/perimeter/meddefense.rules"
+# Labeled PCAPs directory: /home/analyst/MedDefense_Lab/PCAPs/labels
 PCAPS_DIR="${LAB_DIR}/PCAPs/labels"
 CONFIG_FILE="./suricata.yaml"
 OUTPUT_DIR="/tmp/meddefense-validation-$$"
