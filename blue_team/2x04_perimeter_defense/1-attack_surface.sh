@@ -166,6 +166,7 @@ for ((i = 0; i < SOCKET_COUNT; i++)); do
     # Rules:
     #   1. Bound to 0.0.0.0 on database or rpc
     #   2. Function is telnet, ftp, snmpv1, snmpv2c, rlogin, or nfs
+    #   3. Web services exposed on wildcard (web, http, https)
     # ---------------------------------------------------------------
     flags="[]"
 
@@ -175,6 +176,8 @@ for ((i = 0; i < SOCKET_COUNT; i++)); do
             flags=$(echo "$flags" | jq '. + ["bound_0.0.0.0", "database_exposed"]')
         elif [[ "$function_label" == "rpc" ]]; then
             flags=$(echo "$flags" | jq '. + ["bound_0.0.0.0", "rpc_exposed"]')
+        elif [[ "$function_label" == "web" ]]; then
+            flags=$(echo "$flags" | jq '. + ["bound_0.0.0.0", "web_exposed"]')
         fi
     fi
 
