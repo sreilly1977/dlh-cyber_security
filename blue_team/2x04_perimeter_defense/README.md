@@ -135,7 +135,7 @@ $ cat attack_surface.json
 
 ---
 
-# [2. The Segmentation Design]https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/2-segmentation_rules.sh)
+# [2. The Segmentation Design](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/2-segmentation_rules.sh)
 
 ## Goal: 
 
@@ -196,6 +196,44 @@ $ cat segmentation_rules.json
   "justification": "EHR web integration for device display"
 }
 ```
+
+---
+
+# [4. The nftables Ruleset](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/script 4-nftables_config.sh)
+
+## Goal: 
+
+Compile the segmentation rules into a working nftables configuration, apply it safely and emit evidence of the transition.
+
+## Context: 
+
+T2 defined the rules. This task enforces them. nftables is the modern Linux filtering engine and the default on Ubuntu 22.04. It is also less forgiving than the old iptables front end: a wrong atomic ruleset update can lock you out of your own SSH session in one second. The script must produce a ruleset, load it as an atomic transaction and leave a rollback path behind.
+
+## Instructions: 
+
+Write a script 4-nftables_config.sh that renders segmentation_rules.json into a runnable nftables configuration and applies it. The script must:
+
+    Render a nftables.conf file containing:
+
+        table inet meddefense with chains input, forward and output
+
+        input chain with policy drop, connection tracking accept (ct state established,related accept), loopback accept, ICMP minimal accept and explicit allow rules for each flow that terminates on the local host
+
+        forward chain with policy drop and cross-zone allow rules rendered from the flow matrix
+
+        output chain with policy accept and explicit drops for the zones that must not receive outbound traffic from this host
+
+        A named set per zone containing its CIDR (so that rule expressions reference sets rather than literal prefixes)
+
+        A log prefix on the drop terminal rule so that denied packets appear in /var/log/ufw.log or /var/log/syslog depending on logger configuration
+
+    Save a rollback of the current ruleset before applying: nft list ruleset > /var/backups/nftables-rollback-<timestamp>.nft
+
+    Apply the new ruleset atomically: nft -f nftables.conf
+
+    Verify the load with nft list ruleset and count the rules that match the expected total
+
+Hint: test the render step before the apply step. nft -c -f nftables.conf performs a check-only parse.
 
 ---
 
