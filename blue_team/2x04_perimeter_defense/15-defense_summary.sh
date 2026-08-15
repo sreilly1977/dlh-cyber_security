@@ -258,6 +258,8 @@ if dns_report:
 # 8. evidence_package
 # ==============================================================================
 
+# evidence_package: manifest SHA-256 computed for integrity verification
+
 ep_tarball_path = ""
 ep_manifest_sha256 = ""
 ep_file_count = 0
