@@ -888,3 +888,57 @@ $ sudo ./13-dns_filtering.sh
 
 ---
 
+# [14. The Perimeter Validation Suite](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/14-perimeter_validation.sh)
+## #advanced
+
+## Goal: 
+
+Run a single end-to-end check of every network defense control built in this project and emit a pass-fail report on the state of the perimeter.
+
+## Context: 
+
+The individual tasks proved their own correctness. This task proves the system as a whole. It walks the controls one by one, asks each one "are you active and configured as specified", records the answer and refuses to declare the perimeter ready unless every check passes. It is the pre-flight before the Module 2 capstone.
+
+## Instructions: 
+
+Write a script 14-perimeter_validation.sh that verifies every perimeter control. The script must:
+
+    Check nftables: nft list ruleset must contain the meddefense table, the expected chains and a non-zero rule count
+
+    Check the firewall validation report: re-run 5-firewall_test.sh (or re-read its latest firewall_test_results.json if produced within the last hour) and fail if any test failed
+
+    Check Suricata configuration: suricata -T -c ./suricata.yaml must exit 0
+
+    Check Suricata rule load: parse setup_verification.json and confirm rule_count > 0 and meddefense.rules is referenced in suricata.yaml
+
+    Check custom rule validation: parse rule_validation.json and confirm every rule passed
+
+    Check protocol audit: parse protocol_audit.json and fail if any finding has severity high that is not explicitly marked as exception_accepted
+
+    Check DNS filtering: parse dns_filter_report.json and confirm service_active == true and all validation tests passed
+
+    Check the artifact package: verify network_artifact_package/manifest/manifest.json exists and every listed file matches its recorded SHA-256
+
+    Exit with code 0 if every check passed, 1 otherwise
+
+Hint: the script is idempotent. Running it twice in a row must produce the same result unless something on the host has changed.
+
+**Expected Output:**
+
+```bash
+$ sudo ./14-perimeter_validation.sh
+[01/09] nftables ruleset loaded                      PASS
+[02/09] firewall test results (14/14)                PASS
+[03/09] suricata config -T                           PASS
+[04/09] suricata rule load (34219 + 6 custom)        PASS
+[05/09] custom rule validation (6/6)                 PASS
+[06/09] protocol audit (no unaccepted high)          PASS
+[07/09] dns filtering active and validated           PASS
+[08/09] artifact package manifest verified           PASS
+[09/09] no-residue rerun consistency                 PASS
+Checks: 9    Passed: 9    Failed: 0
+```
+
+---
+
+# 

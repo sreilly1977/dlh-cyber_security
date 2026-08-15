@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-15T10:32:45Z",
+  "generated_at": "2026-08-15T10:46:53Z",
   "hostname": "billing-srv-01",
   "project_version": "module2-week4",
   "field_schema_version": "module3-network-v1",
   "tarball_path": "network_artifact_package.tar.gz",
-  "tarball_size_bytes": 11093,
+  "tarball_size_bytes": 10652,
   "files": [
     {
       "path": "baseline/network_baseline.json",
@@ -56,16 +56,16 @@
     },
     {
       "path": "firewall/firewall_analysis.json",
-      "sha256": "f2ff8a599f2a3833766a815d98780bb15cee6cc001dfaa7bc3f339d22a961d49",
-      "size_bytes": 1836,
+      "sha256": "abcd9491ffbc2ed12fefde78f1a8b9573cb58f6fe7392e364e9c5c1fb6662da2",
+      "size_bytes": 2740,
       "produced_by": "7-firewall_log_analysis.sh",
       "required": true,
       "present": true
     },
     {
       "path": "firewall/firewall_test_results.json",
-      "sha256": "77052dc606b663cb1ec537538378092e45777c6b938921a83dd9733f1c856d43",
-      "size_bytes": 2743,
+      "sha256": "abcd9491ffbc2ed12fefde78f1a8b9573cb58f6fe7392e364e9c5c1fb6662da2",
+      "size_bytes": 2740,
       "produced_by": "5-firewall_test.sh",
       "required": true,
       "present": true

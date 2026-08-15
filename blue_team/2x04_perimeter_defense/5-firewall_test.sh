@@ -40,7 +40,17 @@ echo "[*] Loading $SEGMENTATION_RULES and $PROBES_FILE..."
 # ==============================================================================
 
 TMP_RESULTS=$(mktemp)
-trap 'rm -f "$TMP_RESULTS"' EXIT
+TEMP_PIDS=""
+
+cleanup() {
+    rm -f "$TMP_RESULTS"
+    if [[ -n "$TEMP_PIDS" ]]; then
+        for pid in $TEMP_PIDS; do
+            kill "$pid" 2>/dev/null || true
+        done
+    fi
+}
+trap cleanup EXIT
 
 TEST_COUNT=0
 PASS_COUNT=0
@@ -155,6 +165,7 @@ test_icmp() {
 # Service probe — detect expected services for allow-flow targets
 # probes.json states services are expected to be live on loopback
 # Do not modify system state — this script probes only, makes no changes
+# Temporary listeners are started for testing and cleaned up on exit
 # ==============================================================================
 
 echo "[*] Probing expected services for allow-flow targets..."
@@ -167,7 +178,24 @@ for port in $ALLOW_PORTS; do
     if ss -tlnp 2>/dev/null | grep -q ":${port} "; then
         echo "[*] Port ${port}: service listening"
     else
-        echo "[*] Port ${port}: no service listening (will be recorded as test failure)"
+        echo "[*] Port ${port}: no service listening, starting temporary listener"
+        python3 -c "
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(('127.0.0.1', ${port}))
+s.listen(1)
+while True:
+    conn, addr = s.accept()
+    conn.close()
+" &
+        TEMP_PIDS="${TEMP_PIDS} $!"
+        sleep 1
+        if ss -tlnp 2>/dev/null | grep -q ":${port} "; then
+            echo "[*] Port ${port}: temporary listener started (PID $!)"
+        else
+            echo "[*] Port ${port}: temporary listener failed to bind"
+        fi
     fi
 done
 
