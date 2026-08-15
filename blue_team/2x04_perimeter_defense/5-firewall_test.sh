@@ -251,6 +251,7 @@ done <<< "$DENIED_FLOWS"
 
 # ==============================================================================
 # Phase 3: Baseline connectivity tests
+# Verify baseline connectivity (ICMP reachability, loopback reachability)
 # ==============================================================================
 
 echo ""
