@@ -333,7 +333,7 @@ result = {
         "custom_rule_count": custom_rule_count,
         "replay_only": replay_only
     },
-    "protocol_audit": {
+    "protocol_audit": { # protocol_audit: accepted exceptions counted from exception_accepted field
         "finding_count_by_severity": finding_count_by_severity,
         "high_unaccepted_count": high_unaccepted_count,
         "accepted_exceptions_count": accepted_exceptions_count
