@@ -40,6 +40,7 @@ ARTIFACTS=(
     "firewall|nftables_apply_log.json|4-nftables_config.sh|true"
     "firewall|firewall_analysis.json|7-firewall_log_analysis.sh|true"
     "firewall|firewall_test_results.json|5-firewall_test.sh|true"
+    # windows_firewall_rules.json copied when present
     "firewall|windows_firewall_rules.json|6-windows_firewall.ps1|false"
     # suricata/
     "suricata|suricata.yaml|8-suricata_setup.sh|true"
