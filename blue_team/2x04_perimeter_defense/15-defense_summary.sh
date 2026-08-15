@@ -327,7 +327,7 @@ result = {
         "present": windows_fw_present,
         "rule_count": windows_fw_rule_count
     },
-    "ids_engine": {
+    "ids_engine": { # ids_engine: custom rule count from rule_validation.json
         "suricata_version": suricata_version,
         "community_rule_count": community_rule_count,
         "custom_rule_count": custom_rule_count,
