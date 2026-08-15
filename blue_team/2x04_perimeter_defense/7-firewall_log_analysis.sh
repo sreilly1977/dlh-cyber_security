@@ -13,7 +13,7 @@ set -euo pipefail
 # ==============================================================================
 
 LOG_FILE="${1:-/home/analyst/MedDefense_Lab/firewall_samples/ufw.log}"
-OUTPUT_FILE="firewall_analysis.json"
+OUTPUT_FILE="firewall_analysis.json"  # Parse with: jq . firewall_analysis.json
 
 # ==============================================================================
 # Pre-flight checks
