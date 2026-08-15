@@ -173,7 +173,7 @@ for src_ip, evts in src_events.items():
         else:
             i += 1
 
-# Outbound anomalies: denied connections from private to public IPs
+# Outbound anomalies: denied outbound connections from private to public IPs
 def is_private_ip(ip):
     parts = ip.split('.')
     if len(parts) != 4:
