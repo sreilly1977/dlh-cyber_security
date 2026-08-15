@@ -342,6 +342,37 @@ Hint: test the render step before the apply step. nft -c -f nftables.conf perfor
 
 ---
 
+# [5. The Firewall Validation Suite](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/5-firewall_test.sh)
+### advanced
+
+## Goal: 
+
+Prove that every rule in the new nftables configuration behaves as designed by attempting the allowed and forbidden flows and recording the outcome.
+
+## Context: 
+
+An unverified firewall rule is an assumption. A verified firewall rule is a control. This task builds the evidence that converts the first into the second. It attempts every flow from segmentation_rules.json (both the allowed ones and representative denied ones) and records whether the result matches intent.
+
+## Instructions: 
+
+Write a script 5-firewall_test.sh that executes connection tests against the loaded ruleset. The script must:
+
+    Read segmentation_rules.json as the source of truth
+
+    For each allow flow with dst_zone equal to the local host's own zone, issue a test connection from a provided test source (either a loopback-mapped alias or a controlled external probe registered in /home/analyst/MedDefense_Lab/probes.json). Use nc -z -w 3 for TCP checks and nc -uzv -w 3 for UDP checks. Record expected=allow, observed=pass if the connection succeeds
+
+    For each denied flow in the test probe matrix (hosts that MUST be refused), issue the same test and expect failure. Record expected=deny, observed=pass if the connection is refused
+
+    For each protocol probe (ICMP reachability, loopback reachability), verify that the rules did not accidentally break baseline connectivity
+
+    For every test, compute a boolean result=pass|fail by comparing expected and observed
+
+    If any test fails, exit with code 1 and print the failing tests. Otherwise exit with code 0.
+
+Note: the probes file is shipped with the project. Students do not invent the test topology.
+
+---
+
 # [6. The Windows Firewall Alignment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/6-windows_firewall.ps1)
 
 ## Goal: 
