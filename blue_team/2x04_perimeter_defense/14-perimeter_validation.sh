@@ -13,7 +13,7 @@ set -euo pipefail
 # ==============================================================================
 
 # Do not modify system state - this script validates only, makes no changes
-# Generates audit reports only — no configuration changes
+# Generates audit reports only - no configuration changes
 WORKDIR="$(pwd)"
 CHECKS_PASSED=0
 CHECKS_FAILED=0
