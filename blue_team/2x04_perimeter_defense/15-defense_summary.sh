@@ -259,6 +259,7 @@ if dns_report:
 # ==============================================================================
 
 # evidence_package: manifest SHA-256 computed for integrity verification
+# evidence_package: file count from manifest.json
 
 ep_tarball_path = ""
 ep_manifest_sha256 = ""
