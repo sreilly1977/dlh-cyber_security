@@ -1,0 +1,306 @@
+{
+  "generated_at": "2026-08-15T11:31:26Z",
+  "hostname": "billing-srv-01",
+  "zones_defined": {
+    "count": 4,
+    "names": [
+      "DMZ",
+      "INTERNAL",
+      "MGMT",
+      "MEDDEV"
+    ],
+    "cidrs": [
+      {
+        "zone": "DMZ",
+        "cidr": "10.10.2.0/24"
+      },
+      {
+        "zone": "INTERNAL",
+        "cidr": "10.10.1.0/24"
+      },
+      {
+        "zone": "MGMT",
+        "cidr": "192.168.10.0/24"
+      },
+      {
+        "zone": "MEDDEV",
+        "cidr": "10.10.3.0/24"
+      }
+    ]
+  },
+  "flows_allowed": {
+    "count": 19,
+    "list": [
+      {
+        "action": "allow",
+        "src_zone": "MGMT",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 22,
+        "justification": "Administration access to clinical servers"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MGMT",
+        "dst_zone": "DMZ",
+        "proto": "tcp",
+        "dport": 22,
+        "justification": "Administration access to DMZ hosts"
+      },
+      {
+        "action": "allow",
+        "src_zone": "INTERNAL",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 443,
+        "justification": "Clinical workstations to INTERNAL server hosts (HTTPS)"
+      },
+      {
+        "action": "allow",
+        "src_zone": "INTERNAL",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 3306,
+        "justification": "Clinical workstations to INTERNAL database servers"
+      },
+      {
+        "action": "allow",
+        "src_zone": "DMZ",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 3306,
+        "justification": "DMZ application hosts to INTERNAL databases",
+        "exception_for": "dmz_app_hosts_only",
+        "src_restriction": "named_dmz_application_hosts"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MEDDEV",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 4242,
+        "justification": "DICOM imaging to PACS"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MEDDEV",
+        "dst_zone": "INTERNAL",
+        "proto": "tcp",
+        "dport": 443,
+        "justification": "EHR web integration for device display"
+      },
+      {
+        "action": "allow",
+        "src_zone": "DMZ",
+        "dst_zone": "MGMT",
+        "proto": "udp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "DMZ",
+        "dst_zone": "MGMT",
+        "proto": "tcp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "INTERNAL",
+        "dst_zone": "MGMT",
+        "proto": "udp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "INTERNAL",
+        "dst_zone": "MGMT",
+        "proto": "tcp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MEDDEV",
+        "dst_zone": "MGMT",
+        "proto": "udp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MEDDEV",
+        "dst_zone": "MGMT",
+        "proto": "tcp",
+        "dport": 53,
+        "justification": "DNS resolution to MGMT resolver"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MGMT",
+        "dst_zone": "MEDDEV",
+        "proto": "tcp",
+        "dport": 22,
+        "justification": "Administration access to medical devices"
+      },
+      {
+        "action": "allow",
+        "src_zone": "MGMT",
+        "dst_zone": "MEDDEV",
+        "proto": "tcp",
+        "dport": 4242,
+        "justification": "DICOM management to medical devices"
+      },
+      {
+        "action": "deny_all",
+        "src_zone": "DMZ",
+        "dst_zone": "MEDDEV",
+        "proto": "any",
+        "dport": 0,
+        "justification": "No flows from DMZ to MEDDEV (medical device isolation)"
+      },
+      {
+        "action": "deny_all",
+        "src_zone": "INTERNAL",
+        "dst_zone": "DMZ",
+        "proto": "any",
+        "dport": 0,
+        "justification": "No flows from INTERNAL to DMZ (segmentation enforcement)"
+      },
+      {
+        "action": "deny_all",
+        "src_zone": "INTERNAL",
+        "dst_zone": "MEDDEV",
+        "proto": "any",
+        "dport": 0,
+        "justification": "No flows from INTERNAL to MEDDEV (medical device isolation)"
+      },
+      {
+        "action": "deny_all",
+        "src_zone": "MEDDEV",
+        "dst_zone": "DMZ",
+        "proto": "any",
+        "dport": 0,
+        "justification": "No flows from MEDDEV to DMZ or public Internet"
+      }
+    ]
+  },
+  "firewall_engine": {
+    "nftables_version": "v1.0.2",
+    "meddefense_table_present": true,
+    "rules_loaded_count": 34,
+    "log_file_path": "/home/analyst/MedDefense_Lab/firewall_samples/ufw.log"
+  },
+  "windows_firewall": {
+    "present": false,
+    "rule_count": 0
+  },
+  "ids_engine": {
+    "suricata_version": "6.0.4",
+    "community_rule_count": 45016,
+    "custom_rule_count": 6,
+    "replay_only": true
+  },
+  "protocol_audit": {
+    "finding_count_by_severity": {
+      "low": 11,
+      "info": 1,
+      "medium": 1
+    },
+    "high_unaccepted_count": 0,
+    "accepted_exceptions_count": 0
+  },
+  "dns_filter": {
+    "active": true,
+    "blocklist_size": 814,
+    "sinkhole_validation_result": true
+  },
+  "evidence_package": {
+    "tarball_path": "network_artifact_package.tar.gz",
+    "manifest_sha256": "f524d7242ad79b7679bc06f96a43adfe314d28effbbc729e53030a73b66ae032",
+    "file_count": 16,
+    "schema_version": "module3-network-v1"
+  },
+  "validation_last_run": {
+    "timestamp": "2026-08-15T11:02:23Z",
+    "passed": true,
+    "passed_count": 9,
+    "failed_count": 0
+  },
+  "known_gaps": [
+    {
+      "id": "GAP-001",
+      "title": "Radiology lab PC still runs cleartext Telnet",
+      "zone": "MEDDEV",
+      "asset": "172.16.40.77 (radiology-lab-pc-03)",
+      "severity": "high",
+      "category": "insecure_protocol",
+      "discovered_by": "Mike Torres, manual probe",
+      "status": "open",
+      "remediation": "Replace vendor Telnet management interface with SSH or vendor-supported HTTPS console; scheduled for the next maintenance window because the imaging vendor must certify the change first.",
+      "target_remediation": "next-quarter-maintenance-window"
+    },
+    {
+      "id": "GAP-002",
+      "title": "Guest Wi-Fi VLAN can still reach the billing database subnet",
+      "zone": "DMZ",
+      "asset": "guest-wifi-ap-pool -> 172.16.20.0/24",
+      "severity": "critical",
+      "category": "flat_network",
+      "discovered_by": "Mike Torres, arp -a dump",
+      "status": "mitigated_by_this_project",
+      "remediation": "Blocked by the default-deny forward chain rendered in T4; retained here for audit trail continuity from the pre-project state.",
+      "target_remediation": "closed"
+    },
+    {
+      "id": "GAP-003",
+      "title": "SNMP agent answers v1/v2c community-string queries",
+      "zone": "INTERNAL",
+      "asset": "billing-srv-01 (snmpd, udp/161)",
+      "severity": "high",
+      "category": "insecure_protocol",
+      "discovered_by": "T3 protocol audit",
+      "status": "open",
+      "remediation": "Migrate to SNMPv3 with authPriv; community string \"public\" must be retired once the monitoring team finishes onboarding v3 credentials.",
+      "target_remediation": "pending_monitoring_team"
+    },
+    {
+      "id": "GAP-004",
+      "title": "Billing admin panel served over cleartext HTTP",
+      "zone": "INTERNAL",
+      "asset": "billing-srv-01 (apache2, /admin/)",
+      "severity": "high",
+      "category": "insecure_protocol",
+      "discovered_by": "T3 protocol audit",
+      "status": "open",
+      "remediation": "Terminate TLS in front of the admin vhost and redirect port 80 to 443; certificate request is filed with IT.",
+      "target_remediation": "pending_certificate_issuance"
+    },
+    {
+      "id": "GAP-005",
+      "title": "No egress filtering yet validated for DNS tunneling on the medical device VLAN",
+      "zone": "MEDDEV",
+      "asset": "172.16.40.0/24",
+      "severity": "medium",
+      "category": "detection_gap",
+      "discovered_by": "T9/T10 Suricata replay analysis",
+      "status": "monitoring",
+      "remediation": "Custom Suricata rule (T10) now detects long-label DNS queries in offline replay; live inline enforcement is out of scope for this module.",
+      "target_remediation": "module_3_followup"
+    },
+    {
+      "id": "GAP-006",
+      "title": "Windows Firewall alignment not yet verified on all domain-joined workstations",
+      "zone": "INTERNAL",
+      "asset": "clinical-workstation-pool",
+      "severity": "medium",
+      "category": "coverage_gap",
+      "discovered_by": "T6 rollout tracking",
+      "status": "in_progress",
+      "remediation": "6-windows_firewall.ps1 has been validated on a pilot group of 5 workstations; fleet-wide GPO rollout is scheduled after change approval.",
+      "target_remediation": "pending_change_approval"
+    }
+  ]
+}
