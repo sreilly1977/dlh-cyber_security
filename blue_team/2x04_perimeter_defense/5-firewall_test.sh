@@ -277,7 +277,7 @@ add_result "loopback_ssh" "-" "$LOOPBACK_TARGET" "22" "tcp" "allow" "$loopback_r
 # ==============================================================================
 
 echo ""
-echo "[*] Building firewall_test.json..."
+echo "[*] Building firewall_test_results.json..."
 
 # Count totals
 TOTAL_TESTS=$(jq -s 'length' "$TMP_RESULTS" 2>/dev/null || echo "0")
