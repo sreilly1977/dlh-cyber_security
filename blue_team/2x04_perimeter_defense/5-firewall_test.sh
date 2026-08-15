@@ -16,7 +16,8 @@ set -euo pipefail
 # Generates audit reports only — no configuration changes
 SEGMENTATION_RULES="segmentation_rules.json"
 PROBES_FILE="/home/analyst/MedDefense_Lab/probes.json"
-OUTPUT_FILE="firewall_test.json"
+# Output: firewall_test_results.json
+OUTPUT_FILE="firewall_test_results.json"
 
 # ==============================================================================
 # Pre-flight checks
