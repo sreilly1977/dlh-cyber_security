@@ -15,7 +15,7 @@ set -euo pipefail
 # Do not modify system state - this script validates only, makes no changes
 # Generates audit reports only - no configuration changes
 
-WORKDIR="/home/analyst/scripts/perimeter"
+WORKDIR="$(pwd)"
 CHECKS_PASSED=0
 CHECKS_FAILED=0
 CHECK_COUNT=0
