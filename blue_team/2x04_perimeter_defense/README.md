@@ -941,4 +941,132 @@ Checks: 9    Passed: 9    Failed: 0
 
 ---
 
-# 
+# [15. The Defensive Posture Summary](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/15-defense_summary.sh)
+### advanced
+
+## Goal: 
+
+Emit one machine-readable summary of the network defense posture, including deployed controls, validation state, evidence package metadata and known gaps.
+
+## Context: 
+
+The final deliverable for this project is not a narrative report. It is a JSON posture object that downstream capstone automation can read with jq. The posture summary answers: what zones exist, what flows are allowed, which firewall engine is active, what Suricata can see, what insecure protocols remain, whether DNS filtering works, where the evidence package is and what known gaps still exist.
+
+## Instructions: 
+
+Write a script 15-defense_summary.sh.
+
+The script must read artifacts produced by Tasks 0 through 14, including:
+
+    segmentation_rules.json
+    nftables.conf
+    windows_firewall_rules.json if present
+    setup_verification.json
+    rule_validation.json
+    protocol_audit.json
+    dns_filter_report.json if present
+    network_artifact_package/manifest/manifest.json
+    perimeter_validation.json
+    /home/analyst/MedDefense_Lab/known_gaps.json
+
+The script must emit defense_summary.json with:
+
+    generated_at
+    hostname
+    zones_defined
+    flows_allowed
+    firewall_engine
+    windows_firewall
+    ids_engine
+    protocol_audit
+    dns_filter
+    evidence_package
+    validation_last_run
+    known_gaps
+
+Required computed fields:
+
+1. zones_defined
+
+    count
+    names
+    CIDRs
+
+2. flows_allowed
+
+    count
+    list of allowed flows
+
+3. firewall_engine
+
+    nftables version
+    meddefense table present
+    rules loaded count
+    log file path
+
+4. windows_firewall
+
+    present boolean
+    rule count if present
+
+5. ids_engine
+
+    Suricata version
+    community rule count
+    custom rule count
+    replay_only boolean
+
+6. protocol_audit
+
+    finding count by severity
+    high unaccepted count
+    accepted exceptions count
+
+7. dns_filter
+
+    active boolean
+    blocklist size
+    sinkhole validation result
+
+8. evidence_package
+
+    tarball path
+    manifest SHA-256
+    file count
+    schema version
+
+9. validation_last_run
+
+    timestamp
+    passed boolean
+    passed count
+    failed count
+
+10. known_gaps
+
+    deterministic array sourced from known_gaps.json
+
+Print a one-screen operator summary.
+
+**Expected Output:**
+
+```bash
+$ sudo ./15-defense_summary.sh
+================================================================
+   Defensive Posture Summary - billing-srv-01
+================================================================
+Zones:                4 (DMZ, INTERNAL, MGMT, MEDDEV)
+Allowed flows:        9
+nftables:             1.0.2 | 28 rules loaded
+Windows Firewall:     aligned (6 rules)
+Suricata (replay):    6.0.14 | 34219 community + 6 custom
+Protocol audit:       0 high unaccepted, 1 medium, 1 accepted
+DNS filter:           active | 814 domains | sinkhole validated
+Evidence package:     network_artifact_package.tar.gz
+Last validation:      2026-04-10T10:42:18Z | PASS (9/9)
+Known gaps:           2
+Report: defense_summary.json
+================================================================
+```
+
+---
