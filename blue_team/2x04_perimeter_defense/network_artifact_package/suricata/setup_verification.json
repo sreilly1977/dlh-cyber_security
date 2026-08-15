@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-08-14T16:32:47Z",
+  "installed_version": "6.0.4",
+  "rule_files_loaded": 53,
+  "rule_count": 45022,
+  "config_test_exit": 0,
+  "smoke_pcap": "/home/analyst/MedDefense_Lab/PCAPs/smoke.pcap",
+  "smoke_alerts": 2,
+  "smoke_test_passed": true,
+  "config_file": "suricata.yaml",
+  "rules_directory": "/var/lib/suricata/rules",
+  "home_net": "[10.10.0.0/16]",
+  "external_net": "!$HOME_NET",
+  "mode": "offline_replay"
+}

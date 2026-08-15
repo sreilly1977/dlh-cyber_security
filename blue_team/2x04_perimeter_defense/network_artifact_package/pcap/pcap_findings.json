@@ -1,0 +1,863 @@
+{
+  "timestamp": "2026-08-14T18:39:37Z",
+  "pcap": "/home/analyst/MedDefense_Lab/PCAPs/suspicious_session.pcap",
+  "duration_seconds": 486,
+  "packet_count": 942,
+  "tcp_conversations": [
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50000,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 52000,
+      "dst_addr": "10.10.1.50",
+      "dst_port": 3306,
+      "total_packets": 6,
+      "total_bytes": 333
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50001,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 52001,
+      "dst_addr": "10.10.1.50",
+      "dst_port": 3306,
+      "total_packets": 6,
+      "total_bytes": 333
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50002,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50003,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 52002,
+      "dst_addr": "10.10.1.50",
+      "dst_port": 3306,
+      "total_packets": 6,
+      "total_bytes": 333
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50004,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 50005,
+      "dst_addr": "185.220.101.42",
+      "dst_port": 443,
+      "total_packets": 6,
+      "total_bytes": 419
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 52003,
+      "dst_addr": "10.10.1.50",
+      "dst_port": 3306,
+      "total_packets": 6,
+      "total_bytes": 333
+    }
+  ],
+  "udp_conversations": [
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40000,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 80
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40001,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 84
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40002,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 81
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40003,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 72
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40004,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 86
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40005,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 80
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40006,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 84
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40007,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 81
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40008,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 72
+    },
+    {
+      "src_addr": "10.10.1.10",
+      "src_port": 40009,
+      "dst_addr": "8.8.8.8",
+      "dst_port": 53,
+      "total_packets": 1,
+      "total_bytes": 86
+    }
+  ],
+  "dns_queries": [
+    {
+      "timestamp": "1755100000.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100012.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100024.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100036.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100048.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100060.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100072.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100084.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100096.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100108.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100120.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100132.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100144.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100156.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100168.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100180.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100192.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100204.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100216.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100228.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100240.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100252.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100264.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100276.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100288.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100300.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100312.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100324.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100336.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100348.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100360.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100372.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100384.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100396.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100408.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100420.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ntp.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100432.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "billing.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100444.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "updates.microsoft.com",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100456.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "pool.ntp.org",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100468.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "clamav-db.meddefense.local",
+      "query_type": "1"
+    },
+    {
+      "timestamp": "1755100483.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "ZG9jdW1lbnQuZXhlLm1kZC5jcmltc29uLXRpZGUtb3BzLnh5eg.c2.example",
+      "query_type": "16"
+    },
+    {
+      "timestamp": "1755100486.000000000",
+      "src_ip": "10.10.1.10",
+      "query_name": "cGF0aWVudF9leHBvcnRfYmF0Y2hfMDA0Mi5jc3YuZ3oubWRkLmNyaW1zb24tdGl.c2.example",
+      "query_type": "16"
+    }
+  ],
+  "http_requests": [
+    {
+      "timestamp": "1755100480.090000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "host": "cdn.crimson-tide-ops.xyz",
+      "method": "GET",
+      "uri": "/update.bin"
+    }
+  ],
+  "tls_sni": [
+    {
+      "timestamp": "1755100000.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100008.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100016.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100024.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100032.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100040.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100048.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100056.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100064.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100072.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100080.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100088.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100096.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100104.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100112.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100120.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100128.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100136.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100144.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100152.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100160.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100168.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100176.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100184.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100192.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100200.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100208.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100216.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100224.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100232.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100240.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100248.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100256.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100264.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100272.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100280.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100288.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100296.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100304.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100312.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100320.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100328.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100336.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100344.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100352.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100360.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100368.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100376.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100384.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100392.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100400.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100408.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100416.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100424.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100432.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100440.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100448.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100456.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100464.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    },
+    {
+      "timestamp": "1755100472.060000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "server_name": "cdn.crimson-tide-ops.xyz"
+    }
+  ],
+  "file_transfers": [
+    {
+      "timestamp": "1755100480.090000000",
+      "src_ip": "10.10.1.10",
+      "dst_ip": "185.220.101.42",
+      "uri": "/update.bin",
+      "content_type": "",
+      "content_length": 0,
+      "smb_filename": ""
+    },
+    {
+      "timestamp": "1755100480.150000000",
+      "src_ip": "185.220.101.42",
+      "dst_ip": "10.10.1.10",
+      "uri": "",
+      "content_type": "application/octet-stream",
+      "content_length": 32,
+      "smb_filename": ""
+    }
+  ],
+  "protocol_distribution": [
+    {
+      "protocol": "eth",
+      "frames": 942,
+      "bytes": 65098
+    },
+    {
+      "protocol": "ip",
+      "frames": 942,
+      "bytes": 65098
+    },
+    {
+      "protocol": "tcp",
+      "frames": 860,
+      "bytes": 56931
+    },
+    {
+      "protocol": "tls",
+      "frames": 120,
+      "bytes": 16320
+    },
+    {
+      "protocol": "mysql",
+      "frames": 25,
+      "bytes": 1475
+    },
+    {
+      "protocol": "http",
+      "frames": 2,
+      "bytes": 409
+    },
+    {
+      "protocol": "data",
+      "frames": 1,
+      "bytes": 221
+    },
+    {
+      "protocol": "udp",
+      "frames": 82,
+      "bytes": 8167
+    },
+    {
+      "protocol": "dns",
+      "frames": 82,
+      "bytes": 8167
+    }
+  ]
+}

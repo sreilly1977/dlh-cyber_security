@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-08-14T14:17:32Z",
+  "hostname": "billing-srv-01",
+  "sockets": [
+    {
+      "proto": "tcp",
+      "port": 33060,
+      "bind_addr": "127.0.0.1",
+      "process": "mysqld",
+      "package": "mysql-server-core-8.0",
+      "function": "database",
+      "criticality": "critical",
+      "exposure_flags": [],
+      "service_unit": "mysql.service",
+      "binary_path": "/usr/sbin/mysqld"
+    },
+    {
+      "proto": "tcp",
+      "port": 3306,
+      "bind_addr": "0.0.0.0",
+      "process": "mysqld",
+      "package": "mysql-server-core-8.0",
+      "function": "database",
+      "criticality": "critical",
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "database_exposed"
+      ],
+      "service_unit": "mysql.service",
+      "binary_path": "/usr/sbin/mysqld"
+    },
+    {
+      "proto": "tcp",
+      "port": 22,
+      "bind_addr": "0.0.0.0",
+      "process": "sshd",
+      "package": "openssh-server",
+      "function": "ssh",
+      "criticality": "high",
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "ssh_exposed"
+      ],
+      "service_unit": "ssh.service",
+      "binary_path": "/usr/sbin/sshd"
+    },
+    {
+      "proto": "tcp",
+      "port": 22,
+      "bind_addr": "::",
+      "process": "sshd",
+      "package": "openssh-server",
+      "function": "ssh",
+      "criticality": "high",
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "ssh_exposed"
+      ],
+      "service_unit": "ssh.service",
+      "binary_path": "/usr/sbin/sshd"
+    },
+    {
+      "proto": "tcp",
+      "port": 80,
+      "bind_addr": "*",
+      "process": "apache2",
+      "package": "apache2-bin",
+      "function": "web",
+      "criticality": "high",
+      "exposure_flags": [
+        "bound_0.0.0.0",
+        "web_exposed"
+      ],
+      "service_unit": "apache2.service",
+      "binary_path": "/usr/sbin/apache2"
+    }
+  ],
+  "summary": {
+    "total_sockets": 5,
+    "flagged_sockets": 4,
+    "unknown_functions": 0,
+    "by_severity": {
+      "critical": 1,
+      "high": 3,
+      "medium": 0,
+      "low": 0
+    }
+  }
+}

@@ -719,6 +719,117 @@ Long DNS labels (> 50 chars):
   ZG9jdW1lbnQuZXhlLm1kZC5jcmltc29uLXRpZGUtb3BzLnh5eg.c2.example.  (58 chars)
 ```
 
+# [12. The Network Evidence Handoff Package](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/12-network_artifacts.sh)
+## #advanced
+
+## Goal: 
+
+Assemble every perimeter evidence artifact into a deterministic handoff package that Module 3 analysts can consume without transformation.
+
+## Context: 
+
+Every task in this project produces local evidence: baselines, firewall rules, validation results, Suricata alerts, PCAP findings, DNS filtering results and protocol audit findings. Those files are useful only if the analyst knows where they are, what produced them and whether they were modified after packaging.
+
+## Instructions: 
+
+Write a script 12-network_artifacts.sh.
+
+The script must create this directory structure:
+
+<pre>
+network_artifact_package/
+├── baseline/
+├── firewall/
+├── suricata/
+├── pcap/
+├── dns/
+└── manifest/
+</pre>
+
+The script must copy, not move, artifacts into the package.
+
+Required artifacts:
+
+baseline/
+
+    network_baseline.json
+    attack_surface.json
+    segmentation_rules.json
+    protocol_audit.json
+
+firewall/
+
+    nftables.conf
+    nftables_apply_log.json
+    firewall_analysis.json
+    firewall_test_results.json
+    windows_firewall_rules.json when present
+
+suricata/
+
+    suricata.yaml
+    meddefense.rules
+    suricata_alerts.json
+    rule_validation.json
+    setup_verification.json
+
+pcap/
+
+    pcap_findings.json
+    redacted PCAPs used by the analysis tasks only
+
+dns/
+
+    dns_filter_report.json when present
+
+The script must emit network_artifact_package/manifest/manifest.json containing:
+
+    generated_at
+    hostname
+    project_version
+    field_schema_version
+    tarball_path
+    tarball_size_bytes
+    files
+
+Each file entry must include:
+
+    path
+    sha256
+    size_bytes
+    produced_by
+    required
+    present
+
+The script must also emit network_artifact_package/manifest/README.json with machine-readable descriptions of every subdirectory.
+
+After building the manifest, the script must:
+
+    Re-read manifest.json
+    Recompute every listed SHA-256
+    Fail if any required file is missing or hash verification fails
+    Create network_artifact_package.tar.gz
+    Update the manifest with tarball path and size
+
+**Expected Output:**
+
+```bash
+$ sudo ./12-network_artifacts.sh
+[*] Creating package directory structure...
+    baseline/ firewall/ suricata/ pcap/ dns/ manifest/
+[*] Copying artifacts...                 14 files
+[*] Building manifest...
+[*] Computing SHA-256 per file...
+[*] Verifying manifest...                OK
+[*] Creating tarball...                  network_artifact_package.tar.gz
+
+Package:   network_artifact_package/
+Manifest:  network_artifact_package/manifest/manifest.json
+Tarball:   network_artifact_package.tar.gz
+Files:     14
+Schema:    module3-network-v1
+```
+
 ---
 
 # [13. The DNS Filtering Layer](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/13-dns_filtering.sh)

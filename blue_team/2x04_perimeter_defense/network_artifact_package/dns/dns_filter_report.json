@@ -1,0 +1,10 @@
+{
+  "dnsmasq_version": "2.90",
+  "blocked_domains": 814,
+  "config_files": {
+    "blocklist": "/etc/dnsmasq.d/meddefense-blocklist.conf",
+    "upstream": "/etc/dnsmasq.d/meddefense-upstream.conf"
+  },
+  "service_status": "active",
+  "generated_at": "2026-08-14T19:36:40Z"
+}

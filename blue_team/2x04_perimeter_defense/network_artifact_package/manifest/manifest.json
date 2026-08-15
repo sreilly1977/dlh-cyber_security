@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-08-15T10:32:45Z",
+  "hostname": "billing-srv-01",
+  "project_version": "module2-week4",
+  "field_schema_version": "module3-network-v1",
+  "tarball_path": "network_artifact_package.tar.gz",
+  "tarball_size_bytes": 11093,
+  "files": [
+    {
+      "path": "baseline/network_baseline.json",
+      "sha256": "f8505001f74a19024e5515dc8a85137500790d80f61d6df79c2f12aa0e4c41e3",
+      "size_bytes": 2655,
+      "produced_by": "0-network_baseline.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "baseline/attack_surface.json",
+      "sha256": "65d45f3ef68cd369baab25bc3e0b054fd0be3cd97fe2c01f3cda7d26ff059315",
+      "size_bytes": 2061,
+      "produced_by": "1-attack_surface.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "baseline/segmentation_rules.json",
+      "sha256": "749f44ee63212e14ea5f81fca1ad6c91b2a890f523496c17aa1e73c9bb272a07",
+      "size_bytes": 4942,
+      "produced_by": "2-segmentation_rules.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "baseline/protocol_audit.json",
+      "sha256": "161a68464e2d539d769aa67efbf5d7a819fa43357ac0273eed72078cd03899f2",
+      "size_bytes": 3919,
+      "produced_by": "3-protocol_audit.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "firewall/nftables.conf",
+      "sha256": "9cc3ecc2d0255cd516118e58d8a091d432b8bf89eb4590af912f17424bf8ecfc",
+      "size_bytes": 4614,
+      "produced_by": "4-nftables_config.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "firewall/nftables_apply_log.json",
+      "sha256": "a0fadf2edba4928e21ba22bae949e1494ace6f91e0c3a75cf79db6431b57997e",
+      "size_bytes": 435,
+      "produced_by": "4-nftables_config.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "firewall/firewall_analysis.json",
+      "sha256": "f2ff8a599f2a3833766a815d98780bb15cee6cc001dfaa7bc3f339d22a961d49",
+      "size_bytes": 1836,
+      "produced_by": "7-firewall_log_analysis.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "firewall/firewall_test_results.json",
+      "sha256": "77052dc606b663cb1ec537538378092e45777c6b938921a83dd9733f1c856d43",
+      "size_bytes": 2743,
+      "produced_by": "5-firewall_test.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "firewall/windows_firewall_rules.json",
+      "sha256": "",
+      "size_bytes": 0,
+      "produced_by": "6-windows_firewall.ps1",
+      "required": false,
+      "present": false
+    },
+    {
+      "path": "suricata/suricata.yaml",
+      "sha256": "cc5312da9c986495be4c866dea834e2040077654638430edccf9c36c092d0179",
+      "size_bytes": 3190,
+      "produced_by": "8-suricata_setup.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "suricata/meddefense.rules",
+      "sha256": "d5a502db7533d3bdbaf19aed47685b268ba3233386cb822a7f0c4d1c3269169c",
+      "size_bytes": 2155,
+      "produced_by": "8-suricata_setup.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "suricata/suricata_alerts.json",
+      "sha256": "f4c6f9b9a53de4c56fe273d28e0b2b8879277118547948a94ff15fa22e26d33b",
+      "size_bytes": 8961,
+      "produced_by": "9-suricata_analysis.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "suricata/rule_validation.json",
+      "sha256": "83ff236b6937dc4687309da1091f37e18beb83f71761a9b9d333844eb440ec58",
+      "size_bytes": 153,
+      "produced_by": "10-rule_validation.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "suricata/setup_verification.json",
+      "sha256": "3b5214e63c062412e54e9575da7c7a59ba8e6f652cdd6e3e8c293cf18169abda",
+      "size_bytes": 438,
+      "produced_by": "8-suricata_setup.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "pcap/pcap_findings.json",
+      "sha256": "e518641a4ab481b215b8384043bbcbc11439591996d9cbc98dbca54614c5181b",
+      "size_bytes": 21902,
+      "produced_by": "11-pcap_investigation.sh",
+      "required": true,
+      "present": true
+    },
+    {
+      "path": "dns/dns_filter_report.json",
+      "sha256": "e99a86ef7c3227ef65b44d93fa97bd7ac34bef6d83b5375d84051f8d2bad21f0",
+      "size_bytes": 274,
+      "produced_by": "13-dns_filtering.sh",
+      "required": false,
+      "present": true
+    }
+  ]
+}

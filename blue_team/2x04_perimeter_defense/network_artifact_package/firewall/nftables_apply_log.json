@@ -1,0 +1,17 @@
+{
+  "timestamp": "20260814T154048Z",
+  "local_zone": "INTERNAL",
+  "nftables_conf": "nftables.conf",
+  "rollback_file": "/var/backups/nftables-rollback-20260814T154048Z.nft",
+  "table_loaded": true,
+  "chains": 3,
+  "zone_sets": 4,
+  "rules_loaded": 34,
+  "expected_total": 19,
+  "log_prefix_rules": 8,
+  "allow_flows_rendered": 15,
+  "deny_flows_rendered": 4,
+  "zones_defined": 4,
+  "idempotent_skip": false,
+  "status": "applied"
+}
