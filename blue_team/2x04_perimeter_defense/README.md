@@ -304,7 +304,7 @@ Report saved to: protocol_audit.json
 
 ---
 
-# [4. The nftables Ruleset](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/script 4-nftables_config.sh)
+# [4. The nftables Ruleset](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/4-nftables_config.sh)
 
 ## Goal: 
 
@@ -426,6 +426,62 @@ PS> .\6-windows_firewall.ps1
   MedDefense-DMZ-TCP-3306      Inbound Allow tcp 3306  [CREATED]
   MedDefense-MEDDEV-TCP-4242   Inbound Allow tcp 4242  [CREATED]
   MedDefense-MEDDEV-TCP-443    Inbound Allow tcp 443   [CREATED]
+```
+
+---
+
+# [7. The Firewall Log Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x04_perimeter_defense/7-firewall_log_analysis.sh)
+### advanced
+
+## Goal: 
+
+Parse a captured firewall log and extract the patterns that matter for an analyst: top denied sources, denied port clusters, scan signatures and anomalous outbound connections.
+
+## Context: 
+
+The firewall is the first sensor that sees an attacker touching the perimeter. Its logs, read carelessly, look like a wall of identical lines. Read carefully, they contain the shape of the adversary. This task builds the parser that produces the shape.
+
+## Instructions: 
+
+Write a script 7-firewall_log_analysis.sh that consumes a provided firewall log sample and emits structured findings. The script must:
+
+    Read /home/analyst/MedDefense_Lab/firewall_samples/ufw.log (or any file passed as argument) containing nftables/ufw-style LOG entries
+
+    Parse each line into fields: timestamp, iface_in, iface_out, src_ip, dst_ip, proto, spt, dpt, action
+
+    Compute the following aggregates:
+
+        Top 10 denied source IPs by count
+
+        Top 10 denied destination ports by count
+
+        Hosts that touched 20 or more distinct destination ports within any 60-second window (scan signature)
+
+        Hosts that generated denied outbound connections to public-IP destinations (potential beacon attempts from inside the zone)
+
+        Time distribution histogram bucketed by hour
+
+    For each scan candidate, record src_ip, window_start, window_end, ports_touched, dst_count
+
+    Emit firewall_analysis.json with source_file, line_count, parsed_count, top_denied_sources, top_denied_ports, scan_candidates, outbound_anomalies and hourly_histogram
+
+    Print a short summary to stdout (counts only) so that the analyst does not need to open the JSON to triage the run
+
+Hint: the scan detection is a sliding window over sorted events. Do not rebuild a SQL engine; a small awk or Python helper is enough.
+
+**Expected Output:**
+
+```bash
+$ ./7-firewall_log_analysis.sh /home/analyst/MedDefense_Lab/firewall_samples/ufw.log
+
+$ cat firewall_analysis.json
+{
+  "src_ip": "10.10.5.14",
+  "window_start": "2026-04-08T03:42:11Z",
+  "window_end": "2026-04-08T03:42:49Z",
+  "ports_touched": 87,
+  "dst_count": 4
+}
 ```
 
 ---
