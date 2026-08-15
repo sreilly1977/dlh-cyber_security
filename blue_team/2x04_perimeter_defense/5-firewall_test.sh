@@ -171,6 +171,7 @@ done
 
 # ==============================================================================
 # Phase 1: Test ALLOW flows from probes.json
+# Record expected=allow, observed=pass if connection succeeds
 # ==============================================================================
 
 echo ""
