@@ -15,6 +15,7 @@ set -euo pipefail
 # Do not modify system state - this script reads artifacts only, makes no changes
 # Generates defense_summary.json - a posture summary for capstone automation
 # Output: defense_summary.json (parse downstream with: jq . defense_summary.json)
+# nftables version: obtained via 'nft --version'
 
 WORKDIR="$(pwd)"
 GAPS_FILE="/home/analyst/MedDefense_Lab/known_gaps.json"
