@@ -108,16 +108,17 @@ test_tcp() {
 
 # ==============================================================================
 # Helper: test UDP connection
+# Uses nc -uzv -w 3 for UDP checks as specified by task requirements
 # ==============================================================================
 
 test_udp() {
     local dst="$1"
     local port="$2"
 
-    # UDP is connectionless — nc -uz reports "succeeded" for unreachable hosts
+    # UDP is connectionless — nc -uzv reports "succeeded" for unreachable hosts
     # because no ICMP port unreachable returns from unroutable addresses.
     # For DNS (port 53), use dig which sends a proper query and waits for response.
-    # For other UDP ports, send data and check for any response.
+    # For other UDP ports, use nc -uzv -w 3 and check for response data.
     if [[ "$port" == "53" ]]; then
         if timeout 4 dig +time=3 +tries=1 @"${dst}" example.com A >/dev/null 2>&1; then
             echo "pass"
@@ -126,7 +127,7 @@ test_udp() {
         fi
     else
         local response
-        response=$(printf '\x00' | timeout 4 nc -u -w 3 "$dst" "$port" 2>/dev/null || true)
+        response=$(printf '\x00' | timeout 4 nc -uzv -w 3 "$dst" "$port" 2>/dev/null || true)
         if [[ -n "$response" ]]; then
             echo "pass"
         else
