@@ -211,6 +211,7 @@ done <<< "$ALLOW_FLOWS"
 
 # ==============================================================================
 # Phase 2: Test DENY flows from probes.json
+# Record expected=deny, observed=fail if connection is blocked
 # ==============================================================================
 
 echo ""
