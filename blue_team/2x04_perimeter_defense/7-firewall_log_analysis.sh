@@ -12,6 +12,8 @@ set -euo pipefail
 # Configuration
 # ==============================================================================
 
+# Default log file: /home/analyst/MedDefense_Lab/firewall_samples/ufw.log
+# Override with: $1 (first argument passed to script)
 LOG_FILE="${1:-/home/analyst/MedDefense_Lab/firewall_samples/ufw.log}"
 OUTPUT_FILE="firewall_analysis.json"  # Parse with: jq . firewall_analysis.json
 
