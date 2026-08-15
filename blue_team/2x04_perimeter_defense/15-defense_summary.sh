@@ -370,7 +370,7 @@ print(f"Zones:                {zones_count} ({', '.join(zones_names)})")
 print(f"Allowed flows:        {flows_count}")
 print(f"nftables:             {nft_version} | {nft_rules_count} rules loaded")
 if windows_fw_present:
-    print(f"Windows Firewall:     aligned ({windows_fw_rule_count} rules)")
+    print(f"Windows Firewall:     aligned ({windows_fw_rule_count} rules)") # windows_firewall: rule count extracted from windows_firewall_rules.json
 else:
     print(f"Windows Firewall:     not present")
 mode_label = "replay" if replay_only else "live"
