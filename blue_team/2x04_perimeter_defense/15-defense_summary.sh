@@ -321,7 +321,7 @@ result = {
         "nftables_version": nft_version,
         "meddefense_table_present": nft_table_present,
         "rules_loaded_count": nft_rules_count,
-        "log_file_path": "/home/analyst/MedDefense_Lab/firewall_samples/ufw.log"
+        "log_file_path": "/home/analyst/MedDefense_Lab/firewall_samples/ufw.log" # firewall log file location
     },
     "windows_firewall": {
         "present": windows_fw_present,
