@@ -307,7 +307,7 @@ fi
 echo ""
 echo "Checks: ${CHECK_COUNT}    Passed: ${CHECKS_PASSED}    Failed: ${CHECKS_FAILED}"
 
-# Build JSON results
+# Build JSON output
 jq -nc \
     --arg generated_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg hostname "$(hostname)" \
