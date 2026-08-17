@@ -23,7 +23,7 @@ CHECK_COUNT=0
 # Argument: $1 overrides default log file (used by 7-firewall_log_analysis.sh)
 
 # Output
-RESULTS_FILE="perimeter_validation_results.json"
+OUTPUT_FILE="perimeter_validation_results.json"
 
 # ==============================================================================
 # Helper: report check result
@@ -323,7 +323,7 @@ jq -nc \
         failed: $failed,
         perimeter_status: $overall_status,
         all_passed: ($failed == 0)
-    }' | tee "$RESULTS_FILE"
+    }' | tee "$OUTPUT_FILE"
 
 echo ""
 
