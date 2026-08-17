@@ -23,7 +23,7 @@ CHECK_COUNT=0
 # Argument: $1 overrides default log file (used by 7-firewall_log_analysis.sh)
 
 # Output
-OUTPUT_FILE="perimeter_validation_results.json"
+OUTPUT_FILE="perimeter_validation_output.json"
 
 # ==============================================================================
 # Helper: report check result
