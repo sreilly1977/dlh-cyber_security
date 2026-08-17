@@ -85,14 +85,14 @@ CHECK_COUNT=$((CHECK_COUNT + 1))
 
 echo "[*] Checking firewall validation report..."
 
-FIREWALL_RESULTS="${WORKDIR}/firewall_test_results.json"
+FIREWALL_CHECKS="${WORKDIR}/firewall_test_results.json"
 
-if [[ ! -f "$FIREWALL_RESULTS" ]]; then
+if [[ ! -f "$FIREWALL_CHECKS" ]]; then
     check_fail "$CHECK_COUNT" "firewall test results" "firewall_test_results.json not found"
 else
-    TOTAL_TESTS=$(jq -r '.summary.total // 0' "$FIREWALL_RESULTS")
-    PASSED_TESTS=$(jq -r '.summary.passed // 0' "$FIREWALL_RESULTS")
-    FAILED_TESTS=$(jq -r '.summary.failed // 0' "$FIREWALL_RESULTS")
+    TOTAL_TESTS=$(jq -r '.summary.total // 0' "$FIREWALL_CHECKS")
+    PASSED_TESTS=$(jq -r '.summary.passed // 0' "$FIREWALL_CHECKS")
+    FAILED_TESTS=$(jq -r '.summary.failed // 0' "$FIREWALL_CHECKS")
 
     if [[ "$FAILED_TESTS" -eq 0 && "$TOTAL_TESTS" -gt 0 ]]; then
         check_pass "$CHECK_COUNT" "firewall test results" "${PASSED_TESTS}/${TOTAL_TESTS}"
