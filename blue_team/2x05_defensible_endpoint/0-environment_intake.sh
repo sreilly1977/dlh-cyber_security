@@ -231,11 +231,14 @@ capture_sysctl_params() {
 capture_suid_sgid_binaries() {
     log_info "Counting SUID/SGID binaries..."
 
-    local suid_count sgid_count total_count
+    local suid_sgid_list
+    suid_sgid_list="$(find / -perm /6000 -type f 2>/dev/null || echo "")"
+    local total_count
+    total_count="$(echo "$suid_sgid_list" | grep -c '.' || echo "0")"
 
-    suid_count="$(find / -xdev -perm /4000 -type f 2>/dev/null | wc -l || echo "0")"
-    sgid_count="$(find / -xdev -perm /2000 -type f 2>/dev/null | wc -l || echo "0")"
-    total_count=$((suid_count + sgid_count))
+    local suid_count sgid_count
+    suid_count="$(find / -perm /4000 -type f 2>/dev/null | wc -l || echo "0")"
+    sgid_count="$(find / -perm /2000 -type f 2>/dev/null | wc -l || echo "0")"
 
     jq -n \
         --argjson suid "$suid_count" \
