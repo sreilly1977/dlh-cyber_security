@@ -1,7 +1,9 @@
 #!/bin/bash
 #
 # Name: 0-environment_intake.sh
+# Name: 0-environment_intake.sh
 # Purpose: Capture raw state of Hawthorne Linux endpoint before hardening
+#          Capstone task T0 - Defensible Endpoint Package
 # Author: Steve - Cybersecurity Engineer
 # Exit Codes: 0=success, 1=controlled failure, 2=environment error
 #
