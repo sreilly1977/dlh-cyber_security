@@ -59,3 +59,59 @@ Mike Torres is already at the rack in the satellite closet taking pictures.
 
 ---
 
+# [0. The Environment Intake](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/0-environment_intake.sh)
+
+## Goal: 
+
+Capture the raw state of the Hawthorne endpoints before any hardening action and produce a structured intake record that every subsequent task can compare against.
+
+## Context: 
+
+The first rule of a professional handoff is that the receiver must be able to reconstruct what was done. The only way to do that is to record where you started. This task takes a complete snapshot of the unhardened environment, on both the Linux and the Windows side, and saves it in one deterministic format. Every later task measures its success by the delta between this snapshot and the post-hardening state.
+
+## Instructions: 
+
+Write a script 0-environment_intake.sh that runs on hawthorne-app-01 (Linux) and a PowerShell script [0-environment_intake.ps1](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/0-environment_intake.ps1) that runs on hawthorne-adm-01 (Windows). For Linux, the script must capture:
+
+    Hostname, kernel release, distribution and patch level
+
+    Installed package count from dpkg-query -W
+
+    Listening sockets from ss -tulnpH
+
+    Active systemd services
+
+    Current sshd_config as a key-value record
+
+    Current sysctl security parameters
+
+    SUID and SGID binaries count from find / -perm /6000 -type f
+
+    World-writable files count from find / -perm -0002 -type f excluding /proc and /sys
+
+    Firewall status (nft list ruleset length)
+
+    Telemetry presence: auditd running, rsyslog running, Sysmon-for-Linux present (if installed)
+
+For Windows, the script must capture:
+
+    Hostname, OS build and patch level
+
+    Installed feature count from Get-WindowsFeature (if server) or Get-WindowsOptionalFeature (if client)
+
+    Running services from Get-Service
+
+    Local user accounts from Get-LocalUser
+
+    Windows Firewall state per profile
+
+    Audit policy summary from auditpol /get /category:*
+
+    Sysmon presence and version via Get-Service Sysmon and event channel size
+
+    PowerShell logging state (Script Block Logging registry key)
+
+    Account lockout and password policy from net accounts
+
+---
+

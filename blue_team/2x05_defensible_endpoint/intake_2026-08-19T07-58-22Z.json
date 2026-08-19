@@ -1,0 +1,426 @@
+{
+    "timestamp":  "2026-08-19T07:58:22Z",
+    "hostname":  "HAWTHORNE-ADM-0",
+    "os_caption":  "Microsoft Windows 11 Home",
+    "os_build":  "28000",
+    "patch_level":  [
+                        {
+                            "hotfix_id":  "KB5077868",
+                            "installed_on":  "2026-08-18"
+                        },
+                        {
+                            "hotfix_id":  "KB5072032",
+                            "installed_on":  "2026-01-04"
+                        },
+                        {
+                            "hotfix_id":  "KB5071955",
+                            "installed_on":  "2026-01-04"
+                        }
+                    ],
+    "installed_feature_count":  12,
+    "feature_source":  "Get-WindowsOptionalFeature (Client)",
+    "running_services":  [
+                             "AppIDSvc",
+                             "Appinfo",
+                             "AppXSvc",
+                             "AudioEndpointBuilder",
+                             "Audiosrv",
+                             "BDESVC",
+                             "BFE",
+                             "BrokerInfrastructure",
+                             "camsvc",
+                             "cbdhsvc_3d183",
+                             "CDPSvc",
+                             "CDPUserSvc_3d183",
+                             "ClipSVC",
+                             "CoreMessagingRegistrar",
+                             "CryptSvc",
+                             "DcomLaunch",
+                             "dcsvc",
+                             "Dhcp",
+                             "DiagTrack",
+                             "DispBrokerDesktopSvc",
+                             "DisplayEnhancementService",
+                             "Dnscache",
+                             "DoSvc",
+                             "DPS",
+                             "DusmSvc",
+                             "EventLog",
+                             "EventSystem",
+                             "FontCache",
+                             "gpsvc",
+                             "InstallService",
+                             "InventorySvc",
+                             "IpHlpSvc",
+                             "KeyIso",
+                             "LanmanServer",
+                             "LanmanWorkstation",
+                             "lfsvc",
+                             "LicenseManager",
+                             "lmhosts",
+                             "LSM",
+                             "midisrv",
+                             "mpssvc",
+                             "NcbService",
+                             "netprofm",
+                             "NetSetupSvc",
+                             "nsi",
+                             "OneSyncSvc_3d183",
+                             "PcaSvc",
+                             "PlugPlay",
+                             "Power",
+                             "ProfSvc",
+                             "RasMan",
+                             "RmSvc",
+                             "RpcEptMapper",
+                             "RpcSs",
+                             "SamSs",
+                             "Schedule",
+                             "SecurityHealthService",
+                             "SENS",
+                             "ShellHWDetection",
+                             "Spooler",
+                             "SSDPSRV",
+                             "SstpSvc",
+                             "StateRepository",
+                             "StorSvc",
+                             "SysMain",
+                             "SystemEventsBroker",
+                             "TextInputManagementService",
+                             "Themes",
+                             "TimeBrokerSvc",
+                             "TokenBroker",
+                             "TrkWks",
+                             "TrustedInstaller",
+                             "UdkUserSvc_3d183",
+                             "UserManager",
+                             "UsoSvc",
+                             "VaultSvc",
+                             "VBoxService",
+                             "Wcmsvc",
+                             "WdiSystemHost",
+                             "WdNisSvc",
+                             "webthreatdefsvc",
+                             "webthreatdefusersvc_3d183",
+                             "whesvc",
+                             "WinDefend",
+                             "WinHttpAutoProxySvc",
+                             "Winmgmt",
+                             "WpnService",
+                             "WpnUserService_3d183",
+                             "WSAIFabricSvc",
+                             "wscsvc",
+                             "WSearch",
+                             "wuauserv"
+                         ],
+    "local_users":  [
+                        {
+                            "name":  "Administrator",
+                            "enabled":  false,
+                            "password_required":  true,
+                            "password_last_set":  "2026-08-18T10:13:59Z"
+                        },
+                        {
+                            "name":  "analyst",
+                            "enabled":  true,
+                            "password_required":  true,
+                            "password_last_set":  "2026-08-18T10:13:59Z"
+                        },
+                        {
+                            "name":  "DefaultAccount",
+                            "enabled":  false,
+                            "password_required":  false,
+                            "password_last_set":  null
+                        },
+                        {
+                            "name":  "Guest",
+                            "enabled":  false,
+                            "password_required":  false,
+                            "password_last_set":  null
+                        },
+                        {
+                            "name":  "WDAGUtilityAccount",
+                            "enabled":  false,
+                            "password_required":  true,
+                            "password_last_set":  "2026-08-18T19:11:56Z"
+                        }
+                    ],
+    "firewall_profiles":  [
+                              {
+                                  "profile_name":  "Domain",
+                                  "enabled":  1,
+                                  "default_inbound":  0,
+                                  "default_outbound":  0
+                              },
+                              {
+                                  "profile_name":  "Private",
+                                  "enabled":  1,
+                                  "default_inbound":  0,
+                                  "default_outbound":  0
+                              },
+                              {
+                                  "profile_name":  "Public",
+                                  "enabled":  1,
+                                  "default_inbound":  0,
+                                  "default_outbound":  0
+                              }
+                          ],
+    "audit_policy":  [
+                         {
+                             "subcategory":  "Security System Extension",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "System Integrity",
+                             "setting":  "Success and Failure"
+                         },
+                         {
+                             "subcategory":  "IPsec Driver",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other System Events",
+                             "setting":  "Success and Failure"
+                         },
+                         {
+                             "subcategory":  "Security State Change",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Logon",
+                             "setting":  "Success and Failure"
+                         },
+                         {
+                             "subcategory":  "Logoff",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Account Lockout",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "IPsec Main Mode",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "IPsec Quick Mode",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "IPsec Extended Mode",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Special Logon",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Other Logon/Logoff Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Network Policy Server",
+                             "setting":  "Success and Failure"
+                         },
+                         {
+                             "subcategory":  "User / Device Claims",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Group Membership",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Access Rights",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "File System",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Registry",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Kernel Object",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "SAM",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Certification Services",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Application Generated",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Handle Manipulation",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "File Share",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Filtering Platform Packet Drop",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Filtering Platform Connection",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other Object Access Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Detailed File Share",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Removable Storage",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Central Policy Staging",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Non Sensitive Privilege Use",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other Privilege Use Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Sensitive Privilege Use",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Process Creation",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Process Termination",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "DPAPI Activity",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "RPC Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Plug and Play Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Token Right Adjusted Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Audit Policy Change",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Authentication Policy Change",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Authorization Policy Change",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "MPSSVC Rule-Level Policy Change",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Filtering Platform Policy Change",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other Policy Change Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Computer Account Management",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Security Group Management",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Distribution Group Management",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Application Group Management",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other Account Management Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "User Account Management",
+                             "setting":  "Success"
+                         },
+                         {
+                             "subcategory":  "Directory Service Access",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Directory Service Changes",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Directory Service Replication",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Detailed Directory Service Replication",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Kerberos Service Ticket Operations",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Other Account Logon Events",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Kerberos Authentication Service",
+                             "setting":  "No Auditing"
+                         },
+                         {
+                             "subcategory":  "Credential Validation",
+                             "setting":  "No Auditing"
+                         }
+                     ],
+    "sysmon_present":  false,
+    "sysmon_version":  null,
+    "event_channel_size":  0,
+    "script_block_logging_enabled":  null,
+    "transcription_enabled":  null,
+    "account_password_policy":  {
+                                    "force_logoff_after":  null,
+                                    "password_min_age_days":  0,
+                                    "password_max_age_days":  42,
+                                    "password_min_length":  0,
+                                    "password_complexity":  null,
+                                    "password_history":  null,
+                                    "lockout_threshold":  10,
+                                    "lockout_duration_minutes":  10,
+                                    "lockout_window_minutes":  10
+                                }
+}
