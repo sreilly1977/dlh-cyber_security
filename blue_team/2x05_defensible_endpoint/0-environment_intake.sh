@@ -211,7 +211,7 @@ capture_sysctl_params() {
 
     local sysctl_output
     sysctl_output="$(sysctl -a 2>/dev/null | grep -E \
-        'net\.ipv4\.ip_forward|net\.ipv4\.conf\.all\.send_redirects|net\.ipv4\.conf\.all\.accept_redirects|net\.ipv4\.conf\.all\.accept_source_route|net\.ipv4\.tcp_syncookies|net\.ipv6\.conf\.all\.accept_redirects|net\.ipv6\.conf\.all\.disabled|kernel\.randomize_va_space|kernel\.exec|kernel\.shm|kernel\.msg|kernel\.sem|kernel\.core|kernel\.ptrace|kernel\.sysrq|fs\.suid_dumpable|fs\.protected_symlinks|fs\.protected_hardlinks|fs\.protected_fifos|fs\.protected_regular' \
+        'net.ipv4.ip_forward|net.ipv4.conf.all.send_redirects|net.ipv4.conf.all.accept_redirects|net.ipv4.conf.all.accept_source_route|net.ipv4.tcp_syncookies|net.ipv6.conf.all.accept_redirects|net.ipv6.conf.all.disabled|kernel.randomize_va_space|kernel.exec|kernel.shm|kernel.msg|kernel.sem|kernel.core|kernel.ptrace|kernel.sysrq|fs.suid_dumpable|fs.protected_symlinks|fs.protected_hardlinks|fs.protected_fifos|fs.protected_regular' \
         || echo "")"
 
     if [[ -z "$sysctl_output" ]]; then
