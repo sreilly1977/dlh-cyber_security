@@ -495,14 +495,14 @@ write_intake_record() {
 }
 
 main() {
-    log_info "Starting environment intake for Hawthorne Linux endpoint..."
+    log_info "Starting capstone environment intake for Hawthorne Linux endpoint..."
     log_info "Timestamp: $TIMESTAMP"
 
     validate_environment
     ensure_directories
     write_intake_record
 
-    log_info "Environment intake completed successfully"
+    log_info "Capstone environment intake completed successfully"
     exit 0
 }
 
