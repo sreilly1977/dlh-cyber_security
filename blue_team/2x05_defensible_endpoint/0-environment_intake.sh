@@ -2,7 +2,7 @@
 #
 # Name: 0-environment_intake.sh
 # Purpose: Capture raw state of Hawthorne Linux endpoint before hardening
-# Author: Stephen Reilly
+# Author: Steve - Cybersecurity Engineer
 # Exit Codes: 0=success, 1=controlled failure, 2=environment error
 #
 
@@ -210,7 +210,9 @@ capture_sysctl_params() {
     log_info "Capturing sysctl security parameters..."
 
     local sysctl_output
-    sysctl_output="$(sysctl -a 2>/dev/null | grep -E '^(kernel|net|vm).*(exec|shm|msg|sem|core|ptrace|randomize|symlink|hardlink)' || echo "")"
+    sysctl_output="$(sysctl -a 2>/dev/null | grep -E \
+        'net\.ipv4\.ip_forward|net\.ipv4\.conf\.all\.send_redirects|net\.ipv4\.conf\.all\.accept_redirects|net\.ipv4\.conf\.all\.accept_source_route|net\.ipv4\.tcp_syncookies|net\.ipv6\.conf\.all\.accept_redirects|net\.ipv6\.conf\.all\.disabled|kernel\.randomize_va_space|kernel\.exec|kernel\.shm|kernel\.msg|kernel\.sem|kernel\.core|kernel\.ptrace|kernel\.sysrq|fs\.suid_dumpable|fs\.protected_symlinks|fs\.protected_hardlinks|fs\.protected_fifos|fs\.protected_regular' \
+        || echo "")"
 
     if [[ -z "$sysctl_output" ]]; then
         jq -n '{sysctl_params: {}}'
