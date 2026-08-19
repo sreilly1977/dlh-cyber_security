@@ -419,7 +419,7 @@ function Write-IntakeRecord {
 }
 
 function Main {
-    Write-InfoLog "Starting environment intake for Hawthorne Windows endpoint..."
+    Write-InfoLog "Starting capstone environment intake for Hawthorne Windows endpoint..."
     Write-InfoLog "Timestamp: $Timestamp"
 
     Write-InfoLog "Validating execution environment..."
@@ -460,7 +460,7 @@ function Main {
     Write-InfoLog "Directory ready: $IntakeDir"
     Write-IntakeRecord
 
-    Write-InfoLog "Environment intake completed successfully"
+    Write-InfoLog "Capstone environment intake completed successfully"
     exit 0
 }
 
