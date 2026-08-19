@@ -2,6 +2,7 @@
 .SYNOPSIS
     Captures the raw state of the Hawthorne Windows endpoint before hardening.
 .DESCRIPTION
+    Capstone task T0 - Defensible Endpoint Package.
     Collects host info, installed features, running services, local users,
     firewall state, audit policy, Sysmon presence, PowerShell logging state,
     and account/password policy into a structured JSON intake record.
