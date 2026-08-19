@@ -281,7 +281,7 @@ capture_firewall_status() {
 }
 
 capture_telemetry_presence() {
-    log_info "Capturing telemetry agent presence..."
+    log_info "Capturing telemetry agent presence (auditd, rsyslog, Sysmon)..."
 
     local auditd_running="false"
     local rsyslog_running="false"
@@ -295,6 +295,139 @@ capture_telemetry_presence() {
         rsyslog_running="true"
     fi
 
+    # Check for Sysmon-for-Linux
+    if dpkg-query -W -f='${Status}' sysmon-for-linux 2>/dev/null | grep -q "install ok installed"; then
+        sysmon_installed="true"
+    elif [[ -d "/opt/sysmon" ]] || [[ -f "/usr/bin/sysmon" ]]; then
+        sysmon_installed="true"
+    fi
+
+    jq -n \
+        --argjson auditd "$auditd_running" \
+        --argjson rsyslog "$rsyslog_running" \
+        --argjson sysmon "$sysmon_installed" \
+        '{
+            telemetry: {
+                auditd_running: $auditd,
+                rsyslog_running: $rsyslog,
+                sysmon_for_linux_present: $sysmon
+            }
+        }'
+}capture_telemetry_presence() {
+    log_info "Capturing telemetry agent presence (auditd, rsyslog, Sysmon)..."
+
+    local auditd_running="false"
+    local rsyslog_running="false"
+    local sysmon_installed="false"
+
+    if systemctl is-active --quiet auditd 2>/dev/null; then
+        auditd_running="true"
+    fi
+
+    if systemctl is-active --quiet rsyslog 2>/dev/null; then
+        rsyslog_running="true"
+    fi
+
+    # Check for Sysmon-for-Linux
+    if dpkg-query -W -f='${Status}' sysmon-for-linux 2>/dev/null | grep -q "install ok installed"; then
+        sysmon_installed="true"
+    elif [[ -d "/opt/sysmon" ]] || [[ -f "/usr/bin/sysmon" ]]; then
+        sysmon_installed="true"
+    fi
+
+    jq -n \
+        --argjson auditd "$auditd_running" \
+        --argjson rsyslog "$rsyslog_running" \
+        --argjson sysmon "$sysmon_installed" \
+        '{
+            telemetry: {
+                auditd_running: $auditd,
+                rsyslog_running: $rsyslog,
+                sysmon_for_linux_present: $sysmon
+            }
+        }'
+}capture_telemetry_presence() {
+    log_info "Capturing telemetry agent presence (auditd, rsyslog, Sysmon)..."
+
+    local auditd_running="false"
+    local rsyslog_running="false"
+    local sysmon_installed="false"
+
+    if systemctl is-active --quiet auditd 2>/dev/null; then
+        auditd_running="true"
+    fi
+
+    if systemctl is-active --quiet rsyslog 2>/dev/null; then
+        rsyslog_running="true"
+    fi
+
+    # Check for Sysmon-for-Linux
+    if dpkg-query -W -f='${Status}' sysmon-for-linux 2>/dev/null | grep -q "install ok installed"; then
+        sysmon_installed="true"
+    elif [[ -d "/opt/sysmon" ]] || [[ -f "/usr/bin/sysmon" ]]; then
+        sysmon_installed="true"
+    fi
+
+    jq -n \
+        --argjson auditd "$auditd_running" \
+        --argjson rsyslog "$rsyslog_running" \
+        --argjson sysmon "$sysmon_installed" \
+        '{
+            telemetry: {
+                auditd_running: $auditd,
+                rsyslog_running: $rsyslog,
+                sysmon_for_linux_present: $sysmon
+            }
+        }'
+}capture_telemetry_presence() {
+    log_info "Capturing telemetry agent presence (auditd, rsyslog, Sysmon)..."
+
+    local auditd_running="false"
+    local rsyslog_running="false"
+    local sysmon_installed="false"
+
+    if systemctl is-active --quiet auditd 2>/dev/null; then
+        auditd_running="true"
+    fi
+
+    if systemctl is-active --quiet rsyslog 2>/dev/null; then
+        rsyslog_running="true"
+    fi
+
+    # Check for Sysmon-for-Linux
+    if dpkg-query -W -f='${Status}' sysmon-for-linux 2>/dev/null | grep -q "install ok installed"; then
+        sysmon_installed="true"
+    elif [[ -d "/opt/sysmon" ]] || [[ -f "/usr/bin/sysmon" ]]; then
+        sysmon_installed="true"
+    fi
+
+    jq -n \
+        --argjson auditd "$auditd_running" \
+        --argjson rsyslog "$rsyslog_running" \
+        --argjson sysmon "$sysmon_installed" \
+        '{
+            telemetry: {
+                auditd_running: $auditd,
+                rsyslog_running: $rsyslog,
+                sysmon_for_linux_present: $sysmon
+            }
+        }'
+}capture_telemetry_presence() {
+    log_info "Capturing telemetry agent presence (auditd, rsyslog, Sysmon)..."
+
+    local auditd_running="false"
+    local rsyslog_running="false"
+    local sysmon_installed="false"
+
+    if systemctl is-active --quiet auditd 2>/dev/null; then
+        auditd_running="true"
+    fi
+
+    if systemctl is-active --quiet rsyslog 2>/dev/null; then
+        rsyslog_running="true"
+    fi
+
+    # Check for Sysmon-for-Linux
     if dpkg-query -W -f='${Status}' sysmon-for-linux 2>/dev/null | grep -q "install ok installed"; then
         sysmon_installed="true"
     elif [[ -d "/opt/sysmon" ]] || [[ -f "/usr/bin/sysmon" ]]; then
