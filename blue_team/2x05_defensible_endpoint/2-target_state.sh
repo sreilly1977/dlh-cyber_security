@@ -147,9 +147,9 @@ emit_controls() {
             id: "LNX-MAC-01",
             platform: "linux",
             family: "hardening",
-            description: "AppArmor must be in enforce mode.",
+            description: "apparmor must be in enforce mode.",
             check_type: "command_exit_zero",
-            check_target: "aa-status --enabled",
+            check_target: "apparmor_status --enabled",
             expected_value: "0",
             source_project: "2x01_windows_fortress",
             severity: "high"
