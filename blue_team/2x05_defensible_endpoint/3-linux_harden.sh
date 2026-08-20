@@ -95,7 +95,7 @@ ensure_directories() {
 run_harden_step() {
     local step_name="$1"
     local script_path="$2"
-    local control_ids="$3"
+    local control_ids="$3"  # comma-separated list of control IDs
 
     if [[ ! -f "$script_path" ]]; then
         log_error "Hardening script not found: $script_path"
