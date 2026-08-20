@@ -254,6 +254,7 @@ read_target_index() {
 emit_execution_record() {
     log_info "Writing execution evidence to linux_harden.json..."
 
+    # Compare against target-state controls to determine pass/fail
     local lynis_before
     lynis_before="$(read_baseline_index)"
 
