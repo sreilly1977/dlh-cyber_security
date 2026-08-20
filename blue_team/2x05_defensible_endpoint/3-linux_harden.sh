@@ -163,8 +163,8 @@ orchestrate_hardening() {
         all_success=false
     fi
 
-    # Filesystem hardening - 6-filesystem_hardening.sh
-    if ! run_harden_step "filesystem_hardening" \
+    # Filesystem permission hardening - 6-filesystem_hardening.sh
+    if ! run_harden_step "filesystem_permission_hardening" \
         "$HARDENING_SCRIPTS_DIR/6-filesystem_hardening.sh" \
         "LNX-PER-01,LNX-PER-02"; then
         all_success=false
