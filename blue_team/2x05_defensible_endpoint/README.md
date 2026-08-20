@@ -147,4 +147,80 @@ For Windows:
 
 ---
 
+# [2. The Target State Definition](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/2-target_state.sh)
+
+## Goal: 
+
+Declare, in structured data, the exact set of controls the handoff must satisfy and the pass criterion for each one, so that every downstream task can be checked against it.
+
+## Context: 
+
+Every capstone has a finish line. The professional difference between a rushed handoff and a mature one is whether the finish line was defined in data before the work started, or invented retroactively to match whatever was shipped. This task defines the finish line as a machine-readable contract. It is the source of truth for T8 (end-to-end validation) and T10 (compliance report). The grille at the end of this project is evaluated against this same file.
+
+## Instructions: 
+
+Write a script 2-target_state.sh that emits a capstone/target_state.json file declaring the target state. The file must contain:
+
+    A top-level controls array, with one entry per control, each with the fields:
+
+        id (string, stable identifier such as LNX-SSH-01)
+
+        platform (linux, windows, network or both)
+
+        family (hardening, telemetry, patching, network, handoff)
+
+        description (single sentence)
+
+        check_type (file_exists, json_field_equals, json_field_gte, command_exit_zero, grep_match)
+
+        check_target (path or expression evaluated by the validation suite)
+
+        expected_value (value, number or regex as appropriate)
+
+        source_project
+
+        severity (critical, high, medium, low)
+
+    At minimum the following controls:
+
+        SSH PermitRootLogin no, SSH PasswordAuthentication no, sysctl net.ipv4.ip_forward = 0, sysctl kernel.randomize_va_space = 2, auditd active, apparmor enforce mode, Lynis hardening index at least 80
+
+        Windows Firewall default-deny inbound on every profile, Script Block Logging enabled, Sysmon service installed and running, audit policy covers Account Logon, Logon, Object Access and Privilege Use subcategories, CIS Level 1 pass rate at least 85 percent
+
+        Linux auditd rules file present and loaded, structured JSON export path exists, Windows Sysmon event count greater than zero in the last 10 minutes, Script Block Logging event channel size greater than zero
+
+        vulnerability_inventory.json present, patch_plan.json present, patch_execution_log.json present with zero entries in failed state, unattended-upgrades configured with the mandated blacklist
+
+        nftables ruleset loaded with default-deny inbound, segmentation_rules.json present, Suricata custom rule file loaded with at least six rules, Suricata rule validation report shows every rule fired against its target PCAP, DNS filter active
+
+        compliance.json present, manifest.json present with SHA-256 per file, telemetry export package exists and is tarballed, runbook script present and executable
+
+    A top-level schema_version string
+
+    A generated_at timestamp
+
+The script must refuse to overwrite an existing target_state.json unless the --force flag is passed. A corrupted or missing target_state.json must be fatal for every downstream script.
+
+**Expected Output:**
+
+```bash
+$ ./2-target_state.sh
+
+$ cat capstone/target_state.json | head
+{
+  "id": "LNX-SSH-02",
+  "description": "SSH must refuse password authentication"
+}
+{
+  "id": "WIN-FW-01",
+  "description": "Windows Firewall must default-deny inbound on every profile"
+}
+{
+  "id": "NET-NFT-01",
+  "description": "nftables input chain must default to drop"
+}
+```
+
+---
+
 # 
