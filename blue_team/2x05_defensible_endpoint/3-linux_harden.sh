@@ -170,7 +170,7 @@ orchestrate_hardening() {
         all_success=false
     fi
 
-    # Service minimization - 7-service_minimization.sh
+    # service minimization - 7-service_minimization.sh
     if ! run_harden_step "service_minimization" \
         "$HARDENING_SCRIPTS_DIR/7-service_minimization.sh" \
         "LNX-SVC-01"; then
