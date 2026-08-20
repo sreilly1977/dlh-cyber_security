@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-08-20T12:57:20Z",
+  "hostname": "hawthorne-app-01",
+  "lynis_version": "3.0.7",
+  "hardening_index": 55,
+  "warnings_count": 2,
+  "suggestions_count": 49,
+  "log_path": "/home/analyst/scripts/endpoint/capstone/baseline/lynis_baseline.log"
+}

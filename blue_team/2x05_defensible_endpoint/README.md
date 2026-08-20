@@ -115,3 +115,36 @@ For Windows, the script must capture:
 
 ---
 
+# [1. The Baseline Snapshot](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/1-baseline_snapshot.sh)
+
+## Goal: 
+
+Run a recognized hardening audit on both endpoints and persist the raw baseline score as the quantitative starting point for the capstone.
+
+## Context: 
+
+The intake tells you what is there. The baseline tells you how far from hardened it is. For Linux the instrument is lynis. For Windows the instrument is the scored output of a scripted audit that walks the CIS Level 1 controls relevant to a workstation. Both produce a number. That number is the denominator of the delta you will report at the end of the capstone.
+
+## Instructions: 
+
+Write a script [1-baseline_snapshot.sh](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/1-baseline_snapshot.sh) (Linux) and [1-baseline_snapshot.ps1](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/1-baseline_snapshot.ps1) (Windows) that runs the baseline audit and persists the raw output plus the extracted score.
+
+For Linux:
+
+    Run lynis audit system --quick --no-colors and capture the full log to capstone/baseline/lynis_baseline.log
+
+    Parse the Hardening Index from the Lynis output
+
+    Emit capstone/baseline/baseline_linux.json with timestamp, hostname, lynis_version, hardening_index, warnings_count, suggestions_count, log_path
+
+For Windows:
+
+    Run the provided audit helper /home/analyst/MedDefense_Lab/capstone/win_audit.ps1 which walks a fixed list of CIS Level 1 control checks and outputs one line per control with PASS, FAIL or NOT_APPLICABLE
+
+    Count the pass rate and persist the full output to capstone/baseline/windows_baseline.log
+
+    Emit capstone/baseline/baseline_windows.json with timestamp, hostname, controls_total, pass_count, fail_count, na_count, pass_rate_percent, log_path
+
+---
+
+# 
