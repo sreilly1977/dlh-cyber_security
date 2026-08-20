@@ -1,0 +1,47 @@
+[*] Pre-hardening SSH state:
+    PermitRootLogin: no
+    PasswordAuthentication: no
+    PermitEmptyPasswords: no
+    X11Forwarding: no
+    MaxAuthTries: 3
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 2
+    AllowUsers: medadmin
+sysadmin
+analyst
+    LoginGraceTime: 60
+    Banner: /etc/issue.net
+[*] Backing up /etc/ssh/sshd_config
+[*] Checking SSH drop-in config files for conflicting directives...
+[*] Applying SSH hardening settings...
+    PermitRootLogin no
+    PasswordAuthentication no
+    PermitEmptyPasswords no
+    X11Forwarding no
+    MaxAuthTries 3
+    ClientAliveInterval 300
+    ClientAliveCountMax 2
+    AllowUsers medadmin sysadmin analyst
+    Protocol 2
+    LoginGraceTime 60
+    Banner /etc/issue.net
+[*] Creating login banner at /etc/issue.net
+    Banner file already configured
+[*] Validating SSH configuration...
+    sshd -t: OK
+[*] Restarting SSH service...
+    ssh.service: active
+[*] Post-hardening SSH state:
+    PermitRootLogin: no
+    PasswordAuthentication: no
+    PermitEmptyPasswords: no
+    X11Forwarding: no
+    MaxAuthTries: 3
+    ClientAliveInterval: 300
+    ClientAliveCountMax: 2
+    AllowUsers: medadmin
+sysadmin
+analyst
+    LoginGraceTime: 60
+    Banner: /etc/issue.net
+Settings applied: 11

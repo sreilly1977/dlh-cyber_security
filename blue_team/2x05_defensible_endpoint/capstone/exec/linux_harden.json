@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-08-20T15:45:47Z",
+  "hostname": "hawthorne-app-01",
+  "steps": [
+    {
+      "name": "ssh_hardening",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/4-ssh_hardening.sh",
+      "exit_code": 0,
+      "duration_seconds": 0.211649463,
+      "changed": true
+    },
+    {
+      "name": "sysctl_hardening",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/5-sysctl_hardening.sh",
+      "exit_code": 0,
+      "duration_seconds": 0.252465767,
+      "changed": true
+    },
+    {
+      "name": "filesystem_hardening",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/6-filesystem_hardening.sh",
+      "exit_code": 0,
+      "duration_seconds": 1.14097183,
+      "changed": true
+    },
+    {
+      "name": "service_minimization",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/7-service_minimization.sh",
+      "exit_code": 0,
+      "duration_seconds": 1.659069566,
+      "changed": true
+    },
+    {
+      "name": "pam_hardening",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/8-pam_hardening.sh",
+      "exit_code": 0,
+      "duration_seconds": 0.175964197,
+      "changed": true
+    },
+    {
+      "name": "apparmor_config",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/9-apparmor_config.sh",
+      "exit_code": 0,
+      "duration_seconds": 0.143591539,
+      "changed": true
+    },
+    {
+      "name": "auditd_config",
+      "script_path": "/home/analyst/scripts/endpoint/2x00_locking_the_gates/10-auditd_config.sh",
+      "exit_code": 0,
+      "duration_seconds": 5.611128965,
+      "changed": true
+    }
+  ],
+  "lynis_before": 55,
+  "lynis_after": 76,
+  "index_delta": 21,
+  "target_hardening_index": 80,
+  "controls_touched": [
+    "LNX-AUD-01",
+    "LNX-AUD-02",
+    "LNX-MAC-01",
+    "LNX-PAM-01",
+    "LNX-PER-01",
+    "LNX-PER-02",
+    "LNX-SSH-01",
+    "LNX-SSH-02",
+    "LNX-SVC-01",
+    "LNX-SYS-01",
+    "LNX-SYS-02"
+  ],
+  "passed": false
+}

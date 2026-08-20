@@ -1,0 +1,43 @@
+[*] Checking AppArmor status...
+    AppArmor module: loaded
+    AppArmor service: active
+
+[*] Listing all AppArmor profiles:
+39 profiles are loaded.
+39 profiles are in enforce mode.
+0 profiles are in complain mode.
+0 profiles are in kill mode.
+0 profiles are in unconfined mode.
+0 processes have profiles defined.
+0 processes are in enforce mode.
+0 processes are in complain mode.
+0 processes are unconfined but have a profile defined.
+0 processes are in mixed mode.
+0 processes are in kill mode.
+
+[*] Profile enforcement:
+    /usr/sbin/apache2           NOT FOUND (no existing profile)
+    /usr/sbin/mysqld           NOT FOUND (no existing profile)
+
+[*] Creating custom profile for MedDefense billing application...
+    Custom profile: /etc/apparmor.d/opt.meddefense.billing-app   [ALREADY EXISTS]
+    Profile loaded via apparmor_parser: [OK]
+    Enforce mode: [FAILED - profile may not be attached to a running process]
+
+[*] Unconfined network-exposed processes:
+    None detected
+
+Profiles in enforce: 0 | Complain: 0 | Unconfined: 0
+
+[*] Verification:
+    Running aa-status to confirm changes:
+apparmor module is loaded.
+39 profiles are loaded.
+39 profiles are in enforce mode.
+   /opt/meddefense/billing-app
+   /snap/snapd/21759/usr/lib/snapd/snap-confine
+   /snap/snapd/21759/usr/lib/snapd/snap-confine//mount-namespace-capture-helper
+   /usr/bin/man
+   /usr/lib/NetworkManager/nm-dhcp-client.action
+   /usr/lib/NetworkManager/nm-dhcp-helper
+   /usr/lib/connman/scripts/dhclient-script

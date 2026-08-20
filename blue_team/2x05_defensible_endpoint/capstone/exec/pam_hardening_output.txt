@@ -1,0 +1,27 @@
+[*] Checking libpam-pwquality...
+    Already installed: libpam-pwquality 1.4.4-1build2
+[*] Backing up PAM files...
+    Backup saved to: /root/pam_backups_20260820_154550
+[*] Configuring password quality (/etc/security/pwquality.conf)...
+    minlen = 14                      [SET]
+    dcredit = -1                     [SET]
+    ucredit = -1                     [SET]
+    lcredit = -1                     [SET]
+    ocredit = -1                     [SET]
+    maxrepeat = 3                    [SET]
+    reject_username                  [SET]
+[*] Configuring account lockout (pam_faillock)...
+    deny = 5                         [SET]
+    unlock_time = 900                [SET]
+    fail_interval = 900              [SET]
+[*] Configuring password history...
+    remember = 12                    [UPDATED]
+[*] Validating PAM configuration...
+    /etc/security/pwquality.conf: readable [OK]
+    /etc/pam.d/common-auth: readable [OK]
+    /etc/pam.d/common-password: readable [OK]
+
+Password minimum length: 14 | Lockout: 5 attempts / 15 min | History: 12
+
+Configuration complete. To test, run: passwd <username>
+To restore from backup: cp /root/pam_backups_20260820_154550/* <pam_file>

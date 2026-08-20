@@ -223,4 +223,46 @@ $ cat capstone/target_state.json | head
 
 ---
 
-# 
+# [3. The Linux Hardening Execution](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/3-linux_harden.sh)
+
+## Goal: 
+
+Apply the full hardening workflow to hawthorne-app-01 as a single idempotent orchestration and persist the execution evidence.
+
+## Context: 
+
+This is where the skills become a delivered control set. You do not reinvent the work. You orchestrate it. The hardening script from before runs against hawthorne-app-01, every step is logged as structured evidence and the result is compared against the Linux controls in target_state.json.
+
+## Instructions: 
+
+Write a script 3-linux_harden.sh that orchestrates the Linux hardening pass. The script must:
+
+    Invoke the composition of hardening scripts in a deterministic order: SSH hardening, sysctl hardening, permission sweep, service minimization, PAM configuration, AppArmor enforcement, auditd deployment
+
+    Capture the stdout and exit code of each sub-step into capstone/exec/linux_harden.log
+
+    After the run, re-run lynis audit system and capture the new Hardening Index
+        controls_touched (list of target-state control IDs modified by this step)
+
+    Exit with code 0 only if every sub-step exited 0 and lynis_after >= target_state.linux.hardening_index. Otherwise exit 1.
+
+    Emit capstone/exec/linux_harden.json with:
+
+        timestamp
+
+        hostname
+
+        steps array, each entry with name, script_path, exit_code, duration_seconds, changed (boolean)
+
+        lynis_before (read from baseline_linux.json)
+
+        lynis_after (from the new audit)
+
+        index_delta
+
+        controls_touched (list of target-state control IDs modified by this step)
+
+Hint: use set -o pipefail and a wrapper function that catches each sub-step's return code.
+
+---
+

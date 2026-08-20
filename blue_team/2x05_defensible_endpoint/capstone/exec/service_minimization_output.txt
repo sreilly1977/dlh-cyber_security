@@ -1,0 +1,24 @@
+[*] Scanning enabled services...
+    Enabled services found: 7
+[*] Comparing against MedDefense whitelist (9 required services)...
+  apparmor.service     [ACTIVE]
+  auditd.service     [ACTIVE]
+  cron.service     [ACTIVE]
+  rsyslog.service     [ACTIVE]
+  ssh.service     [ACTIVE]
+  systemd-timesyncd.service     [ACTIVE]
+  ufw.service     [ACTIVE]
+
+[*] Verifying required services...
+  ssh.service     [RUNNING]
+  ufw.service     [RUNNING]
+  auditd.service     [RUNNING]
+  apparmor.service     [RUNNING]
+  cron.service     [RUNNING]
+  rsyslog.service     [RUNNING]
+  systemd-timesyncd.service     [RUNNING]
+  apache2.service     [NOT RUNNING]
+  mysql.service     [NOT RUNNING]
+
+Before: 7 | After: 7 | Disabled: 0
+Required services verified running: 7/9

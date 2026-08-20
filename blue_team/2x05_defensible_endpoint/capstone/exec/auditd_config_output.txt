@@ -1,0 +1,42 @@
+[*] Enabling auditd service...
+    auditd already installed
+    auditd.service: active
+[*] Deploying MedDefense audit rules...
+    -w /etc/passwd -p wa -k identity              [ADDED]
+    -w /etc/shadow -p wa -k identity              [ADDED]
+    -w /etc/group -p wa -k identity               [ADDED]
+    -w /etc/pam.d/ -p wa -k pam_config            [ADDED]
+    -w /etc/ssh/sshd_config -p wa -k sshd_config  [ADDED]
+    -w /usr/bin/sudo -p x -k priv_esc             [ADDED]
+    -w /usr/bin/su -p x -k priv_esc               [ADDED]
+    -w /etc/sudoers -p wa -k sudoers               [ADDED]
+    -w /usr/bin/wget -p x -k suspicious_download   [ADDED]
+    -w /usr/bin/curl -p x -k suspicious_download   [ADDED]
+    -w /usr/bin/nc -p x -k suspicious_netcat      [ADDED]
+    -w /var/lib/mysql/ -p wa -k meddefense_db     [ADDED]
+    -w /etc/apache2/ -p wa -k meddefense_web      [ADDED]
+    -w /etc/init.d/ -p wa -k startup_scripts      [ADDED]
+[*] Enabling kernel auditing...
+enabled 1
+failure 1
+pid 262560
+rate_limit 0
+backlog_limit 8192
+lost 0
+backlog 0
+backlog_wait_time 60000
+backlog_wait_time_actual 0
+    Kernel auditing: ENABLED
+[*] Loading rules... augenrules --load:
+Usage: /usr/sbin/augenrules [--check|--load]
+augenrules --load: FAILED, trying auditctl...
+auditctl -R: attempted
+[*] Verifying...
+auditctl -l: 19 rules loaded
+[*] Test: writing to /etc/shadow (touch triggers 'w' permission)...
+    Searching for identity key events...
+    ausearch -ts recent -k identity: 3517 event(s) found [PASS]
+
+Audit rules deployed: 14
+Active rules: 19
+Test event: PASS
