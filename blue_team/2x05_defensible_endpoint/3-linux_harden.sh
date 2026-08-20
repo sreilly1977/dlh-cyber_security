@@ -109,6 +109,7 @@ run_harden_step() {
     local output_file
     output_file="${EXEC_DIR}/${step_name}_output.txt"
 
+    # Capture stdout and stderr of each sub-step
     local exit_code=0
     bash "$script_path" > "$output_file" 2>&1 || exit_code=$?
 
