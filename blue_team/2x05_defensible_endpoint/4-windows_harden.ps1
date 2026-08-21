@@ -168,7 +168,7 @@ function Orchestrate-Hardening {
 
     $allSuccess = $true
 
-    # Account policy - 4-password_policy.ps1
+    # account policy - 4-password_policy.ps1
     if (-not (Invoke-HardenStep -StepName "account_policy" `
             -ScriptPath (Join-Path $HardeningScriptsDir "4-password_policy.ps1") `
             -ControlIds @("WIN-POL-01"))) {
