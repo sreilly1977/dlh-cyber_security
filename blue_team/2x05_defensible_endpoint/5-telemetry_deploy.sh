@@ -209,10 +209,14 @@ verify_trace "$KEY_SCHEDULER" "cron_remove" || FAILED=1
 verify_trace "$KEY_FILE_ACCESS" "file_access" || FAILED=1
 
 # --- Evidence Export ---
+# Export the last 30 minutes of auditd and syslog records as structured JSON into capstone/telemetry/linux_events.json
 
-log_step "Exporting structured JSON evidence..."
+log_step "Exporting the last 30 minutes of auditd and syslog records as structured JSON..."
 
-# Build linux_events.json: structured JSON from ausearch output for all test keys
+# Calculate timestamp for the last 30 minutes
+EXPORT_START_TIME=$(date -d "-30 minutes" "+%m/%d/%Y %H:%M:%S")
+
+# Build linux_events.json: structured JSON from ausearch output for all test keys plus syslog
 build_events_json() {
     local output_file=$1
     local ts_iso
@@ -221,17 +225,16 @@ build_events_json() {
     echo "[" > "$output_file"
     local first=true
 
+    # Export the last 30 minutes of auditd records for all test keys
     for key in "$KEY_USER_MGMT" "$KEY_SERVICE" "$KEY_SCHEDULER" "$KEY_FILE_ACCESS"; do
         local raw_output
-        raw_output=$(ausearch -k "$key" -ts recent -i 2>/dev/null || true)
+        raw_output=$(ausearch -k "$key" -ts "$EXPORT_START_TIME" -i 2>/dev/null || true)
 
         if [[ -n "$raw_output" ]]; then
             while IFS= read -r line; do
                 if [[ "$line" =~ type=([A-Z_]+) ]]; then
                     local evt_type="${BASH_REMATCH[1]}"
-                    # Extract timestamp from the line if possible
                     local evt_ts="$ts_iso"
-                    # Escape the line for JSON
                     local escaped_line
                     escaped_line=$(echo "$line" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g')
 
@@ -241,12 +244,37 @@ build_events_json() {
                         echo "," >> "$output_file"
                     fi
 
-                    printf '  {"timestamp": "%s", "audit_key": "%s", "event_type": "%s", "raw_message": "%s"}' \
+                    printf '  {"timestamp": "%s", "log_source": "auditd", "audit_key": "%s", "event_type": "%s", "raw_message": "%s"}' \
                         "$evt_ts" "$key" "$evt_type" "$escaped_line" >> "$output_file"
                 fi
             done <<< "$raw_output"
         fi
     done
+
+    # Export the last 30 minutes of syslog records
+    if [[ -f /var/log/syslog ]]; then
+        while IFS= read -r line; do
+            if [[ -n "$line" ]]; then
+                local escaped_line
+                escaped_line=$(echo "$line" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g')
+
+                if [[ "$first" == "true" ]]; then
+                    first=false
+                else
+                    echo "," >> "$output_file"
+                fi
+
+                printf '  {"timestamp": "%s", "log_source": "syslog", "audit_key": "", "event_type": "SYSLOG", "raw_message": "%s"}' \
+                    "$ts_iso" "$escaped_line" >> "$output_file"
+            fi
+        done < <(awk -v cutoff="$(date -d '-30 minutes' '+%b %d %H:%M:%S')" '
+            BEGIN { found=0 }
+            /[A-Z][a-z]{2} [0-9 ]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/ {
+                if ($1 " " $2 " " $3 >= cutoff) found=1
+            }
+            found { print }
+        ' /var/log/syslog 2>/dev/null || true)
+    fi
 
     echo "" >> "$output_file"
     echo "]" >> "$output_file"
