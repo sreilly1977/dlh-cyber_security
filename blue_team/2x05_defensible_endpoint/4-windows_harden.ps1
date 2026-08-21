@@ -175,7 +175,7 @@ function Orchestrate-Hardening {
         $allSuccess = $false
     }
 
-    # Audit policy - 5-audit_policy.ps1
+    # audit policy - 5-audit_policy.ps1
     if (-not (Invoke-HardenStep -StepName "audit_policy" `
             -ScriptPath (Join-Path $HardeningScriptsDir "5-audit_policy.ps1") `
             -ControlIds @("WIN-AUD-01"))) {
