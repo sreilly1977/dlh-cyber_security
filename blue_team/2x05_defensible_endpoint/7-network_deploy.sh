@@ -14,6 +14,8 @@ PCAP_DIR="/home/analyst/MedDefense_Lab/capstone/PCAPs/"
 LABELED_PCAP_DIR="/home/analyst/MedDefense_Lab/capstone/PCAPs/labels/"
 DNS_BLOCKLIST="/home/analyst/MedDefense_Lab/capstone/dns_blocklist.txt"
 NFT_RULESET_FILE="${CAPSTONE_ARTIFACTS_DIR}nftables_ruleset.nft"
+FIREWALL_TEST_SOURCE="/home/analyst/MedDefense_Lab/blue_team/2x04_perimeter_defense/5-firewall_test.sh"
+FIREWALL_TEST_SCRIPT="${CAPSTONE_ARTIFACTS_DIR}5-firewall_test.sh"
 FIREWALL_VALIDATION_FILE="${CAPSTONE_ARTIFACTS_DIR}firewall_validation.json"
 SURICATA_CUSTOM_RULES="${CAPSTONE_ARTIFACTS_DIR}meddefense_custom.rules"
 SURICATA_REPLAY_DIR="${CAPSTONE_ARTIFACTS_DIR}suricata_replay/"
@@ -86,7 +88,22 @@ mkdir -p "$SURICATA_REPLAY_DIR"
 export CAPSTONE_ARTIFACTS_DIR
 export SEGMENTATION_RULES
 
-# --- Step 1: Deploy nftables Ruleset from Segmentation Rules ---
+# --- Step 1: Copy Existing Firewall Test Script ---
+
+log_step "Copying existing firewall test script from blue_team exercises..."
+
+if [[ -f "$FIREWALL_TEST_SOURCE" ]]; then
+    cp "$FIREWALL_TEST_SOURCE" "$FIREWALL_TEST_SCRIPT"
+    chmod +x "$FIREWALL_TEST_SCRIPT"
+    log_step "Firewall test script copied to $FIREWALL_TEST_SCRIPT"
+    ARTIFACT_PATHS["firewall_test_script"]="$FIREWALL_TEST_SCRIPT"
+    record_validation "firewall_test_script" "pass" "Copied from 2x04_perimeter_defense exercise"
+else
+    log_step "Warning: Original 5-firewall_test.sh not found at $FIREWALL_TEST_SOURCE"
+    record_validation "firewall_test_script" "warn" "Original file not found, will continue without it"
+fi
+
+# --- Step 2: Deploy nftables Ruleset from Segmentation Rules ---
 
 log_step "Deploying nftables ruleset from segmentation rules..."
 
@@ -174,7 +191,7 @@ fi
 
 ARTIFACT_PATHS["nftables_ruleset"]="$NFT_RULESET_FILE"
 
-# --- Step 2: Firewall Validation Suite ---
+# --- Step 3: Firewall Validation Suite ---
 
 log_step "Running firewall validation suite..."
 
@@ -262,7 +279,7 @@ jq -n \
 ARTIFACT_PATHS["firewall_validation"]="$FIREWALL_VALIDATION_FILE"
 log_step "Firewall validation report saved to $FIREWALL_VALIDATION_FILE"
 
-# --- Step 3: Windows Firewall Alignment Script ---
+# --- Step 4: Windows Firewall Alignment Script ---
 
 log_step "Generating Windows Firewall alignment script..."
 
@@ -305,7 +322,7 @@ log_step "Windows Firewall alignment script saved to $WINDOWS_FIREWALL_SCRIPT"
 ARTIFACT_PATHS["windows_firewall_alignment"]="$WINDOWS_FIREWALL_SCRIPT"
 record_validation "windows_firewall_alignment" "pass" "PowerShell script generated for Windows hosts"
 
-# --- Step 4: Suricata Offline Replay Against Capstone PCAPs ---
+# --- Step 5: Suricata Offline Replay Against Capstone PCAPs ---
 
 log_step "Preparing Suricata for offline replay..."
 
@@ -455,7 +472,7 @@ jq -n \
 ARTIFACT_PATHS["suricata_replay_results"]="$SURICATA_REPLAY_RESULTS"
 record_validation "suricata_offline_replay" "pass" "Replayed ${PCAP_COUNT} PCAPs, ${TOTAL_ALERTS} total alerts detected"
 
-# --- Step 5: Custom Rule Validation Against Labeled PCAPs ---
+# --- Step 6: Custom Rule Validation Against Labeled PCAPs ---
 
 log_step "Running custom rule validation against labeled PCAPs..."
 
@@ -537,7 +554,7 @@ if [[ "$CUSTOM_RESULT" != "pass" ]]; then
     fail_exit "Custom rule validation failed - labeled PCAPs did not trigger expected rules"
 fi
 
-# --- Step 6: Configure dnsmasq as Local DNS Filter ---
+# --- Step 7: Configure dnsmasq as Local DNS Filter ---
 
 log_step "Configuring dnsmasq as local DNS filter..."
 
@@ -588,7 +605,7 @@ else
     fi
 fi
 
-# --- Step 7: Emit Execution Summary ---
+# --- Step 8: Emit Execution Summary ---
 
 log_step "Emitting execution summary..."
 
