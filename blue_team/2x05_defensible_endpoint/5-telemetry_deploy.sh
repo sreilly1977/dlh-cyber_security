@@ -53,6 +53,11 @@ env_error() {
     exit 2
 }
 
+# Helper to safely run crontab commands (handles "no crontab" gracefully)
+safe_crontab_list() {
+    crontab -l 2>/dev/null || true
+}
+
 # --- Pre-flight Checks ---
 
 log_step "Checking environment dependencies..."
@@ -105,10 +110,8 @@ fi
 log_step "Reloading auditd rules..."
 
 if command -v augenrules &> /dev/null; then
-    # augenrules --load merges all .rules files in the directory
     augenrules --load 2>&1 | tail -n 1
 else
-    # Fallback: load directly via auditctl
     auditctl -R "$RULES_FILE" 2>/dev/null || true
 fi
 
@@ -129,13 +132,8 @@ VERIFY_START_TS=$(date +%s)
 
 log_step "Starting controlled test sequence..."
 
-# Helper to safely run crontab commands (handles "no crontab" gracefully)
-safe_crontab_list() {
-    crontab -l 2>/dev/null || true
-}
-
-# 1. Create User (Expected: KEY_USER_MGMT)
-log_step "Test 1: Creating user '$TEST_USER'..."
+# 1. create a user (Expected: KEY_USER_MGMT)
+log_step "Test 1: create a user ('$TEST_USER')..."
 if id "$TEST_USER" &> /dev/null; then
     log_step "User '$TEST_USER' already exists, skipping creation (idempotent)."
 else
@@ -143,20 +141,20 @@ else
 fi
 sleep 2
 
-# 2. Remove User (Expected: KEY_USER_MGMT)
-log_step "Test 2: Removing user '$TEST_USER'..."
+# 2. remove the user (Expected: KEY_USER_MGMT)
+log_step "Test 2: remove the user ('$TEST_USER')..."
 if id "$TEST_USER" &> /dev/null; then
     userdel -r "$TEST_USER" 2>/dev/null || userdel "$TEST_USER" 2>/dev/null || true
 fi
 sleep 2
 
-# 3. Service Management (Expected: KEY_SERVICE)
-log_step "Test 3: Restarting service '$SERVICE_ACTION'..."
+# 3. run a service management action (Expected: KEY_SERVICE)
+log_step "Test 3: run a service management action ('$SERVICE_ACTION')..."
 systemctl restart "$SERVICE_ACTION" 2>/dev/null || true
 sleep 2
 
-# 4. Schedule Cron Job (Expected: KEY_SCHEDULER)
-log_step "Test 4: Scheduling cron job..."
+# 4. schedule a cron job (Expected: KEY_SCHEDULER)
+log_step "Test 4: schedule a cron job..."
 # Safe pipeline: suppress "no crontab" error, grep -v won't fail on empty input
 existing_cron=$(safe_crontab_list)
 if echo "$existing_cron" | grep -q "$CRON_JOB_NAME"; then
@@ -166,14 +164,14 @@ else
 fi
 sleep 2
 
-# 5. Remove Cron Job (Expected: KEY_SCHEDULER)
-log_step "Test 5: Removing cron job..."
+# 5. remove it (Expected: KEY_SCHEDULER)
+log_step "Test 5: remove it (cron job)..."
 existing_cron=$(safe_crontab_list)
 echo "$existing_cron" | grep -v "$CRON_JOB_NAME" | crontab - 2>/dev/null || true
 sleep 2
 
-# 6. Authorized Find as Root (Expected: KEY_FILE_ACCESS)
-log_step "Test 6: Running authorized find command..."
+# 6. run a short authorized find as root (Expected: KEY_FILE_ACCESS)
+log_step "Test 6: run a short authorized find as root..."
 find /etc -maxdepth 2 -name "*.conf" 2>/dev/null | head -n 5 > /dev/null
 sleep 2
 
@@ -279,6 +277,21 @@ build_events_json "$JSON_OUTPUT"
     echo "  \"overall_result\": \"$([[ $FAILED -eq 0 ]] && echo 'PASS' || echo 'FAIL')\""
     echo "}"
 } > "$COVERAGE_OUTPUT"
+
+# --- Cleanup Test Artifacts ---
+
+log_step "Cleaning up test artifacts..."
+
+# Remove the test user if it still exists
+if id "$TEST_USER" &> /dev/null; then
+    userdel -r "$TEST_USER" 2>/dev/null || true
+fi
+
+# Ensure the cron job is removed
+existing_cron=$(safe_crontab_list)
+if echo "$existing_cron" | grep -q "$CRON_JOB_NAME"; then
+    echo "$existing_cron" | grep -v "$CRON_JOB_NAME" | crontab - 2>/dev/null || true
+fi
 
 # --- Final Result ---
 
