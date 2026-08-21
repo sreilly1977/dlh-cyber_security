@@ -354,7 +354,7 @@ function Main {
     Validate-Environment
     Ensure-Directories
 
-    # Compare against target-state controls to determine pass/fail
+    # Compare against target-state controls to determine pass/fail based on post_pass_rate
     $orchestrationSuccess = Orchestrate-Hardening
 
     Emit-ExecutionRecord -OrchestrationSuccess $orchestrationSuccess
