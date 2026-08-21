@@ -210,7 +210,7 @@ function Orchestrate-Hardening {
         $allSuccess = $false
     }
 
-    # Service minimization - 14-service_accounts.ps1
+    # service minimization - 14-service_accounts.ps1
     if (-not (Invoke-HardenStep -StepName "service_minimization" `
             -ScriptPath (Join-Path $HardeningScriptsDir "14-service_accounts.ps1") `
             -ControlIds @("WIN-SVC-01"))) {
