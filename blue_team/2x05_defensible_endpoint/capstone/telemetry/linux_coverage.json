@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-08-20T16:16:35+00:00",
+  "host": "hawthorne-app-01",
+  "source": "auditd",
+  "test_actions": [
+    {"action": "create_user", "status": "verified"},
+    {"action": "remove_user", "status": "verified"},
+    {"action": "service_restart", "status": "verified"},
+    {"action": "cron_create", "status": "verified"},
+    {"action": "cron_remove", "status": "verified"},
+    {"action": "file_access", "status": "verified"}
+  ],
+  "overall_result": "PASS"
+}

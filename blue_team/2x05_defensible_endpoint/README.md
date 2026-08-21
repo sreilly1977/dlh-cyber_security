@@ -292,3 +292,45 @@ Note: the script is Windows-native PowerShell but must emit the same JSON schema
 
 ---
 
+# [5. The Telemetry Instrumentation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/5-telemetry_deploy.sh)
+
+## Goal: 
+
+Deploy the telemetry stack on both endpoints, verify coverage against authorized test actions and persist the coverage evidence.
+
+## Context: 
+
+A hardened system that does not produce evidence is a silent system. The telemetry work is the layer that turns the hardened hosts into observable hosts. This task deploys Sysmon and Script Block Logging on the Windows host, refines the auditd rules on the Linux host, runs the controlled test sequences from and verifies that every authorized test action left the expected trace in the expected log.
+
+## Instructions: 
+
+Write a script [5-telemetry_deploy.sh (Linux)](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/5-telemetry_deploy.sh) and [5-telemetry_deploy.ps1 (Windows)](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/5-telemetry_deploy.ps1) that perform the deployment and coverage verification.
+
+For Linux:
+
+    Ensure auditd is active with the project-provided rules file at /etc/audit/rules.d/meddefense.rules
+
+    Run the controlled test sequence: create a user, remove the user, run a service management action, schedule a cron job, remove it, run a short authorized find as root
+
+    For each test action, query auditd and verify the expected record is present (by key search, e.g. ausearch -k meddefense-user-mgmt)
+
+    Export the last 30 minutes of auditd and syslog records as structured JSON into capstone/telemetry/linux_events.json
+
+For Windows:
+
+    Verify Sysmon is installed, running and using the MedDefense configuration
+
+    Verify Script Block Logging is active by reading the registry key
+
+    Run the controlled test sequence: create a local user, create and run a scheduled task, start and stop a service, run a short authorized PowerShell command
+
+    For each test action, query the relevant event channel (Sysmon Operational, PowerShell Operational, Security) and verify the expected event is present within the last 10 minutes
+
+    Export the last 30 minutes of Sysmon and PowerShell events as structured JSON into capstone\telemetry\windows_events.json
+
+    Emit capstone\telemetry\windows_coverage.json with the same per-action schema as Linux
+
+Both scripts must exit 0 only if every test action produced the expected record.
+
+---
+
