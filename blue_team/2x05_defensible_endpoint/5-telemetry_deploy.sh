@@ -176,8 +176,9 @@ find /etc -maxdepth 2 -name "*.conf" 2>/dev/null | head -n 5 > /dev/null
 sleep 2
 
 # --- Verification Phase ---
+# For each test action, query auditd and verify the expected record is present (by key search, e.g. ausearch -k meddefense-user-mgmt)
 
-log_step "Verifying telemetry coverage..."
+log_step "Verifying telemetry coverage: confirming each test action left the expected record..."
 
 verify_trace() {
     local key=$1
@@ -189,11 +190,11 @@ verify_trace() {
     count=$(ausearch -k "$key" -ts recent 2>/dev/null | grep -c "type=" || echo "0")
 
     if [[ "$count" -gt 0 ]]; then
-        log_step "PASS: Found $count records for key '$key' ($action_name)."
+        log_step "PASS: Found $count records for key '$key' ($action_name) - expected record is present."
         COVERAGE_STATUS["$action_name"]="verified"
         return 0
     else
-        log_step "FAIL: No records found for key '$key' ($action_name)."
+        log_step "FAIL: No records found for key '$key' ($action_name) - expected record is missing."
         COVERAGE_STATUS["$action_name"]="failed"
         return 1
     fi
