@@ -1,0 +1,109 @@
+{
+  "site": "hawthorne",
+  "host": "hawthorne-app-01",
+  "interface": "enp0s3",
+  "host_ip": "192.168.10.115/24",
+  "networks": {
+    "management": "192.168.10.0/24",
+    "application": "10.10.2.0/24",
+    "public": "0.0.0.0/0"
+  },
+  "default_policy": {
+    "input": "drop",
+    "output": "accept",
+    "forward": "drop"
+  },
+  "allowed_services": [
+    {
+      "name": "ssh",
+      "port": 22,
+      "protocol": "tcp",
+      "source": "192.168.10.0/24",
+      "description": "SSH from management network only"
+    },
+    {
+      "name": "http",
+      "port": 80,
+      "protocol": "tcp",
+      "source": "0.0.0.0/0",
+      "description": "Apache HTTP public-facing web server"
+    },
+    {
+      "name": "https",
+      "port": 443,
+      "protocol": "tcp",
+      "source": "0.0.0.0/0",
+      "description": "Apache HTTPS public-facing web server"
+    },
+    {
+      "name": "mysql",
+      "port": 3306,
+      "protocol": "tcp",
+      "source": "10.10.2.0/24",
+      "description": "MySQL from application network only"
+    }
+  ],
+  "denied_services": [
+    {
+      "name": "telnet",
+      "port": 23,
+      "protocol": "tcp",
+      "reason": "Legacy cleartext protocol, security risk"
+    },
+    {
+      "name": "ftp",
+      "port": 21,
+      "protocol": "tcp",
+      "reason": "Cleartext file transfer, credentials exposed"
+    },
+    {
+      "name": "rlogin",
+      "port": 513,
+      "protocol": "tcp",
+      "reason": "Legacy trusted-host cleartext login"
+    },
+    {
+      "name": "rsh",
+      "port": 514,
+      "protocol": "tcp",
+      "reason": "Legacy remote shell, cleartext credentials"
+    },
+    {
+      "name": "nfs",
+      "port": 2049,
+      "protocol": "tcp",
+      "reason": "Legacy NFS v2/v3 with AUTH_SYS, no encryption"
+    },
+    {
+      "name": "rpcbind",
+      "port": 111,
+      "protocol": "tcp",
+      "reason": "RPC portmapper, exposes service enumeration"
+    },
+    {
+      "name": "smb",
+      "port": 445,
+      "protocol": "tcp",
+      "reason": "SMB file sharing not required on this host"
+    },
+    {
+      "name": "snmp",
+      "port": 161,
+      "protocol": "udp",
+      "reason": "SNMP v1/v2c community string exposure"
+    }
+  ],
+  "logging": {
+    "level": "low",
+    "log_denied": true
+  },
+  "suricata": {
+    "mode": "offline",
+    "pcap_dir": "/home/analyst/MedDefense_Lab/capstone/PCAPs/",
+    "labeled_pcap_dir": "/home/analyst/MedDefense_Lab/capstone/PCAPs/labels/"
+  },
+  "dns_filter": {
+    "blocklist": "/home/analyst/MedDefense_Lab/capstone/dns_blocklist.txt",
+    "resolver": "dnsmasq"
+  }
+}

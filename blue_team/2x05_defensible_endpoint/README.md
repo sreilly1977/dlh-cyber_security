@@ -334,13 +334,19 @@ Both scripts must exit 0 only if every test action produced the expected record.
 
 ---
 
-# 6. The Patch Pipeline Deployment
+# [6. The Patch Pipeline Deployment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/6-patch_pipeline.sh)
 
-Goal: Deploy the patch management pipeline on the Linux endpoint, run it against the provided CVE feed and persist every pipeline artifact inside the capstone package.
+## Goal: 
 
-Context: A production endpoint that cannot be patched safely is a liability. This task takes the pipeline and runs it end-to-end on hawthorne-app-01 with the provided capstone CVE.
+Deploy the patch management pipeline on the Linux endpoint, run it against the provided CVE feed and persist every pipeline artifact inside the capstone package.
 
-Instructions: Write a script 6-patch_pipeline.sh that orchestrates the pipeline end-to-end for here. The script must:
+## Context: 
+
+A production endpoint that cannot be patched safely is a liability. This task takes the pipeline and runs it end-to-end on hawthorne-app-01 with the provided capstone CVE.
+
+## Instructions: 
+
+Write a script 6-patch_pipeline.sh that orchestrates the pipeline end-to-end for here. The script must:
 
     Invoke the pipeline script from the previous project with CAPSTONE_ARTIFACTS_DIR=capstone/patch/ set in the environment so that all sub-step artifacts land inside the capstone package
 
@@ -353,3 +359,36 @@ Instructions: Write a script 6-patch_pipeline.sh that orchestrates the pipeline 
     Exit 0 only if the pipeline exit code was 0 and failed_entries == 0
 
 Hint: this task does not reinvent the pipeline. It wraps it with client specific directory redirection and a summary emitter.
+
+---
+
+# [7. The Network Defense Deployment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/7-network_deploy.sh)
+
+## Goal: 
+
+Deploy the network defense stack on hawthorne-app-01, validate every rule and run the offline Suricata replay against the capstone PCAP set.
+
+## Context: 
+
+The perimeter comes last because it is the control that isolates the host from everything you have not hardened yet. This task deploys the nftables ruleset, aligns Windows Firewall to the same segmentation contract, runs Suricata in offline replay mode against the capstone PCAP set and produces the full artifact collection inside the capstone package.
+
+## Instructions: 
+
+Write a script 7-network_deploy.sh that orchestrates the deployment and validation the script must:
+
+1.Invoke the pipeline with CAPSTONE_ARTIFACTS_DIR=capstone/network/ set in the environment so that artifacts land inside the capstone package
+
+    Use the capstone segmentation file at /home/analyst/MedDefense_Lab/capstone/segmentation_rules.json (which reflects the Hawthorne site topology, not the main MedDefense topology)
+
+    Run the firewall validation suite and refuse to proceed if any test fails
+
+    Run Suricata in offline replay mode against every PCAP in /home/analyst/MedDefense_Lab/capstone/PCAPs/ and persist the parsed alerts
+
+    Run the custom rule validation against the provided labeled PCAPs
+
+    Configure dnsmasq as the local DNS filter with the capstone blocklist at /home/analyst/MedDefense_Lab/capstone/dns_blocklist.txt
+
+    Exit 0 only if every validation step passed
+
+---
+
