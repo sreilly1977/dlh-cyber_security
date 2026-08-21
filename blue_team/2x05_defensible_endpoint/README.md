@@ -266,3 +266,29 @@ Hint: use set -o pipefail and a wrapper function that catches each sub-step's re
 
 ---
 
+# [4. The Windows Hardening Execution](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/4-windows_harden.ps1)
+
+## Goal: 
+
+Apply the full hardening workflow to hawthorne-adm-01 as a single idempotent orchestration and persist the execution evidence.
+
+## Context: 
+
+The Windows side receives the same treatment as the Linux side. The orchestrator invokes the PowerShell scripts in order and captures each step as a row in a structured execution log. The end state is measured against the Windows controls in target_state.json.
+
+## Instructions: 
+
+Write a PowerShell script 4-windows_harden.ps1 that orchestrates the Windows hardening pass. The script must:
+
+    Invoke the composition of scripts in order: account policy, audit policy, Windows Firewall baseline, Sysmon installation with the MedDefense config, PowerShell Script Block Logging enable, AppLocker or Defender Application Control baseline, service minimization
+
+    Capture the stdout and exit code of each sub-step into capstone\exec\windows_harden.log
+
+    After the run, invoke the provided /home/analyst/MedDefense_Lab/capstone/win_audit.ps1 helper and compute the new CIS Level 1 pass rate
+
+    Exit with code 0 only if every sub-step exited 0 and post_pass_rate >= target_state.windows.pass_rate. Otherwise exit 1.
+
+Note: the script is Windows-native PowerShell but must emit the same JSON schema as the Linux sibling so that the validation suite in T8 can read both without branching.
+
+---
+

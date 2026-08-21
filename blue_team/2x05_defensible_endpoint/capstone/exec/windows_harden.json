@@ -1,0 +1,71 @@
+﻿{
+    "timestamp":  "2026-08-21T09:34:56Z",
+    "hostname":  "HAWTHORNE-ADM-0",
+    "steps":  [
+                  {
+                      "name":  "account_policy",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\4-password_policy.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.648,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "audit_policy",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\5-audit_policy.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.898,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "firewall_hardening",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\11-firewall_hardening.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  3.642,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "sysmon_deploy",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\9-sysmon_deploy.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.108,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "powershell_security",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\6-powershell_security.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.16,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "applocker_config",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\12-applocker_config.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.548,
+                      "changed":  true
+                  },
+                  {
+                      "name":  "service_minimization",
+                      "script_path":  "C:\\Users\\analyst\\Script\\2x01_windows_fortress\\14-service_accounts.ps1",
+                      "exit_code":  0,
+                      "duration_seconds":  1.611,
+                      "changed":  true
+                  }
+              ],
+    "cis_before":  38.9,
+    "cis_after":  61.1,
+    "index_delta":  22.2,
+    "target_pass_rate":  85,
+    "controls_touched":  [
+                             "WIN-APP-01",
+                             "WIN-AUD-01",
+                             "WIN-FW-01",
+                             "WIN-POL-01",
+                             "WIN-PWR-01",
+                             "WIN-SVC-01",
+                             "WIN-SYS-01",
+                             "WIN-SYS-02",
+                             "WIN-SYS-03"
+                         ],
+    "passed":  false
+}

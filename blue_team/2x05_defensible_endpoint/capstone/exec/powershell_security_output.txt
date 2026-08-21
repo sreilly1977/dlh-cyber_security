@@ -1,0 +1,9 @@
+﻿[6-powershell_security.ps1][INFO] Configuring PowerShell security...
+[6-powershell_security.ps1][INFO] Script Block Logging enabled
+[6-powershell_security.ps1][INFO] Module Logging enabled for all modules
+[6-powershell_security.ps1][INFO] Transcription enabled
+[6-powershell_security.ps1][INFO] Verification:
+  ScriptBlockLogging: EnableScriptBlockLogging = 1
+  ModuleLogging: EnableModuleLogging = 1
+  Transcription: EnableTranscripting = 1
+[6-powershell_security.ps1][INFO] PowerShell security hardened successfully

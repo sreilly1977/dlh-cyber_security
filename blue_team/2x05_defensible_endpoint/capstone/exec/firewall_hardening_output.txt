@@ -1,0 +1,24 @@
+﻿[11-firewall_hardening.ps1][INFO] Configuring Windows Firewall...
+[11-firewall_hardening.ps1][INFO] All firewall profiles enabled with default-deny inbound
+[11-firewall_hardening.ps1][INFO] RDP rule already exists
+[11-firewall_hardening.ps1][INFO] WinRM rule already exists
+[11-firewall_hardening.ps1][INFO] SMB DC rule already exists
+[11-firewall_hardening.ps1][INFO] Verification:
+
+Name    Enabled DefaultInboundAction DefaultOutboundAction
+----    ------- -------------------- ---------------------
+Domain     True                Block                 Allow
+Private    True                Block                 Allow
+Public     True                Block                 Allow
+
+
+
+DisplayName                Direction Action Enabled
+-----------                --------- ------ -------
+MedDefense RDP               Inbound  Allow    True
+MedDefense WinRM             Inbound  Allow    True
+MedDefense SMB DC            Inbound  Allow    True
+MedDefense Syslog Outbound  Outbound  Allow    True
+
+
+[11-firewall_hardening.ps1][INFO] Firewall hardened successfully

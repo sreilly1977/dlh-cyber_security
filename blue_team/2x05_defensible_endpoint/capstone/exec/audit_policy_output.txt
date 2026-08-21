@@ -1,0 +1,117 @@
+﻿[5-audit_policy.ps1][INFO] Configuring local audit policy...
+[5-audit_policy.ps1][INFO] Setting: Credential Validation
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Other Account Logon Events
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Kerberos Authentication Service
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Kerberos Service Ticket Operations
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Account Lockout
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Logoff
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Logon
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Special Logon
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Process Creation
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Process Termination
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Sensitive Privilege Use
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Non Sensitive Privilege Use
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Other Privilege Use Events
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: DPAPI Activity
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Security State Change
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Security System Extension
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: System Integrity
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: File Share
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Filtering Platform Connection
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Other Object Access Events
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Removable Storage
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Authorization Policy Change
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Audit Policy Change
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Authentication Policy Change
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: MPSSVC Rule-Level Policy Change
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Other Policy Change Events
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: User Account Management
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Computer Account Management
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Distribution Group Management
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: Security Group Management
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Setting: User / Device Claims
+The command was successfully executed.
+
+[5-audit_policy.ps1][INFO] Verification:
+
+  Security System Extension               Success
+  System Integrity                        Success and Failure
+  Other System Events                     Success and Failure
+  Security State Change                   Success
+  Logon                                   Success and Failure
+  Logoff                                  Success
+  Account Lockout                         Failure
+  Special Logon                           Success
+  Network Policy Server                   Success and Failure
+  User / Device Claims                    Success and Failure
+  File Share                              Success and Failure
+  Filtering Platform Connection           Failure
+  Other Object Access Events              Failure
+  Removable Storage                       Success and Failure
+  Non Sensitive Privilege Use             Failure
+  Other Privilege Use Events              Failure
+  Sensitive Privilege Use                 Success and Failure
+  Process Creation                        Success
+  Process Termination                     Success
+  DPAPI Activity                          Failure
+[5-audit_policy.ps1][INFO] Audit policy hardened successfully

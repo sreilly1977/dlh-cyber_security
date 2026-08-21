@@ -1,0 +1,7 @@
+﻿[12-applocker_config.ps1][INFO] Configuring AppLocker...
+[12-applocker_config.ps1][INFO] AppLocker service already running
+[12-applocker_config.ps1][INFO] Importing AppLocker policy...
+[12-applocker_config.ps1][INFO] AppLocker policy imported successfully
+[12-applocker_config.ps1][INFO] Verification:
+[12-applocker_config.ps1][INFO] AppLocker policy is active
+[12-applocker_config.ps1][INFO] AppLocker configured successfully
