@@ -1,10 +1,10 @@
 ﻿{
-    "timestamp":  "2026-08-20T13:27:04Z",
+    "timestamp":  "2026-08-20T18:43:56Z",
     "hostname":  "HAWTHORNE-ADM-0",
     "controls_total":  36,
     "pass_count":  14,
     "fail_count":  22,
     "na_count":  0,
     "pass_rate_percent":  38.9,
-    "log_path":  "C:\\Users\\analyst\\Scripts\\capstone\\baseline\\windows_baseline.log"
+    "log_path":  "C:\\Users\\analyst\\Script\\capstone\\baseline\\windows_baseline.log"
 }

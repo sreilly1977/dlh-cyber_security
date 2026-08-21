@@ -1,0 +1,24 @@
+﻿{
+    "timestamp":  "2026-08-21T14:24:56.8993938+02:00",
+    "host":  "HAWTHORNE-ADM-0",
+    "source":  "Sysmon+PowerShell",
+    "test_actions":  [
+                         {
+                             "action":  "user_creation",
+                             "status":  "verified"
+                         },
+                         {
+                             "action":  "scheduled_task",
+                             "status":  "verified"
+                         },
+                         {
+                             "action":  "service_start_stop",
+                             "status":  "verified"
+                         },
+                         {
+                             "action":  "powershell_command",
+                             "status":  "verified"
+                         }
+                     ],
+    "overall_result":  "PASS"
+}

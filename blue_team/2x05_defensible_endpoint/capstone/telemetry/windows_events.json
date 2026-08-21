@@ -1,0 +1,938 @@
+﻿[
+    {
+        "timestamp":  "2026-08-21T14:24:51.4132458+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:24:51.410\r\nProcessGuid: {25cfb7e9-4393-6a88-2505-000000000400}\r\nProcessId: 3732\r\nImage: C:\\Windows\\System32\\sc.exe\r\nFileVersion: 10.0.26100.4484 (WinBuild.160101.0800)\r\nDescription: Service Control Manager Configuration Tool\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: sc.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\sc.exe\" stop BITS\r\nCurrentDirectory: C:\\Users\\analyst\\Script\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-db2f-040000000000}\r\nLogonId: 0x42FDB\r\nTerminalSessionId: 1\r\nIntegrityLevel: High\r\nHashes: MD5=C8F632A326219F85927B3F33A13F7C7D,SHA256=A452BFCB6000D03942DDFADDCDA5A7EB121447ED99B1BA090446B4A989F1F7AE,IMPHASH=42DADBD60BBC453DD1773FDC089E19B7\r\nParentProcessGuid: {25cfb7e9-4a27-6a87-5e01-000000000400}\r\nParentProcessId: 6236\r\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \r\nParentUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:47.7040659+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:24:47.702\r\nProcessGuid: {25cfb7e9-438f-6a88-2405-000000000400}\r\nProcessId: 7344\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:46.3912965+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:24:46.386\r\nProcessGuid: {25cfb7e9-438e-6a88-2205-000000000400}\r\nProcessId: 5032\r\nImage: C:\\Windows\\System32\\sc.exe\r\nFileVersion: 10.0.26100.4484 (WinBuild.160101.0800)\r\nDescription: Service Control Manager Configuration Tool\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: sc.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\sc.exe\" start BITS\r\nCurrentDirectory: C:\\Users\\analyst\\Script\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-db2f-040000000000}\r\nLogonId: 0x42FDB\r\nTerminalSessionId: 1\r\nIntegrityLevel: High\r\nHashes: MD5=C8F632A326219F85927B3F33A13F7C7D,SHA256=A452BFCB6000D03942DDFADDCDA5A7EB121447ED99B1BA090446B4A989F1F7AE,IMPHASH=42DADBD60BBC453DD1773FDC089E19B7\r\nParentProcessGuid: {25cfb7e9-4a27-6a87-5e01-000000000400}\r\nParentProcessId: 6236\r\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \r\nParentUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:41.3824115+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:24:41.381\r\nProcessGuid: {25cfb7e9-4389-6a88-2005-000000000400}\r\nProcessId: 10608\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:41.3541793+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:24:41.351\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:24:41.351\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7476561+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.747\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7476056+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.747\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7475528+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.747\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7358713+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.735\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7358182+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.735\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7357572+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:24:35.735\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:31.8219891+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:24:31.820\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:23:11.0177947+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:23:11.015\r\nProcessGuid: {25cfb7e9-432f-6a88-1c05-000000000400}\r\nProcessId: 10948\r\nImage: C:\\Windows\\System32\\svchost.exe\r\nFileVersion: 10.0.26100.8737 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Services\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: svchost.exe\r\nCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k GPSvcGroup\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=07FE1BE55D1049C7B48E270C466502D4,SHA256=1222A44A5FDB4EFDE4DFCB41093648627950E7EC02D8667F1C26CCAE31D922E2,IMPHASH=DE43BD45CC98C143357416C7519ECCFD\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:06.0424113+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:22:06.041\r\nProcessGuid: {25cfb7e9-42ee-6a88-1905-000000000400}\r\nProcessId: 7520\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:06.0135201+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:22:06.012\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:22:06.012\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4295357+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.429\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4294890+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.429\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4294366+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.429\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4181801+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.417\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4181332+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.417\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4180803+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:22:00.417\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.0840164+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:22:00.082\r\nProcessGuid: {25cfb7e9-42e8-6a88-1705-000000000400}\r\nProcessId: 3368\r\nImage: C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\r\nFileVersion: 1.3.257.13\r\nDescription: Microsoft Edge Update\r\nProduct: Microsoft Edge Update\r\nCompany: Microsoft Corporation\r\nOriginalFileName: MicrosoftEdgeUpdate.exe\r\nCommandLine: \"C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\" /ua /installsource scheduler\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=33FC26D2C54A2CC4486F7CEF2FEFC43A,SHA256=02019D96F55FC9036E5403E79132CBD8AFD955C14C469172694C2B38E7939134,IMPHASH=CD3B2D99C6655A5D4A14E30E380F5BF9\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:21:55.3212447+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:21:55.319\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:56.7318740+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:16:56.730\r\nProcessGuid: {25cfb7e9-41b8-6a88-1205-000000000400}\r\nProcessId: 11188\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:56.7015346+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:16:56.699\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:16:56.699\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0748250+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.072\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-TaskScheduler/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0627082+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.061\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0626694+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.061\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0626258+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.061\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0507235+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.048\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0506726+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.048\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0506206+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:16:51.048\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:47.7207115+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:16:47.718\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:29.9227922+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:16:29.921\r\nProcessGuid: {25cfb7e9-419d-6a88-0e05-000000000400}\r\nProcessId: 4728\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:01.2864910+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:16:01.284\r\nProcessGuid: {25cfb7e9-4181-6a88-0d05-000000000400}\r\nProcessId: 4120\r\nImage: C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SoftLandingTask\\SoftLandingTask.exe\r\nFileVersion: 2606.26002.200.0\r\nDescription: -\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: SoftLandingTask.exe\r\nCommandLine: \"C:\\WINDOWS\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SoftLandingTask\\SoftLandingTask.exe\" -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=17D4AA311B9A22E65689973D02B86CDE,SHA256=90E82F585D2D46996A3E2060095E56D727C76DBFBF8E5DBAFA36A11C7569FD48,IMPHASH=41FAA649D6771CE7D2A185A37249990B\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:01.2614980+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:16:01.259\r\nProcessGuid: {25cfb7e9-4181-6a88-0c05-000000000400}\r\nProcessId: 4784\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe CreativeId:18=128000000001615609;CourtesyOverrideRuleName:4=none;\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:58.4175309+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:13:58.415\r\nProcessGuid: {25cfb7e9-4106-6a88-0805-000000000400}\r\nProcessId: 2868\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:58.3856761+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:13:58.382\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:13:58.382\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.8006039+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.798\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.8005539+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.798\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.8005022+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.798\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.7887535+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.786\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.7887120+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.786\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.7886687+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:13:52.786\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:49.4968464+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:13:49.496\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:49.5856854+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:49.584\r\nProcessGuid: {25cfb7e9-40c1-6a88-0405-000000000400}\r\nProcessId: 384\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:49.4418749+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:49.440\r\nProcessGuid: {25cfb7e9-40c1-6a88-0305-000000000400}\r\nProcessId: 6912\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:48.8786833+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:48.876\r\nProcessGuid: {25cfb7e9-40c0-6a88-0205-000000000400}\r\nProcessId: 7756\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:48.7807346+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:48.779\r\nProcessGuid: {25cfb7e9-40c0-6a88-0105-000000000400}\r\nProcessId: 5044\r\nImage: C:\\Windows\\UUS\\amd64\\MoUsoCoreWorker.exe\r\nFileVersion: 1509.2607.1012.0\r\nDescription: MoUSO Core Worker Process\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: MoUSOCoreWorker.exe\r\nCommandLine: \"C:\\WINDOWS\\uus\\AMD64\\MoUsoCoreWorker.exe\" useprivatenamespaces\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=620BAE4C8BF599F2289B71E1CDCDD009,SHA256=D74C055552ADB882BBE57D746B5659A75A20552F09D715D904B8A8D82B76E5B8,IMPHASH=6022CD9CBE0FB37CB87DD6C459CEDFA7\r\nParentProcessGuid: {25cfb7e9-49b2-6a87-cc00-000000000400}\r\nParentProcessId: 9516\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s UsoSvc\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:48.2318957+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:48.229\r\nProcessGuid: {25cfb7e9-40c0-6a88-ff04-000000000400}\r\nProcessId: 3280\r\nImage: C:\\Windows\\System32\\svchost.exe\r\nFileVersion: 10.0.26100.8737 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Services\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: svchost.exe\r\nCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k LocalService -p -s SstpSvc\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\LOCAL SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e503-000000000000}\r\nLogonId: 0x3E5\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=07FE1BE55D1049C7B48E270C466502D4,SHA256=1222A44A5FDB4EFDE4DFCB41093648627950E7EC02D8667F1C26CCAE31D922E2,IMPHASH=DE43BD45CC98C143357416C7519ECCFD\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:48.1264962+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:48.125\r\nProcessGuid: {25cfb7e9-40c0-6a88-fd04-000000000400}\r\nProcessId: 10500\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:12:47.4049614+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:12:47.354\r\nProcessGuid: {25cfb7e9-40bf-6a88-fc04-000000000400}\r\nProcessId: 10048\r\nImage: C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Settings\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: SystemSettings.exe\r\nCommandLine: \"C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe\" -ServerName:microsoft.windows.immersivecontrolpanel\r\nCurrentDirectory: C:\\Windows\\ImmersiveControlPanel\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=FE79EB27A9D8871E875A4CC1989C67AF,SHA256=1ABB5656A1EC562B47ECB9860F1DAFAB6F18AEFA669819F6690C6DCB92D4C43B,IMPHASH=AC97060BFD665F2F8A38B5C8340BDFD0\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:46.2462384+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: Context,DeviceConnectedOrUpdated\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:46.244\r\nProcessGuid: {25cfb7e9-4082-6a88-fa04-000000000400}\r\nProcessId: 7936\r\nImage: C:\\WINDOWS\\System32\\sdbinst.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\SdbUpdates\\msimain.sdb\\01DA54B25CE0D000.msimain.sdb\\FriendlyName\r\nDetails: Microsoft System Installer Compatibility Database\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:46.2437460+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: Context,DeviceConnectedOrUpdated\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:46.242\r\nProcessGuid: {25cfb7e9-4082-6a88-fa04-000000000400}\r\nProcessId: 7936\r\nImage: C:\\WINDOWS\\System32\\sdbinst.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\SdbUpdates\\sysmain.sdb\\01DA54B25CE0D000.sysmain.sdb\\FriendlyName\r\nDetails: Microsoft Windows Application Compatibility Fix Database\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:46.2141263+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:11:46.208\r\nProcessGuid: {25cfb7e9-4082-6a88-fa04-000000000400}\r\nProcessId: 7936\r\nImage: C:\\Windows\\System32\\sdbinst.exe\r\nFileVersion: 10.0.26100.9168 (WinBuild.160101.0800)\r\nDescription: Application Compatibility Database Installer\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: sdbinst.exe\r\nCommandLine: C:\\WINDOWS\\System32\\sdbinst.exe -m -bg\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=8FA471D7C7AD8533DB0FD696C91E0E3F,SHA256=3B05A3EBF55B8847191FCB61F6DC4D3B14F2CA82EAF9329CD66812DBFA0508BD,IMPHASH=1B6EE3C1899EA90A8A3811555E1DA64E\r\nParentProcessGuid: {25cfb7e9-4985-6a87-7c00-000000000400}\r\nParentProcessId: 6348\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k LocalSystemNetworkRestricted -p -s PcaSvc\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:19.3222150+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:11:19.320\r\nProcessGuid: {25cfb7e9-4067-6a88-f604-000000000400}\r\nProcessId: 4172\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:19.2821087+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:11:19.279\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:11:19.279\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6954592+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.693\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6954056+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.693\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6953438+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.693\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6677606+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.666\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6677174+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.666\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6676680+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:11:13.666\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:09.9818945+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:11:09.979\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:49.0619737+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:10:49.059\r\nProcessGuid: {25cfb7e9-4049-6a88-f304-000000000400}\r\nProcessId: 304\r\nImage: C:\\Windows\\System32\\svchost.exe\r\nFileVersion: 10.0.26100.8737 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Services\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: svchost.exe\r\nCommandLine: C:\\WINDOWS\\System32\\svchost.exe -k CameraMonitor\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=07FE1BE55D1049C7B48E270C466502D4,SHA256=1222A44A5FDB4EFDE4DFCB41093648627950E7EC02D8667F1C26CCAE31D922E2,IMPHASH=DE43BD45CC98C143357416C7519ECCFD\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:40.3521859+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  22,
+        "raw_message":  "Dns query:\r\nRuleName: -\r\nUtcTime: 2026-08-20 19:36:50.271\r\nProcessGuid: {25cfb7e9-3fd1-6a88-e204-000000000400}\r\nProcessId: 7960\r\nQueryName: HAWTHORNE-ADM-0\r\nQueryStatus: 0\r\nQueryResults: fe80::309d:1ccf:fe53:4afa;::ffff:192.168.10.116;\r\nImage: C:\\WINDOWS\\system32\\wbem\\wmiprvse.exe\r\nUser: NT AUTHORITY\\NETWORK SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.4290781+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:10:37.427\r\nProcessGuid: {25cfb7e9-403d-6a88-f004-000000000400}\r\nProcessId: 4448\r\nImage: C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nTargetFilename: C:\\Windows\\SystemTemp\\__PSScriptPolicyTest_z1p2szgd.fyh.ps1\r\nCreationUtcTime: 2026-08-21 12:10:37.427\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.3395891+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:10:37.334\r\nProcessGuid: {25cfb7e9-403d-6a88-f004-000000000400}\r\nProcessId: 4448\r\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nFileVersion: 10.0.26100.8875 (WinBuild.160101.0800)\r\nDescription: Windows PowerShell\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: PowerShell.EXE\r\nCommandLine: powershell.exe -ExecutionPolicy Restricted -Command Write-Host \u0027Final result: 1\u0027;\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E65ECCA3754249C00F50A035202F7591,SHA256=7600FFE12DA441FE89D035B13801E8E91D064BC544A27B19A5CF49F6AB8B18F5,IMPHASH=AFACF6DC9041114B198160AAB4D0AE77\r\nParentProcessGuid: {25cfb7e9-400b-6a88-e904-000000000400}\r\nParentProcessId: 4812\r\nParentImage: C:\\Windows\\System32\\CompatTelRunner.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\compattelrunner.exe -cv:lKHFRXg8KUCFJWAC.0.6 -wce:0000000000000000  -fullsync -m:appraiser.dll -f:DoScheduledTelemetryRun \r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:35.4351716+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:10:35.430\r\nProcessGuid: {25cfb7e9-403b-6a88-ee04-000000000400}\r\nProcessId: 11112\r\nImage: C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nTargetFilename: C:\\Windows\\SystemTemp\\__PSScriptPolicyTest_xj40pfhe.2xs.ps1\r\nCreationUtcTime: 2026-08-21 12:10:35.430\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:35.2445208+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:10:35.232\r\nProcessGuid: {25cfb7e9-403b-6a88-ee04-000000000400}\r\nProcessId: 11112\r\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nFileVersion: 10.0.26100.8875 (WinBuild.160101.0800)\r\nDescription: Windows PowerShell\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: PowerShell.EXE\r\nCommandLine: powershell.exe -ExecutionPolicy Restricted -Command \n                        $Res = 0\n                        $InboxIMEs = (@(\n                          \u0027{0000897b-83df-4b96-be07-0fb58b01c4a4}\u0027,\u0027{03b5835f-f03c-411b-9ce2-aa23e1171e36}\u0027,\n                          \u0027{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\u0027,\u0027{6a498709-e00b-4c45-a018-8f9e4081ae40}\u0027,\n                          \u0027{7c472071-36a7-4709-88cc-859513e583a9}\u0027,\u0027{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\u0027,\n                          \u0027{81ea0a17-aa39-455b-ba20-ea79a8f98966}\u0027,\u0027{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\u0027,\n                          \u0027{a028ae76-01b1-46c2-99c4-acd9858ae02f}\u0027,\u0027{a1e2b86b-924a-4d43-80f6-8a820df7190f}\u0027,\n                          \u0027{b115690a-ea02-48d5-a231-e3578d2fdf80}\u0027,\u0027{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\u0027,\n                          \u0027{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\u0027,\u0027{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\u0027,\n                          \u0027{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\u0027,\u0027{fa445657-9379-11d6-b41a-00065b83ee53}\u0027\n                        ) | ForEach-Object { [regex]::Escape($_) }) -join \u0027|\u0027\n                        $InboxPattern = \u0027TIP\\\\(?:\u0027 + $InboxIMEs + \u0027)\u0027\n                        $LanguageProfiles = Get-Item \u0027HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\u0027 -EA SilentlyContinue\n                        foreach ($prof in @($LanguageProfiles)) {\n                          if ($prof.PSPath -match $InboxPattern) { continue }\n                          $pp = Get-ItemProperty $prof.PSPath -EA SilentlyContinue\n       "
+    },
+    {
+        "timestamp":  "2026-08-21T14:09:50.6818745+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:09:50.677\r\nProcessGuid: {25cfb7e9-400e-6a88-ec04-000000000400}\r\nProcessId: 10456\r\nImage: C:\\Windows\\WinSxS\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe\r\nFileVersion: 10.0.26100.9156 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer Worker\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TiWorker.exe\r\nCommandLine: C:\\WINDOWS\\winsxs\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=3C1B9CE5F76E99F8E8D85DDC5CF739D8,SHA256=F46E2736394159BEC3BF617CFDACC4C37FDE3809044610DDB6848B43BF7CAFC8,IMPHASH=8138F313B2ED787DAD307B2ECE1400E5\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:09:50.6624234+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:09:50.657\r\nProcessGuid: {25cfb7e9-400e-6a88-eb04-000000000400}\r\nProcessId: 6368\r\nImage: C:\\Windows\\servicing\\TrustedInstaller.exe\r\nFileVersion: 10.0.26100.9168 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TrustedInstaller.exe\r\nCommandLine: C:\\WINDOWS\\servicing\\TrustedInstaller.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=06E9C91E4DF1C28FD8BBA61F9664125D,SHA256=DF13F27D5E606D064C3CD0583174DE69798D2A404BD172C5F9B3AA1AABB2B17F,IMPHASH=3538EC2894B99A7F12D731CC5A7B69B6\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:09:49.5920982+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  22,
+        "raw_message":  "Dns query:\r\nRuleName: -\r\nUtcTime: 2026-08-20 19:35:59.858\r\nProcessGuid: {25cfb7e9-400b-6a88-e904-000000000400}\r\nProcessId: 4812\r\nQueryName: hawthorne-adm-0\r\nQueryStatus: 0\r\nQueryResults: fe80::309d:1ccf:fe53:4afa;::ffff:192.168.10.116;\r\nImage: C:\\WINDOWS\\system32\\compattelrunner.exe\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:09:17.6378014+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:09:17.635\r\nProcessGuid: {25cfb7e9-3fed-6a88-e804-000000000400}\r\nProcessId: 9948\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:56.6696689+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:08:56.668\r\nProcessGuid: {25cfb7e9-3fd8-6a88-e704-000000000400}\r\nProcessId: 10268\r\nImage: C:\\Windows\\System32\\smartscreen.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Defender SmartScreen\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: smartscreen.exe\r\nCommandLine: C:\\Windows\\System32\\smartscreen.exe -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=8C82BDA3ED4D8963EF65D91A0CECCBC1,SHA256=2AF496C24C1DEF94006DA19E6E5940715067BA8AFD482FE4C7C944E882EC43A3,IMPHASH=3D967AE398FD13D8BAF1933856991799\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:56.6297451+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:08:56.627\r\nProcessGuid: {25cfb7e9-3fd8-6a88-e604-000000000400}\r\nProcessId: 2444\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:53.1704131+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  22,
+        "raw_message":  "Dns query:\r\nRuleName: -\r\nUtcTime: 2026-08-20 19:35:03.077\r\nProcessGuid: {25cfb7e9-3fd1-6a88-e204-000000000400}\r\nProcessId: 7960\r\nQueryName: HAWTHORNE-ADM-0\r\nQueryStatus: 0\r\nQueryResults: fe80::309d:1ccf:fe53:4afa;::ffff:192.168.10.116;\r\nImage: C:\\WINDOWS\\system32\\wbem\\wmiprvse.exe\r\nUser: NT AUTHORITY\\NETWORK SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:50.6436874+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:08:50.641\r\nProcessGuid: {25cfb7e9-3fd2-6a88-e304-000000000400}\r\nProcessId: 9460\r\nImage: C:\\Windows\\System32\\svchost.exe\r\nFileVersion: 10.0.26100.8737 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Services\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: svchost.exe\r\nCommandLine: C:\\WINDOWS\\System32\\svchost.exe -k smphost\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\NETWORK SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e403-000000000000}\r\nLogonId: 0x3E4\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=07FE1BE55D1049C7B48E270C466502D4,SHA256=1222A44A5FDB4EFDE4DFCB41093648627950E7EC02D8667F1C26CCAE31D922E2,IMPHASH=DE43BD45CC98C143357416C7519ECCFD\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:17.4111965+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:08:17.382\r\nProcessGuid: {25cfb7e9-3fb1-6a88-dd04-000000000400}\r\nProcessId: 9764\r\nImage: C:\\Windows\\UUS\\amd64\\MoUsoCoreWorker.exe\r\nFileVersion: 1509.2607.1012.0\r\nDescription: MoUSO Core Worker Process\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: MoUSOCoreWorker.exe\r\nCommandLine: \"C:\\WINDOWS\\uus\\AMD64\\MoUsoCoreWorker.exe\" useprivatenamespaces\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=620BAE4C8BF599F2289B71E1CDCDD009,SHA256=D74C055552ADB882BBE57D746B5659A75A20552F09D715D904B8A8D82B76E5B8,IMPHASH=6022CD9CBE0FB37CB87DD6C459CEDFA7\r\nParentProcessGuid: {25cfb7e9-49b2-6a87-cc00-000000000400}\r\nParentProcessId: 9516\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s UsoSvc\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:08:10.9479003+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:08:10.946\r\nProcessGuid: {25cfb7e9-3faa-6a88-dc04-000000000400}\r\nProcessId: 7448\r\nImage: C:\\Windows\\System32\\svchost.exe\r\nFileVersion: 10.0.26100.8737 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Services\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: svchost.exe\r\nCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k GPSvcGroup\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=07FE1BE55D1049C7B48E270C466502D4,SHA256=1222A44A5FDB4EFDE4DFCB41093648627950E7EC02D8667F1C26CCAE31D922E2,IMPHASH=DE43BD45CC98C143357416C7519ECCFD\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:03:57.5326513+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:03:57.531\r\nProcessGuid: {25cfb7e9-3ead-6a88-da04-000000000400}\r\nProcessId: 4156\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:03:57.5044014+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:03:57.502\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:03:57.502\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:03:53.2240645+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:03:53.221\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:02:36.2936485+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:02:36.291\r\nProcessGuid: {25cfb7e9-3e5c-6a88-d604-000000000400}\r\nProcessId: 10548\r\nImage: C:\\Windows\\System32\\wermgr.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Problem Reporting\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: WerMgr\r\nCommandLine: \"C:\\WINDOWS\\system32\\wermgr.exe\" -upload\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=7FAEBCBFE326A04DE4A4803BA7EE7DEF,SHA256=50BD23D3C29088A31DD1229F9B01268A7BED7BA96912FFA4E45697882A116CC3,IMPHASH=0663EFB87019D0AFFBAD3D2E9FE1CD61\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:25.1339027+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:01:25.127\r\nProcessGuid: {25cfb7e9-3e15-6a88-d304-000000000400}\r\nProcessId: 9420\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:25.0863827+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:01:25.084\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:01:25.084\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:19.1922010+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:01:19.190\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:01.2748487+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:01:01.272\r\nProcessGuid: {25cfb7e9-3dfd-6a88-cf04-000000000400}\r\nProcessId: 11176\r\nImage: C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SoftLandingTask\\SoftLandingTask.exe\r\nFileVersion: 2606.26002.200.0\r\nDescription: -\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: SoftLandingTask.exe\r\nCommandLine: \"C:\\WINDOWS\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SoftLandingTask\\SoftLandingTask.exe\" -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=17D4AA311B9A22E65689973D02B86CDE,SHA256=90E82F585D2D46996A3E2060095E56D727C76DBFBF8E5DBAFA36A11C7569FD48,IMPHASH=41FAA649D6771CE7D2A185A37249990B\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:01.2505668+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:01:01.248\r\nProcessGuid: {25cfb7e9-3dfd-6a88-ce04-000000000400}\r\nProcessId: 3644\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe CreativeId:18=128000000001615609;CourtesyOverrideRuleName:4=none;\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:00:35.4793426+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.478\r\nProcessGuid: {25cfb7e9-3de3-6a88-cb04-000000000400}\r\nProcessId: 1436\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:00:35.4763601+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.470\r\nProcessGuid: {25cfb7e9-3de3-6a88-ca04-000000000400}\r\nProcessId: 4408\r\nImage: C:\\Windows\\System32\\rundll32.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows host process (Rundll32)\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: RUNDLL32.EXE\r\nCommandLine: \"C:\\WINDOWS\\system32\\rundll32.exe\" C:\\WINDOWS\\system32\\AppxDeploymentClient.dll,AppxPreStageCleanupRunTask\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=807D8C1EA3658035B6F5B27232ED120D,SHA256=C4C8160C42407741BAF0946A1FC0E8162E14C6CC543E754EFD78CC52BB316AF5,IMPHASH=C8B70D465C35D895C4171BAF042BB63A\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:00:35.4715065+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.468\r\nProcessGuid: {25cfb7e9-3de3-6a88-c904-000000000400}\r\nProcessId: 4868\r\nImage: C:\\Windows\\System32\\appidcertstorecheck.exe\r\nFileVersion: 10.0.26100.8457 (WinBuild.160101.0800)\r\nDescription: AppID Certificate Store Verification Task\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: AppIDCertstoreCheck.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\appidcertstorecheck.exe\"\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\LOCAL SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e503-000000000000}\r\nLogonId: 0x3E5\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=4C15950DDB11400899A7F207AF901B77,SHA256=513605BCE4C18FEE8D117ADEE1051D23AE57A6F1E735606CD5254444DADED088,IMPHASH=129D704DF0889821ED61ADCF00D784FE\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:00:35.4710283+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.464\r\nProcessGuid: {25cfb7e9-3de3-6a88-c804-000000000400}\r\nProcessId: 3840\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:00:35.4703850+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.449\r\nProcessGuid: {25cfb7e9-3de3-6a88-c704-000000000400}\r\nProcessId: 6344\r\nImage: C:\\Windows\\System32\\rundll32.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows host process (Rundll32)\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: RUNDLL32.EXE\r\nCommandLine: \"C:\\WINDOWS\\system32\\rundll32.exe\" /d acproxy.dll,PerformAutochkOperations\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=807D8C1EA3658035B6F5B27232ED120D,SHA256=C4C8160C42407741BAF0946A1FC0E8162E14C6CC543E754EFD78CC52BB316AF5,IMPHASH=C8B70D465C35D895C4171BAF042BB63A\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:59:44.3244619+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:44.322\r\nProcessGuid: {25cfb7e9-3db0-6a88-c304-000000000400}\r\nProcessId: 5876\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:59:18.1619954+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.156\r\nProcessGuid: {25cfb7e9-3d96-6a88-c204-000000000400}\r\nProcessId: 9412\r\nImage: C:\\Windows\\WinSxS\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe\r\nFileVersion: 10.0.26100.9156 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer Worker\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TiWorker.exe\r\nCommandLine: C:\\WINDOWS\\winsxs\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=3C1B9CE5F76E99F8E8D85DDC5CF739D8,SHA256=F46E2736394159BEC3BF617CFDACC4C37FDE3809044610DDB6848B43BF7CAFC8,IMPHASH=8138F313B2ED787DAD307B2ECE1400E5\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:59:18.1382909+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.131\r\nProcessGuid: {25cfb7e9-3d96-6a88-c104-000000000400}\r\nProcessId: 4268\r\nImage: C:\\Windows\\servicing\\TrustedInstaller.exe\r\nFileVersion: 10.0.26100.9168 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TrustedInstaller.exe\r\nCommandLine: C:\\WINDOWS\\servicing\\TrustedInstaller.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=06E9C91E4DF1C28FD8BBA61F9664125D,SHA256=DF13F27D5E606D064C3CD0583174DE69798D2A404BD172C5F9B3AA1AABB2B17F,IMPHASH=3538EC2894B99A7F12D731CC5A7B69B6\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:59:18.0903933+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.083\r\nProcessGuid: {25cfb7e9-3d96-6a88-c004-000000000400}\r\nProcessId: 6340\r\nImage: C:\\Windows\\System32\\UsoClient.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: UsoClient\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: UsoClient\r\nCommandLine: \"C:\\Windows\\System32\\usoclient.exe\" StartLXPBizCritUpdates hPJdOW12R06vK1uj.1\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=214C2EA3C241B8FC061DD04133ACCE6A,SHA256=D3C90744D4BB616C4946D9DC646E39E1FAD581366AA46F440B867C010B106612,IMPHASH=1BC6441172601AD7E84C0082681FF7D2\r\nParentProcessGuid: {25cfb7e9-49b2-6a87-d000-000000000400}\r\nParentProcessId: 4172\r\nParentImage: C:\\Windows\\UUS\\amd64\\MoUsoCoreWorker.exe\r\nParentCommandLine: \"C:\\WINDOWS\\uus\\AMD64\\MoUsoCoreWorker.exe\" useprivatenamespaces\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:58:47.2476006+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:58:47.245\r\nProcessGuid: {25cfb7e9-3d77-6a88-be04-000000000400}\r\nProcessId: 2748\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T13:55:08.4355966+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:55:08.431\r\nProcessGuid: {25cfb7e9-3c9c-6a88-bc04-000000000400}\r\nProcessId: 11096\r\nImage: C:\\Windows\\System32\\appidcertstorecheck.exe\r\nFileVersion: 10.0.26100.8457 (WinBuild.160101.0800)\r\nDescription: AppID Certificate Store Verification Task\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: AppIDCertstoreCheck.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\appidcertstorecheck.exe\"\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\LOCAL SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e503-000000000000}\r\nLogonId: 0x3E5\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=4C15950DDB11400899A7F207AF901B77,SHA256=513605BCE4C18FEE8D117ADEE1051D23AE57A6F1E735606CD5254444DADED088,IMPHASH=129D704DF0889821ED61ADCF00D784FE\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:24:35.7204742+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:23.6375199+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 140\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 46\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:22:00.4015803+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:17:14.3175694+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 131\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 45\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:16:51.0270530+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:14:16.0315335+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 128\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 44\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:13:52.7738454+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:36.9395996+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 125\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 43\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:11:13.6428076+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:38.2923046+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n$global:?\r\n\r\nScriptBlock ID: b959a884-e6a3-497d-a63e-a4f1f5c0f3da\r\nPath: "
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:38.2874455+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(Out-Default): \"Out-Default\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 8fc4d844-797f-43fa-b268-569aa48ecc99\r\n        Host Application = powershell.exe -ExecutionPolicy Restricted -Command Write-Host \u0027Final result: 1\u0027;\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = 9d364ab4-8861-416f-98fb-5506908998e9\r\n        Pipeline ID = 1\r\n        Command Name = \r\n        Command Type = Script\r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 30\r\n        User = WORKGROUP\\SYSTEM\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:38.2868529+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(Write-Host): \"Write-Host\"\r\nParameterBinding(Write-Host): name=\"Object\"; value=\"Final result: 1\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 8fc4d844-797f-43fa-b268-569aa48ecc99\r\n        Host Application = powershell.exe -ExecutionPolicy Restricted -Command Write-Host \u0027Final result: 1\u0027;\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = 9d364ab4-8861-416f-98fb-5506908998e9\r\n        Pipeline ID = 1\r\n        Command Name = Write-Host\r\n        Command Type = Cmdlet\r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 26\r\n        User = WORKGROUP\\SYSTEM\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.8929924+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\nWrite-Host \u0027Final result: 1\u0027;\r\n\r\nScriptBlock ID: 9fa2963d-bd82-4bd2-8fa3-29afc14467b1\r\nPath: "
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.7425099+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  40962,
+        "raw_message":  "PowerShell console is ready for user input"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.5262575+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  53504,
+        "raw_message":  "Windows PowerShell has started an IPC listening thread on process: 4448 in AppDomain: DefaultAppDomain."
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.3789093+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  40961,
+        "raw_message":  "PowerShell console is starting up"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.2526747+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n$global:?\r\n\r\nScriptBlock ID: 2d9c3234-c61c-4c7b-ae3e-812e9bf5ccd7\r\nPath: "
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.2424201+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(Out-Default): \"Out-Default\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = ce6334ee-32f9-48fb-ae3e-648f7f754c3a\r\n        Host Application = powershell.exe -ExecutionPolicy Restricted -Command \n $Res = 0\n $InboxIMEs = (@(\n \u0027{0000897b-83df-4b96-be07-0fb58b01c4a4}\u0027,\u0027{03b5835f-f03c-411b-9ce2-aa23e1171e36}\u0027,\n \u0027{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\u0027,\u0027{6a498709-e00b-4c45-a018-8f9e4081ae40}\u0027,\n \u0027{7c472071-36a7-4709-88cc-859513e583a9}\u0027,\u0027{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\u0027,\n \u0027{81ea0a17-aa39-455b-ba20-ea79a8f98966}\u0027,\u0027{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\u0027,\n \u0027{a028ae76-01b1-46c2-99c4-acd9858ae02f}\u0027,\u0027{a1e2b86b-924a-4d43-80f6-8a820df7190f}\u0027,\n \u0027{b115690a-ea02-48d5-a231-e3578d2fdf80}\u0027,\u0027{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\u0027,\n \u0027{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\u0027,\u0027{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\u0027,\n \u0027{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\u0027,\u0027{fa445657-9379-11d6-b41a-00065b83ee53}\u0027\n ) | ForEach-Object { [regex]::Escape($_) }) -join \u0027|\u0027\n $InboxPattern = \u0027TIP\\\\(?:\u0027 + $InboxIMEs + \u0027)\u0027\n $LanguageProfiles = Get-Item \u0027HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\u0027 -EA SilentlyContinue\n foreach ($prof in @($LanguageProfiles)) {\n if ($prof.PSPath -match $InboxPattern) { continue }\n $pp = Get-ItemProperty $prof.PSPath -EA SilentlyContinue\n $hasEnable = ($pp.PSObject.Properties.Name -contains \u0027Enable\u0027)\n if ((-not $hasEnable) -or ($pp.Enable -eq 1)) {\n $Res = 1\n break\n }\n }\n Write-Host \u0027Final result:\u0027,$Res\n\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = e14a1382-9784-4a9a-a6db-7fbd3ac9846f\r\n        Pipeline ID = 1\r\n        Command Name = \r\n        Command Type = Script\r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 40\r\n        User = WORKGROUP\\SYSTEM\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.2418284+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(Write-Host): \"Write-Host\"\r\nParameterBinding(Write-Host): name=\"Object\"; value=\"System.Object[]\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = ce6334ee-32f9-48fb-ae3e-648f7f754c3a\r\n        Host Application = powershell.exe -ExecutionPolicy Restricted -Command \n $Res = 0\n $InboxIMEs = (@(\n \u0027{0000897b-83df-4b96-be07-0fb58b01c4a4}\u0027,\u0027{03b5835f-f03c-411b-9ce2-aa23e1171e36}\u0027,\n \u0027{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\u0027,\u0027{6a498709-e00b-4c45-a018-8f9e4081ae40}\u0027,\n \u0027{7c472071-36a7-4709-88cc-859513e583a9}\u0027,\u0027{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\u0027,\n \u0027{81ea0a17-aa39-455b-ba20-ea79a8f98966}\u0027,\u0027{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\u0027,\n \u0027{a028ae76-01b1-46c2-99c4-acd9858ae02f}\u0027,\u0027{a1e2b86b-924a-4d43-80f6-8a820df7190f}\u0027,\n \u0027{b115690a-ea02-48d5-a231-e3578d2fdf80}\u0027,\u0027{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\u0027,\n \u0027{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\u0027,\u0027{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\u0027,\n \u0027{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\u0027,\u0027{fa445657-9379-11d6-b41a-00065b83ee53}\u0027\n ) | ForEach-Object { [regex]::Escape($_) }) -join \u0027|\u0027\n $InboxPattern = \u0027TIP\\\\(?:\u0027 + $InboxIMEs + \u0027)\u0027\n $LanguageProfiles = Get-Item \u0027HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\u0027 -EA SilentlyContinue\n foreach ($prof in @($LanguageProfiles)) {\n if ($prof.PSPath -match $InboxPattern) { continue }\n $pp = Get-ItemProperty $prof.PSPath -EA SilentlyContinue\n $hasEnable = ($pp.PSObject.Properties.Name -contains \u0027Enable\u0027)\n if ((-not $hasEnable) -or ($pp.Enable -eq 1)) {\n $Res = 1\n break\n }\n }\n Write-Host \u0027Final result:\u0027,$Res\n\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = e14a1382-9784-4a9a-a6db-7fbd3ac9846f\r\n        Pipeline ID = 1\r\n        Command Name = Write-Host\r\n        Command Type = Cmdlet\r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 36\r\n        User = WORKGROUP\\SYSTEM\r\n        Connect"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:37.1514878+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(Get-Item): \"Get-Item\"\r\nParameterBinding(Get-Item): name=\"ErrorAction\"; value=\"SilentlyContinue\"\r\nParameterBinding(Get-Item): name=\"Path\"; value=\"HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = ce6334ee-32f9-48fb-ae3e-648f7f754c3a\r\n        Host Application = powershell.exe -ExecutionPolicy Restricted -Command \n $Res = 0\n $InboxIMEs = (@(\n \u0027{0000897b-83df-4b96-be07-0fb58b01c4a4}\u0027,\u0027{03b5835f-f03c-411b-9ce2-aa23e1171e36}\u0027,\n \u0027{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\u0027,\u0027{6a498709-e00b-4c45-a018-8f9e4081ae40}\u0027,\n \u0027{7c472071-36a7-4709-88cc-859513e583a9}\u0027,\u0027{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\u0027,\n \u0027{81ea0a17-aa39-455b-ba20-ea79a8f98966}\u0027,\u0027{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\u0027,\n \u0027{a028ae76-01b1-46c2-99c4-acd9858ae02f}\u0027,\u0027{a1e2b86b-924a-4d43-80f6-8a820df7190f}\u0027,\n \u0027{b115690a-ea02-48d5-a231-e3578d2fdf80}\u0027,\u0027{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\u0027,\n \u0027{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\u0027,\u0027{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\u0027,\n \u0027{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\u0027,\u0027{fa445657-9379-11d6-b41a-00065b83ee53}\u0027\n ) | ForEach-Object { [regex]::Escape($_) }) -join \u0027|\u0027\n $InboxPattern = \u0027TIP\\\\(?:\u0027 + $InboxIMEs + \u0027)\u0027\n $LanguageProfiles = Get-Item \u0027HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\u0027 -EA SilentlyContinue\n foreach ($prof in @($LanguageProfiles)) {\n if ($prof.PSPath -match $InboxPattern) { continue }\n $pp = Get-ItemProperty $prof.PSPath -EA SilentlyContinue\n $hasEnable = ($pp.PSObject.Properties.Name -contains \u0027Enable\u0027)\n if ((-not $hasEnable) -or ($pp.Enable -eq 1)) {\n $Res = 1\n break\n }\n }\n Write-Host \u0027Final result:\u0027,$Res\n\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = e14a1382-9784-4a9a-a6db-7fbd3ac9846f\r\n        Pipeline ID = 1\r\n        Comm"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:36.3193269+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4103,
+        "raw_message":  "CommandInvocation(ForEach-Object): \"ForEach-Object\"\r\nParameterBinding(ForEach-Object): name=\"Process\"; value=\" [regex]::Escape($_) \"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{0000897b-83df-4b96-be07-0fb58b01c4a4}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{03b5835f-f03c-411b-9ce2-aa23e1171e36}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{6a498709-e00b-4c45-a018-8f9e4081ae40}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{7c472071-36a7-4709-88cc-859513e583a9}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{81ea0a17-aa39-455b-ba20-ea79a8f98966}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{a028ae76-01b1-46c2-99c4-acd9858ae02f}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{a1e2b86b-924a-4d43-80f6-8a820df7190f}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{b115690a-ea02-48d5-a231-e3578d2fdf80}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\"\r\nParameterBinding(ForEach-Object): name=\"InputObject\"; value=\"{fa445657-9379-11d6-b41a-00065b83ee53}\"\r\n\r\n\r\nContext:\r\n        Severity = Informational\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = ce6334ee-32f9-48fb-ae3e-648f7f754c3a\r\n        Host Application = powershell.exe -ExecutionPolicy"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:36.2760122+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n{ [regex]::Escape($_) }\r\n\r\nScriptBlock ID: 483e179f-3550-4388-927b-ba989fa2537c\r\nPath: "
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:36.1932345+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n\n $Res = 0\n $InboxIMEs = (@(\n \u0027{0000897b-83df-4b96-be07-0fb58b01c4a4}\u0027,\u0027{03b5835f-f03c-411b-9ce2-aa23e1171e36}\u0027,\n \u0027{531fdebf-9b4c-4a43-a2aa-960e8fcdc732}\u0027,\u0027{6a498709-e00b-4c45-a018-8f9e4081ae40}\u0027,\n \u0027{7c472071-36a7-4709-88cc-859513e583a9}\u0027,\u0027{81d4e9c9-1d3b-41bc-9e6c-4b40bf79e35e}\u0027,\n \u0027{81ea0a17-aa39-455b-ba20-ea79a8f98966}\u0027,\u0027{8613e14c-d0c0-4161-ac0f-1dd2563286bc}\u0027,\n \u0027{a028ae76-01b1-46c2-99c4-acd9858ae02f}\u0027,\u0027{a1e2b86b-924a-4d43-80f6-8a820df7190f}\u0027,\n \u0027{b115690a-ea02-48d5-a231-e3578d2fdf80}\u0027,\u0027{c2cb2cf0-af47-413e-9780-8bc3a3c16068}\u0027,\n \u0027{dcbd6fa8-032f-11d3-b5b1-00c04fc324a1}\u0027,\u0027{e429b25a-e5d3-4d1f-9be3-0c608477e3a1}\u0027,\n \u0027{f25e9f57-2fc8-4eb3-a41a-cce5f08541e6}\u0027,\u0027{fa445657-9379-11d6-b41a-00065b83ee53}\u0027\n ) | ForEach-Object { [regex]::Escape($_) }) -join \u0027|\u0027\n $InboxPattern = \u0027TIP\\\\(?:\u0027 + $InboxIMEs + \u0027)\u0027\n $LanguageProfiles = Get-Item \u0027HKLM:\\SOFTWARE\\Microsoft\\CTF\\TIP\\{????????-????-????-????-????????????}\\LanguageProfile\\0x*\\{????????-????-????-????-????????????}\u0027 -EA SilentlyContinue\n foreach ($prof in @($LanguageProfiles)) {\n if ($prof.PSPath -match $InboxPattern) { continue }\n $pp = Get-ItemProperty $prof.PSPath -EA SilentlyContinue\n $hasEnable = ($pp.PSObject.Properties.Name -contains \u0027Enable\u0027)\n if ((-not $hasEnable) -or ($pp.Enable -eq 1)) {\n $Res = 1\n break\n }\n }\n Write-Host \u0027Final result:\u0027,$Res\n\r\n\r\nScriptBlock ID: 41b36795-a966-42b6-bc7b-0b502341409e\r\nPath: "
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:35.8992072+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  40962,
+        "raw_message":  "PowerShell console is ready for user input"
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:35.5923098+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  53504,
+        "raw_message":  "Windows PowerShell has started an IPC listening thread on process: 11112 in AppDomain: DefaultAppDomain."
+    },
+    {
+        "timestamp":  "2026-08-21T14:10:35.3640169+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  40961,
+        "raw_message":  "PowerShell console is starting up"
+    },
+    {
+        "timestamp":  "2026-08-21T14:04:02.5393450+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 122\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 42\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:03:56.9926878+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = The running command stopped because the preference variable \"ErrorActionPreference\" or common parameter is set to Stop: Exception of type \u0027Microsoft.PowerShell.Commands.InvalidPasswordException\u0027 was thrown.\r\nFully Qualified Error ID = InvalidPassword,Microsoft.PowerShell.Commands.NewLocalUserCommand\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 122\r\n        Command Name = New-LocalUser\r\n        Command Type = Cmdlet\r\n        Script Name = C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\n        Command Path = \r\n        Sequence Number = 41\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:03:56.9798346+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:36.7939495+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = System error.\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 117\r\n        Command Name = \r\n        Command Type = \r\n        Script Name = \r\n        Command Path = \r\n        Sequence Number = 40\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607607+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (6 of 6):\r\n    }\r\n        { @(\u0027Object\u0027) -contains $_ } {\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027InputObject\u0027)) {\r\n          [object]$__cmdletization_value = ${InputObject}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027InputObject\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027InputObject\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ClusteredScheduledTask\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n      $__cmdletization_returnValue = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{ Name = \u0027ReturnValue\u0027; ParameterType = \u0027System.Int32\u0027; Bindings = \u0027Error\u0027; Value = $null; IsValuePresent = $false }\r\n      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new(\u0027UnregisterByObject\u0027, $__cmdletization_methodParameters, $__cmdletization_returnValue)\r\n      $__cmdletization_objectModelWrapper.ProcessRecord($__cmdletization_methodInvocationInfo)\r\n        }\r\n    }\r\n\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    End {\r\n        try\r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n                $__cmdletization_objectModelWrapper.EndProcessi"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607575+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (5 of 6):\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Trigger\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskTrigger\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Description\u0027)) {\r\n          [object]$__cmdletization_value = ${Description}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Description\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Description\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ClusteredScheduledTask\u0027\r\n        $__cmdletization_me"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607492+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (4 of 6):\r\nlidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${Cluster},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027, Mandatory=$true, Position=1, ValueFromPipeline=$true)]\r\n    [PSTypeName(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [ciminstance]\r\n    ${InputObject},\r\n\r\n    [Parameter(ParameterSetName=\u0027Params\u0027, Position=1)]\r\n    [PSTypeName(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskAction\u0027)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [ciminstance[]]\r\n    ${Action},\r\n\r\n    [Parameter(ParameterSetName=\u0027Params\u0027, Position=3)]\r\n    [PSTypeName(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskSettings\u0027)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [ciminstance]\r\n    ${Settings},\r\n\r\n    [Parameter(ParameterSetName=\u0027Params\u0027, Position=2)]\r\n    [PSTypeName(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskTrigger\u0027)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [ciminstance[]]\r\n    ${Trigger},\r\n\r\n    [Parameter(ParameterSetName=\u0027Params\u0027, Position=4)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${Description},\r\n\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027, Mandatory=$true, Position=1, ValueFromPipeline=$true)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${Xml},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Params\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027)]\r\n    [Alias(\u0027Session\u0027)]\r\n    [ValidateNotNullOrEmpty()]\r\n    [CimSession[]]\r\n    ${CimSession},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Params\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027)]\r\n    [int]\r\n    ${ThrottleLimit},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Params\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027)]\r\n    [switch]\r\n    ${AsJob})\r"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607387+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (3 of 6):\r\ndParameter]@{Name = \u0027Cluster\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Cluster\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Action\u0027)) {\r\n          [object]$__cmdletization_value = ${Action}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Action\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Action\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskAction\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027TaskType\u0027)) {\r\n          [object]$__cmdletization_value = ${TaskType}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskType\u0027; ParameterType = \u0027Microsoft.PowerShell.Cmdletization.GeneratedTypes."
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607252+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (2 of 6):\r\nrameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Params\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027)]\r\n    [int]\r\n    ${ThrottleLimit},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Params\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Xml\u0027)]\r\n    [switch]\r\n    ${AsJob})\r\n\r\n    DynamicParam {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n                $__cmdletization_objectModelWrapper = $script:ObjectModelWrapper::new()\r\n                $__cmdletization_objectModelWrapper.Initialize($PSCmdlet, $script:ClassName, $script:ClassVersion, $script:ModuleVersion, $script:PrivateData)\r\n\r\n                if ($__cmdletization_objectModelWrapper -is [System.Management.Automation.IDynamicParameters])\r\n                {\r\n                    ([System.Management.Automation.IDynamicParameters]$__cmdletization_objectModelWrapper).GetDynamicParameters()\r\n                }\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n\r\n    Begin {\r\n        $__cmdletization_exceptionHasBeenThrown = $false\r\n        try \r\n        {\r\n            __cmdletization_BindCommonParameters $__cmdletization_objectModelWrapper $PSBoundParameters\r\n            $__cmdletization_objectModelWrapper.BeginProcessing()\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    Process {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n      $__cmdletization_methodParameters = [System.Collections.Generic.List[Microsoft.PowerShell.Cmdletization.MethodParameter]]::new()\r\n\r\n      switch -exact ($PSCmdlet.ParameterSetName) { \r\n        { @(\u0027Object\u0027) -contains $_ } {\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.6607140+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 6):\r\n\r\n#requires -version 3.0\r\n\r\ntry { Microsoft.PowerShell.Core\\Set-StrictMode -Off } catch { }\r\n\r\n$script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module\r\n\r\n$script:ClassName = \u0027Root/Microsoft/Windows/TaskScheduler/PS_ClusteredScheduledTask\u0027\r\n$script:ClassVersion = \u00271.0\u0027\r\n$script:ModuleVersion = \u00271.0\u0027\r\n$script:ObjectModelWrapper = [Microsoft.PowerShell.Cmdletization.Cim.CimCmdletAdapter]\r\n\r\n$script:PrivateData = [System.Collections.Generic.Dictionary[string,string]]::new()\r\n\r\nMicrosoft.PowerShell.Core\\Export-ModuleMember -Function @()\r\n        \r\n\r\nfunction __cmdletization_BindCommonParameters\r\n{\r\n    param(\r\n        $__cmdletization_objectModelWrapper,\r\n        $myPSBoundParameters\r\n    )       \r\n                \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027CimSession\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027CimSession\u0027].Value = $myPSBoundParameters[\u0027CimSession\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027ThrottleLimit\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027ThrottleLimit\u0027].Value = $myPSBoundParameters[\u0027ThrottleLimit\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027AsJob\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027AsJob\u0027].Value = $myPSBoundParameters[\u0027AsJob\u0027] \r\n        }\r\n                    \r\n\r\n}\r\n                \r\n\r\nfunction Get-ClusteredScheduledTask\r\n{\r\n    [CmdletBinding(PositionalBinding=$false)]\r\n    \r\n    [OutputType([Microsoft.Management.Infrastructure.CimInstance[]])][OutputType(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ClusteredScheduledTask\u0027)]\r\n    param(\r\n    \r\n    [Parameter(ParameterSetName=\u0027Get0\u0027, Position=0)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${TaskName},\r\n\r\n    [Parameter(ParameterSetName=\u0027Get0\u0027, Position=1)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [strin"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5974021+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (17 of 17):\r\nk\u0027)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [ciminstance]\r\n    ${InputObject},\r\n\r\n    [Parameter(ParameterSetName=\u0027Path\u0027, Position=1)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${TaskPath},\r\n\r\n    [Parameter(ParameterSetName=\u0027Path\u0027, Mandatory=$true, Position=0)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n    ${TaskName},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Path\u0027)]\r\n    [Alias(\u0027Session\u0027)]\r\n    [ValidateNotNullOrEmpty()]\r\n    [CimSession[]]\r\n    ${CimSession},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Path\u0027)]\r\n    [int]\r\n    ${ThrottleLimit},\r\n\r\n    [Parameter(ParameterSetName=\u0027Object\u0027)]\r\n    [Parameter(ParameterSetName=\u0027Path\u0027)]\r\n    [switch]\r\n    ${AsJob})\r\n\r\n    DynamicParam {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n                $__cmdletization_objectModelWrapper = $script:ObjectModelWrapper::new()\r\n                $__cmdletization_objectModelWrapper.Initialize($PSCmdlet, $script:ClassName, $script:ClassVersion, $script:ModuleVersion, $script:PrivateData)\r\n\r\n                if ($__cmdletization_objectModelWrapper -is [System.Management.Automation.IDynamicParameters])\r\n                {\r\n                    ([System.Management.Automation.IDynamicParameters]$__cmdletization_objectModelWrapper).GetDynamicParameters()\r\n                }\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n\r\n    Begin {\r\n        $__cmdletization_exceptionHasBeenThrown = $false\r\n        try \r\n        {\r\n            __cmdletization_BindCommonParameters $__cmdletization_objectModelWrapper $PSBoundParameters\r\n            $__cmdletization_objectModelWrapper.BeginProcessing()\r\n        }\r\n        catch\r\n        {\r\n            $_"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973976+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (16 of 17):\r\ndParameters.ContainsKey(\u0027Trigger\u0027)) {\r\n          [object]$__cmdletization_value = ${Trigger}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Trigger\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Trigger\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskTrigger\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Password\u0027)) {\r\n          [object]$__cmdletization_value = ${Password}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027User\u0027)) {\r\n          [object]$__cmdletization_value = ${User}\r\n  "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973905+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (15 of 17):\r\nMethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027User\u0027)) {\r\n          [object]$__cmdletization_value = ${User}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027User\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027User\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_m"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973838+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (14 of 17):\r\nPowerShell.Cmdletization.MethodParameter]@{Name = \u0027Force\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Xml\u0027)) {\r\n          [object]$__cmdletization_value = ${Xml}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Xml\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Xml\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Password\u0027)) {\r\n          [object]$__cmdletization_value = ${Password}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletizat"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973737+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (13 of 17):\r\nr]@{Name = \u0027TaskName\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskName\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n      $__cmdletization_returnValue = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{ Name = \u0027ReturnValue\u0027; ParameterType = \u0027System.Int32\u0027; Bindings = \u0027Error\u0027; Value = $null; IsValuePresent = $false }\r\n      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new(\u0027RegisterByPrincipal\u0027, $__cmdletization_methodParameters, $__cmdletization_returnValue)\r\n      $__cmdletization_objectModelWrapper.ProcessRecord($__cmdletization_methodInvocationInfo)\r\n        }\r\n        { @(\u0027User\u0027) -contains $_ } {\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Force\u0027)) {\r\n          [object]$__cmdletization_value = ${Force}\r\n          $__cmdletization_methodPar"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973512+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (12 of 17):\r\n$null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027InputObject\u0027)) {\r\n          [object]$__cmdletization_value = ${InputObject}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027InputObject\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027InputObject\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Password\u0027)) {\r\n          [object]$__cmdletization_value = ${Password}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Password\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n    "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973437+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (11 of 17):\r\nion_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027DaysOfWeek\u0027)) {\r\n          [object]$__cmdletization_value = ${DaysOfWeek}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027DaysOfWeek\u0027; ParameterType = \u0027System.DayOfWeek[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027DaysOfWeek\u0027; ParameterType = \u0027System.DayOfWeek[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Weekly\u0027)) {\r\n          [object]$__cmdletization_value = ${Weekly}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Weekly\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Weekly\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027WeeksInterval\u0027)) {\r\n          [object]$__cmdletization_value = ${WeeksInterval}\r"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973288+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (10 of 17):\r\nhodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027RandomDelay\u0027; ParameterType = \u0027System.TimeSpan\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027AtLogOn\u0027)) {\r\n          [object]$__cmdletization_value = ${AtLogOn}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027AtLogOn\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027AtLogOn\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027User\u0027)) {\r\n          [object]$__cmdletization_value = ${User}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027User\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027User\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n     "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973215+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (9 of 17):\r\nSwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskSettings\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n      $__cmdletization_returnValue = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{ Name = \u0027ReturnValue\u0027; ParameterType = \u0027System.Int32\u0027; Bindings = \u0027Error\u0027; Value = $null; IsValuePresent = $false }\r\n      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new(\u0027NewSettings\u0027, $__cmdletization_methodParameters, $__cmdletization_returnValue)\r\n      $__cmdletization_objectModelWrapper.ProcessRecord($__cmdletization_methodInvocationInfo)\r\n\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    End {\r\n        try\r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n                $__cmdletization_objectModelWrapper.EndProcessing()\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            throw\r\n        }\r\n    }\r\n\r\n    # .EXTERNALHELP PS_ScheduledTask_v1.0.cdxml-Help.xml\r\n}\r\nMicrosoft.PowerShell.Core\\Export-ModuleMember -Function \u0027New-ScheduledTaskSettingsSet\u0027 -Alias \u0027*\u0027\r\n        "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973113+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (8 of 17):\r\n\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027MaintenancePeriod\u0027)) {\r\n          [object]$__cmdletization_value = ${MaintenancePeriod}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027MaintenancePeriod\u0027; ParameterType = \u0027System.TimeSpan\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027MaintenancePeriod\u0027; ParameterType = \u0027System.TimeSpan\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027MaintenanceDeadline\u0027)) {\r\n          [object]$__cmdletization_value = ${MaintenanceDeadline}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027MaintenanceDeadline\u0027; ParameterType = \u0027System.TimeSpan\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027MaintenanceDeadline\u0027; ParameterType = \u0027System.TimeSpan\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $fal"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5973041+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (7 of 17):\r\n     throw\r\n        }\r\n    }\r\n\r\n    Begin {\r\n        $__cmdletization_exceptionHasBeenThrown = $false\r\n        try \r\n        {\r\n            __cmdletization_BindCommonParameters $__cmdletization_objectModelWrapper $PSBoundParameters\r\n            $__cmdletization_objectModelWrapper.BeginProcessing()\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    Process {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n      $__cmdletization_methodParameters = [System.Collections.Generic.List[Microsoft.PowerShell.Cmdletization.MethodParameter]]::new()\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027DisallowDemandStart\u0027)) {\r\n          [object]$__cmdletization_value = ${DisallowDemandStart}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027DisallowDemandStart\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027DisallowDemandStart\u0027; ParameterType = \u0027System.Management.Automation.SwitchParameter\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027DisallowHardTerminate\u0027)) {\r\n          [object]$__cmdletization_value = ${DisallowHardTerminate}\r\n          $__cmdletization_methodParameter = [Microsoft"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972963+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (6 of 17):\r\nUserId}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027UserId\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027UserId\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027LogonType\u0027)) {\r\n          [object]$__cmdletization_value = ${LogonType}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027LogonType\u0027; ParameterType = \u0027Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.LogonTypeEnum\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027LogonType\u0027; ParameterType = \u0027Microsoft.PowerShell.Cmdletization.GeneratedTypes.ScheduledTask.LogonTypeEnum\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Id\u0027)) {\r\n          [object]$__cmdletization_value = ${Id}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Id\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; V"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972894+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (5 of 17):\r\n}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027WorkingDirectory\u0027)) {\r\n          [object]$__cmdletization_value = ${WorkingDirectory}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027WorkingDirectory\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027WorkingDirectory\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskAction\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n      $__cmdletization_returnValue = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{ Name = \u0027ReturnValue\u0027; ParameterType = \u0027System.Int32\u0027; Bindings = \u0027Error\u0027; Value = $null; IsValuePresent = $false }\r\n      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new(\u0027NewActionByExec\u0027, $__cmdletization_methodPa"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972801+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (4 of 17):\r\nicParameters()\r\n                }\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n\r\n    Begin {\r\n        $__cmdletization_exceptionHasBeenThrown = $false\r\n        try \r\n        {\r\n            __cmdletization_BindCommonParameters $__cmdletization_objectModelWrapper $PSBoundParameters\r\n            $__cmdletization_objectModelWrapper.BeginProcessing()\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    Process {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n      $__cmdletization_methodParameters = [System.Collections.Generic.List[Microsoft.PowerShell.Cmdletization.MethodParameter]]::new()\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027Action\u0027)) {\r\n          [object]$__cmdletization_value = ${Action}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Action\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027Action\u0027; ParameterType = \u0027Microsoft.Management.Infrastructure.CimInstance[]\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameter.ParameterTypeName = \u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskAction\u0027\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__c"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972729+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (3 of 17):\r\nmethodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027CmdletOutput\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027Out\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n      $__cmdletization_returnValue = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{ Name = \u0027ReturnValue\u0027; ParameterType = \u0027System.Int32\u0027; Bindings = \u0027Error\u0027; Value = $null; IsValuePresent = $false }\r\n      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new(\u0027ExportByObject\u0027, $__cmdletization_methodParameters, $__cmdletization_returnValue)\r\n      $__cmdletization_objectModelWrapper.ProcessRecord($__cmdletization_methodInvocationInfo)\r\n        }\r\n    }\r\n\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    End {\r\n        try\r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n                $__cmdletization_objectModelWrapper.EndProcessing()\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            throw\r\n        }\r\n    }\r\n\r\n    # .EXTERNALHELP PS_ScheduledTask_v1.0.cdxml-Help.xml\r\n}\r\nMicrosoft.PowerShell.Core\\Export-ModuleMember -Function \u0027Export-ScheduledTask\u0027 -Alias \u0027*\u0027\r\n        \r\n\r\nfunction Get-ScheduledTaskInfo\r\n{\r\n    [CmdletBinding(PositionalBinding=$false)]\r\n    \r\n    [OutputType([Microsoft.Management.Infrastructure.CimInstance])][OutputType(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_TaskDynamicInfo\u0027)][OutputType([Microsoft.Management.Infrastructure.CimInstance])][OutputType(\u0027"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972614+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (2 of 17):\r\n\r\n        catch\r\n        {\r\n            $__cmdletization_exceptionHasBeenThrown = $true\r\n            throw\r\n        }\r\n    }\r\n        \r\n\r\n    Process {\r\n        try \r\n        {\r\n            if (-not $__cmdletization_exceptionHasBeenThrown)\r\n            {\r\n      $__cmdletization_methodParameters = [System.Collections.Generic.List[Microsoft.PowerShell.Cmdletization.MethodParameter]]::new()\r\n\r\n      switch -exact ($PSCmdlet.ParameterSetName) { \r\n        { @(\u0027Name\u0027) -contains $_ } {\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027TaskName\u0027)) {\r\n          [object]$__cmdletization_value = ${TaskName}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskName\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskName\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_defaultValue; IsValuePresent = $__cmdletization_defaultValueIsPresent}\r\n        }\r\n        $__cmdletization_methodParameters.Add($__cmdletization_methodParameter)\r\n\r\n        [object]$__cmdletization_defaultValue = $null\r\n        [object]$__cmdletization_defaultValueIsPresent = $false\r\n        if ($PSBoundParameters.ContainsKey(\u0027TaskPath\u0027)) {\r\n          [object]$__cmdletization_value = ${TaskPath}\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskPath\u0027; ParameterType = \u0027System.String\u0027; Bindings = \u0027In\u0027; Value = $__cmdletization_value; IsValuePresent = $true}\r\n        } else {\r\n          $__cmdletization_methodParameter = [Microsoft.PowerShell.Cmdletization.MethodParameter]@{Name = \u0027TaskPath\u0027; ParameterType = \u0027System.String\u0027; Bindings = "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5972467+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 17):\r\n\r\n#requires -version 3.0\r\n\r\ntry { Microsoft.PowerShell.Core\\Set-StrictMode -Off } catch { }\r\n\r\n$script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module\r\n\r\n$script:ClassName = \u0027Root/Microsoft/Windows/TaskScheduler/PS_ScheduledTask\u0027\r\n$script:ClassVersion = \u00271.0\u0027\r\n$script:ModuleVersion = \u00271.0\u0027\r\n$script:ObjectModelWrapper = [Microsoft.PowerShell.Cmdletization.Cim.CimCmdletAdapter]\r\n\r\n$script:PrivateData = [System.Collections.Generic.Dictionary[string,string]]::new()\r\n\r\nMicrosoft.PowerShell.Core\\Export-ModuleMember -Function @()\r\n        \r\n\r\nfunction __cmdletization_BindCommonParameters\r\n{\r\n    param(\r\n        $__cmdletization_objectModelWrapper,\r\n        $myPSBoundParameters\r\n    )       \r\n                \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027CimSession\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027CimSession\u0027].Value = $myPSBoundParameters[\u0027CimSession\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027ThrottleLimit\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027ThrottleLimit\u0027].Value = $myPSBoundParameters[\u0027ThrottleLimit\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027AsJob\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027AsJob\u0027].Value = $myPSBoundParameters[\u0027AsJob\u0027] \r\n        }\r\n                    \r\n\r\n}\r\n                \r\n\r\nfunction Disable-ScheduledTask\r\n{\r\n    [CmdletBinding(PositionalBinding=$false)]\r\n    \r\n    [OutputType([Microsoft.Management.Infrastructure.CimInstance])][OutputType(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027)][OutputType([Microsoft.Management.Infrastructure.CimInstance])][OutputType(\u0027Microsoft.Management.Infrastructure.CimInstance#MSFT_ScheduledTask\u0027)]\r\n    param(\r\n    \r\n    [Parameter(ParameterSetName=\u0027Name\u0027, Mandatory=$true, Position=0)]\r\n    [ValidateNotNull()]\r\n    [ValidateNotNullOrEmpty()]\r\n    [string]\r\n   "
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.5459670+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n\r\n#requires -version 3.0\r\n\r\ntry { Microsoft.PowerShell.Core\\Set-StrictMode -Off } catch { }\r\n\r\n$script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module\r\n\r\n$script:ClassName = \u0027Root/Microsoft/Windows/TaskScheduler/MSFT_ScheduledTask\u0027\r\n$script:ClassVersion = \u0027\u0027\r\n$script:ModuleVersion = \u00271.0\u0027\r\n$script:ObjectModelWrapper = [Microsoft.PowerShell.Cmdletization.Cim.CimCmdletAdapter]\r\n\r\n$script:PrivateData = [System.Collections.Generic.Dictionary[string,string]]::new()\r\n\r\nMicrosoft.PowerShell.Core\\Export-ModuleMember -Function @()\r\n        \r\n\r\nfunction __cmdletization_BindCommonParameters\r\n{\r\n    param(\r\n        $__cmdletization_objectModelWrapper,\r\n        $myPSBoundParameters\r\n    )       \r\n                \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027CimSession\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027CimSession\u0027].Value = $myPSBoundParameters[\u0027CimSession\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027ThrottleLimit\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027ThrottleLimit\u0027].Value = $myPSBoundParameters[\u0027ThrottleLimit\u0027] \r\n        }\r\n                    \r\n\r\n        if ($myPSBoundParameters.ContainsKey(\u0027AsJob\u0027)) { \r\n            $__cmdletization_objectModelWrapper.PSObject.Properties[\u0027AsJob\u0027].Value = $myPSBoundParameters[\u0027AsJob\u0027] \r\n        }\r\n                    \r\n\r\n}\r\n                \r\n\r\nfunction Get-ScheduledTask\r\n{\r\n    [CmdletBinding(DefaultParameterSetName=\u0027ByPath\u0027, PositionalBinding=$false)]\r\n    \r\n    [OutputType([Microsoft.Management.Infrastructure.CimInstance])]\r\n[OutputType(\u0027Microsoft.Management.Infrastructure.CimInstance#Root/Microsoft/Windows/TaskScheduler/MSFT_ScheduledTask\u0027)]\r\n\r\n    param(\r\n    \r\n    [Parameter(ParameterSetName=\u0027ByPath\u0027, Position=0, ValueFromPipelineByPropertyName=$true)]\r\n    [ValidateNotNull()]\r\n    [string[]]\r\n    ${TaskName},\r\n\r\n    [Parameter(ParameterSetName=\u0027ByPath\u0027, Position=1, ValueFromPi"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.4015449+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4100,
+        "raw_message":  "Error Message = The running command stopped because the preference variable \"ErrorActionPreference\" or common parameter is set to Stop: Exception of type \u0027Microsoft.PowerShell.Commands.InvalidPasswordException\u0027 was thrown.\r\nFully Qualified Error ID = InvalidPassword,Microsoft.PowerShell.Commands.NewLocalUserCommand\r\n\r\n\r\nContext:\r\n        Severity = Warning\r\n        Host Name = ConsoleHost\r\n        Host Version = 5.1.26100.9168\r\n        Host ID = 2c022520-354d-4e2a-b62a-d599d6346246\r\n        Host Application = C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n        Engine Version = 5.1.26100.9168\r\n        Runspace ID = d836a06c-ae70-4cf9-a2de-b123194f3db3\r\n        Pipeline ID = 117\r\n        Command Name = New-LocalUser\r\n        Command Type = Cmdlet\r\n        Script Name = C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\n        Command Path = \r\n        Sequence Number = 39\r\n        User = HAWTHORNE-ADM-0\\analyst\r\n        Connected User = \r\n        Shell ID = Microsoft.PowerShell\r\n\r\n\r\nUser Data:\r\n\r\n"
+    },
+    {
+        "timestamp":  "2026-08-21T14:01:23.3448676+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed (check service first, then binary path)\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    # Try to locate the binary as a "
+    }
+]
