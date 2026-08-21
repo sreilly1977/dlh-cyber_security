@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-08-21T16:41:54+00:00",
+  "timestamp": "2026-08-21T16:50:45+00:00",
   "host": "hawthorne-app-01",
   "cve_feed_path": "/home/analyst/MedDefense_Lab/capstone/cve_feed.json",
   "blacklist_path": "/home/analyst/MedDefense_Lab/capstone/blacklist.json",
   "capstone_artifacts_dir": "capstone/patch/",
   "pipeline_exit_code": 0,
   "failed_entries": 0,
-  "artifact_paths": {
+  "sub_step_artifacts": {
     "pre_patch_state.json": "capstone/patch/pre_patch_state.json",
     "service_dependency_map.json": "capstone/patch/service_dependency_map.json",
     "config_drift.json": "capstone/patch/config_drift.json",

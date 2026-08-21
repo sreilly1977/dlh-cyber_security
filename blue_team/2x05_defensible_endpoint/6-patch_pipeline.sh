@@ -12,7 +12,7 @@ CAPSTONE_ARTIFACTS_DIR="capstone/patch/"
 CVE_FEED_PATH="/home/analyst/MedDefense_Lab/capstone/cve_feed.json"
 BLACKLIST_PATH="/home/analyst/MedDefense_Lab/capstone/blacklist.json"
 PATCH_DIR="/home/analyst/scripts/patch"
-PATCH_SCRIPT_PATH="${PATCH_DIR}/13-patch_pipeline.sh"
+PATCH_SCRIPT_PATH="${PATCH_DIR}/patch_pipeline.sh"
 PIPELINE_LOG="${CAPSTONE_ARTIFACTS_DIR}pipeline_execution.log"
 PIPELINE_SUMMARY="${CAPSTONE_ARTIFACTS_DIR}execution_summary.json"
 MAINTENANCE_WINDOWS_FILE="${PATCH_DIR}/maintenance_windows.json"
@@ -196,11 +196,11 @@ else
     log_step "Pipeline script exited with code $PIPELINE_EXIT_CODE."
 fi
 
-# --- Copy Pipeline Artifacts into Capstone Package ---
+# --- Aggregate Sub-step Artifacts into Capstone Package ---
 
-log_step "Copying pipeline artifacts into capstone package..."
+log_step "Aggregating sub-step artifacts into capstone package..."
 
-# Copy the pipeline_run.json
+# Copy the pipeline_run.json (master pipeline report)
 PIPELINE_RUN_SRC="${PATCH_DIR}/pipeline_run.json"
 PIPELINE_RUN_DST="${CAPSTONE_ARTIFACTS_DIR}pipeline_run.json"
 if [[ -f "$PIPELINE_RUN_SRC" ]]; then
@@ -208,19 +208,20 @@ if [[ -f "$PIPELINE_RUN_SRC" ]]; then
     log_step "Copied pipeline_run.json to $PIPELINE_RUN_DST."
 fi
 
-# Copy all stage artifacts referenced in pipeline_run.json
+# Copy every sub-step artifact generated during the pipeline process
 if [[ -f "$PIPELINE_RUN_SRC" ]] && command -v jq &> /dev/null; then
-    # Extract all artifact paths from the pipeline run report
+    # Extract all sub-step artifact paths from the pipeline run report
     ARTIFACT_COUNT=0
     while IFS= read -r artifact_path; do
         if [[ -n "$artifact_path" ]] && [[ -f "$artifact_path" ]]; then
             artifact_name=$(basename "$artifact_path")
             cp "$artifact_path" "${CAPSTONE_ARTIFACTS_DIR}${artifact_name}"
             ARTIFACT_PATHS["$artifact_name"]="${CAPSTONE_ARTIFACTS_DIR}${artifact_name}"
+            log_step "Aggregated sub-step artifact: ${artifact_name}"
             ARTIFACT_COUNT=$((ARTIFACT_COUNT + 1))
         fi
     done < <(jq -r '.artifacts[]' "$PIPELINE_RUN_SRC" 2>/dev/null || echo "")
-    log_step "Copied $ARTIFACT_COUNT stage artifacts into capstone package."
+    log_step "Aggregated $ARTIFACT_COUNT sub-step artifacts into capstone package."
 else
     log_step "Warning: jq not available or pipeline_run.json missing, copying all JSON artifacts from patch dir..."
     for f in "${PATCH_DIR}"/*.json; do
@@ -270,7 +271,7 @@ log_step "Emitting pipeline summary..."
     echo "  \"capstone_artifacts_dir\": \"$CAPSTONE_ARTIFACTS_DIR\","
     echo "  \"pipeline_exit_code\": $PIPELINE_EXIT_CODE,"
     echo "  \"failed_entries\": $FAILED_ENTRIES,"
-    echo "  \"artifact_paths\": {"
+    echo "  \"sub_step_artifacts\": {"
 
     first_artifact=true
     for key in "${!ARTIFACT_PATHS[@]}"; do
@@ -300,7 +301,7 @@ log_step "Summary emitted to: $PIPELINE_SUMMARY"
 
 log_step "Pipeline execution complete. Exit code: $PIPELINE_EXIT_CODE, Failed entries: $FAILED_ENTRIES."
 
-# Exit 0 only if pipeline exit code was 0 AND failed_entries == 0
+# Deterministic exit check: exit 0 only if pipeline exit code was 0 AND failed_entries == 0
 if [[ $PIPELINE_EXIT_CODE -eq 0 ]] && [[ $FAILED_ENTRIES -eq 0 ]]; then
     log_step "SUCCESS: Patch pipeline completed without errors."
     exit 0
