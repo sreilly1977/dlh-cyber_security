@@ -1,0 +1,16 @@
+[
+    "mysql-server",
+    "mysql-client",
+    "mariadb-server",
+    "mariadb-client",
+    "apache2",
+    "nginx",
+    "openssh-server",
+    "openssh-client",
+    "php",
+    "php-fpm",
+    "redis-server",
+    "libc6",
+    "linux-image-generic",
+    "linux-headers-generic"
+]

@@ -1,0 +1,163 @@
+{
+  "generated_at": "2026-08-21T16:41:54+00:00",
+  "hostname": "hawthorne-app-01",
+  "summary": {
+    "total_events": 10,
+    "inside_window": 10,
+    "outside_window": 0,
+    "cves_resolved": 22
+  },
+  "events": [
+    {
+      "started": "2024-09-11T14:21:54+00:00",
+      "ended": "2024-09-11T14:24:32+00:00",
+      "user": "root",
+      "within_window": "inside",
+      "transactions": 4,
+      "linked_execution_log": null,
+      "cves_resolved": [
+        "CVE-2022-3216",
+        "CVE-2022-48303",
+        "CVE-2023-2650",
+        "CVE-2023-29491",
+        "CVE-2023-39615",
+        "CVE-2023-4807",
+        "CVE-2023-4809",
+        "CVE-2023-4911",
+        "CVE-2023-5363",
+        "CVE-2023-6597",
+        "CVE-2024-0727",
+        "CVE-2024-2398",
+        "CVE-2024-2399",
+        "CVE-2024-25062",
+        "CVE-2024-2511",
+        "CVE-2024-28182",
+        "CVE-2024-3094",
+        "CVE-2024-5535",
+        "CVE-2024-6387"
+      ],
+      "cves_resolved_count": 19
+    },
+    {
+      "started": "2026-08-17T15:06:39+00:00",
+      "ended": "2026-08-17T15:11:33+00:00",
+      "user": "root",
+      "within_window": "inside",
+      "transactions": 3,
+      "linked_execution_log": null,
+      "cves_resolved": [
+        "CVE-2022-3216",
+        "CVE-2022-48303",
+        "CVE-2023-2650",
+        "CVE-2023-29491",
+        "CVE-2023-39615",
+        "CVE-2023-4807",
+        "CVE-2023-4809",
+        "CVE-2023-4911",
+        "CVE-2023-5363",
+        "CVE-2023-6546",
+        "CVE-2023-6597",
+        "CVE-2024-0565",
+        "CVE-2024-0727",
+        "CVE-2024-1086",
+        "CVE-2024-2398",
+        "CVE-2024-2399",
+        "CVE-2024-25062",
+        "CVE-2024-2511",
+        "CVE-2024-28182",
+        "CVE-2024-3094",
+        "CVE-2024-5535",
+        "CVE-2024-6387"
+      ],
+      "cves_resolved_count": 22
+    },
+    {
+      "started": "2026-08-18T07:53:57+00:00",
+      "ended": "2026-08-18T07:55:38+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 2,
+      "linked_execution_log": null,
+      "cves_resolved": [
+        "CVE-2024-6387"
+      ],
+      "cves_resolved_count": 1
+    },
+    {
+      "started": "2026-08-18T08:31:06+00:00",
+      "ended": "2026-08-18T08:31:08+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 1,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    },
+    {
+      "started": "2026-08-19T07:12:25+00:00",
+      "ended": "2026-08-19T07:12:27+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 1,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    },
+    {
+      "started": "2026-08-20T12:44:40+00:00",
+      "ended": "2026-08-20T12:44:43+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 1,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    },
+    {
+      "started": "2026-08-20T14:57:45+00:00",
+      "ended": "2026-08-20T15:04:30+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 3,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    },
+    {
+      "started": "2026-08-20T15:40:10+00:00",
+      "ended": "2026-08-20T15:40:16+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 1,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    },
+    {
+      "started": "2026-08-21T15:30:48+00:00",
+      "ended": "2026-08-21T15:34:38+00:00",
+      "user": "root",
+      "within_window": "inside",
+      "transactions": 8,
+      "linked_execution_log": null,
+      "cves_resolved": [
+        "CVE-2023-6546",
+        "CVE-2024-0565",
+        "CVE-2024-1086",
+        "CVE-2024-2398",
+        "CVE-2024-2399"
+      ],
+      "cves_resolved_count": 5
+    },
+    {
+      "started": "2026-08-21T16:17:11+00:00",
+      "ended": "2026-08-21T16:33:44+00:00",
+      "user": "analyst 1000)",
+      "within_window": "inside",
+      "transactions": 43,
+      "linked_execution_log": null,
+      "cves_resolved": [],
+      "cves_resolved_count": 0
+    }
+  ]
+}

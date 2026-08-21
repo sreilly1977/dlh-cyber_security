@@ -1,0 +1,13 @@
+{
+  "now": "2026-08-21T18:40:44+02:00",
+  "now_display": "2026-08-21 18:40 (Fri)",
+  "timezone": "Europe/Paris",
+  "active_window": "capstone-standard",
+  "decision": "proceed",
+  "next_window": {
+    "name": "emergency",
+    "at": "null"
+  },
+  "seconds_until_next": 0,
+  "exit_code": 0
+}

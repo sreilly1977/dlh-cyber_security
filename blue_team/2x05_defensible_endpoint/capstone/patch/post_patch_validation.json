@@ -1,0 +1,319 @@
+{
+  "hostname": "hawthorne-app-01",
+  "generated_at": "2026-08-21T16:40:46Z",
+  "total_checks": 42,
+  "passed": 42,
+  "failed": 0,
+  "verdict": "PASS",
+  "summary": {
+    "service_state": {
+      "checked": 40,
+      "passed": 40
+    },
+    "listening_sockets": {
+      "checked": 1,
+      "passed": 1
+    },
+    "liveness_probes": {
+      "checked": 1,
+      "passed": 1
+    }
+  },
+  "details": [
+    {
+      "type": "service_state",
+      "name": "apparmor.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "apport.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "auditd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "cron.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "dbus.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "fail2ban.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "fwupd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "getty@tty1.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "kmod-static-nodes.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "packagekit.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-quit-wait.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-quit.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "plymouth-read-write.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "polkit.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "rsyslog.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "ssh.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-binfmt.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-fsck@dev-disk-by\\x2duuid-3633\\x2d823E.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-journal-flush.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-journald.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-logind.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-modules-load.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-networkd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-random-seed.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-remount-fs.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-sysctl.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-sysusers.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-timesyncd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-tmpfiles-setup-dev.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-tmpfiles-setup.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-udev-trigger.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-udevd.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-update-utmp.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "systemd-user-sessions.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "udisks2.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "ufw.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "unattended-upgrades.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "upower.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "user-runtime-dir@1000.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "service_state",
+      "name": "user@1000.service",
+      "expected": "unknown",
+      "actual": "active",
+      "status": "pass"
+    },
+    {
+      "type": "listening_socket",
+      "service": "ssh.service",
+      "port": "22",
+      "protocol": "tcp",
+      "status": "pass"
+    },
+    {
+      "type": "liveness_probe",
+      "service": "ssh.service",
+      "probe_type": "tcp_connect",
+      "target": "127.0.0.1:22",
+      "status": "pass",
+      "result": "Probe succeeded"
+    }
+  ]
+}

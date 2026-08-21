@@ -1,0 +1,408 @@
+{
+  "generated_at": "2026-08-21T16:40:37Z",
+  "total_active_services": 40,
+  "services_processed": 40,
+  "services_failed": 0,
+  "services": [
+    {
+      "service": "apparmor.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "apport.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "auditd.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "high",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "cron.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "dbus.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "fail2ban.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "fwupd.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "getty@tty1.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "kmod-static-nodes.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "packagekit.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "plymouth-quit-wait.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "plymouth-quit.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "plymouth-read-write.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "polkit.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "rsyslog.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "high",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "ssh.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "critical",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-binfmt.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-fsck@dev-disk-by\\x2duuid-3633\\x2d823E.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-journal-flush.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-journald.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "high",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-logind.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-modules-load.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-networkd.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "high",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-random-seed.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-remount-fs.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-sysctl.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-sysusers.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-timesyncd.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "high",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-tmpfiles-setup-dev.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-tmpfiles-setup.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-udev-trigger.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-udevd.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-update-utmp.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "systemd-user-sessions.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "udisks2.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "ufw.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "unattended-upgrades.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "medium",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "upower.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "user-runtime-dir@1000.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    },
+    {
+      "service": "user@1000.service",
+      "exec_path": "{",
+      "owning_package": "unknown",
+      "linked_packages": [
+        "unknown"
+      ],
+      "criticality": "low",
+      "restart_required_on_patch": true
+    }
+  ]
+}

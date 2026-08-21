@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-21T16:40:43Z",
+  "weights": {
+    "cvss_weight": 0.8,
+    "kev_weight": 1.5,
+    "criticality_weight": 0.5,
+    "exposure_weight": 1
+  },
+  "plan": [],
+  "summary": {
+    "total_patches": 0,
+    "emergency": 0,
+    "urgent": 0,
+    "scheduled": 0,
+    "requires_reboot": false,
+    "requires_restart": false
+  }
+}

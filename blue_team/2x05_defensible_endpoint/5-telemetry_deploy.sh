@@ -1,7 +1,8 @@
 #!/bin/bash
 # Name: 5-telemetry_deploy.sh
 # Purpose: Deploy auditd telemetry, run controlled test sequences, verify coverage, and export evidence.
-# Author: Stephen Reilly
+# Author: Steve - Cybersecurity Engineer
+# Date: 21 August 2026
 # Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)
 
 set -euo pipefail

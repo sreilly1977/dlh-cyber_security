@@ -1,0 +1,119 @@
+{
+  "started_at": "2026-08-21T16:40:30+00:00",
+  "finished_at": "2026-08-21T16:41:54+00:00",
+  "hostname": "hawthorne-app-01",
+  "pipeline_status": "ok",
+  "duration_seconds": 84,
+  "stages": [
+    {
+      "script": "0-vuln_inventory.sh",
+      "description": "Vulnerability Inventory",
+      "artifact": "vulnerability_inventory.json",
+      "exit_code": 0,
+      "duration_seconds": 4,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "1-service_deps.sh",
+      "description": "Service Dependencies",
+      "artifact": "service_dependency_map.json",
+      "exit_code": 0,
+      "duration_seconds": 3,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "2-pre_patch_snapshot.sh",
+      "description": "Pre-Patch Snapshot",
+      "artifact": "pre_patch_state.json",
+      "exit_code": 0,
+      "duration_seconds": 6,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "3-patch_plan.sh",
+      "description": "Patch Plan",
+      "artifact": "patch_plan.json",
+      "exit_code": 0,
+      "duration_seconds": 0,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "11-maintenance_window.sh",
+      "description": "Maintenance Window Check",
+      "artifact": "maintenance_window.json",
+      "exit_code": 0,
+      "duration_seconds": 1,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "4-patch_execute.sh",
+      "description": "Patch Execution",
+      "artifact": "patch_execution_log.json",
+      "exit_code": 0,
+      "duration_seconds": 0,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "5-post_patch_validate.sh",
+      "description": "Post-Patch Validation",
+      "artifact": "post_patch_validation.json",
+      "exit_code": 0,
+      "duration_seconds": 2,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "6-config_drift.sh",
+      "description": "Config Drift Detection",
+      "artifact": "config_drift.json",
+      "exit_code": 0,
+      "duration_seconds": 41,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "script": "12-change_log.sh",
+      "description": "Change Tracking Log",
+      "artifact": "patch_change_log.json",
+      "exit_code": 0,
+      "duration_seconds": 27,
+      "skipped": false,
+      "artifact_exists": true,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "artifacts": {
+    "0-vuln_inventory.sh": "/home/analyst/scripts/patch/vulnerability_inventory.json",
+    "1-service_deps.sh": "/home/analyst/scripts/patch/service_dependency_map.json",
+    "2-pre_patch_snapshot.sh": "/home/analyst/scripts/patch/pre_patch_state.json",
+    "3-patch_plan.sh": "/home/analyst/scripts/patch/patch_plan.json",
+    "11-maintenance_window.sh": "/home/analyst/scripts/patch/maintenance_window.json",
+    "4-patch_execute.sh": "/home/analyst/scripts/patch/patch_execution_log.json",
+    "5-post_patch_validate.sh": "/home/analyst/scripts/patch/post_patch_validation.json",
+    "6-config_drift.sh": "/home/analyst/scripts/patch/config_drift.json",
+    "12-change_log.sh": "/home/analyst/scripts/patch/patch_change_log.json"
+  }
+}

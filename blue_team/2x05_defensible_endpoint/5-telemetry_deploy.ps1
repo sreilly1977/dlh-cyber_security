@@ -1,6 +1,7 @@
 # Name: 5-telemetry_deploy.ps1
 # Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.
-# Author: Stephen Reilly
+# Author: Steve - Cybersecurity Engineer
+# Date: 21 August 2026
 # Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)
 
 Set-StrictMode -Version Latest

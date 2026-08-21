@@ -334,3 +334,22 @@ Both scripts must exit 0 only if every test action produced the expected record.
 
 ---
 
+# 6. The Patch Pipeline Deployment
+
+Goal: Deploy the patch management pipeline on the Linux endpoint, run it against the provided CVE feed and persist every pipeline artifact inside the capstone package.
+
+Context: A production endpoint that cannot be patched safely is a liability. This task takes the pipeline and runs it end-to-end on hawthorne-app-01 with the provided capstone CVE.
+
+Instructions: Write a script 6-patch_pipeline.sh that orchestrates the pipeline end-to-end for here. The script must:
+
+    Invoke the pipeline script from the previous project with CAPSTONE_ARTIFACTS_DIR=capstone/patch/ set in the environment so that all sub-step artifacts land inside the capstone package
+
+    Consume the provided capstone CVE feed at /home/analyst/MedDefense_Lab/capstone/cve_feed.json
+
+    Configure unattended-upgrades with the mandated blacklist from /home/analyst/MedDefense_Lab/capstone/blacklist.json
+
+    Capture the pipeline exit code and every sub-step artifact path
+
+    Exit 0 only if the pipeline exit code was 0 and failed_entries == 0
+
+Hint: this task does not reinvent the pipeline. It wraps it with client specific directory redirection and a summary emitter.
