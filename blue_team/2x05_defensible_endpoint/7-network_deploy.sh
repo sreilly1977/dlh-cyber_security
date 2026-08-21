@@ -20,6 +20,7 @@ FIREWALL_VALIDATION_FILE="${CAPSTONE_ARTIFACTS_DIR}firewall_validation.json"
 SURICATA_CUSTOM_RULES="${CAPSTONE_ARTIFACTS_DIR}meddefense_custom.rules"
 SURICATA_REPLAY_DIR="${CAPSTONE_ARTIFACTS_DIR}suricata_replay/"
 SURICATA_REPLAY_RESULTS="${CAPSTONE_ARTIFACTS_DIR}suricata_replay_results.json"
+SURICATA_ALERTS_FILE="${CAPSTONE_ARTIFACTS_DIR}suricata_alerts.json"
 SURICATA_CUSTOM_VALIDATION="${CAPSTONE_ARTIFACTS_DIR}custom_rule_validation.json"
 DNSMASQ_CONFIG_COPY="${CAPSTONE_ARTIFACTS_DIR}dnsmasq_blocklist.conf"
 WINDOWS_FIREWALL_SCRIPT="${CAPSTONE_ARTIFACTS_DIR}windows_firewall_alignment.ps1"
@@ -472,6 +473,67 @@ jq -n \
 ARTIFACT_PATHS["suricata_replay_results"]="$SURICATA_REPLAY_RESULTS"
 record_validation "suricata_offline_replay" "pass" "Replayed ${PCAP_COUNT} PCAPs, ${TOTAL_ALERTS} total alerts detected"
 
+# --- Step 5b: Consolidate Suricata Alerts into suricata_alerts.json ---
+
+log_step "Consolidating Suricata alerts into suricata_alerts.json..."
+
+ALERTS_JSON="[]"
+
+for pcap in "${PCAP_FILES[@]}"; do
+    pcap_name=$(basename "$pcap")
+    pcap_output_dir="${SURICATA_REPLAY_DIR}${pcap_name%.pcap}"
+    EVE_FILE="${pcap_output_dir}/eve.json"
+
+    if [[ -f "$EVE_FILE" ]]; then
+        # Extract alert events with key fields and attach the source pcap name
+        PCAP_ALERTS=$(grep '"event_type":"alert"' "$EVE_FILE" 2>/dev/null \
+            | jq -c --arg pcap "$pcap_name" \
+                '{
+                    pcap: $pcap,
+                    timestamp: .timestamp,
+                    src_ip: .src_ip,
+                    src_port: .src_port,
+                    dest_ip: .dest_ip,
+                    dest_port: .dest_port,
+                    proto: .proto,
+                    signature: .alert.signature,
+                    signature_id: .alert.signature_id,
+                    classtype: .alert.classtype,
+                    severity: .alert.severity,
+                    category: .alert.category
+                }' 2>/dev/null || echo "")
+
+        if [[ -n "$PCAP_ALERTS" ]]; then
+            ALERTS_JSON=$(echo "$ALERTS_JSON" | jq --argjson new "$PCAP_ALERTS" '. + $new' 2>/dev/null || echo "$ALERTS_JSON")
+        fi
+    fi
+done
+
+ALERT_TOTAL=${#PCAP_FILES[@]}
+ACTUAL_ALERT_COUNT=$(echo "$ALERTS_JSON" | jq 'length' 2>/dev/null || echo "0")
+log_step "Consolidated ${ACTUAL_ALERT_COUNT} alert records from ${ALERT_TOTAL} PCAP replays."
+
+jq -n \
+    --arg timestamp "$(date -Iseconds)" \
+    --arg host "$(hostname)" \
+    --arg target "Hawthorne-App-01" \
+    --arg source_pcap_dir "$PCAP_DIR" \
+    --arg rules_file "$SURICATA_CUSTOM_RULES" \
+    --argjson total_alerts "$ACTUAL_ALERT_COUNT" \
+    --argjson alerts "$ALERTS_JSON" \
+    '{
+        timestamp: $timestamp,
+        host: $host,
+        target_host: $target,
+        source_pcap_directory: $source_pcap_dir,
+        rules_file: $rules_file,
+        total_alert_records: $total_alerts,
+        alerts: $alerts
+    }' > "$SURICATA_ALERTS_FILE"
+
+ARTIFACT_PATHS["suricata_alerts"]="$SURICATA_ALERTS_FILE"
+log_step "Suricata alerts saved to $SURICATA_ALERTS_FILE"
+
 # --- Step 6: Custom Rule Validation Against Labeled PCAPs ---
 
 log_step "Running custom rule validation against labeled PCAPs..."
@@ -659,6 +721,7 @@ echo "=== Network Defense Deployment Summary ==="
 echo "Host: Hawthorne-App-01 ($(hostname))"
 echo "nftables ruleset: ${ALLOWED_COUNT} allowed services, ${DENIED_COUNT} denied services"
 echo "Suricata offline replay: ${PCAP_COUNT} PCAPs replayed, ${TOTAL_ALERTS} alerts detected"
+echo "Suricata alerts file: ${ACTUAL_ALERT_COUNT} alert records saved to suricata_alerts.json"
 echo "Custom rule validation: ${LABELED_COUNT} labeled PCAPs validated"
 echo "dnsmasq DNS filter: ${BLOCKED_COUNT} domains blocked"
 echo "Overall result: ${OVERALL_RESULT}"
