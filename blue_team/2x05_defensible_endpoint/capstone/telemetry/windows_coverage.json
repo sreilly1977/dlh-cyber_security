@@ -1,5 +1,5 @@
 ﻿{
-    "timestamp":  "2026-08-21T14:24:56.8993938+02:00",
+    "timestamp":  "2026-08-21T14:30:58.5522128+02:00",
     "host":  "HAWTHORNE-ADM-0",
     "source":  "Sysmon+PowerShell",
     "test_actions":  [

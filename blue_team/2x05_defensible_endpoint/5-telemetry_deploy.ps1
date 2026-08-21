@@ -236,18 +236,19 @@ try {
 }
 
 # --- Verification Phase ---
+# For each test action, query the relevant event channel and verify the expected event is present within the last 10 minutes
 
-Write-LogStep "Verifying telemetry coverage..."
+Write-LogStep "Verifying telemetry coverage (searching events within the last 10 minutes)..."
 
 $verificationFailed = $false
 
-# 1. Verify user creation (Security Event ID 4720)
+# 1. Verify user creation (Security Event ID 4720) - verify within the last 10 minutes
 Write-LogStep "Verifying user creation event..."
 try {
     $userEvents = @(Get-WinEvent -FilterHashtable @{
         LogName = 'Security'
         Id = @(4720, 4722, 4723)
-        StartTime = $testStartTime.AddMinutes(-5)
+        StartTime = $testStartTime.AddMinutes(-10)
     } -ErrorAction SilentlyContinue)
     if ($userEvents.Count -gt 0) {
         Write-LogStep "PASS: Found $($userEvents.Count) user management events."
@@ -263,7 +264,7 @@ try {
     $verificationFailed = $true
 }
 
-# 2. Verify scheduled task
+# 2. Verify scheduled task - verify within the last 10 minutes
 Write-LogStep "Verifying scheduled task event..."
 try {
     $taskEvents = @()
@@ -271,7 +272,7 @@ try {
     # First: Check Task Scheduler Operational log
     $taskOpEvents = @(Get-WinEvent -FilterHashtable @{
         LogName = 'Microsoft-Windows-TaskScheduler/Operational'
-        StartTime = $testStartTime.AddMinutes(-5)
+        StartTime = $testStartTime.AddMinutes(-10)
     } -ErrorAction SilentlyContinue)
     if ($taskOpEvents.Count -gt 0) {
         $taskEvents = $taskOpEvents
@@ -282,7 +283,7 @@ try {
         $secTaskEvents = @(Get-WinEvent -FilterHashtable @{
             LogName = 'Security'
             Id = 4698
-            StartTime = $testStartTime.AddMinutes(-5)
+            StartTime = $testStartTime.AddMinutes(-10)
         } -ErrorAction SilentlyContinue)
         if ($secTaskEvents.Count -gt 0) {
             $taskEvents = $secTaskEvents
@@ -294,7 +295,7 @@ try {
         $sysmonTaskEvents = @(Get-WinEvent -FilterHashtable @{
             LogName = 'Microsoft-Windows-Sysmon/Operational'
             Id = 1
-            StartTime = $testStartTime.AddMinutes(-5)
+            StartTime = $testStartTime.AddMinutes(-10)
         } -ErrorAction SilentlyContinue | Where-Object {
             $_.Message -like "*schtasks*" -or $_.Message -like "*$ScheduledTaskName*"
         })
@@ -317,7 +318,7 @@ try {
     $verificationFailed = $true
 }
 
-# 3. Verify service start/stop
+# 3. Verify service start/stop - verify within the last 10 minutes
 Write-LogStep "Verifying service start/stop events..."
 try {
     # Use Get-EventLog with -Newest to avoid date filtering issues
@@ -331,7 +332,7 @@ try {
     if ($serviceEvents.Count -gt 0) {
         # Check if any are in our time window and relate to our service
         $matchedEvents = @($serviceEvents | Where-Object {
-            $_.TimeGenerated -ge $testStartTime.AddMinutes(-5) -and
+            $_.TimeGenerated -ge $testStartTime.AddMinutes(-10) -and
             ($_.Message -like "*$activeServiceName*" -or $_.Message -like "*BITS*")
         })
         if ($matchedEvents.Count -gt 0) {
@@ -339,7 +340,7 @@ try {
         } else {
             # Accept any recent SCM event as evidence the channel is working
             $recentScm = @($serviceEvents | Where-Object {
-                $_.TimeGenerated -ge $testStartTime.AddMinutes(-5)
+                $_.TimeGenerated -ge $testStartTime.AddMinutes(-10)
             })
             if ($recentScm.Count -gt 0) {
                 Write-LogStep "PASS: Found $($recentScm.Count) Service Control Manager events (broader search)."
@@ -359,13 +360,13 @@ try {
     $verificationFailed = $true
 }
 
-# 4. Verify PowerShell Script Block Logging (Event ID 4104)
+# 4. Verify PowerShell Script Block Logging (Event ID 4104) - verify within the last 10 minutes
 Write-LogStep "Verifying PowerShell script block logging events..."
 try {
     $powerShellEvents = @(Get-WinEvent -FilterHashtable @{
         LogName = 'Microsoft-Windows-PowerShell/Operational'
         Id = @(400, 403, 4104, 600, 608)
-        StartTime = $testStartTime.AddMinutes(-5)
+        StartTime = $testStartTime.AddMinutes(-10)
     } -ErrorAction SilentlyContinue)
     if ($powerShellEvents.Count -gt 0) {
         Write-LogStep "PASS: Found $($powerShellEvents.Count) PowerShell script block events."

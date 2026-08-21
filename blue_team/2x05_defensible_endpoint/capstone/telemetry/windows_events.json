@@ -1,5 +1,83 @@
 ﻿[
     {
+        "timestamp":  "2026-08-21T14:30:53.0168831+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:30:53.014\r\nProcessGuid: {25cfb7e9-44fd-6a88-3105-000000000400}\r\nProcessId: 4048\r\nImage: C:\\Windows\\System32\\sc.exe\r\nFileVersion: 10.0.26100.4484 (WinBuild.160101.0800)\r\nDescription: Service Control Manager Configuration Tool\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: sc.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\sc.exe\" stop BITS\r\nCurrentDirectory: C:\\Users\\analyst\\Script\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-db2f-040000000000}\r\nLogonId: 0x42FDB\r\nTerminalSessionId: 1\r\nIntegrityLevel: High\r\nHashes: MD5=C8F632A326219F85927B3F33A13F7C7D,SHA256=A452BFCB6000D03942DDFADDCDA5A7EB121447ED99B1BA090446B4A989F1F7AE,IMPHASH=42DADBD60BBC453DD1773FDC089E19B7\r\nParentProcessGuid: {25cfb7e9-4a27-6a87-5e01-000000000400}\r\nParentProcessId: 6236\r\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \r\nParentUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:47.9849231+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:30:47.983\r\nProcessGuid: {25cfb7e9-44f7-6a88-2f05-000000000400}\r\nProcessId: 10980\r\nImage: C:\\Windows\\System32\\sc.exe\r\nFileVersion: 10.0.26100.4484 (WinBuild.160101.0800)\r\nDescription: Service Control Manager Configuration Tool\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: sc.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\sc.exe\" start BITS\r\nCurrentDirectory: C:\\Users\\analyst\\Script\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-db2f-040000000000}\r\nLogonId: 0x42FDB\r\nTerminalSessionId: 1\r\nIntegrityLevel: High\r\nHashes: MD5=C8F632A326219F85927B3F33A13F7C7D,SHA256=A452BFCB6000D03942DDFADDCDA5A7EB121447ED99B1BA090446B4A989F1F7AE,IMPHASH=42DADBD60BBC453DD1773FDC089E19B7\r\nParentProcessGuid: {25cfb7e9-4a27-6a87-5e01-000000000400}\r\nParentProcessId: 6236\r\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \r\nParentUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:42.9805136+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:30:42.979\r\nProcessGuid: {25cfb7e9-44f2-6a88-2d05-000000000400}\r\nProcessId: 10740\r\nImage: C:\\Windows\\System32\\cmd.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows Command Processor\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: Cmd.Exe\r\nCommandLine: \"cmd.exe\" /c echo MedDefense test task\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=E463E36104D22A2479046A7D4F620816,SHA256=8DD1EBB0B969370C70A5EE7F7EE347949AA7046AA5E1A33FCD7B1E9415B21FC3,IMPHASH=010B165E4C37F484601D3DBD700C9423\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:42.9514089+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: T1053\r\nUtcTime: 2026-08-21 12:30:42.950\r\nProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nProcessId: 2028\r\nImage: C:\\WINDOWS\\system32\\svchost.exe\r\nTargetFilename: C:\\Windows\\System32\\Tasks\\MedDefenseTestTask\r\nCreationUtcTime: 2026-08-21 12:30:42.948\r\nUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3651685+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.363\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3651253+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.363\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3650833+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.363\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-Sysmon/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3521282+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.351\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSizeUpper\r\nDetails: DWORD (0x00000000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3520754+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.351\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\MaxSize\r\nDetails: DWORD (0x06400000)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:37.3520207+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  13,
+        "raw_message":  "Registry value set:\r\nRuleName: -\r\nEventType: SetValue\r\nUtcTime: 2026-08-21 12:30:37.351\r\nProcessGuid: {25cfb7e9-497a-6a87-2300-000000000400}\r\nProcessId: 1764\r\nImage: C:\\WINDOWS\\System32\\svchost.exe\r\nTargetObject: HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\Microsoft-Windows-PowerShell/Operational\\Enabled\r\nDetails: DWORD (0x00000001)\r\nUser: NT AUTHORITY\\LOCAL SERVICE"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:34.0890202+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  11,
+        "raw_message":  "File created:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:30:34.086\r\nProcessGuid: {25cfb7e9-4981-6a87-6200-000000000400}\r\nProcessId: 4988\r\nImage: C:\\WINDOWS\\Explorer.EXE\r\nTargetFilename: C:\\Users\\analyst\\Script\\5-telemetry_deploy.ps1\r\nCreationUtcTime: 2026-08-21 11:54:36.281\r\nUser: HAWTHORNE-ADM-0\\analyst"
+    },
+    {
+        "timestamp":  "2026-08-21T14:30:15.4536637+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:30:15.451\r\nProcessGuid: {25cfb7e9-44d7-6a88-2905-000000000400}\r\nProcessId: 7932\r\nImage: C:\\Windows\\UUS\\amd64\\MoUsoCoreWorker.exe\r\nFileVersion: 1509.2607.1012.0\r\nDescription: MoUSO Core Worker Process\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: MoUSOCoreWorker.exe\r\nCommandLine: \"C:\\WINDOWS\\uus\\AMD64\\MoUsoCoreWorker.exe\" useprivatenamespaces\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=620BAE4C8BF599F2289B71E1CDCDD009,SHA256=D74C055552ADB882BBE57D746B5659A75A20552F09D715D904B8A8D82B76E5B8,IMPHASH=6022CD9CBE0FB37CB87DD6C459CEDFA7\r\nParentProcessGuid: {25cfb7e9-49b2-6a87-cc00-000000000400}\r\nParentProcessId: 9516\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s UsoSvc\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
+        "timestamp":  "2026-08-21T14:29:34.8014419+02:00",
+        "log_source":  "Sysmon",
+        "event_id":  1,
+        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:29:34.798\r\nProcessGuid: {25cfb7e9-44ae-6a88-2805-000000000400}\r\nProcessId: 5384\r\nImage: C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\r\nFileVersion: 1.3.257.13\r\nDescription: Microsoft Edge Update\r\nProduct: Microsoft Edge Update\r\nCompany: Microsoft Corporation\r\nOriginalFileName: MicrosoftEdgeUpdate.exe\r\nCommandLine: \"C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\" /ua /installsource core\r\nCurrentDirectory: C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\1.3.259.11\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=33FC26D2C54A2CC4486F7CEF2FEFC43A,SHA256=02019D96F55FC9036E5403E79132CBD8AFD955C14C469172694C2B38E7939134,IMPHASH=CD3B2D99C6655A5D4A14E30E380F5BF9\r\nParentProcessGuid: {25cfb7e9-178c-6a88-e501-000000000400}\r\nParentProcessId: 8588\r\nParentImage: C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\r\nParentCommandLine: \"C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\" /c\r\nParentUser: NT AUTHORITY\\SYSTEM"
+    },
+    {
         "timestamp":  "2026-08-21T14:24:51.4132458+02:00",
         "log_source":  "Sysmon",
         "event_id":  1,
@@ -534,70 +612,10 @@
         "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:01:01.248\r\nProcessGuid: {25cfb7e9-3dfd-6a88-ce04-000000000400}\r\nProcessId: 3644\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe CreativeId:18=128000000001615609;CourtesyOverrideRuleName:4=none;\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
     },
     {
-        "timestamp":  "2026-08-21T14:00:35.4793426+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.478\r\nProcessGuid: {25cfb7e9-3de3-6a88-cb04-000000000400}\r\nProcessId: 1436\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: HAWTHORNE-ADM-0\\analyst\r\nLogonGuid: {25cfb7e9-4980-6a87-1430-040000000000}\r\nLogonId: 0x43014\r\nTerminalSessionId: 1\r\nIntegrityLevel: Medium\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T14:00:35.4763601+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.470\r\nProcessGuid: {25cfb7e9-3de3-6a88-ca04-000000000400}\r\nProcessId: 4408\r\nImage: C:\\Windows\\System32\\rundll32.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows host process (Rundll32)\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: RUNDLL32.EXE\r\nCommandLine: \"C:\\WINDOWS\\system32\\rundll32.exe\" C:\\WINDOWS\\system32\\AppxDeploymentClient.dll,AppxPreStageCleanupRunTask\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=807D8C1EA3658035B6F5B27232ED120D,SHA256=C4C8160C42407741BAF0946A1FC0E8162E14C6CC543E754EFD78CC52BB316AF5,IMPHASH=C8B70D465C35D895C4171BAF042BB63A\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T14:00:35.4715065+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.468\r\nProcessGuid: {25cfb7e9-3de3-6a88-c904-000000000400}\r\nProcessId: 4868\r\nImage: C:\\Windows\\System32\\appidcertstorecheck.exe\r\nFileVersion: 10.0.26100.8457 (WinBuild.160101.0800)\r\nDescription: AppID Certificate Store Verification Task\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: AppIDCertstoreCheck.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\appidcertstorecheck.exe\"\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\LOCAL SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e503-000000000000}\r\nLogonId: 0x3E5\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=4C15950DDB11400899A7F207AF901B77,SHA256=513605BCE4C18FEE8D117ADEE1051D23AE57A6F1E735606CD5254444DADED088,IMPHASH=129D704DF0889821ED61ADCF00D784FE\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T14:00:35.4710283+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.464\r\nProcessGuid: {25cfb7e9-3de3-6a88-c804-000000000400}\r\nProcessId: 3840\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T14:00:35.4703850+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 12:00:35.449\r\nProcessGuid: {25cfb7e9-3de3-6a88-c704-000000000400}\r\nProcessId: 6344\r\nImage: C:\\Windows\\System32\\rundll32.exe\r\nFileVersion: 10.0.26100.8972 (WinBuild.160101.0800)\r\nDescription: Windows host process (Rundll32)\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: RUNDLL32.EXE\r\nCommandLine: \"C:\\WINDOWS\\system32\\rundll32.exe\" /d acproxy.dll,PerformAutochkOperations\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=807D8C1EA3658035B6F5B27232ED120D,SHA256=C4C8160C42407741BAF0946A1FC0E8162E14C6CC543E754EFD78CC52BB316AF5,IMPHASH=C8B70D465C35D895C4171BAF042BB63A\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:59:44.3244619+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:44.322\r\nProcessGuid: {25cfb7e9-3db0-6a88-c304-000000000400}\r\nProcessId: 5876\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:59:18.1619954+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.156\r\nProcessGuid: {25cfb7e9-3d96-6a88-c204-000000000400}\r\nProcessId: 9412\r\nImage: C:\\Windows\\WinSxS\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe\r\nFileVersion: 10.0.26100.9156 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer Worker\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TiWorker.exe\r\nCommandLine: C:\\WINDOWS\\winsxs\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.26100.9156_none_a546383f7734e5e5\\TiWorker.exe -Embedding\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=3C1B9CE5F76E99F8E8D85DDC5CF739D8,SHA256=F46E2736394159BEC3BF617CFDACC4C37FDE3809044610DDB6848B43BF7CAFC8,IMPHASH=8138F313B2ED787DAD307B2ECE1400E5\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0d00-000000000400}\r\nParentProcessId: 956\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k DcomLaunch -p\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:59:18.1382909+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.131\r\nProcessGuid: {25cfb7e9-3d96-6a88-c104-000000000400}\r\nProcessId: 4268\r\nImage: C:\\Windows\\servicing\\TrustedInstaller.exe\r\nFileVersion: 10.0.26100.9168 (WinBuild.160101.0800)\r\nDescription: Windows Modules Installer\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: TrustedInstaller.exe\r\nCommandLine: C:\\WINDOWS\\servicing\\TrustedInstaller.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=06E9C91E4DF1C28FD8BBA61F9664125D,SHA256=DF13F27D5E606D064C3CD0583174DE69798D2A404BD172C5F9B3AA1AABB2B17F,IMPHASH=3538EC2894B99A7F12D731CC5A7B69B6\r\nParentProcessGuid: {25cfb7e9-4979-6a87-0b00-000000000400}\r\nParentProcessId: 808\r\nParentImage: C:\\Windows\\System32\\services.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\services.exe\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:59:18.0903933+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:59:18.083\r\nProcessGuid: {25cfb7e9-3d96-6a88-c004-000000000400}\r\nProcessId: 6340\r\nImage: C:\\Windows\\System32\\UsoClient.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: UsoClient\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: UsoClient\r\nCommandLine: \"C:\\Windows\\System32\\usoclient.exe\" StartLXPBizCritUpdates hPJdOW12R06vK1uj.1\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=214C2EA3C241B8FC061DD04133ACCE6A,SHA256=D3C90744D4BB616C4946D9DC646E39E1FAD581366AA46F440B867C010B106612,IMPHASH=1BC6441172601AD7E84C0082681FF7D2\r\nParentProcessGuid: {25cfb7e9-49b2-6a87-d000-000000000400}\r\nParentProcessId: 4172\r\nParentImage: C:\\Windows\\UUS\\amd64\\MoUsoCoreWorker.exe\r\nParentCommandLine: \"C:\\WINDOWS\\uus\\AMD64\\MoUsoCoreWorker.exe\" useprivatenamespaces\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:58:47.2476006+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:58:47.245\r\nProcessGuid: {25cfb7e9-3d77-6a88-be04-000000000400}\r\nProcessId: 2748\r\nImage: C:\\Windows\\System32\\taskhostw.exe\r\nFileVersion: 10.0.26100.8328 (WinBuild.160101.0800)\r\nDescription: Host Process for Windows Tasks\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: taskhostw.exe\r\nCommandLine: taskhostw.exe\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\SYSTEM\r\nLogonGuid: {25cfb7e9-4979-6a87-e703-000000000000}\r\nLogonId: 0x3E7\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=9E9370331B9D14ABBA21091FFFCD1D1E,SHA256=EA8D441DF237FB3D3B7A27A95FDE186E19C94D58A618F5C29ED5FC13CB155E96,IMPHASH=2196268E7A2880E3ADC74481297D0C4B\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
-    },
-    {
-        "timestamp":  "2026-08-21T13:55:08.4355966+02:00",
-        "log_source":  "Sysmon",
-        "event_id":  1,
-        "raw_message":  "Process Create:\r\nRuleName: -\r\nUtcTime: 2026-08-21 11:55:08.431\r\nProcessGuid: {25cfb7e9-3c9c-6a88-bc04-000000000400}\r\nProcessId: 11096\r\nImage: C:\\Windows\\System32\\appidcertstorecheck.exe\r\nFileVersion: 10.0.26100.8457 (WinBuild.160101.0800)\r\nDescription: AppID Certificate Store Verification Task\r\nProduct: Microsoft® Windows® Operating System\r\nCompany: Microsoft Corporation\r\nOriginalFileName: AppIDCertstoreCheck.exe\r\nCommandLine: \"C:\\WINDOWS\\system32\\appidcertstorecheck.exe\"\r\nCurrentDirectory: C:\\WINDOWS\\system32\\\r\nUser: NT AUTHORITY\\LOCAL SERVICE\r\nLogonGuid: {25cfb7e9-4979-6a87-e503-000000000000}\r\nLogonId: 0x3E5\r\nTerminalSessionId: 0\r\nIntegrityLevel: System\r\nHashes: MD5=4C15950DDB11400899A7F207AF901B77,SHA256=513605BCE4C18FEE8D117ADEE1051D23AE57A6F1E735606CD5254444DADED088,IMPHASH=129D704DF0889821ED61ADCF00D784FE\r\nParentProcessGuid: {25cfb7e9-497a-6a87-2b00-000000000400}\r\nParentProcessId: 2028\r\nParentImage: C:\\Windows\\System32\\svchost.exe\r\nParentCommandLine: C:\\WINDOWS\\system32\\svchost.exe -k netsvcs -p -s Schedule\r\nParentUser: NT AUTHORITY\\SYSTEM"
+        "timestamp":  "2026-08-21T14:30:37.3276056+02:00",
+        "log_source":  "PowerShell",
+        "event_id":  4104,
+        "raw_message":  "Creating Scriptblock text (1 of 1):\r\n# Name: 5-telemetry_deploy.ps1\n# Purpose: Deploy telemetry (Sysmon + Script Block Logging), run controlled test sequences, verify coverage, and export evidence.\n# Author: Stephen Reilly\n# Exit Codes: 0=Success, 1=Control Failure (verification failed), 2=Environment Error (missing deps/files)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \u0027Stop\u0027\n\n# --- Configuration ---\n$LogDir = \"capstone\\telemetry\"\n$WindowsEventsJson = Join-Path $PWD \"$LogDir\\windows_events.json\"\n$WindowsCoverageJson = Join-Path $PWD \"$LogDir\\windows_coverage.json\"\n$TestUser = \"TestAuditUser\"\n$ScheduledTaskName = \"MedDefenseTestTask\"\n$TestServiceName = \"BITS\"\n\n# Coverage tracking hashtable\n$coverageStatus = [ordered]@{\n    \"user_creation\"      = \"pending\"\n    \"scheduled_task\"     = \"pending\"\n    \"service_start_stop\" = \"pending\"\n    \"powershell_command\" = \"pending\"\n}\n\n# --- Logging Helpers ---\nfunction Write-LogStep {\n    param([string]$Message)\n    $timestamp = Get-Date -Format \"yyyy-MM-dd HH:mm:ss\"\n    Write-Host \"[INFO] $timestamp - $Message\"\n}\n\nfunction Write-FailExit {\n    param([string]$Message)\n    Write-LogStep \"FAILURE: $Message\"\n    exit 1\n}\n\nfunction Write-EnvError {\n    param([string]$Message)\n    Write-LogStep \"ENVIRONMENT ERROR: $Message\"\n    exit 2\n}\n\n# --- Pre-flight Checks ---\n\nWrite-LogStep \"Checking environment dependencies...\"\n\n# Check if running as Administrator\n$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)\nif (-not $isAdmin) {\n    Write-EnvError \"This script must be run as Administrator.\"\n}\n\n# Check if Sysmon is installed\n$sysmonService = Get-Service -Name \"Sysmon64\" -ErrorAction SilentlyContinue\nif ($null -eq $sysmonService) {\n    $sysmonService = Get-Service -Name \"Sysmon\" -ErrorAction SilentlyContinue\n}\n\nif ($null -eq $sysmonService) {\n    $sysmonPaths = @(\n        \"$env:SystemRoot\\Sysmon64.exe\",\n        \"$env:"
     },
     {
         "timestamp":  "2026-08-21T14:24:35.7204742+02:00",
