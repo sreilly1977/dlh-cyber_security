@@ -36,6 +36,11 @@ windows_dir = sys.argv[2]
 student_dir = sys.argv[3]
 output_file = sys.argv[4]
 
+# --- ensure output directory exists -------------------------------------------
+output_dir = os.path.dirname(output_file) or "."
+if output_dir and not os.path.exists(output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+
 def parse_json_file(filepath):
     """Parse a JSON file that may be NDJSON or a single JSON array."""
     with open(filepath, "r", errors="replace") as f:
@@ -128,6 +133,9 @@ if os.path.isfile(student_file):
     for rec in records:
         normalize_record(rec, "student_telemetry")
         combined.append(rec)
+
+    # Include student records in the total
+    total_records += student_records
 
     results["student_telemetry"] = {"status": "appended", "records": student_records}
 else:
