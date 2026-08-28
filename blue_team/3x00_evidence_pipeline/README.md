@@ -360,3 +360,47 @@ network_events.json written
 ```
 
 ---
+
+# [7. Schema Validation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/7-schema_validate.sh)
+### advanced
+
+## Goal: 
+
+Validate every record in the normalized dataset against the schema you designed and produce a machine-readable compliance report.
+
+## Context: 
+
+A schema is a contract. A normalization script that produces records that violate the contract is a bug. This task is the automated check that catches that bug before the bad data reaches 3x02. Run it every time normalization changes.
+
+## Instructions: 
+
+Write a script 7-schema_validate.sh that:
+
+    Reads event_schema.json and normalized_events.json
+
+    For every record, checks that every required field is present and has a non-null value
+
+    For every field, checks that the value matches the declared type
+
+    Counts compliant records, non-compliant records, and per-field completeness percentage across the dataset
+
+    Writes validation_report.json containing overall counts, per-field completeness, and up to 20 example non-compliant records with the reason
+
+The script must exit with code 0 if compliance is above 99 percent and 1 otherwise.
+
+**Expected Output:**
+
+```bash
+$ ./7-schema_validate.sh
+records checked       : <total>
+fully compliant       : <N> (>99%)
+non-compliant         : <N>
+per-field completeness:
+  timestamp      100.00%
+  hostname        99.xx%
+  source_type    100.00%
+  event_category 100.00%
+validation_report.json written
+```
+
+---
