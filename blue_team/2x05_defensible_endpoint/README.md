@@ -487,3 +487,63 @@ Note: this task does not transform telemetry. The Linux and Windows exports from
 
 ---
 
+# [10. The Machine-Readable Compliance Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/10-compliance_report.sh)
+### advanced
+
+## Goal: 
+
+Emit the single compliance report that covers every control in scope, cross-references it to CIS, NIST and the 2x00 through 2x04 source projects, and captures the evidence path for each verdict.
+
+## Context: 
+
+The compliance report is the machine-readable artifact that an auditor or a next-level reviewer can consume without opening any other file. Unlike the validation report from T8, which is raw verdict data, the compliance report adds framework mapping and control lineage so that each capstone control can be traced to a CIS Control, a NIST CSF function and the source project that introduced it. It is the closest thing this project produces to a regulatory deliverable.
+
+## Instructions: 
+
+Write a script 10-compliance_report.sh that emits the compliance report. The script must:
+
+    Read capstone/target_state.json and capstone/validation.json and join them by control ID
+
+    For each control, look up the framework mapping in a provided /home/analyst/MedDefense_Lab/capstone/framework_map.json shipped with the project. The map contains, per control ID, an array of {framework, control_id} entries (e.g. CIS Controls v8, 5.2 for account management)
+
+    Emit capstone/compliance.json with:
+
+        schema_version (capstone-compliance-v1)
+
+        generated_at
+
+        hostname
+
+        site (hawthorne)
+
+        overall_verdict (ready, not_ready) computed from the validation summary
+
+        controls array with per-control entries containing:
+
+            id
+
+            description
+
+            family
+
+            severity
+
+            source_project
+
+            verdict (from validation)
+
+            evidence_path
+
+            framework_mapping (array from the map)
+
+        summary block with totals by family and severity
+
+        unmapped_controls (array of control IDs with no framework mapping, for traceability)
+
+    Print a stdout summary showing per-family pass rate and the top 5 framework hits
+
+    Exit 0 only if overall_verdict == "ready"
+
+Note: this task does not evaluate controls. It consumes the verdicts from T8 and enriches them with framework mapping.
+
+---
