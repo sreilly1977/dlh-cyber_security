@@ -130,3 +130,41 @@ $ ./1-telemetry_import.sh
 
 ---
 
+# [2. Windows Event Parsing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/2-windows_parse.sh)
+
+## Goal: 
+
+Merge the three Windows JSON source files into a single combined intermediate file, appending student telemetry, ready for normalization.
+
+## Context: 
+
+The Windows event logs are provided as pre-exported NDJSON files (one JSON object per line). Each file covers a different event channel: security.json (4625, 4624, 4720, etc.), sysmon.json (process creation, network connections, etc.), and powershell.json (script block logging). This stage merges all three into a single windows_events.json file and appends the student telemetry windows events. Every record already contains timestamp_raw, hostname, event_id, channel, provider, raw_message, event_data, and source_origin: "evidence_pack". Student telemetry records must be tagged with source_origin: "student_telemetry" if not already set.
+
+## Instructions: 
+
+Write a script 2-windows_parse.sh that reads security.json, sysmon.json, and powershell.json from ~/evidence_pack_primary/windows/ and produces windows_events.json as a newline-delimited JSON file with one record per line. The script must:
+
+    Read each of the three JSON files from ~/evidence_pack_primary/windows/
+
+    Ensure each record contains at minimum: timestamp_raw, hostname, event_id, channel, provider, raw_message, event_data, source_origin
+
+    Set source_origin: "evidence_pack" for records from the windows/ directory (it is already set in the files; verify and preserve it)
+
+    Read ~/evidence_pack_primary/student_telemetry/windows_events.json and append those records tagged with source_origin: "student_telemetry" if not already set
+
+    Write the combined output to windows_events.json
+
+    Print per-file record counts and a total
+
+**Expected Output:**
+
+```bash
+$ ./2-windows_parse.sh
+reading security.json      ... 38498 records
+reading sysmon.json        ... 72810 records
+reading powershell.json    ...  9408 records
+appending student telemetry ... 1859 records
+windows_events.json: 122575 records
+```
+
+---
