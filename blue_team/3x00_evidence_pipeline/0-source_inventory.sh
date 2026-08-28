@@ -13,7 +13,6 @@ WORKDIR="${WORKDIR:-$(pwd)}"
 EVIDENCE_PACK="${EVIDENCE_PACK:-$HOME/evidence_pack_primary}"
 OUTPUT_FILE="${WORKDIR}/source_inventory.json"
 
-# --- validate inputs ----------------------------------------------------------
 if [[ ! -d "$EVIDENCE_PACK" ]]; then
     echo "ERROR: evidence pack directory not found: $EVIDENCE_PACK" >&2
     exit 1
@@ -25,7 +24,6 @@ for subdir in windows linux network; do
     fi
 done
 
-# --- delegate to Python for all file discovery and parsing ---------------------
 python3 - "${WORKDIR}" "${EVIDENCE_PACK}" "${OUTPUT_FILE}" <<'PYTHON_EOF'
 import hashlib
 import json
@@ -38,15 +36,15 @@ workdir = sys.argv[1]
 evidence_pack = sys.argv[2]
 output_file = sys.argv[3]
 
+MONTHS = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
+          "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
+
 def sha256_of(filepath):
     h = hashlib.sha256()
     with open(filepath, "rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):
             h.update(chunk)
     return h.hexdigest()
-
-def file_size(filepath):
-    return os.path.getsize(filepath)
 
 def classify(dir_name, filename):
     if dir_name == "windows":
@@ -59,19 +57,57 @@ def classify(dir_name, filename):
         return "network_json"
     return "unknown"
 
-def extract_timestamp_windows(line):
-    """Extract timestamp_raw from a Windows NDJSON line."""
+def try_iso_normalize(ts_str):
+    """Try to normalize a timestamp string to ISO 8601 UTC."""
+    if not ts_str:
+        return None
+    ts_str = ts_str.strip()
+    # Already ISO 8601 with Z
+    if re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", ts_str):
+        return ts_str
+    # ISO 8601 with +00:00
+    if ts_str.endswith("+00:00"):
+        return ts_str[:-6] + "Z"
+    # ISO 8601 with +0000 offset (e.g. Suricata)
+    m = re.match(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+[+\-]\d{4}$", ts_str)
+    if m:
+        return m.group(1) + "Z"
+    # ISO 8601 with fractional seconds and Z
+    m = re.match(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+Z$", ts_str)
+    if m:
+        return m.group(1) + "Z"
+    # MM/DD/YYYY HH:MM:SS AM/PM (PCAP summary)
     try:
-        rec = json.loads(line)
-        ts = rec.get("timestamp_raw", "")
-        if ts:
-            return ts.replace("+00:00", "Z")
-    except (json.JSONDecodeError, AttributeError):
+        dt = datetime.strptime(ts_str, "%m/%d/%Y %I:%M:%S %p").replace(tzinfo=timezone.utc)
+        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        pass
+    # Pure epoch seconds (integer or float as string)
+    try:
+        val = float(ts_str)
+        if 1_000_000_000 < val < 2_000_000_000:
+            dt = datetime.fromtimestamp(val, tz=timezone.utc)
+            return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
         pass
     return None
 
+def extract_timestamp_from_json_obj(obj):
+    """Try every known JSON timestamp field on an object."""
+    for field in ("timestamp_raw", "timestamp", "start_time"):
+        if field in obj:
+            ts = try_iso_normalize(str(obj[field]))
+            if ts:
+                return ts
+    # Epoch as integer in a timestamp field
+    for field in ("timestamp", "epoch", "time"):
+        if field in obj:
+            ts = try_iso_normalize(str(obj[field]))
+            if ts:
+                return ts
+    return None
+
 def extract_timestamp_auditd(line):
-    """Extract epoch timestamp from auditd msg=audit(EPOCH.SECS:ID)."""
     m = re.search(r"msg=audit\((\d+\.\d+):\d+\)", line)
     if m:
         epoch = float(m.group(1))
@@ -80,61 +116,58 @@ def extract_timestamp_auditd(line):
     return None
 
 def extract_timestamp_syslog(line):
-    """Parse 'Mon DD HH:MM:SS' syslog timestamp, assume 2026 UTC."""
     m = re.match(r"^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})", line)
     if m:
         month_name, day, hh, mm, ss = m.groups()
-        months = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
-                  "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
-        mon = months.get(month_name, "01")
-        return f"2026-{mon}-{int(day):02d}T{hh}:{mm}:{ss}Z"
+        mon = MONTHS.get(month_name)
+        if mon:
+            return f"2026-{mon}-{int(day):02d}T{hh}:{mm}:{ss}Z"
     return None
 
-def extract_timestamp_firewall_csv(lines):
-    """Extract first/last epoch timestamps from firewall CSV data rows."""
-    first_ts = last_ts = None
-    for i, line in enumerate(lines):
-        if i == 0:
-            continue
-        parts = line.strip().split(",")
-        if len(parts) >= 1 and parts[0].strip().isdigit():
+def extract_timestamp_csv_epoch(line):
+    parts = line.strip().split(",")
+    if len(parts) >= 1 and parts[0].strip().isdigit():
+        try:
             dt = datetime.fromtimestamp(int(parts[0].strip()), tz=timezone.utc)
-            iso = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-            if first_ts is None:
-                first_ts = iso
-            last_ts = iso
-    return first_ts, last_ts
-
-def extract_timestamp_suricata(line):
-    """Extract ISO timestamp from Suricata EVE JSON."""
-    try:
-        rec = json.loads(line)
-        ts = rec.get("timestamp", "")
-        if ts:
-            dt = datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
             return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    except (json.JSONDecodeError, ValueError):
-        pass
+        except (ValueError, OSError):
+            pass
     return None
 
-def extract_timestamp_pcap(line):
-    """Extract start_time from pcap summary JSON (MM/DD/YYYY HH:MM:SS AM/PM)."""
+def parse_json_records(filepath):
+    """Parse a JSON file that may be NDJSON or a single JSON array."""
+    with open(filepath, "r", errors="replace") as f:
+        content = f.read()
+
+    # Try single JSON array first
     try:
-        rec = json.loads(line)
-        ts = rec.get("start_time", "")
-        if ts:
-            dt = datetime.strptime(ts, "%m/%d/%Y %I:%M:%S %p").replace(tzinfo=timezone.utc)
-            return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    except (json.JSONDecodeError, ValueError):
+        data = json.loads(content)
+        if isinstance(data, list):
+            return [obj for obj in data if isinstance(obj, dict)]
+        if isinstance(data, dict):
+            return [data]
+    except json.JSONDecodeError:
         pass
-    return None
+
+    # Fall back to NDJSON
+    records = []
+    for line in content.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+            if isinstance(obj, dict):
+                records.append(obj)
+        except json.JSONDecodeError:
+            continue
+    return records
 
 def process_file(filepath, dir_name):
-    """Process a single file and return its metadata dict."""
     rel_path = os.path.relpath(filepath, evidence_pack)
     filename = os.path.basename(filepath)
     source_type = classify(dir_name, filename)
-    size_bytes = file_size(filepath)
+    size_bytes = os.path.getsize(filepath)
     sha = sha256_of(filepath)
 
     first_event_time = None
@@ -142,29 +175,26 @@ def process_file(filepath, dir_name):
     line_count = 0
     record_count = 0
 
-    with open(filepath, "r", errors="replace") as f:
-        lines = f.readlines()
-
-    non_empty = [l for l in lines if l.strip()]
-    line_count = len(non_empty)
-
     if source_type == "windows_json":
-        record_count = 0
-        for line in non_empty:
-            record_count += 1
-            ts = extract_timestamp_windows(line.strip())
+        records = parse_json_records(filepath)
+        record_count = len(records)
+        for obj in records:
+            ts = extract_timestamp_from_json_obj(obj)
             if ts:
                 if first_event_time is None:
                     first_event_time = ts
                 last_event_time = ts
+        with open(filepath, "r", errors="replace") as f:
+            line_count = sum(1 for l in f if l.strip())
 
     elif source_type == "linux_text":
+        with open(filepath, "r", errors="replace") as f:
+            lines = [l for l in f.readlines() if l.strip()]
+        line_count = len(lines)
         record_count = line_count
-        for line in non_empty:
+        for line in lines:
             stripped = line.strip()
-            ts = None
-            if "msg=audit(" in stripped:
-                ts = extract_timestamp_auditd(stripped)
+            ts = extract_timestamp_auditd(stripped)
             if ts is None:
                 ts = extract_timestamp_syslog(stripped)
             if ts:
@@ -173,24 +203,37 @@ def process_file(filepath, dir_name):
                 last_event_time = ts
 
     elif source_type == "network_csv":
-        record_count = max(len(non_empty) - 1, 0)
-        first_event_time, last_event_time = extract_timestamp_firewall_csv(non_empty)
-
-    elif source_type == "network_json":
-        record_count = 0
-        for line in non_empty:
-            record_count += 1
-            ts = None
-            if filename == "suricata_eve.json":
-                ts = extract_timestamp_suricata(line.strip())
-            elif filename == "pcap_summary.json":
-                ts = extract_timestamp_pcap(line.strip())
+        with open(filepath, "r", errors="replace") as f:
+            lines = [l for l in f.readlines() if l.strip()]
+        line_count = len(lines)
+        record_count = max(len(lines) - 1, 0)
+        for i, line in enumerate(lines):
+            if i == 0 and not line.strip().split(",")[0].strip().isdigit():
+                continue
+            ts = extract_timestamp_csv_epoch(line)
             if ts:
                 if first_event_time is None:
                     first_event_time = ts
                 last_event_time = ts
 
-    entry = {
+    elif source_type == "network_json":
+        records = parse_json_records(filepath)
+        record_count = len(records)
+        for obj in records:
+            ts = extract_timestamp_from_json_obj(obj)
+            if ts:
+                if first_event_time is None:
+                    first_event_time = ts
+                last_event_time = ts
+        with open(filepath, "r", errors="replace") as f:
+            line_count = sum(1 for l in f if l.strip())
+
+    else:
+        with open(filepath, "r", errors="replace") as f:
+            line_count = sum(1 for l in f if l.strip())
+        record_count = line_count
+
+    return {
         "path": rel_path,
         "source_type": source_type,
         "size_bytes": size_bytes,
@@ -200,9 +243,8 @@ def process_file(filepath, dir_name):
         "first_event_time": first_event_time,
         "last_event_time": last_event_time,
     }
-    return entry
 
-# --- walk each category in sorted order ----------------------------------------
+# --- recursively walk each category -------------------------------------------
 categories = ["windows", "linux", "network"]
 manifest_files = []
 category_stats = {}
@@ -213,13 +255,15 @@ for dir_name in categories:
         continue
     entries = []
     total_bytes = 0
-    for fname in sorted(os.listdir(dir_path)):
-        fpath = os.path.join(dir_path, fname)
-        if not os.path.isfile(fpath):
-            continue
-        entry = process_file(fpath, dir_name)
-        entries.append(entry)
-        total_bytes += entry["size_bytes"]
+    for root, dirs, files in os.walk(dir_path):
+        dirs.sort()
+        for fname in sorted(files):
+            fpath = os.path.join(root, fname)
+            if not os.path.isfile(fpath):
+                continue
+            entry = process_file(fpath, dir_name)
+            entries.append(entry)
+            total_bytes += entry["size_bytes"]
     manifest_files.extend(entries)
     category_stats[dir_name] = {"file_count": len(entries), "total_bytes": total_bytes}
 
