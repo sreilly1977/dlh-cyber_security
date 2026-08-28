@@ -622,4 +622,3 @@ Write a script 11-handoff_package.sh that assembles the handoff package. The scr
 Note: no manual file curation. Every file in the package must be referenced by manifest.json and produced by one of the prior scripts.
 
 ---
-
