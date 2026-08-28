@@ -75,36 +75,36 @@ REQUIRED_FIELDS = [
     "provider", "raw_message", "event_data", "source_origin"
 ]
 
-DEFAULTS = {
-    "event_id": 0,
-    "channel": "",
-    "provider": "",
-    "raw_message": "",
-    "event_data": {},
-}
+def prepare_windows_record(record):
+    """Prepare a Windows evidence pack record: set source_origin if missing,
+    map timestamp -> timestamp_raw if needed, preserve all existing data."""
+    # Only set source_origin if genuinely missing
+    if "source_origin" not in record or record["source_origin"] is None:
+        record["source_origin"] = "evidence_pack"
 
-def normalize_record(record, forced_source_origin):
-    """Normalize a single record: force source_origin, fill missing fields
-    with sensible defaults, and map timestamp -> timestamp_raw if needed."""
-    # Force source_origin to the correct value
-    record["source_origin"] = forced_source_origin
-
-    # Map timestamp -> timestamp_raw for student telemetry compatibility
+    # Map timestamp -> timestamp_raw for compatibility
     if "timestamp_raw" not in record and "timestamp" in record:
         record["timestamp_raw"] = record["timestamp"]
 
-    # Fill in any missing required fields with appropriate defaults
-    for field in REQUIRED_FIELDS:
-        if field not in record:
-            record[field] = DEFAULTS.get(field, None)
+    return record
+
+def prepare_student_record(record):
+    """Prepare a student telemetry record: set source_origin if missing,
+    map timestamp -> timestamp_raw if needed, preserve all existing data."""
+    # Only set source_origin if genuinely missing
+    if "source_origin" not in record or record["source_origin"] is None:
+        record["source_origin"] = "student_telemetry"
+
+    # Map timestamp -> timestamp_raw for compatibility
+    if "timestamp_raw" not in record and "timestamp" in record:
+        record["timestamp_raw"] = record["timestamp"]
 
     return record
 
 results = {}
-total_records = 0
 combined = []
 
-# --- Process each Windows source file (single read + modify + store) -----------
+# --- Process each Windows source file -----------------------------------------
 for fname in ["security.json", "sysmon.json", "powershell.json"]:
     fpath = os.path.join(windows_dir, fname)
 
@@ -117,12 +117,10 @@ for fname in ["security.json", "sysmon.json", "powershell.json"]:
     results[fname] = {"status": "read", "records": len(records)}
 
     for rec in records:
-        normalize_record(rec, "evidence_pack")
+        prepare_windows_record(rec)
         combined.append(rec)
 
-    total_records += len(records)
-
-# --- Process student telemetry (single read + modify + append) -----------------
+# --- Process student telemetry ------------------------------------------------
 student_file = os.path.join(student_dir, "windows_events.json")
 student_records = 0
 
@@ -131,17 +129,17 @@ if os.path.isfile(student_file):
     student_records = len(records)
 
     for rec in records:
-        normalize_record(rec, "student_telemetry")
+        prepare_student_record(rec)
         combined.append(rec)
-
-    # Include student records in the total
-    total_records += student_records
 
     results["student_telemetry"] = {"status": "appended", "records": student_records}
 else:
     results["student_telemetry"] = {"status": "missing", "records": 0}
 
-# --- Write output (from in-memory combined list) -------------------------------
+# --- Calculate total from actual records written -------------------------------
+total_records = len(combined)
+
+# --- Write output --------------------------------------------------------------
 with open(output_file, "w") as f:
     for rec in combined:
         json.dump(rec, f, separators=(",", ":"))
