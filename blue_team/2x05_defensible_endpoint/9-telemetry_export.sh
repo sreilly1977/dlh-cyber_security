@@ -201,6 +201,8 @@ jq \
 log "Manifest updated with tarball metadata"
 
 # --- Step 6: Verify Hashes ---
+# Re-read the manifest and verify every hash matches the file on disk
+# verify each file hash against the manifest
 
 log "Verifying manifest hashes against files on disk..."
 
@@ -232,6 +234,7 @@ for i in $(seq 0 $((FILE_COUNT - 1))); do
     actual_size=$(compute_size "$disk_path")
     actual_hash=$(compute_sha256 "$disk_path")
 
+    # verify hash matches manifest entry
     if [[ "$actual_hash" == "$manifest_hash" && "$actual_size" == "$manifest_size" ]]; then
         log "  [PASS] $manifest_path (sha256: ${actual_hash:0:16}...)"
         VERIFIED_COUNT=$((VERIFIED_COUNT + 1))
