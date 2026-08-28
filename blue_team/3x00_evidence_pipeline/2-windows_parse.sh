@@ -36,89 +36,67 @@ windows_dir = sys.argv[2]
 student_dir = sys.argv[3]
 output_file = sys.argv[4]
 
-# --- ensure output directory exists -------------------------------------------
 output_dir = os.path.dirname(output_file) or "."
 if output_dir and not os.path.exists(output_dir):
     os.makedirs(output_dir, exist_ok=True)
-
-def parse_json_file(filepath):
-    """Parse a JSON file that may be NDJSON or a single JSON array."""
-    with open(filepath, "r", errors="replace") as f:
-        content = f.read()
-
-    # Try single JSON document (array or object)
-    try:
-        data = json.loads(content)
-        if isinstance(data, list):
-            return data
-        if isinstance(data, dict):
-            return [data]
-    except json.JSONDecodeError:
-        pass
-
-    # Fall back to NDJSON
-    records = []
-    for line in content.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            obj = json.loads(line)
-            if isinstance(obj, dict):
-                records.append(obj)
-        except json.JSONDecodeError:
-            continue
-    return records
 
 REQUIRED_FIELDS = [
     "timestamp_raw", "hostname", "event_id", "channel",
     "provider", "raw_message", "event_data", "source_origin"
 ]
 
-def prepare_windows_record(record):
-    """Prepare a Windows evidence pack record: set source_origin if missing,
-    map timestamp -> timestamp_raw if needed, preserve all existing data."""
-    # Only set source_origin if genuinely missing
-    if "source_origin" not in record or record["source_origin"] is None:
-        record["source_origin"] = "evidence_pack"
+def parse_json_file(filepath):
+    """Parse a JSON file that may be NDJSON or a single JSON array."""
+    with open(filepath, "r", errors="replace") as f:
+        content = f.read()
 
-    # Map timestamp -> timestamp_raw for compatibility
+    try:
+        data = json.loads(content)
+        if isinstance(data, list):
+            return [obj for obj in data if isinstance(obj, dict)]
+        if isinstance(data, dict):
+            return [data]
+    except json.JSONDecodeError:
+        pass
+
+    records = []
+    for line in content.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            obj = json.loads(stripped)
+            if isinstance(obj, dict):
+                records.append(obj)
+        except json.JSONDecodeError:
+            sys.stderr.write(f"WARNING: malformed line skipped in {filepath}\n")
+    return records
+
+def prepare_record(record, default_origin):
+    """Preserve original structure; set source_origin only if absent,
+    map timestamp -> timestamp_raw for compatibility."""
+    if "source_origin" not in record or record["source_origin"] is None:
+        record["source_origin"] = default_origin
     if "timestamp_raw" not in record and "timestamp" in record:
         record["timestamp_raw"] = record["timestamp"]
-
     return record
 
-def prepare_student_record(record):
-    """Prepare a student telemetry record: set source_origin if missing,
-    map timestamp -> timestamp_raw if needed, preserve all existing data."""
-    # Only set source_origin if genuinely missing
-    if "source_origin" not in record or record["source_origin"] is None:
-        record["source_origin"] = "student_telemetry"
-
-    # Map timestamp -> timestamp_raw for compatibility
-    if "timestamp_raw" not in record and "timestamp" in record:
-        record["timestamp_raw"] = record["timestamp"]
-
-    return record
-
-results = {}
 combined = []
+counts = {}
 
 # --- Process each Windows source file -----------------------------------------
 for fname in ["security.json", "sysmon.json", "powershell.json"]:
     fpath = os.path.join(windows_dir, fname)
 
     if not os.path.isfile(fpath):
-        print(f"WARNING: {fname} not found, skipping")
-        results[fname] = {"status": "missing", "records": 0}
+        counts[fname] = 0
         continue
 
     records = parse_json_file(fpath)
-    results[fname] = {"status": "read", "records": len(records)}
-
     for rec in records:
-        prepare_windows_record(rec)
+        prepare_record(rec, "evidence_pack")
         combined.append(rec)
+    counts[fname] = len(records)
 
 # --- Process student telemetry ------------------------------------------------
 student_file = os.path.join(student_dir, "windows_events.json")
@@ -126,30 +104,26 @@ student_records = 0
 
 if os.path.isfile(student_file):
     records = parse_json_file(student_file)
+    for rec in records:
+        prepare_record(rec, "student_telemetry")
+        combined.append(rec)
     student_records = len(records)
 
-    for rec in records:
-        prepare_student_record(rec)
-        combined.append(rec)
+counts["student_telemetry"] = student_records
 
-    results["student_telemetry"] = {"status": "appended", "records": student_records}
-else:
-    results["student_telemetry"] = {"status": "missing", "records": 0}
-
-# --- Calculate total from actual records written -------------------------------
-total_records = len(combined)
-
-# --- Write output --------------------------------------------------------------
+# --- Write merged output -------------------------------------------------------
 with open(output_file, "w") as f:
     for rec in combined:
         json.dump(rec, f, separators=(",", ":"))
         f.write("\n")
 
-# --- Print summary ------------------------------------------------------------
-print(f"{'reading security.json':23s} ... {results.get('security.json', {}).get('records', 0):>6d} records")
-print(f"{'reading sysmon.json':23s} ... {results.get('sysmon.json', {}).get('records', 0):>6d} records")
-print(f"{'reading powershell.json':23s} ... {results.get('powershell.json', {}).get('records', 0):>6d} records")
-print(f"{'appending student telemetry':23s} ... {student_records:>6d} records")
+total_records = len(combined)
+
+# --- Print summary (exact format per spec) ------------------------------------
+print(f"reading security.json      ... {counts.get('security.json', 0):>6d} records")
+print(f"reading sysmon.json        ... {counts.get('sysmon.json', 0):>6d} records")
+print(f"reading powershell.json    ... {counts.get('powershell.json', 0):>6d} records")
+print(f"appending student telemetry ... {student_records:>6d} records")
 print(f"windows_events.json: {total_records} records")
 
 PYTHON_EOF
