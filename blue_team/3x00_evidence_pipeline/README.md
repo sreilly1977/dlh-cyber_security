@@ -404,3 +404,44 @@ validation_report.json written
 ```
 
 ---
+
+# [8. Dirty Data Handling](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/8-data_quality.sh)
+
+## Goal: 
+
+Detect and repair the intentional quality defects injected into the evidence pack, and log every correction you apply.
+
+## Context: 
+
+Real logs are dirty. The primary evidence pack contains intentional defects that mirror what you will see in production: malformed timestamps that do not parse, duplicate events from network retransmissions, hostnames written in three different cases, a batch of records encoded in latin-1 instead of utf-8, and a block of events with timestamps in the wrong timezone. Every defect you silently ignore becomes an analyst headache later. Every correction you make must be logged with the original value, the corrected value, and the reason, so the analyst can reconstruct exactly what you changed.
+
+## Instructions: 
+
+Write a script 8-data_quality.sh that reads normalized_events.json and produces cleaned_events.json plus cleaning_log.json. It must detect and correct the following categories of defects:
+
+    Malformed timestamps: records whose timestamp does not parse as ISO 8601. Attempt repair using fallback formats. If repair fails, move the record to a unrepairable section of the cleaning log and drop it from the cleaned dataset
+
+    Duplicates: records where timestamp, hostname, source_type, and raw_message are all identical. Keep the first occurrence, drop the rest
+
+    Hostname case inconsistency: normalize all hostnames to lowercase
+
+    Encoding errors: records where raw_message contains replacement characters or mojibake. Attempt to re-decode from latin-1 as utf-8 and repair
+
+    Timezone inconsistency: records whose timestamp is valid but falls outside the expected date range of the evidence pack by more than 12 hours. Flag these as suspected_wrong_tz and include them in the cleaning log
+
+cleaning_log.json must contain one entry per correction with: defect_type, original_value, corrected_value, record_id, reason.
+
+**Expected Output:**
+
+```bash
+$ ./8-data_quality.sh
+malformed timestamps   :  detected   repaired    dropped
+duplicates             :  detected   removed
+hostname case          :  normalized
+encoding errors        :  detected   repaired
+suspected wrong tz     :  flagged
+cleaned_events.json    written
+cleaning_log.json      written
+```
+
+---
