@@ -11,7 +11,7 @@ set -euo pipefail
 
 # --- Configuration ---
 TARGET_STATE="${1:-capstone/target_state.json}"
-REPORT_FILE="capstone/validation_report.json"
+REPORT_FILE="capstone/validation.json"
 
 # --- Helper Functions ---
 
@@ -132,7 +132,7 @@ for i in $(seq 0 $((CONTROL_COUNT - 1))); do
                 fi
             else
                 if [[ -f "$ctrl_check_target" ]]; then
-                    verdict="pass"
+                    verdict="pass"REPORT_FILE
                     evidence="File $ctrl_check_target exists"
                 else
                     verdict="fail"
