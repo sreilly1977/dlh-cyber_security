@@ -1,9 +1,11 @@
 #!/bin/bash
 # Name: 8-validate_all.sh
 # Purpose: End-to-end validation suite that reads target_state.json, evaluates every control, and produces a machine-readable report
+# Total controls: loaded from target_state.json controls array, aggregated by family
 # Author: Steve - Cybersecurity Engineer
 # Date: 22 August 2026
 # Exit Codes: 0=All controls passed, 1=One or more controls failed or errored, 2=Environment error
+
 
 set -euo pipefail
 
