@@ -65,17 +65,35 @@ def parse_json_file(filepath):
             continue
     return records
 
-def ensure_minimal_fields(record, required_fields):
-    """Ensure a record has all required fields, setting missing ones to None."""
-    for field in required_fields:
-        if field not in record or record[field] is None:
-            record[field] = None
-    return record
-
-MINIMUM_OUTPUT_FIELDS = [
+REQUIRED_FIELDS = [
     "timestamp_raw", "hostname", "event_id", "channel",
     "provider", "raw_message", "event_data", "source_origin"
 ]
+
+DEFAULTS = {
+    "event_id": 0,
+    "channel": "",
+    "provider": "",
+    "raw_message": "",
+    "event_data": {},
+}
+
+def normalize_record(record, forced_source_origin):
+    """Normalize a single record: force source_origin, fill missing fields
+    with sensible defaults, and map timestamp -> timestamp_raw if needed."""
+    # Force source_origin to the correct value
+    record["source_origin"] = forced_source_origin
+
+    # Map timestamp -> timestamp_raw for student telemetry compatibility
+    if "timestamp_raw" not in record and "timestamp" in record:
+        record["timestamp_raw"] = record["timestamp"]
+
+    # Fill in any missing required fields with appropriate defaults
+    for field in REQUIRED_FIELDS:
+        if field not in record:
+            record[field] = DEFAULTS.get(field, None)
+
+    return record
 
 results = {}
 total_records = 0
@@ -93,11 +111,8 @@ for fname in ["security.json", "sysmon.json", "powershell.json"]:
     records = parse_json_file(fpath)
     results[fname] = {"status": "read", "records": len(records)}
 
-    # Verify source_origin is set to "evidence_pack" and ensure fields
     for rec in records:
-        if rec.get("source_origin") is None:
-            rec["source_origin"] = "evidence_pack"
-        ensure_minimal_fields(rec, MINIMUM_OUTPUT_FIELDS)
+        normalize_record(rec, "evidence_pack")
         combined.append(rec)
 
     total_records += len(records)
@@ -110,13 +125,8 @@ if os.path.isfile(student_file):
     records = parse_json_file(student_file)
     student_records = len(records)
 
-    # Tag student telemetry with source_origin and map timestamp -> timestamp_raw
     for rec in records:
-        if rec.get("source_origin") is None:
-            rec["source_origin"] = "student_telemetry"
-        if "timestamp_raw" not in rec and "timestamp" in rec:
-            rec["timestamp_raw"] = rec["timestamp"]
-        ensure_minimal_fields(rec, MINIMUM_OUTPUT_FIELDS)
+        normalize_record(rec, "student_telemetry")
         combined.append(rec)
 
     results["student_telemetry"] = {"status": "appended", "records": student_records}
