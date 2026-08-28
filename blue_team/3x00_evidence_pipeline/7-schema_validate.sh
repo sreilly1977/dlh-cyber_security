@@ -2,9 +2,8 @@
 #
 # Name: 7-schema_validate.sh
 # Purpose: Validate every record in normalized_events.json against event_schema.json
-#          using standard JSON Schema validation. Converts the custom schema format
-#          to JSON Schema Draft 7, then validates using the jsonschema library.
-#          Streams NDJSON to avoid memory exhaustion on large files.
+#          using pure Python recursive validation. Streams NDJSON line-by-line
+#          to avoid memory exhaustion. No external dependencies.
 # Author: Steve - Cybersecurity Engineer
 # Date: 28 August 2026
 #
@@ -18,26 +17,8 @@ REPORT_FILE="${WORKDIR}/validation_report.json"
 python3 - "${WORKDIR}" "${NORMALIZED_FILE}" "${SCHEMA_FILE}" "${REPORT_FILE}" <<'PYTHON_EOF'
 import json
 import os
-import subprocess
+import re
 import sys
-
-# Ensure jsonschema site-packages is in path
-local_lib = os.path.expanduser("~/.local/lib/python3*/site-packages")
-import glob
-for path in glob.glob(local_lib):
-    if path not in sys.path:
-        sys.path.insert(0, path)
-
-# Ensure jsonschema is available
-try:
-    from jsonschema import Draft7Validator
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "--user", "jsonschema"])
-    # Re-add path after install
-    for path in glob.glob(local_lib):
-        if path not in sys.path:
-            sys.path.insert(0, path)
-    from jsonschema import Draft7Validator
 
 workdir = sys.argv[1]
 normalized_file = sys.argv[2]
@@ -56,195 +37,210 @@ if not os.path.isfile(schema_file):
 with open(schema_file, "r") as f:
     custom_schema = json.load(f)
 
-# --- Convert custom {fields:[...]} schema to standard JSON Schema --------------
+schema_fields = {field["name"]: field for field in custom_schema.get("fields", [])}
+required_fields = [f["name"] for f in custom_schema.get("fields", []) if f.get("required")]
+
+# Build constraint lookup tables from schema
+ENUM_CONSTRAINTS = {}
+PATTERN_CONSTRAINTS = {}
+MIN_MAX_CONSTRAINTS = {}
+NESTED_PROPERTIES = {}
+ARRAY_ITEM_TYPES = {}
+
+for field_name, field_def in schema_fields.items():
+    if field_def.get("enum"):
+        ENUM_CONSTRAINTS[field_name] = set(field_def["enum"])
+    if field_def.get("pattern"):
+        PATTERN_CONSTRAINTS[field_name] = re.compile(field_def["pattern"])
+    if field_def.get("min") is not None or field_def.get("max") is not None:
+        MIN_MAX_CONSTRAINTS[field_name] = {
+            "min": field_def.get("min"),
+            "max": field_def.get("max"),
+        }
+    if field_def.get("type") == "object" and field_def.get("properties"):
+        NESTED_PROPERTIES[field_name] = field_def["properties"]
+    if field_def.get("type") == "array" and field_def.get("items"):
+        ARRAY_ITEM_TYPES[field_name] = field_def["items"].get("type")
 
 TYPE_MAP = {
-    "string": "string",
-    "integer": "integer",
-    "float": "number",
-    "boolean": "boolean",
-    "timestamp": "string",
-    "object": "object",
-    "array": "array",
+    "string": str,
+    "integer": int,
+    "float": (int, float),
+    "boolean": bool,
+    "timestamp": str,
+    "object": dict,
+    "array": list,
 }
 
-def convert_field(field_def):
-    """Recursively convert a custom field definition to a JSON Schema property."""
-    prop = {}
-    field_type = field_def.get("type")
+def check_type_match(value, expected_type):
+    """Check if value matches expected type, respecting bool/int distinction."""
+    if value is None:
+        return True  # null values handled separately
+
+    if expected_type == "integer":
+        return isinstance(value, int) and not isinstance(value, bool)
+    elif expected_type == "float":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    elif expected_type == "boolean":
+        return isinstance(value, bool)
+    elif expected_type == "string":
+        return isinstance(value, str)
+    elif expected_type == "timestamp":
+        return isinstance(value, str)
+    elif expected_type == "object":
+        return isinstance(value, dict)
+    elif expected_type == "array":
+        return isinstance(value, list)
+    return True
+
+def validate_value(field_path, value, field_def):
+    """Recursively validate a value against its field definition.
+    Returns list of error messages."""
+    errors = []
+    expected_type = field_def.get("type")
     is_required = field_def.get("required", False)
 
-    if field_type == "timestamp":
-        base_type = "string"
-        prop["pattern"] = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
-    elif field_type == "object":
-        base_type = "object"
-        if field_def.get("properties"):
-            nested_props = {}
-            nested_required = []
-            for pname, pdef in field_def["properties"].items():
-                nested_props[pname] = convert_field(pdef)
-                if isinstance(pdef, dict) and pdef.get("required"):
-                    nested_required.append(pname)
-            prop["properties"] = nested_props
-            if nested_required:
-                prop["required"] = nested_required
-        if "additionalProperties" in field_def:
-            prop["additionalProperties"] = field_def["additionalProperties"]
-    elif field_type == "array":
-        base_type = "array"
-        if field_def.get("items"):
-            prop["items"] = convert_field(field_def["items"])
-    else:
-        base_type = TYPE_MAP.get(field_type)
-
-    # Set type allowing null for non-required fields
-    if base_type:
+    # Null check
+    if value is None:
         if is_required:
-            prop["type"] = base_type
-        else:
-            prop["type"] = [base_type, "null"]
+            errors.append(f"{field_path}: required field cannot be null")
+        return errors  # null values for optional fields are OK
 
-    if field_def.get("enum"):
-        if is_required:
-            prop["enum"] = field_def["enum"]
-        else:
-            prop["enum"] = [*field_def["enum"], None]
-    if field_def.get("pattern") and field_type != "timestamp":
-        prop["pattern"] = field_def["pattern"]
-    if field_def.get("min") is not None:
-        prop["minimum"] = field_def["min"]
-    if field_def.get("max") is not None:
-        prop["maximum"] = field_def["max"]
+    # Type check
+    if expected_type and expected_type in TYPE_MAP:
+        if not check_type_match(value, expected_type):
+            errors.append(f"{field_path}: expected {expected_type}, got {type(value).__name__}")
+            return errors  # Skip further checks if type is wrong
 
-    return prop
+    # Timestamp format validation
+    if expected_type == "timestamp" and isinstance(value, str):
+        pattern = PATTERN_CONSTRAINTS.get(field_path.split(".")[-1])
+        if pattern:
+            if not pattern.match(value):
+                errors.append(f"{field_path}: invalid timestamp format")
+        elif not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", value):
+            errors.append(f"{field_path}: invalid timestamp format")
 
-def convert_to_json_schema(custom_schema):
-    """Convert {fields: [...]} custom schema to standard JSON Schema Draft 7."""
-    properties = {}
-    required = []
+    # Enum validation
+    base_name = field_path.split(".")[-1]
+    if base_name in ENUM_CONSTRAINTS and value not in ENUM_CONSTRAINTS[base_name]:
+        errors.append(f"{field_path}: invalid value '{value}', expected one of {sorted(ENUM_CONSTRAINTS[base_name])}")
 
-    for field in custom_schema.get("fields", []):
-        name = field["name"]
-        properties[name] = convert_field(field)
-        if field.get("required"):
-            required.append(name)
+    # Pattern validation (non-timestamp strings)
+    if base_name in PATTERN_CONSTRAINTS and expected_type != "timestamp":
+        if isinstance(value, str) and not PATTERN_CONSTRAINTS[base_name].match(value):
+            errors.append(f"{field_path}: value does not match required pattern")
 
-    schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": properties,
-        "additionalProperties": True,
-    }
-    if required:
-        schema["required"] = required
-    return schema
+    # Min/max validation
+    if base_name in MIN_MAX_CONSTRAINTS:
+        constraints = MIN_MAX_CONSTRAINTS[base_name]
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            if constraints["min"] is not None and value < constraints["min"]:
+                errors.append(f"{field_path}: value {value} below minimum {constraints['min']}")
+            if constraints["max"] is not None and value > constraints["max"]:
+                errors.append(f"{field_path}: value {value} above maximum {constraints['max']}")
 
-json_schema = convert_to_json_schema(custom_schema)
-schema_fields = {field["name"]: field for field in custom_schema.get("fields", [])}
-validator = Draft7Validator(json_schema)
+    # Nested object property validation (recursive, all items)
+    if expected_type == "object" and isinstance(value, dict):
+        properties = NESTED_PROPERTIES.get(base_name)
+        if properties:
+            for prop_name, prop_def in properties.items():
+                child_path = f"{field_path}.{prop_name}"
+                if prop_def.get("required") and prop_name not in value:
+                    errors.append(f"{child_path}: required nested property missing")
+                if prop_name in value:
+                    child_value = value[prop_name]
+                    errors.extend(validate_value(child_path, child_value, prop_def))
 
-# --- Detect input format (NDJSON vs JSON array vs single object) ---------------
+    # Array item validation (recursive, all items, no truncation)
+    if expected_type == "array" and isinstance(value, list):
+        item_type = ARRAY_ITEM_TYPES.get(base_name)
+        if item_type:
+            for idx, item in enumerate(value):
+                errors.extend(validate_value(f"{field_path}[{idx}]", item, {"type": item_type}))
+
+    return errors
+
+def validate_record(record):
+    """Validate a single record against the schema.
+    Returns (is_valid, all_errors)."""
+    errors = []
+
+    # Check required top-level fields
+    for field_name in required_fields:
+        if field_name not in record or record[field_name] is None:
+            errors.append(f"missing required field: {field_name}")
+
+    # Validate each field present in the record
+    for field_name, value in record.items():
+        if field_name not in schema_fields:
+            continue  # Additional properties are allowed
+        errors.extend(validate_value(field_name, value, schema_fields[field_name]))
+
+    return len(errors) == 0, errors
+
+# --- Stream NDJSON records -----------------------------------------------------
 
 if not os.path.isfile(normalized_file):
     sys.stderr.write(f"ERROR: normalized file not found: {normalized_file}\n")
     sys.exit(1)
 
-with open(normalized_file, "r", errors="replace") as f:
-    first_char = ""
-    while True:
-        ch = f.read(1)
-        if not ch:
-            break
-        if not ch.isspace():
-            first_char = ch
-            break
-
-# --- Counters -----------------------------------------------------------------
 total_records = 0
 compliant_records = 0
 non_compliant_records = 0
 non_compliant_examples = []
 field_presence = {fn: 0 for fn in schema_fields}
 type_violations = {}
-all_violations = {}
+other_violations = {}
 malformed_lines = []
 
-def process_record(record, line_ref):
-    """Validate a single record and update counters."""
-    global total_records, compliant_records, non_compliant_records
+# Stream line-by-line (memory efficient for large files)
+with open(normalized_file, "r", errors="replace") as f:
+    for line_num, line in enumerate(f, start=1):
+        stripped = line.strip()
+        if not stripped:
+            continue
 
-    total_records += 1
-
-    for field_name in schema_fields:
-        if field_name in record and record[field_name] is not None:
-            field_presence[field_name] += 1
-
-    errors = sorted(validator.iter_errors(record), key=lambda e: list(e.absolute_path))
-
-    if not errors:
-        compliant_records += 1
-        return
-
-    non_compliant_records += 1
-
-    if len(non_compliant_examples) < 20:
-        non_compliant_examples.append({
-            "ref": line_ref,
-            "errors": [
-                f"{e.message} (path: {'.'.join(str(p) for p in e.absolute_path) or 'root'}, validator: {e.validator})"
-                for e in errors
-            ],
-            "sample": {k: v for k, v in list(record.items())[:5]},
-        })
-
-    for err in errors:
-        field_path = ".".join(str(p) for p in err.absolute_path) or "root"
-        all_violations[field_path] = all_violations.get(field_path, 0) + 1
-        if err.validator == "type":
-            type_violations[field_path] = type_violations.get(field_path, 0) + 1
-
-# --- Validate records ---------------------------------------------------------
-
-parsed_as_document = False
-if first_char in ("[", "{"):
-    # Try to parse as a single JSON document first (array or object)
-    with open(normalized_file, "r", errors="replace") as f:
         try:
-            data = json.load(f)
-            parsed_as_document = True
-        except json.JSONDecodeError:
-            parsed_as_document = False  # Fall through to NDJSON streaming
+            record = json.loads(stripped)
+        except json.JSONDecodeError as e:
+            non_compliant_records += 1
+            malformed_lines.append({"line": line_num, "error": str(e)})
+            if len(non_compliant_examples) < 20:
+                non_compliant_examples.append({
+                    "ref": f"line {line_num}",
+                    "errors": ["JSON parse error"],
+                    "sample": stripped[:200] + "..." if len(stripped) > 200 else stripped,
+                })
+            continue
 
-    if parsed_as_document:
-        records = data if isinstance(data, list) else [data]
-        for idx, record in enumerate(records):
-            if not isinstance(record, dict):
-                malformed_lines.append({"index": idx, "error": "non-object element in JSON array"})
-                non_compliant_records += 1
-                continue
-            process_record(record, f"index {idx}")
+        total_records += 1
 
-if not parsed_as_document:
-    # NDJSON — stream line by line (memory-efficient)
-    with open(normalized_file, "r", errors="replace") as f:
-        for line_num, line in enumerate(f, start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                record = json.loads(stripped)
-            except json.JSONDecodeError as e:
-                non_compliant_records += 1
-                malformed_lines.append({"line": line_num, "error": str(e)})
-                if len(non_compliant_examples) < 20:
-                    non_compliant_examples.append({
-                        "ref": f"line {line_num}",
-                        "errors": ["JSON parse error"],
-                        "sample": stripped[:200] + "..." if len(stripped) > 200 else stripped,
-                    })
-                continue
-            process_record(record, f"line {line_num}")
+        # Track field presence
+        for field_name in schema_fields:
+            if field_name in record and record[field_name] is not None:
+                field_presence[field_name] += 1
+
+        # Validate record
+        is_valid, errors = validate_record(record)
+        if is_valid:
+            compliant_records += 1
+        else:
+            non_compliant_records += 1
+            if len(non_compliant_examples) < 20:
+                non_compliant_examples.append({
+                    "ref": f"line {line_num}",
+                    "errors": errors,
+                    "sample": {k: v for k, v in list(record.items())[:5]},
+                })
+
+            # Categorize violations
+            for err in errors:
+                field_path = err.split(":")[0] if ":" in err else "unknown"
+                if "expected" in err and ("got" in err or "type" in err.lower()):
+                    type_violations[field_path] = type_violations.get(field_path, 0) + 1
+                else:
+                    other_violations[field_path] = other_violations.get(field_path, 0) + 1
 
 # --- Calculate per-field completeness ------------------------------------------
 per_field_completeness = {}
@@ -265,7 +261,7 @@ report = {
     "per_field_completeness": per_field_completeness,
     "non_compliant_examples": non_compliant_examples[:20],
     "type_violations_by_field": type_violations,
-    "all_violations_by_field": all_violations,
+    "other_violations_by_field": other_violations,
 }
 
 with open(report_file, "w") as f:
