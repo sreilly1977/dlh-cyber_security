@@ -49,8 +49,8 @@
       "sha256": "29b22c10f5147748432bda911cf7711e9ce8dc725c70b0e32823686a843b2f81",
       "line_count": 24880,
       "record_count": 24880,
-      "first_event_time": "2026-03-1800T00:00:38Z",
-      "last_event_time": "2026-03-2500T23:58:52Z"
+      "first_event_time": "2026-03-18T00:00:38Z",
+      "last_event_time": "2026-03-25T23:58:52Z"
     },
     {
       "path": "linux/syslog",
@@ -59,8 +59,8 @@
       "sha256": "a1515ff2828490774bf83a5d8e8cef37760e802d561cbab4d7a0216d02534faa",
       "line_count": 41736,
       "record_count": 41736,
-      "first_event_time": "2026-03-1800T00:00:20Z",
-      "last_event_time": "2026-03-2500T23:59:51Z"
+      "first_event_time": "2026-03-18T00:00:20Z",
+      "last_event_time": "2026-03-25T23:59:51Z"
     },
     {
       "path": "network/firewall.csv",

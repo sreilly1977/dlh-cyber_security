@@ -25,39 +25,7 @@ for subdir in windows linux network; do
     fi
 done
 
-# --- helper: determine source_type from directory + extension -----------------
-get_source_type() {
-    local dir="$1" ext="$2"
-    case "$dir" in
-        windows) echo "windows_json" ;;
-        linux)   echo "linux_text" ;;
-        network)
-            case "$ext" in
-                csv) echo "network_csv" ;;
-                *)   echo "network_json" ;;
-            esac
-            ;;
-    esac
-}
-
-# --- walk each category and build file list ------------------------------------
-declare -a WIN_FILES=()
-declare -a LIN_FILES=()
-declare -a NET_FILES=()
-
-while IFS= read -r -d '' f; do
-    WIN_FILES+=("$f")
-done < <(find "${EVIDENCE_PACK}/windows" -maxdepth 1 -type f 2>/dev/null | sort -z)
-
-while IFS= read -r -d '' f; do
-    LIN_FILES+=("$f")
-done < <(find "${EVIDENCE_PACK}/linux" -maxdepth 1 -type f 2>/dev/null | sort -z)
-
-while IFS= read -r -d '' f; do
-    NET_FILES+=("$f")
-done < <(find "${EVIDENCE_PACK}/network" -maxdepth 1 -type f 2>/dev/null | sort -z)
-
-# --- build JSON manifest using Python for robust parsing -----------------------
+# --- delegate to Python for all file discovery and parsing ---------------------
 python3 - "${WORKDIR}" "${EVIDENCE_PACK}" "${OUTPUT_FILE}" <<'PYTHON_EOF'
 import hashlib
 import json
@@ -113,13 +81,13 @@ def extract_timestamp_auditd(line):
 
 def extract_timestamp_syslog(line):
     """Parse 'Mon DD HH:MM:SS' syslog timestamp, assume 2026 UTC."""
-    m = re.match(r"^([A-Z][a-z]{2})\s+(\d{2})\s+(\d{2}):(\d{2}):(\d{2})", line)
+    m = re.match(r"^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})", line)
     if m:
         month_name, day, hh, mm, ss = m.groups()
         months = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
                   "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
         mon = months.get(month_name, "01")
-        return f"2026-{mon}-{day}{int(day)-int(day):>02d}T{hh}:{mm}:{ss}Z".replace(f"-{day}", f"-{int(day):02d}")
+        return f"2026-{mon}-{int(day):02d}T{hh}:{mm}:{ss}Z"
     return None
 
 def extract_timestamp_firewall_csv(lines):
@@ -127,7 +95,7 @@ def extract_timestamp_firewall_csv(lines):
     first_ts = last_ts = None
     for i, line in enumerate(lines):
         if i == 0:
-            continue  # skip header
+            continue
         parts = line.strip().split(",")
         if len(parts) >= 1 and parts[0].strip().isdigit():
             dt = datetime.fromtimestamp(int(parts[0].strip()), tz=timezone.utc)
@@ -143,7 +111,6 @@ def extract_timestamp_suricata(line):
         rec = json.loads(line)
         ts = rec.get("timestamp", "")
         if ts:
-            # Format: 2026-03-18T00:00:31.026524+0000
             dt = datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
             return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
     except (json.JSONDecodeError, ValueError):
@@ -178,16 +145,14 @@ def process_file(filepath, dir_name):
     with open(filepath, "r", errors="replace") as f:
         lines = f.readlines()
 
-    line_count = len([l for l in lines if l.strip()])
+    non_empty = [l for l in lines if l.strip()]
+    line_count = len(non_empty)
 
     if source_type == "windows_json":
         record_count = 0
-        for line in lines:
-            stripped = line.strip()
-            if not stripped:
-                continue
+        for line in non_empty:
             record_count += 1
-            ts = extract_timestamp_windows(stripped)
+            ts = extract_timestamp_windows(line.strip())
             if ts:
                 if first_event_time is None:
                     first_event_time = ts
@@ -195,10 +160,8 @@ def process_file(filepath, dir_name):
 
     elif source_type == "linux_text":
         record_count = line_count
-        for line in lines:
+        for line in non_empty:
             stripped = line.strip()
-            if not stripped:
-                continue
             ts = None
             if "msg=audit(" in stripped:
                 ts = extract_timestamp_auditd(stripped)
@@ -210,21 +173,18 @@ def process_file(filepath, dir_name):
                 last_event_time = ts
 
     elif source_type == "network_csv":
-        record_count = max(len(lines) - 1, 0)  # minus header
-        first_event_time, last_event_time = extract_timestamp_firewall_csv(lines)
+        record_count = max(len(non_empty) - 1, 0)
+        first_event_time, last_event_time = extract_timestamp_firewall_csv(non_empty)
 
     elif source_type == "network_json":
         record_count = 0
-        for line in lines:
-            stripped = line.strip()
-            if not stripped:
-                continue
+        for line in non_empty:
             record_count += 1
             ts = None
             if filename == "suricata_eve.json":
-                ts = extract_timestamp_suricata(stripped)
+                ts = extract_timestamp_suricata(line.strip())
             elif filename == "pcap_summary.json":
-                ts = extract_timestamp_pcap(stripped)
+                ts = extract_timestamp_pcap(line.strip())
             if ts:
                 if first_event_time is None:
                     first_event_time = ts
@@ -242,16 +202,12 @@ def process_file(filepath, dir_name):
     }
     return entry
 
-categories = [
-    ("windows", "windows"),
-    ("linux", "linux"),
-    ("network", "network"),
-]
-
+# --- walk each category in sorted order ----------------------------------------
+categories = ["windows", "linux", "network"]
 manifest_files = []
 category_stats = {}
 
-for dir_name, _ in categories:
+for dir_name in categories:
     dir_path = os.path.join(evidence_pack, dir_name)
     if not os.path.isdir(dir_path):
         continue
@@ -289,7 +245,6 @@ def fmt_bytes(n):
         return f"{n / 1_000:.1f} KB"
     return f"{n} B"
 
-labels = {"windows": "windows", "linux": "linux", "network": "network"}
 total_files = 0
 total_bytes = 0
 
