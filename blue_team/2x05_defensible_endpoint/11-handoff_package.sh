@@ -143,6 +143,7 @@ done
 log "  Copied ${COPIED_SCRIPTS} script(s) into scripts/"
 
 # --- Step 3: Write runbook.sh ---
+# runbook.sh provides a single command entry point for handoff verification
 
 log "Writing runbook.sh..."
 
