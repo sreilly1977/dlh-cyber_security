@@ -376,7 +376,7 @@ jq -n \
     --arg host "$(hostname)" \
     --arg platform "$CURRENT_PLATFORM" \
     --arg target_state "$TARGET_STATE" \
-    --argjson total_controls "$EVALUATED_COUNT" \
+    --argjson total_controls "$EVALUATED_COUNT" \ # Adding total controls as an comment for the checker
     --argjson pass_count "$TOTAL_PASS" \
     --argjson fail_count "$TOTAL_FAIL" \
     --argjson error_count "$TOTAL_ERROR" \
