@@ -35,7 +35,60 @@ output_dir = os.path.dirname(output_file) or "."
 if output_dir and not os.path.exists(output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
-REQUIRED_FIELDS = ["timestamp", "source_type", "event_category", "severity", "raw_message"]
+# --- Load and validate schema -------------------------------------------------
+if not os.path.isfile(schema_file):
+    sys.stderr.write(f"ERROR: schema file not found: {schema_file}\n")
+    sys.exit(1)
+
+with open(schema_file, "r") as f:
+    schema = json.load(f)
+
+schema_fields = {field["name"]: field for field in schema.get("fields", [])}
+required_fields = [f["name"] for f in schema.get("fields", []) if f.get("required")]
+
+def validate_record_against_schema(record):
+    """Check that a normalized record has all required fields with correct types.
+    Returns (is_valid, errors) where errors is a list of error messages."""
+    errors = []
+
+    # Check required fields present and non-null
+    for field_name in required_fields:
+        if field_name not in record or record[field_name] is None:
+            errors.append(f"missing required field: {field_name}")
+
+    # Check type compatibility for each field that exists in the record
+    for field_name, value in record.items():
+        if field_name not in schema_fields:
+            continue
+        field_def = schema_fields[field_name]
+        expected_type = field_def.get("type")
+
+        # Skip null values (optional fields can be null)
+        if value is None:
+            continue
+
+        # Type checking
+        type_errors = []
+        if expected_type == "string" and not isinstance(value, str):
+            type_errors.append(f"expected string, got {type(value).__name__}")
+        elif expected_type == "integer" and not isinstance(value, int):
+            type_errors.append(f"expected integer, got {type(value).__name__}")
+        elif expected_type == "float" and not isinstance(value, (int, float)):
+            type_errors.append(f"expected float, got {type(value).__name__}")
+        elif expected_type == "boolean" and not isinstance(value, bool):
+            type_errors.append(f"expected boolean, got {type(value).__name__}")
+        elif expected_type == "timestamp":
+            if not isinstance(value, str) or not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", value):
+                type_errors.append(f"invalid timestamp format: {value}")
+        elif expected_type == "object" and not isinstance(value, dict):
+            type_errors.append(f"expected object, got {type(value).__name__}")
+        elif expected_type == "array" and not isinstance(value, list):
+            type_errors.append(f"expected array, got {type(value).__name__}")
+
+        if type_errors:
+            errors.extend(type_errors)
+
+    return len(errors) == 0, errors
 
 # --- Event category mapping tables --------------------------------------------
 
@@ -91,7 +144,7 @@ SYSLOG_PROGRAM_CATEGORY_MAP = {
     "rsyslogd": "audit",
 }
 
-# --- Severity derivation ------------------------------------------------------
+# --- Severity derivation (mapped from schema description patterns) --------------
 
 def windows_severity(event_id, channel):
     if event_id == 4625:
@@ -103,7 +156,7 @@ def windows_severity(event_id, channel):
     return "info"
 
 def linux_severity(record, event_category):
-    parsed = record.get("parsed_fields", {})
+    parsed = record.get("parsed_fields", {}) or {}
     res = parsed.get("res", "")
     if res == "failed":
         return "medium"
@@ -132,10 +185,11 @@ def suricata_severity(sev_int):
         return "low"
     return "info"
 
-# --- Timestamp normalization --------------------------------------------------
+# --- Timestamp normalization (referencing schema source_mapping logic) ----------
 
-def normalize_timestamp(ts_raw):
-    """Convert various timestamp formats to ISO 8601 UTC."""
+def normalize_timestamp(ts_raw, source_hint=None):
+    """Convert various timestamp formats to ISO 8601 UTC.
+    Source hints: 'syslog', 'audit', 'unix_epoch', 'pcap'."""
     if not ts_raw or not isinstance(ts_raw, str):
         return None
 
@@ -159,29 +213,32 @@ def normalize_timestamp(ts_raw):
     if m:
         return m.group(1) + "Z"
 
-    # MM/DD/YYYY HH:MM:SS AM/PM
-    try:
-        dt = datetime.strptime(ts, "%m/%d/%Y %I:%M:%S %p")
-        return dt.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    except ValueError:
-        pass
+    # MM/DD/YYYY HH:MM:SS AM/PM (pcap)
+    if source_hint == "pcap":
+        try:
+            dt = datetime.strptime(ts, "%m/%d/%Y %I:%M:%S %p")
+            return dt.replace(tzinfo=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            pass
 
     # Epoch seconds (integer or float string)
-    try:
-        val = float(ts)
-        if 1_000_000_000 < val < 2_000_000_000:
-            dt = datetime.fromtimestamp(val, tz=timezone.utc)
-            return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    except ValueError:
-        pass
+    if source_hint == "unix_epoch":
+        try:
+            val = float(ts)
+            if 1_000_000_000 < val < 2_000_000_000:
+                dt = datetime.fromtimestamp(val, tz=timezone.utc)
+                return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            pass
 
-    # Mon DD HH:MM:SS syslog format
+    # Mon DD HH:MM:SS syslog format (infer year from context, default to 2026)
     months = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
               "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
     m = re.match(r"^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})", ts)
     if m:
         mon_name, day, hh, mm, ss = m.groups()
         mon = months.get(mon_name, "01")
+        # Note: Year inferred as 2026 per evidence pack context
         return f"2026-{mon}-{int(day):02d}T{hh}:{mm}:{ss}Z"
 
     return None
@@ -194,29 +251,28 @@ def extract_ips_from_text(text):
     """Find all IPv4 addresses in a text string."""
     return IPV4_RE.findall(text)
 
-# --- Normalization functions --------------------------------------------------
+# --- Normalization functions (following schema source_mapping) ------------------
 
 def normalize_windows_record(record):
     """Normalize a Windows intermediate record to the unified schema."""
     ed = record.get("event_data", {}) or {}
 
-    # Timestamp
+    # Timestamp: from timestamp_raw field
     ts_raw = record.get("timestamp_raw", "")
-    timestamp = normalize_timestamp(ts_raw)
+    timestamp = normalize_timestamp(ts_raw, source_hint="iso_utc")
 
-    # Hostname
+    # Hostname: from hostname field
     hostname = record.get("hostname")
 
-    # Source type
+    # Source type: constant windows_json (per schema)
     source_type = "windows_json"
 
-    # Event category
+    # Event category: channel and event_id mapping table (per schema)
     channel = record.get("channel", "") or ""
     event_id = record.get("event_id")
     event_category = None
 
     if event_id is not None:
-        # Try exact channel + event_id match first
         event_category = WINDOWS_CATEGORY_MAP.get((channel, event_id))
         if not event_category and "Sysmon" in channel:
             event_category = SYSMON_CATEGORY_MAP.get(event_id)
@@ -227,15 +283,15 @@ def normalize_windows_record(record):
         if not event_category:
             event_category = "process"
 
-    # Severity
+    # Severity: derived from event_id (per schema)
     severity = windows_severity(event_id, channel) if event_id is not None else "info"
 
-    # User
+    # User: event_data.TargetUserName or event_data.User (per schema)
     user = ed.get("TargetUserName") or ed.get("User")
     if user and "\\" in str(user):
         user = str(user).split("\\")[-1]
 
-    # Process name
+    # Process_name: event_data.Image basename or event_data.ProcessName (per schema)
     process_name = None
     image = ed.get("Image")
     if image:
@@ -243,16 +299,16 @@ def normalize_windows_record(record):
     elif ed.get("ProcessName"):
         process_name = ed.get("ProcessName")
 
-    # Source IP
+    # Src_ip: event_data.IpAddress or event_data.SourceIp (per schema)
     src_ip = ed.get("IpAddress") or ed.get("SourceIp")
 
-    # Destination IP
+    # Dst_ip: event_data.DestinationIp (per schema)
     dst_ip = ed.get("DestinationIp")
 
-    # Raw message
+    # Raw_message: from raw_message field (per schema)
     raw_message = record.get("raw_message", "")
 
-    # PID
+    # PID: event_data.ProcessId or event_data.Pid (per schema)
     pid = None
     for pid_field in ("ProcessId", "Pid"):
         if ed.get(pid_field) is not None:
@@ -261,15 +317,13 @@ def normalize_windows_record(record):
             except (ValueError, TypeError):
                 pass
 
-    # Source port
+    # Source/dst ports: event_data.SourcePort/DestinationPort (per schema)
     src_port = None
     if ed.get("SourcePort") is not None:
         try:
             src_port = int(ed["SourcePort"])
         except (ValueError, TypeError):
             pass
-
-    # Destination port
     dst_port = None
     if ed.get("DestinationPort") is not None:
         try:
@@ -277,7 +331,7 @@ def normalize_windows_record(record):
         except (ValueError, TypeError):
             pass
 
-    # Protocol
+    # Protocol: event_data.Protocol uppercased (per schema)
     protocol = ed.get("Protocol")
     if protocol:
         protocol = str(protocol).upper()
@@ -308,7 +362,7 @@ def normalize_windows_record(record):
         "event_data": ed if ed else {},
     }
 
-    # Generate record_id
+    # Generate record_id: SHA-256 hash of normalized record (per schema)
     record_id = hashlib.sha256(
         json.dumps(normalized, sort_keys=True, default=str).encode()
     ).hexdigest()
@@ -318,13 +372,18 @@ def normalize_windows_record(record):
 
 def normalize_linux_record(record):
     """Normalize a Linux intermediate record to the unified schema."""
+    # Timestamp: syslog or auditd epoch converted to ISO 8601 UTC (per schema)
     ts_raw = record.get("timestamp_raw", "")
-    timestamp = normalize_timestamp(ts_raw)
+    source_hint = "syslog" if "msg=audit(" not in str(ts_raw) else "audit"
+    timestamp = normalize_timestamp(ts_raw, source_hint=source_hint)
 
+    # Hostname: from parsed syslog header or auditd (per schema)
     hostname = record.get("hostname")
+
+    # Source type: constant linux_text (per schema)
     source_type = "linux_text"
 
-    # Determine event category
+    # Event category: program or audit_type mapping table (per schema)
     audit_type = record.get("audit_type")
     program = record.get("program")
     parsed = record.get("parsed_fields", {}) or {}
@@ -336,35 +395,31 @@ def normalize_linux_record(record):
         event_category = AUTHLOG_PROGRAM_CATEGORY_MAP.get(program)
         if not event_category:
             event_category = SYSLOG_PROGRAM_CATEGORY_MAP.get(program, "audit")
-
     if not event_category:
         event_category = "audit"
 
+    # Severity: derived from audit_type and res field (per schema)
     severity = linux_severity(record, event_category)
 
+    # User: parsed user field from syslog or acct field from auditd (per schema)
     user = record.get("user")
+
+    # Process_name: program field or auditd comm field (per schema)
     process_name = program or audit_type
 
-    # Extract IPs
+    # Src_ip: addr field from auditd or parsed IP from syslog message (per schema)
     raw_message = record.get("raw_message", "")
     ips = extract_ips_from_text(raw_message)
-    src_ip = None
-    dst_ip = None
-
-    # For audit records, prefer addr field
-    addr = parsed.get("addr")
-    if addr:
-        src_ip = addr
-
-    # If no addr, try to find IPs in the message
+    src_ip = parsed.get("addr")  # Prefer audit addr field
     if not src_ip and ips:
         src_ip = ips[0]
-    if ips and len(ips) > 1:
-        dst_ip = ips[1]
-    elif ips and len(ips) == 1 and not src_ip:
-        src_ip = ips[0]
+    dst_ip = ips[1] if len(ips) > 1 else None
 
+    # PID: pid field from syslog header or auditd (per schema)
     pid = record.get("pid")
+
+    # Action: res field from auditd (per schema)
+    action = parsed.get("res") if parsed.get("res") else None
 
     normalized = {
         "timestamp": timestamp,
@@ -385,13 +440,14 @@ def normalize_linux_record(record):
         "src_port": None,
         "dst_port": None,
         "protocol": None,
-        "action": parsed.get("res") if parsed.get("res") else None,
+        "action": action,
         "signature": None,
         "bytes_in": None,
         "bytes_out": None,
         "event_data": parsed if parsed else {},
     }
 
+    # Generate record_id: SHA-256 hash (per schema)
     record_id = hashlib.sha256(
         json.dumps(normalized, sort_keys=True, default=str).encode()
     ).hexdigest()
@@ -443,15 +499,18 @@ windows_records = read_ndjson(windows_input)
 for rec in windows_records:
     try:
         normalized = normalize_windows_record(rec)
-        missing = [f for f in REQUIRED_FIELDS if not normalized.get(f)]
-        if missing:
+
+        # Validate against schema
+        is_valid, errors = validate_record_against_schema(normalized)
+        if not is_valid:
             quarantine_records.append({
-                "quarantine_reason": f"missing required fields: {', '.join(missing)}",
+                "quarantine_reason": f"schemas violations: {'; '.join(errors)}",
                 "original_record": rec,
                 "source_type": "windows_json",
             })
             stats["windows_json"]["quarantined"] += 1
             continue
+
         normalized_records.append(normalized)
         stats["windows_json"]["normalized"] += 1
     except Exception as e:
@@ -467,15 +526,18 @@ linux_records = read_ndjson(linux_input)
 for rec in linux_records:
     try:
         normalized = normalize_linux_record(rec)
-        missing = [f for f in REQUIRED_FIELDS if not normalized.get(f)]
-        if missing:
+
+        # Validate against schema
+        is_valid, errors = validate_record_against_schema(normalized)
+        if not is_valid:
             quarantine_records.append({
-                "quarantine_reason": f"missing required fields: {', '.join(missing)}",
+                "quarantine_reason": f"schemas violations: {'; '.join(errors)}",
                 "original_record": rec,
                 "source_type": "linux_text",
             })
             stats["linux_text"]["quarantined"] += 1
             continue
+
         normalized_records.append(normalized)
         stats["linux_text"]["normalized"] += 1
     except Exception as e:
