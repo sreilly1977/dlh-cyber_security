@@ -36,15 +36,15 @@ if not os.path.isfile(input_file):
     sys.stderr.write(f"ERROR: input file not found: {input_file}\n")
     sys.exit(1)
 
-# Evidence pack date range: March 2026 (based on observed data: 270,735 of 270,895 records)
+# Evidence pack date range: March 2026
 EXPECTED_START = datetime(2026, 3, 1, 0, 0, 0, tzinfo=timezone.utc)
 EXPECTED_END = datetime(2026, 3, 31, 23, 59, 59, tzinfo=timezone.utc)
-# Allow 12 hour tolerance for timezone shifts
 TZ_TOLERANCE = timedelta(hours=12)
 
 ISO_Z_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
-ISO_MS_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})\.\d+Z$")
-ISO_OFFSET_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.\d+)?([+\-]\d{2}:?\d{2})$")
+ISO_MS_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d+)Z$")
+ISO_OFFSET_RE = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?([+\-])(\d{2}):?(\d{2})$")
 SYSLOG_RE = re.compile(r"^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})$")
 MONTHS = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
           "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
@@ -52,46 +52,77 @@ MONTHS = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
 REPLACEMENT_CHAR = "\ufffd"
 
 def parse_timestamp(ts_raw):
-    """Returns (datetime, method) or (None, None)."""
+    """Parse timestamp string into datetime in UTC.
+    Properly converts timezone offsets to UTC.
+    Returns (datetime_utc, method) or (None, None)."""
     if not ts_raw or not isinstance(ts_raw, str):
         return None, None
     ts = ts_raw.strip()
 
+    # Method 1: Valid ISO 8601 Z
     if ISO_Z_RE.match(ts):
         try:
-            return datetime.fromisoformat(ts.replace("Z", "+00:00")), "valid"
+            dt = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ")
+            return dt.replace(tzinfo=timezone.utc), "valid_iso_z"
         except ValueError:
             pass
 
+    # Method 2: ISO with milliseconds
     m = ISO_MS_RE.match(ts)
     if m:
         try:
-            return datetime.fromisoformat((m.group(1) + "Z").replace("Z", "+00:00")), "stripped_ms"
+            year, mon, day, hh, mm, ss = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5)), int(m.group(6))
+            dt = datetime(year, mon, day, hh, mm, ss, tzinfo=timezone.utc)
+            return dt, "stripped_ms"
         except ValueError:
             pass
 
+    # Method 3: ISO with timezone offset - PROPERLY convert to UTC
     m = ISO_OFFSET_RE.match(ts)
     if m:
         try:
-            return datetime.fromisoformat((m.group(1) + "Z").replace("Z", "+00:00")), "converted_offset"
+            year = int(m.group(1))
+            mon = int(m.group(2))
+            day = int(m.group(3))
+            hh = int(m.group(4))
+            mm = int(m.group(5))
+            ss = int(m.group(6))
+            sign = m.group(8)
+            off_hh = int(m.group(9))
+            off_mm = int(m.group(10))
+
+            # Create the datetime with the original offset
+            offset = timedelta(hours=off_hh, minutes=off_mm)
+            if sign == "-":
+                offset = -offset
+
+            dt = datetime(year, mon, day, hh, mm, ss, tzinfo=timezone(offset))
+
+            # Convert to UTC
+            dt_utc = dt.astimezone(timezone.utc)
+            return dt_utc, "converted_offset_to_utc"
         except ValueError:
             pass
 
+    # Method 4: Syslog format
     m = SYSLOG_RE.match(ts)
     if m:
         mon = MONTHS.get(m.group(1), "01")
         ts_str = f"2026-{mon}-{int(m.group(2)):02d}T{m.group(3)}:{m.group(4)}:{m.group(5)}Z"
         try:
-            return datetime.fromisoformat(ts_str.replace("Z", "+00:00")), "syslog"
+            dt = datetime.strptime(ts_str, "%Y-%m-%dT%H:%M:%SZ")
+            return dt.replace(tzinfo=timezone.utc), "syslog"
         except ValueError:
             pass
 
+    # Method 5: pcap format
     try:
         dt = datetime.strptime(ts, "%m/%d/%Y %I:%M:%S %p")
         return dt.replace(tzinfo=timezone.utc), "pcap"
     except ValueError:
         pass
 
+    # Method 6: Unix epoch
     try:
         val = float(ts)
         if 1_000_000_000 < val < 2_000_000_000:
@@ -110,28 +141,22 @@ def has_encoding_issue(text):
     return REPLACEMENT_CHAR in text
 
 def attempt_latin1_repair(text):
+    """Repair mojibake by reversing a Latin-1-as-UTF-8 double encoding.
+    The standard pattern: text was encoded as UTF-8, then incorrectly decoded
+    as Latin-1, producing mojibake. Reverse: encode as Latin-1, decode as UTF-8."""
     if not has_encoding_issue(text):
         return text, False
     try:
-        repaired = text.encode("utf-8", errors="surrogatepass").decode("latin-1")
-        if REPLACEMENT_CHAR not in repaired:
-            return repaired, True
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        pass
-    try:
-        repaired = text.encode("latin-1").decode("utf-8", errors="replace")
+        repaired = text.encode("latin-1").decode("utf-8")
         if REPLACEMENT_CHAR not in repaired:
             return repaired, True
     except (UnicodeEncodeError, UnicodeDecodeError):
         pass
     return text, False
 
-def dedup_hash(record):
-    ts = record.get("timestamp", "")
-    hostname = (record.get("hostname") or "").lower()
-    source_type = record.get("source_type", "")
-    raw_msg = record.get("raw_message", "")
-    key = f"{ts}|{hostname}|{source_type}|{raw_msg}"
+def dedup_hash_original(timestamp, hostname, source_type, raw_message):
+    """Compute dedup hash from ORIGINAL values before any mutations."""
+    key = f"{timestamp}|{hostname or ''}|{source_type or ''}|{raw_message or ''}"
     return hashlib.md5(key.encode("utf-8", errors="replace")).hexdigest()
 
 stats_mal_detected = 0
@@ -169,6 +194,12 @@ with open(input_file, "r", errors="replace") as fin, \
             continue
 
         record_id = record.get("record_id", "unknown")
+
+        # Capture ORIGINAL values for dedup BEFORE any mutations
+        orig_timestamp = record.get("timestamp", "")
+        orig_hostname = record.get("hostname")
+        orig_source_type = record.get("source_type", "")
+        orig_raw_message = record.get("raw_message", "")
 
         # 1. Hostname case normalization
         hostname = record.get("hostname")
@@ -241,31 +272,41 @@ with open(input_file, "r", errors="replace") as fin, \
                     "reason": f"Could not parse timestamp. Record dropped.",
                 })
                 continue
+        elif method == "converted_offset_to_utc":
+            # If the offset was converted, update the timestamp to UTC form
+            utc_ts = fmt_ts(dt)
+            if utc_ts != original_ts:
+                record["timestamp"] = utc_ts
+                cleaning_log.append({
+                    "defect_type": "timezone_offset_normalized",
+                    "original_value": original_ts,
+                    "corrected_value": utc_ts,
+                    "record_id": record_id,
+                    "reason": f"Converted timezone offset to UTC: {original_ts} -> {utc_ts}",
+                })
 
-        # 4. TIMEZONE ANOMALY CHECK - Check ALL records
-        # Records outside March 2026 ± 12 hours are flagged
+        # 4. Timezone anomaly check
         if dt < EXPECTED_START - TZ_TOLERANCE or dt > EXPECTED_END + TZ_TOLERANCE:
             stats_tz_flagged += 1
             cleaning_log.append({
                 "defect_type": "suspected_wrong_tz",
                 "original_value": original_ts,
-                "corrected_value": original_ts,
+                "corrected_value": record.get("timestamp", original_ts),
                 "record_id": record_id,
-                "reason": f"Timestamp {original_ts} falls outside expected evidence pack date range (March 2026) by more than 12 hours",
+                "reason": f"Timestamp falls outside expected evidence pack date range (March 2026) by more than 12 hours",
             })
-            # Keep the record - just flag it (don't drop)
 
-        # 5. Deduplication
-        dhash = dedup_hash(record)
+        # 5. Deduplication - using ORIGINAL values for forensic integrity
+        dhash = dedup_hash_original(orig_timestamp, orig_hostname, orig_source_type, orig_raw_message)
         if dhash in seen_hashes:
             stats_dup_detected += 1
             stats_dup_removed += 1
             cleaning_log.append({
                 "defect_type": "duplicate",
-                "original_value": original_ts,
+                "original_value": orig_timestamp,
                 "corrected_value": None,
                 "record_id": record_id,
-                "reason": "Duplicate of earlier record (same timestamp, hostname, source_type, raw_message)",
+                "reason": "Duplicate of earlier record (same original timestamp, hostname, source_type, raw_message)",
             })
             continue
 
