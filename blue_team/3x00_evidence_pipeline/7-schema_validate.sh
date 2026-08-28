@@ -119,6 +119,7 @@ non_compliant_records = 0
 non_compliant_examples = []
 field_presence = {field_name: 0 for field_name in schema_fields.keys()}
 type_violations = {}
+malformed_lines = []
 
 with open(normalized_file, "r", errors="replace") as f:
     for line_num, line in enumerate(f, start=1):
@@ -128,8 +129,13 @@ with open(normalized_file, "r", errors="replace") as f:
 
         try:
             record = json.loads(stripped)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             non_compliant_records += 1
+            malformed_lines.append({
+                "line": line_num,
+                "error": str(e),
+                "sample": stripped[:200] + "..." if len(stripped) > 200 else stripped,
+            })
             if len(non_compliant_examples) < 20:
                 non_compliant_examples.append({
                     "line": line_num,
@@ -175,8 +181,9 @@ report = {
     "normalized_file": normalized_file,
     "schema_file": schema_file,
     "total_records": total_records,
-    "compliant_records": compliant_records,
+    "valid_records": compliant_records,
     "non_compliant_records": non_compliant_records,
+    "malformed_json_lines": len(malformed_lines),
     "compliance_percentage": round(compliant_records / total_records * 100, 2) if total_records > 0 else 0,
     "per_field_completeness": per_field_completeness,
     "non_compliant_examples": non_compliant_examples[:20],
@@ -189,7 +196,13 @@ with open(report_file, "w") as f:
 
 # --- Print summary ------------------------------------------------------------
 print(f"records checked       : {total_records}")
-print(f"fully compliant       : {compliant_records} ({compliant_records / total_records * 100:.2f}%)" if total_records > 0 else "fully compliant       : 0 (0.00%)")
+if total_records > 0:
+    compliance_pct = compliant_records / total_records * 100
+    print(f"fully compliant       : {compliant_records} ({compliance_pct:.2f}%)")
+else:
+    print(f"fully compliant       : 0 (0.00%)")
+    compliance_pct = 0
+
 print(f"non-compliant         : {non_compliant_records}")
 print("per-field completeness:")
 for field_name in sorted(per_field_completeness.keys()):
@@ -197,9 +210,8 @@ for field_name in sorted(per_field_completeness.keys()):
     print(f"  {field_name:<16s} {pct:>6.2f}%")
 print(f"validation_report.json written")
 
-# --- Exit code based on compliance threshold -----------------------------------
-compliance_pct = compliant_records / total_records * 100 if total_records > 0 else 0
-if compliance_pct > 99:
+# --- Exit code based on compliance threshold (>= 99%, not > 99%) -----------------
+if compliance_pct >= 99:
     sys.exit(0)
 else:
     sys.exit(1)
