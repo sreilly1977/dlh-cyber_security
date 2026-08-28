@@ -1,24 +1,22 @@
-[*] Scanning enabled services...
-    Enabled services found: 7
-[*] Comparing against MedDefense whitelist (9 required services)...
-  apparmor.service     [ACTIVE]
-  auditd.service     [ACTIVE]
-  cron.service     [ACTIVE]
-  rsyslog.service     [ACTIVE]
-  ssh.service     [ACTIVE]
-  systemd-timesyncd.service     [ACTIVE]
-  ufw.service     [ACTIVE]
-
-[*] Verifying required services...
-  ssh.service     [RUNNING]
-  ufw.service     [RUNNING]
-  auditd.service     [RUNNING]
-  apparmor.service     [RUNNING]
-  cron.service     [RUNNING]
-  rsyslog.service     [RUNNING]
-  systemd-timesyncd.service     [RUNNING]
-  apache2.service     [NOT RUNNING]
-  mysql.service     [NOT RUNNING]
-
-Before: 7 | After: 7 | Disabled: 0
-Required services verified running: 7/9
+﻿[14-service_accounts.ps1][INFO] Auditing local services...
+[14-service_accounts.ps1][INFO] Already disabled: RemoteRegistry
+[14-service_accounts.ps1][INFO] Already disabled: lmhosts
+[14-service_accounts.ps1][INFO] Already disabled: SSDPSRV
+[14-service_accounts.ps1][INFO] Already disabled: upnphost
+[14-service_accounts.ps1][INFO] Already disabled: WerSvc
+[14-service_accounts.ps1][INFO] Already disabled: MessagingService
+[14-service_accounts.ps1][INFO] Not found: Fax - skipping
+[14-service_accounts.ps1][INFO] Not found: ftpsvc - skipping
+[14-service_accounts.ps1][INFO] Not found: Telnet - skipping
+[14-service_accounts.ps1][INFO] Already disabled: bthserv
+[14-service_accounts.ps1][INFO] Already disabled: SCardSvr
+[14-service_accounts.ps1][INFO] Already disabled: WbioSrvc
+[14-service_accounts.ps1][INFO] Already disabled: TrkWks
+[14-service_accounts.ps1][INFO] Checking service account configurations...
+[14-service_accounts.ps1][INFO] No services running as Administrator detected
+[14-service_accounts.ps1][INFO] Verification:
+  Services disabled this run: 0
+  Already disabled: 10
+  Not found (expected): 3
+  Services running as Admin: 0
+[14-service_accounts.ps1][INFO] Service hardening completed successfully

@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-08-21T21:12:20+00:00",
+  "host": "hawthorne-app-01",
+  "target_host": "Hawthorne-App-01",
+  "source_pcap_directory": "/home/analyst/MedDefense_Lab/capstone/PCAPs/",
+  "rules_file": "capstone/network/meddefense_custom.rules",
+  "total_alert_records": 0,
+  "alerts": []
+}

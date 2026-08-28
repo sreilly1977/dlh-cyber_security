@@ -392,3 +392,43 @@ Write a script 7-network_deploy.sh that orchestrates the deployment and validati
 
 ---
 
+# [8. The End-to-End Validation Suite](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/8-validate_all.sh)
+
+## Goal: 
+
+Run a single validation suite that reads target_state.json, checks every control and produces one machine-readable report that decides whether the environment is ready for handoff.
+
+## Context: 
+
+This is the single command that Dr. Morales said she wanted to run. No human judgment. No narrative. No partial credit. It reads the target state, walks every control, performs the specified check, records the evidence path and produces a per-control verdict. If every control passes, the environment is ready. If any control fails, the exit code is non-zero and the failing controls are listed with their evidence paths so that the engineer can fix the exact gap and re-run.
+
+## Instructions: 
+
+Write a script 8-validate_all.sh that loads capstone/target_state.json and evaluates every control. The script must:
+
+    For each control in target_state.controls:
+
+        Dispatch on check_type:
+
+            file_exists: check check_target path
+
+            json_field_equals: load the JSON file and compare the field to expected_value
+
+            json_field_gte: load the JSON file and compare the numeric field against expected_value
+
+            command_exit_zero: run the command in check_target and check its exit code
+
+            grep_match: run grep -E for expected_value in the file at check_target
+
+        Record the verdict (pass, fail, error) and the evidence (the exact path, command or match that produced the verdict)
+
+    Aggregate: total controls, pass count, fail count, error count, pass percentage
+
+    Print a clean table to stdout showing one row per control family with the family totals
+
+    Exit 0 if fail_count == 0 AND error_count == 0. Otherwise exit 1.
+
+Hint: the script is a dispatcher, not a rewrite of every control. Reuse the artifacts produced by T3 through T7 by pointing check_target at them in target_state.json.
+
+---
+

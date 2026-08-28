@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-08-21T21:12:22+00:00",
+  "host": "hawthorne-app-01",
+  "target_host": "Hawthorne-App-01",
+  "labeled_pcap_count": 6,
+  "results": [
+    {
+      "pcap": "clinical_wrong_db.pcap",
+      "alerts_detected": 192,
+      "signatures": "MEDDEFENSE MySQL connection detected;MEDDEFENSE Suspicious medical device egress traffic;",
+      "result": "pass"
+    },
+    {
+      "pcap": "dns_tunnel.pcap",
+      "alerts_detected": 170,
+      "signatures": "MEDDEFENSE DNS activity detected - review for tunneling;MEDDEFENSE DNS tunneling suspected long query (UDP);",
+      "result": "pass"
+    },
+    {
+      "pcap": "guest_smb.pcap",
+      "alerts_detected": 110,
+      "signatures": "MEDDEFENSE SMB access from external source;MEDDEFENSE Suspicious medical device egress traffic;",
+      "result": "pass"
+    },
+    {
+      "pcap": "large_outbound.pcap",
+      "alerts_detected": 6,
+      "signatures": "MEDDEFENSE Suspicious medical device egress traffic;",
+      "result": "pass"
+    },
+    {
+      "pcap": "meddev_egress.pcap",
+      "alerts_detected": 34,
+      "signatures": "MEDDEFENSE DNS over TCP detected (potential tunneling);MEDDEFENSE DNS TXT record query over TCP;MEDDEFENSE Suspicious medical device egress traffic;",
+      "result": "pass"
+    },
+    {
+      "pcap": "telnet_meddev.pcap",
+      "alerts_detected": 6,
+      "signatures": "MEDDEFENSE Suspicious medical device egress traffic;",
+      "result": "pass"
+    }
+  ],
+  "result": "pass"
+}

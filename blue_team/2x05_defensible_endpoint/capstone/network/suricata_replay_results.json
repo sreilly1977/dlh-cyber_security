@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-08-21T21:12:20+00:00",
+  "host": "hawthorne-app-01",
+  "target_host": "Hawthorne-App-01",
+  "pcap_count": 3,
+  "total_alerts": 2244,
+  "results": [
+    {
+      "pcap": "mixed_traffic.pcap",
+      "alerts_detected": 308,
+      "output_dir": "capstone/network/suricata_replay/mixed_traffic"
+    },
+    {
+      "pcap": "smoke.pcap",
+      "alerts_detected": 0,
+      "output_dir": "capstone/network/suricata_replay/smoke"
+    },
+    {
+      "pcap": "suspicious_session.pcap",
+      "alerts_detected": 1936,
+      "output_dir": "capstone/network/suricata_replay/suspicious_session"
+    }
+  ],
+  "result": "pass"
+}

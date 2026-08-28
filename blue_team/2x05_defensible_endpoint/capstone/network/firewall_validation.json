@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-08-21T21:12:19+00:00",
+  "host": "hawthorne-app-01",
+  "target_host": "Hawthorne-App-01",
+  "ruleset_file": "capstone/network/nftables_ruleset.nft",
+  "allowed_services_count": 4,
+  "denied_services_count": 8,
+  "denied_services_verified": 8,
+  "details": "ssh:22/tcp OK; http:80/tcp OK; https:443/tcp OK; mysql:3306/tcp OK; default-deny OK (2 chains); denied-services verified (8/8)",
+  "result": "pass"
+}

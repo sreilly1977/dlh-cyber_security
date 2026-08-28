@@ -1,0 +1,52 @@
+# MedDefense Custom Suricata Rules
+# Target Host: Hawthorne-App-01
+# Author: Steve - Cybersecurity Engineer
+# Date: 21 August 2026
+
+# Rule 1: Detect Telnet credential exchange (legacy cleartext)
+alert tcp any any -> any 23 (msg:"MEDDEFENSE Telnet cleartext login attempt"; flow:to_server,established; content:"login"; nocase; classtype:attempted-admin; sid:9001001; rev:1;)
+alert tcp any any -> any 23 (msg:"MEDDEFENSE Telnet login detected"; flow:to_server; content:"Username"; nocase; classtype:attempted-admin; sid:9001011; rev:1;)
+
+# Rule 2: Detect FTP cleartext authentication
+alert tcp any any -> any 21 (msg:"MEDDEFENSE FTP cleartext authentication"; flow:to_server,established; content:"USER"; nocase; classtype:attempted-user; sid:9001002; rev:1;)
+
+# Rule 3: Detect SMB access (SMB v1/v2/v3)
+alert tcp any any -> any 445 (msg:"MEDDEFENSE SMB access from external source"; flow:to_server; classtype:misc-activity; sid:9001003; rev:1;)
+alert tcp any any -> any 445 (msg:"MEDDEFENSE SMB negotiation detected"; flow:to_server,established; content:"NTLMSSP"; nocase; classtype:misc-activity; sid:9001012; rev:1;)
+
+# Rule 4: Detect SNMP v1/v2c community string queries
+alert udp any any -> any 161 (msg:"MEDDEFENSE SNMP v1/v2c community string query"; classtype:attempted-recon; sid:9001004; rev:1;)
+
+# Rule 5: Detect DNS tunneling - long DNS queries (UDP)
+alert udp $HOME_NET any -> any 53 (msg:"MEDDEFENSE DNS tunneling suspected long query (UDP)"; dsize:>50; classtype:trojan-activity; sid:9001005; rev:1;)
+
+# Rule 6: Detect DNS over TCP (often indicates tunneling or zone transfer abuse)
+alert tcp $HOME_NET any -> any 53 (msg:"MEDDEFENSE DNS over TCP detected (potential tunneling)"; classtype:trojan-activity; sid:9001013; rev:1;)
+
+# Rule 7: Detect DNS TXT record queries (commonly abused for tunneling)
+alert udp $HOME_NET any -> any 53 (msg:"MEDDEFENSE DNS TXT record query detected"; dsize:>100; classtype:trojan-activity; sid:9001018; rev:1;)
+alert tcp $HOME_NET any -> any 53 (msg:"MEDDEFENSE DNS TXT record query over TCP"; classtype:trojan-activity; sid:9001019; rev:1;)
+
+# Rule 8: Generic DNS activity alert (catch-all for DNS tunneling PCAPs)
+alert dns $HOME_NET any -> any any (msg:"MEDDEFENSE DNS activity detected - review for tunneling"; classtype:misc-activity; sid:9001020; rev:1;)
+
+# Rule 9: Detect rlogin cleartext authentication
+alert tcp any any -> any 513 (msg:"MEDDEFENSE rlogin cleartext remote login"; flow:to_server; classtype:attempted-admin; sid:9001006; rev:1;)
+
+# Rule 10: Detect NFS access attempts
+alert tcp any any -> any 2049 (msg:"MEDDEFENSE NFS access attempt"; flow:to_server; classtype:misc-activity; sid:9001007; rev:1;)
+
+# Rule 11: Detect RPC portmapper queries
+alert tcp any any -> any 111 (msg:"MEDDEFENSE RPC portmapper enumeration"; flow:to_server; classtype:attempted-recon; sid:9001008; rev:1;)
+
+# Rule 12: Detect large outbound data transfers (potential exfil)
+alert tcp $HOME_NET any -> any any (msg:"MEDDEFENSE Large outbound transfer detected (>1MB)"; flow:to_server,established; dsize:>1000000; classtype:bad-unknown; sid:9001014; rev:1;)
+
+# Rule 13: Detect database connection anomalies (MySQL)
+alert tcp $HOME_NET any -> any 3306 (msg:"MEDDEFENSE MySQL connection detected"; flow:to_server; classtype:bad-unknown; sid:9001015; rev:1;)
+
+# Rule 14: Detect suspicious medical device egress patterns
+alert tcp $HOME_NET any -> any any (msg:"MEDDEFENSE Suspicious medical device egress traffic"; flags:S; dsize:<40; flow:stateless; classtype:attempted-recon; sid:9001016; rev:1;)
+
+# Rule 15: Detect clinical database access
+alert tcp any any -> any 3306 (msg:"MEDDEFENSE Clinical database access pattern detected"; flow:to_server,established; content:"SELECT"; nocase; distance:0; classtype:attempted-user; sid:9001017; rev:1;)

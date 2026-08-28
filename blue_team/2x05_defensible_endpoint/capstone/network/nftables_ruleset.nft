@@ -1,0 +1,41 @@
+#!/usr/sbin/nft -f
+
+# ============================================================
+# MedDefense Network Firewall Ruleset
+# Target Host: Hawthorne-App-01 (hawthorne-app-01)
+# Deployment: capstone/network/
+# Author: Steve - Cybersecurity Engineer
+# Purpose: Enforce network segmentation policy per segmentation_rules.json
+# ============================================================
+
+flush ruleset
+
+table inet meddefense {
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        iif "lo" accept
+        ct state established,related accept
+        ip protocol icmp limit rate 5/second accept
+        ip6 nexthdr ipv6-icmp limit rate 5/second accept
+        ct state invalid drop
+        # ssh: SSH from management network only
+        ip saddr 192.168.10.0/24 tcp dport 22 accept
+        # http: Apache HTTP public-facing web server
+        tcp dport 80 accept
+        # https: Apache HTTPS public-facing web server
+        tcp dport 443 accept
+        # mysql: MySQL from application network only
+        ip saddr 10.10.2.0/24 tcp dport 3306 accept
+
+        limit rate 5/minute log prefix "nft-meddefense-drop: " drop
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}

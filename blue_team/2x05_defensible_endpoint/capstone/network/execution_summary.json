@@ -1,0 +1,69 @@
+{
+  "deployment_metadata": {
+    "target_host": "hawthorne-app-01",
+    "display_name": "Hawthorne-App-01",
+    "project": "MedDefense Capstone"
+  },
+  "timestamp": "2026-08-21T21:12:23+00:00",
+  "host": "hawthorne-app-01",
+  "segmentation_rules": "/home/analyst/MedDefense_Lab/capstone/segmentation_rules.json",
+  "capstone_artifacts_dir": "capstone/network/",
+  "validation_steps": [
+  {
+    "step": "firewall_test_script",
+    "result": "pass",
+    "details": "Copied from 2x04_perimeter_defense exercise"
+  },
+  {
+    "step": "nftables_deployment",
+    "result": "pass",
+    "details": "Ruleset applied with 4 allowed services"
+  },
+  {
+    "step": "firewall_validation",
+    "result": "pass",
+    "details": "ssh:22/tcp OK; http:80/tcp OK; https:443/tcp OK; mysql:3306/tcp OK; default-deny OK (2 chains); denied-services verified (8/8)"
+  },
+  {
+    "step": "windows_firewall_alignment",
+    "result": "pass",
+    "details": "PowerShell script generated for Windows hosts"
+  },
+  {
+    "step": "suricata_offline_replay",
+    "result": "pass",
+    "details": "Replayed 3 PCAPs, 2244 total alerts detected"
+  },
+  {
+    "step": "custom_rule_validation",
+    "result": "pass",
+    "details": "Validated 6 labeled PCAPs"
+  },
+  {
+    "step": "dnsmasq_dns_filter",
+    "result": "pass",
+    "details": "Blocked 814 domains"
+  }
+],
+  "artifact_paths": {
+    "custom_validation_clinical_wrong_db": "capstone/network/suricata_replay/labeled_clinical_wrong_db",
+    "custom_validation_telnet_meddev": "capstone/network/suricata_replay/labeled_telnet_meddev",
+    "suricata_custom_rules": "capstone/network/meddefense_custom.rules",
+    "suricata_replay_smoke": "capstone/network/suricata_replay/smoke",
+    "suricata_replay_mixed_traffic": "capstone/network/suricata_replay/mixed_traffic",
+    "suricata_replay_suspicious_session": "capstone/network/suricata_replay/suspicious_session",
+    "custom_rule_validation": "capstone/network/custom_rule_validation.json",
+    "dnsmasq_config": "capstone/network/dnsmasq_blocklist.conf",
+    "custom_validation_dns_tunnel": "capstone/network/suricata_replay/labeled_dns_tunnel",
+    "suricata_replay_results": "capstone/network/suricata_replay_results.json",
+    "windows_firewall_alignment": "capstone/network/windows_firewall_alignment.ps1",
+    "suricata_alerts": "capstone/network/suricata_alerts.json",
+    "custom_validation_guest_smb": "capstone/network/suricata_replay/labeled_guest_smb",
+    "firewall_validation": "capstone/network/firewall_validation.json",
+    "nftables_ruleset": "capstone/network/nftables_ruleset.nft",
+    "custom_validation_meddev_egress": "capstone/network/suricata_replay/labeled_meddev_egress",
+    "firewall_test_script": "capstone/network/5-firewall_test.sh",
+    "custom_validation_large_outbound": "capstone/network/suricata_replay/labeled_large_outbound"
+  },
+  "overall_result": "PASS"
+}
