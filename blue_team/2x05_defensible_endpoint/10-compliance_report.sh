@@ -9,6 +9,7 @@
 set -euo pipefail
 
 # --- Configuration ---
+# Framework map provides CIS Controls v8 and NIST CSF mappings per control ID
 TARGET_STATE="${1:-capstone/target_state.json}"
 VALIDATION_REPORT="${2:-capstone/validation.json}"
 FRAMEWORK_MAP="/home/analyst/MedDefense_Lab/capstone/framework_map.json"
