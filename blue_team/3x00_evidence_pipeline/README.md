@@ -50,4 +50,46 @@ Get this right. Everything we do for the next four weeks runs on what you build 
 
 ---
 
+# [0. Evidence Pack Inventory](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/0-source_inventory.sh)
+
+## Goal: 
+
+Inventory every source file in the primary evidence pack and produce a structured manifest of what you have to work with.
+
+## Context: 
+
+Before you parse anything, you need to know what you received. Real evidence drops are never what the cover email says they are. Files are missing, names are misspelled, exports are truncated, timezones are wrong. The first job of the pipeline is to tell you, loudly and in a machine-readable format, exactly what arrived. Every subsequent stage reads this manifest instead of walking the filesystem.
+
+## Instructions: 
+
+Write a script 0-source_inventory.sh that walks ~/evidence_pack_primary/ and produces source_inventory.json. For each file found under windows/, linux/, and network/, record:
+
+    path relative to the evidence pack root
+
+    source_type (one of windows_json, linux_text, network_csv, network_json)
+
+    size_bytes
+
+    sha256 hash
+
+    line_count or record_count depending on format
+
+    first_event_time and last_event_time extracted from the file (best effort per format)
+
+The script must also print a human-readable summary to stdout listing the total number of files per category and the combined byte count.
+
+Note: The Windows event logs are pre-exported JSON files (NDJSON format). Use source_type: windows_json for them. No EVTX conversion is required.
+
+**Expected Output:**
+
+```bash
+$ ./0-source_inventory.sh
+windows : 3 files  |  62.0 MB
+linux   : 3 files  |  17.2 MB
+network : 3 files  |   6.5 MB
+total   : 9 files  |  85.7 MB
+manifest written to source_inventory.json
+```
+
+---
 
