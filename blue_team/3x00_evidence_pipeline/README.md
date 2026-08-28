@@ -275,3 +275,88 @@ A valid JSON file. Example of one field definition:
 
 ---
 
+# [5. Normalization Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/5-normalize.sh)
+
+## Goal: 
+
+Transform the Windows and Linux intermediate JSON files into a single normalized dataset that conforms to the schema you designed.
+
+## Context: 
+
+This is where the pipeline stops speaking raw log grammar and starts speaking your schema. Downstream tasks never touch the intermediate files again. Every field in every record must be mapped, every missing optional field must be explicitly null (not absent), and every required field must be populated or the record must be flagged for quarantine.
+
+## Instructions: 
+
+Write a script 5-normalize.sh (or a Python equivalent) that:
+
+    Reads windows_events.json and linux_events.json from the working directory
+
+    For each record, emits a normalized record conforming to event_schema.json
+
+    Applies the field mappings declared in your schema
+
+    Converts timestamp_raw to ISO 8601 UTC in the timestamp field
+
+    Writes the combined normalized dataset to normalized_events.json as newline-delimited JSON
+
+    Writes any records that cannot be normalized (missing required fields, unparseable timestamp) to quarantine.json with a quarantine_reason field
+
+The script must print per-source counts of normalized and quarantined records.
+
+**Expected Output:**
+
+```bash
+$ ./5-normalize.sh
+windows_json     : normalized    0 quarantined
+linux_text       : normalized    0 quarantined
+total            : normalized    quarantined
+normalized_events.json written
+quarantine.json  written
+```
+
+---
+
+# [6. Network Artifact Normalization](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/6-network_normalize.sh)
+
+## Goal: 
+
+Ingest the firewall CSV, Suricata EVE JSON, and PCAP summary, and normalize them into the same unified schema.
+
+## Context: 
+
+Network telemetry is the third leg of the pipeline. Each of the three network sources has its own format and its own idea of what a "timestamp" and a "host" mean. The firewall CSV uses Unix epoch seconds, Suricata uses ISO 8601 with microseconds, the PCAP summary uses human-readable localized strings. They all end up as records with the same schema as the endpoint events so the analyst can pivot from a process event to a network event without changing tools.
+
+## Instructions: 
+
+Write a script 6-network_normalize.sh that:
+
+    Reads firewall.csv, suricata_eve.json, and pcap_summary.json from ~/evidence_pack_primary/network/
+
+    Parses each source into records
+
+    Normalizes each record to the unified schema
+
+    Appends the resulting records to normalized_events.json
+
+    Also writes a standalone network_events.json containing only the network records
+
+For firewall events, event_category should be network, source_type should be firewall, and the action field should preserve ALLOW or BLOCK. For Suricata, event_category should be network_alert and the signature and severity fields should be populated. For PCAP summaries, event_category should be network_flow.
+
+Note on formats:
+
+    firewall.csv: Unix epoch timestamp in first column, header row: timestamp,src_ip,src_port,dst_ip,dst_port,protocol,action,interface,rule_id,bytes_in,bytes_out
+    suricata_eve.json: NDJSON, timestamp field in ISO 8601+TZ format, alert details under alert.signature
+    pcap_summary.json: NDJSON, start_time and end_time in MM/DD/YYYY HH:MM:SS AM/PM format
+
+**Expected Output:**
+
+```bash
+$ ./6-network_normalize.sh
+firewall.csv        :  ~67547 records normalized
+suricata_eve.json   :   ~9977 records normalized
+pcap_summary.json   :   ~4096 records normalized
+appended to normalized_events.json
+network_events.json written
+```
+
+---
