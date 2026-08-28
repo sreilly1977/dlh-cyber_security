@@ -432,3 +432,58 @@ Hint: the script is a dispatcher, not a rewrite of every control. Reuse the arti
 
 ---
 
+# [9. The Telemetry Export](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/9-telemetry_export.sh)
+### advanced
+
+## Goal: 
+
+Assemble the structured telemetry export in the exact format, using the same field names and directory layout.
+
+## Context: 
+
+Those analysts ingest telemetry from every site that is in scope. Hawthorne is about to be a site. The moment the environment is accepted, the analysts need the first telemetry bundle in their standard format. This task produces that bundle. Every field name, every directory name, every schema version tag must match what is shipped so that the SIEM ingestion pipeline does not have to branch on the source.
+
+## Instructions: 
+
+Write a script 9-telemetry_export.sh that assembles the export package. The script must:
+
+    Create capstone/telemetry_handoff/ with the subdirectories windows/, linux/, network/, manifest/
+
+    Copy (not move) the following files into the package:
+
+        capstone/telemetry/linux_events.json into linux/
+
+        capstone/telemetry/windows_events.json into windows/
+
+        The auditd rules file used on the Linux host into linux/audit_rules.txt
+
+        The Sysmon configuration used on the Windows host into windows/sysmon_config.xml
+
+        The Script Block Logging registry export into windows/psl_registry.reg
+
+        The structured Suricata alerts from capstone/network/suricata_alerts.json into network/
+
+        The nftables.conf from capstone/network/ into network/
+
+    Emit telemetry_handoff/manifest/manifest.json with:
+
+        schema_version matching the 2x02 and 2x04 schemas exactly
+
+        source_site (hawthorne)
+
+        generated_at
+
+        files array with path, size_bytes, sha256, produced_by
+
+        field_schema_version string matching what Module 3 expects
+
+    Tar the package: tar -czf telemetry_handoff.tar.gz capstone/telemetry_handoff/ and record the tarball size and SHA-256 in the manifest
+
+    Re-read the manifest and verify every hash matches the file on disk
+
+    Exit 0 only if the verification pass succeeded
+
+Note: this task does not transform telemetry. The Linux and Windows exports from T5 are already in the correct schema. This task assembles, manifests and verifies.
+
+---
+
