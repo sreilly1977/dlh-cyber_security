@@ -61,25 +61,91 @@ for field_name, field_def in schema_fields.items():
     if constraints:
         MIN_MAX_CONSTRAINTS[field_name] = constraints
 
-NESTED_RULES = {}
-for field_name, field_def in schema_fields.items():
-    if field_def.get("type") == "object" and field_def.get("properties"):
-        NESTED_RULES[field_name] = field_def["properties"]
+def check_type(value, expected_type):
+    """Check if value matches expected type, handling bool/int distinction."""
+    if expected_type == "integer":
+        return not isinstance(value, bool) and isinstance(value, int)
+    elif expected_type == "float":
+        return not isinstance(value, bool) and isinstance(value, (int, float))
+    elif expected_type == "boolean":
+        return isinstance(value, bool)
+    elif expected_type == "string":
+        return isinstance(value, str)
+    elif expected_type == "timestamp":
+        return isinstance(value, str)
+    elif expected_type == "object":
+        return isinstance(value, dict)
+    elif expected_type == "array":
+        return isinstance(value, list)
+    return True
 
-ARRAY_ITEM_TYPES = {}
-for field_name, field_def in schema_fields.items():
-    if field_def.get("type") == "array" and field_def.get("items"):
-        ARRAY_ITEM_TYPES[field_name] = field_def["items"].get("type")
+def validate_value(field_path, value, field_def):
+    """Recursively validate a value against its schema field definition.
+    Returns a list of error strings."""
+    errors = []
+    expected_type = field_def.get("type")
 
-TYPE_MAP = {
-    "string": str,
-    "integer": int,
-    "float": (int, float),
-    "boolean": bool,
-    "timestamp": str,
-    "object": dict,
-    "array": list,
-}
+    if value is None:
+        return errors
+
+    # Type check
+    if expected_type and not check_type(value, expected_type):
+        errors.append(f"{field_path}: expected {expected_type}, got {type(value).__name__}")
+        return errors  # No point checking further if the type is wrong
+
+    # Timestamp format
+    if expected_type == "timestamp" and isinstance(value, str):
+        pattern = PATTERN_CONSTRAINTS.get(field_path.split(".")[-1])
+        if pattern:
+            if not pattern.match(value):
+                errors.append(f"{field_path}: invalid timestamp format: {value}")
+        elif not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", value):
+            errors.append(f"{field_path}: invalid timestamp format: {value}")
+
+    # Enum check
+    base_name = field_path.split(".")[-1]
+    if base_name in ENUM_CONSTRAINTS and value not in ENUM_CONSTRAINTS[base_name]:
+        errors.append(f"{field_path}: invalid value '{value}', expected one of {sorted(ENUM_CONSTRAINTS[base_name])}")
+
+    # Pattern check (non-timestamp strings)
+    if base_name in PATTERN_CONSTRAINTS and expected_type != "timestamp":
+        if isinstance(value, str) and not PATTERN_CONSTRAINTS[base_name].match(value):
+            errors.append(f"{field_path}: value does not match required pattern")
+
+    # Min/max check
+    if base_name in MIN_MAX_CONSTRAINTS:
+        constraints = MIN_MAX_CONSTRAINTS[base_name]
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            if "min" in constraints and value < constraints["min"]:
+                errors.append(f"{field_path}: value {value} below minimum {constraints['min']}")
+            if "max" in constraints and value > constraints["max"]:
+                errors.append(f"{field_path}: value {value} above maximum {constraints['max']}")
+
+    # Recursive object validation
+    if expected_type == "object" and isinstance(value, dict):
+        properties = field_def.get("properties")
+        if properties:
+            for prop_name, prop_def in properties.items():
+                child_path = f"{field_path}.{prop_name}"
+                if prop_def.get("required") and prop_name not in value:
+                    errors.append(f"{child_path}: required nested property missing")
+                if prop_name in value and value[prop_name] is not None:
+                    errors.extend(validate_value(child_path, value[prop_name], prop_def))
+
+        # Check additional properties if schema forbids them
+        if field_def.get("additionalProperties") is False and properties:
+            for key in value:
+                if key not in properties:
+                    errors.append(f"{field_path}.{key}: additional property not allowed")
+
+    # Recursive array validation — all items, no truncation
+    if expected_type == "array" and isinstance(value, list):
+        items_def = field_def.get("items")
+        if items_def:
+            for idx, item in enumerate(value):
+                errors.extend(validate_value(f"{field_path}[{idx}]", item, items_def))
+
+    return errors
 
 def validate_record(record):
     """Validate a single record against the schema. Returns (is_valid, errors)."""
@@ -92,67 +158,7 @@ def validate_record(record):
     for field_name, value in record.items():
         if field_name not in schema_fields:
             continue
-
-        field_def = schema_fields[field_name]
-        expected_type = field_def.get("type")
-
-        if value is None:
-            continue
-
-        if expected_type == "integer":
-            if isinstance(value, bool) or not isinstance(value, int):
-                errors.append(f"{field_name}: expected integer, got {type(value).__name__}")
-        elif expected_type == "float":
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
-                errors.append(f"{field_name}: expected float, got {type(value).__name__}")
-        elif expected_type == "boolean":
-            if not isinstance(value, bool):
-                errors.append(f"{field_name}: expected boolean, got {type(value).__name__}")
-        elif expected_type == "string":
-            if not isinstance(value, str):
-                errors.append(f"{field_name}: expected string, got {type(value).__name__}")
-        elif expected_type == "object":
-            if not isinstance(value, dict):
-                errors.append(f"{field_name}: expected object, got {type(value).__name__}")
-        elif expected_type == "array":
-            if not isinstance(value, list):
-                errors.append(f"{field_name}: expected array, got {type(value).__name__}")
-
-        if expected_type == "timestamp" and isinstance(value, str):
-            pattern = PATTERN_CONSTRAINTS.get(field_name)
-            if pattern:
-                if not pattern.match(value):
-                    errors.append(f"{field_name}: invalid timestamp format: {value}")
-            elif not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", value):
-                errors.append(f"{field_name}: invalid timestamp format: {value}")
-
-        if field_name in ENUM_CONSTRAINTS and value not in ENUM_CONSTRAINTS[field_name]:
-            errors.append(f"{field_name}: invalid value '{value}', expected one of {sorted(ENUM_CONSTRAINTS[field_name])}")
-
-        if field_name in PATTERN_CONSTRAINTS and expected_type != "timestamp":
-            if isinstance(value, str) and not PATTERN_CONSTRAINTS[field_name].match(value):
-                errors.append(f"{field_name}: value does not match required pattern")
-
-        if field_name in MIN_MAX_CONSTRAINTS:
-            constraints = MIN_MAX_CONSTRAINTS[field_name]
-            if isinstance(value, (int, float)) and not isinstance(value, bool):
-                if "min" in constraints and value < constraints["min"]:
-                    errors.append(f"{field_name}: value {value} below minimum {constraints['min']}")
-                if "max" in constraints and value > constraints["max"]:
-                    errors.append(f"{field_name}: value {value} above maximum {constraints['max']}")
-
-        if field_name in NESTED_RULES and isinstance(value, dict):
-            for prop_name, prop_def in NESTED_RULES[field_name].items():
-                if prop_def.get("required") and prop_name not in value:
-                    errors.append(f"{field_name}.{prop_name}: required nested property missing")
-
-        if field_name in ARRAY_ITEM_TYPES and isinstance(value, list):
-            expected_item_type = ARRAY_ITEM_TYPES[field_name]
-            for idx, item in enumerate(value[:10]):  # Limit items checked to avoid slowdown
-                if expected_item_type == "integer" and (isinstance(item, bool) or not isinstance(item, int)):
-                    errors.append(f"{field_name}[{idx}]: expected integer, got {type(item).__name__}")
-                elif expected_item_type == "string" and not isinstance(item, str):
-                    errors.append(f"{field_name}[{idx}]: expected string, got {type(item).__name__}")
+        errors.extend(validate_value(field_name, value, schema_fields[field_name]))
 
     return len(errors) == 0, errors
 
