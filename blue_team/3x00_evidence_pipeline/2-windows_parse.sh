@@ -72,11 +72,6 @@ def ensure_minimal_fields(record, required_fields):
             record[field] = None
     return record
 
-REQUIRED_WINDOWS_FIELDS = [
-    "timestamp_raw", "hostname", "event_id", "channel",
-    "provider", "raw_message", "event_data", "source_origin"
-]
-
 MINIMUM_OUTPUT_FIELDS = [
     "timestamp_raw", "hostname", "event_id", "channel",
     "provider", "raw_message", "event_data", "source_origin"
@@ -84,8 +79,9 @@ MINIMUM_OUTPUT_FIELDS = [
 
 results = {}
 total_records = 0
+combined = []
 
-# --- Process each Windows source file -----------------------------------------
+# --- Process each Windows source file (single read + modify + store) -----------
 for fname in ["security.json", "sysmon.json", "powershell.json"]:
     fpath = os.path.join(windows_dir, fname)
 
@@ -97,13 +93,16 @@ for fname in ["security.json", "sysmon.json", "powershell.json"]:
     records = parse_json_file(fpath)
     results[fname] = {"status": "read", "records": len(records)}
 
-    # Verify source_origin is set to "evidence_pack"
+    # Verify source_origin is set to "evidence_pack" and ensure fields
     for rec in records:
         if rec.get("source_origin") is None:
             rec["source_origin"] = "evidence_pack"
         ensure_minimal_fields(rec, MINIMUM_OUTPUT_FIELDS)
+        combined.append(rec)
 
-# --- Process student telemetry ------------------------------------------------
+    total_records += len(records)
+
+# --- Process student telemetry (single read + modify + append) -----------------
 student_file = os.path.join(student_dir, "windows_events.json")
 student_records = 0
 
@@ -111,34 +110,20 @@ if os.path.isfile(student_file):
     records = parse_json_file(student_file)
     student_records = len(records)
 
-    # Tag student telemetry with source_origin
+    # Tag student telemetry with source_origin and map timestamp -> timestamp_raw
     for rec in records:
         if rec.get("source_origin") is None:
             rec["source_origin"] = "student_telemetry"
-        # Map timestamp -> timestamp_raw if needed
         if "timestamp_raw" not in rec and "timestamp" in rec:
             rec["timestamp_raw"] = rec["timestamp"]
         ensure_minimal_fields(rec, MINIMUM_OUTPUT_FIELDS)
+        combined.append(rec)
+
     results["student_telemetry"] = {"status": "appended", "records": student_records}
 else:
     results["student_telemetry"] = {"status": "missing", "records": 0}
 
-# --- Combine all records ------------------------------------------------------
-combined = []
-
-for fname in ["security.json", "sysmon.json", "powershell.json"]:
-    fpath = os.path.join(windows_dir, fname)
-    if os.path.isfile(fpath):
-        records = parse_json_file(fpath)
-        combined.extend(records)
-        total_records += len(records)
-
-if student_records > 0:
-    records = parse_json_file(student_file)
-    combined.extend(records)
-    total_records += student_records
-
-# --- Write output --------------------------------------------------------------
+# --- Write output (from in-memory combined list) -------------------------------
 with open(output_file, "w") as f:
     for rec in combined:
         json.dump(rec, f, separators=(",", ":"))
