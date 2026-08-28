@@ -10,7 +10,7 @@
 
 **A:** They differ in format (EventXML vs syslog vs binary), field naming conventions, timestamp standards, and severity levels, requiring reconciliation to enable cross-platform correlation.
 
-** Q: What is a unified event schema and how are fields justified?**
+**Q: What is a unified event schema and how are fields justified?**
 
 **A:** A unified event schema is a standardized data model where required fields ensure core investigative utility (like timestamps and source IPs) while optional fields preserve source-specific context for deep dives.
 
