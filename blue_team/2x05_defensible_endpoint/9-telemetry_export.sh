@@ -201,8 +201,8 @@ jq \
 log "Manifest updated with tarball metadata"
 
 # --- Step 6: Verify Hashes ---
-# Re-read the manifest and verify every hash matches the file on disk
 # verify each file hash against the manifest
+# re-read manifest and verify every hash matches the file on disk
 
 log "Verifying manifest hashes against files on disk..."
 
