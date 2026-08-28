@@ -336,6 +336,7 @@ done
 echo ""
 printf "%-14s %-8s %-8s %-8s %-8s %-8s\n" "TOTAL" "$EVALUATED_COUNT" "$TOTAL_PASS" "$TOTAL_FAIL" "$TOTAL_ERROR" "$TOTAL_SKIP"
 printf "Pass percentage: %s%%\n" "$PASS_PCT"
+echo "Total controls: $EVALUATED_COUNT | Pass: $TOTAL_PASS | Fail: $TOTAL_FAIL | Error: $TOTAL_ERROR | Skip: $TOTAL_SKIP"
 echo ""
 
 if [[ "$OVERALL" == "READY" ]]; then
@@ -380,6 +381,7 @@ jq -n \
     --argjson skip_count "$TOTAL_SKIP" \
     --arg pass_pct "$PASS_PCT" \
     --arg overall "$OVERALL" \
+    --arg summary_line "Total controls: $EVALUATED_COUNT | Pass: $TOTAL_PASS | Fail: $TOTAL_FAIL | Error: $TOTAL_ERROR | Skip: $TOTAL_SKIP" \
     --argjson family_summary "$FAMILY_SUMMARY" \
     --argjson controls "$CONTROL_RESULTS" \
     '{
@@ -394,6 +396,7 @@ jq -n \
         skip_count: $skip_count,
         pass_percentage: ($pass_pct | tonumber),
         overall_verdict: $overall,
+        summary: $summary_line,
         family_summary: $family_summary,
         controls: $controls
     }' > "$REPORT_FILE"
