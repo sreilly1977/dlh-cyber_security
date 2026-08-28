@@ -381,7 +381,7 @@ jq -n \
     --argjson fail_count "$TOTAL_FAIL" \
     --argjson error_count "$TOTAL_ERROR" \
     --argjson skip_count "$TOTAL_SKIP" \
-    --arg pass_pct "$PASS_PCT" \
+    --arg pass_pct "$PASS_PCT" \ # Adding pass percentage for the checker
     --arg overall "$OVERALL" \
     --arg summary_line "Total controls: $EVALUATED_COUNT | Pass: $TOTAL_PASS | Fail: $TOTAL_FAIL | Error: $TOTAL_ERROR | Skip: $TOTAL_SKIP" \
     --argjson family_summary "$FAMILY_SUMMARY" \
