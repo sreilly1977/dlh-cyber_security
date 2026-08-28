@@ -85,6 +85,8 @@ rm -rf "$EXPORT_DIR"
 mkdir -p "$LINUX_DEST" "$WINDOWS_DEST" "$NETWORK_DEST" "$MANIFEST_DEST"
 
 # --- Step 2: Copy Source Files ---
+# Copy (not move) each source artifact into the telemetry handoff package
+# copy source files into the export package directory structure
 
 log "Copying source files into export package..."
 
@@ -100,6 +102,7 @@ for entry in "${FILES_TO_COPY[@]}"; do
         continue
     fi
 
+    # copy artifact from source to destination
     cp "$src_path" "$dest_path"
     log "  Copied: ${src_path} -> ${dest_path}"
 done
