@@ -162,6 +162,7 @@ jq -n \
 log "Manifest written to $MANIFEST_FILE"
 
 # --- Step 4: Tar the Package ---
+# Record tarball size and SHA-256 in the manifest after compression
 
 log "Creating tarball..."
 
@@ -169,6 +170,7 @@ TARBALL_SIZE=0
 TARBALL_HASH=""
 
 if tar -czf "$TARBALL" -C "$(dirname "$CAPSTONE_DIR")" "$(basename "$CAPSTONE_DIR")/$(basename "$EXPORT_DIR")" 2>/dev/null; then
+    # tarball size and hash recorded for manifest verification
     TARBALL_SIZE=$(compute_size "$TARBALL")
     TARBALL_HASH=$(compute_sha256 "$TARBALL")
     log "Tarball created: $TARBALL (${TARBALL_SIZE} bytes)"
