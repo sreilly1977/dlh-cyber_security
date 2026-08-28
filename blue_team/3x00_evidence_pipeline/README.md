@@ -168,3 +168,51 @@ windows_events.json: 122575 records
 ```
 
 ---
+
+# [3. Linux Log Parsing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/3-linux_parse.sh)
+
+## Goal: 
+
+Parse auth.log, audit.log, and syslog into structured JSON records with consistent intermediate fields.
+
+## Context: 
+
+Unlike the pre-parsed Windows files, Linux logs are plain text with three different grammars. auth.log uses syslog format, audit.log uses the auditd type=... key-value format, and syslog mixes both. Each grammar needs its own parser, but the output shape must match the Windows intermediate so the normalization stage can treat them uniformly.
+
+## Instructions: 
+
+Write a script 3-linux_parse.sh (bash plus Python is fine) that reads ~/evidence_pack_primary/linux/auth.log, audit.log, and syslog and produces linux_events.json as newline-delimited JSON. Each record must contain at minimum:
+
+    timestamp_raw (original timestamp string)
+
+    hostname
+
+    program (for auth.log and syslog) or audit_type (for auditd)
+
+    pid if present
+
+    user if present
+
+    raw_message (the full original line)
+
+    parsed_fields (object containing the key-value pairs extracted from the line)
+
+    source_origin: "evidence_pack"
+
+Your student telemetry linux_events.json from ~/evidence_pack_primary/student_telemetry/ must also be appended to the output, tagged with source_origin: "student_telemetry".
+
+Hint: auditd records can span multiple lines sharing the same msg=audit(...) timestamp. Group them before emitting a single record, or emit one record per line and flag the group in parsed_fields.audit_group_id.
+
+**Expected Output:**
+
+```bash
+$ ./3-linux_parse.sh
+parsing auth.log      ... 24880 lines  -> ~24880 records
+parsing audit.log     ... 67368 lines  -> ~50000 records (grouped)
+parsing syslog        ... 41736 lines  -> ~41736 records
+appending student telemetry ... 1879 records
+linux_events.json: written
+```
+
+---
+
