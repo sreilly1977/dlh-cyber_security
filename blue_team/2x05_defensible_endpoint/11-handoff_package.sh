@@ -368,6 +368,7 @@ done
 rm -rf "$TEMP_DIR"
 
 # --- Step 9: Emit handoff_assembly.json ---
+# Output: capstone/handoff_assembly.json with tarball metadata and round-trip verification result
 
 log "Emitting handoff assembly report..."
 
