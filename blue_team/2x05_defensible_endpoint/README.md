@@ -547,3 +547,79 @@ Write a script 10-compliance_report.sh that emits the compliance report. The scr
 Note: this task does not evaluate controls. It consumes the verdicts from T8 and enriches them with framework mapping.
 
 ---
+
+# [11. The Handoff Package Assembly](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/2x05_defensible_endpoint/11-handoff_package.sh)
+### advanced
+
+## Goal: 
+
+Assemble every capstone deliverable into a single signed handoff package with a manifest, a runbook and an executable verification entry point.
+
+## Context: 
+
+This is the last task and the shortest to describe. Everything that has been produced so far becomes one directory, one tarball, one manifest with hashes, one runbook script and one two-paragraph HANDOFF.md. A peer engineer who receives only this tarball must be able to untar it, run the verification script and reach the same pass-fail verdict as the student did, without any further instructions.
+
+## Instructions: 
+
+Write a script 11-handoff_package.sh that assembles the handoff package. The script must:
+
+    Create defensible_endpoint_package/ with the following top-level structure:
+
+        intake/ (content of capstone/intake/)
+
+        baseline/ (content of capstone/baseline/)
+
+        exec/ (content of capstone/exec/)
+
+        telemetry/ (content of capstone/telemetry/)
+
+        patch/ (content of capstone/patch/)
+
+        network/ (content of capstone/network/)
+
+        telemetry_handoff/ (content of capstone/telemetry_handoff/)
+
+        reports/ containing target_state.json, validation.json, compliance.json
+
+        scripts/ containing every 0- through 11- script used to produce the package
+
+        runbook.sh (the executable entry point, see below)
+
+        HANDOFF.md (exactly two paragraphs: what this package contains and how to verify it)
+
+        README.md (see Requirements; three lines)
+
+    Write runbook.sh as a single-file executable that:
+
+        Takes no arguments
+
+        Runs ./scripts/8-validate_all.sh
+
+        Reads reports/validation.json
+
+        Exits 0 if summary.fail_count == 0 and prints HANDOFF READY, otherwise exits 1 and prints the failing control IDs
+
+    Emit manifest.json inside the package with:
+
+        schema_version (capstone-handoff-v1)
+
+        site (hawthorne)
+
+        generated_at
+
+        files array with path, size_bytes, sha256, produced_by
+
+        runbook_entry (./runbook.sh)
+
+        verification_command (the exact one-line invocation a receiver must run)
+
+    Create the final tarball defensible_endpoint_package.tar.gz
+
+    After tarring, extract the tarball to a temp directory, execute the runbook from the extracted copy and capture its exit code as a round-trip verification. The handoff script exits 0 only if the round-trip verification exits 0.
+
+    Emit capstone/handoff_assembly.json with timestamp, tarball_path, tarball_sha256, tarball_size_bytes, roundtrip_exit_code, files_total
+
+Note: no manual file curation. Every file in the package must be referenced by manifest.json and produced by one of the prior scripts.
+
+---
+
