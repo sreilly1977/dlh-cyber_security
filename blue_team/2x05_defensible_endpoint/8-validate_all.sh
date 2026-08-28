@@ -405,7 +405,7 @@ jq -n \
 
 log "Validation report saved to $REPORT_FILE"
 
-# --- Exit ---
+# --- Exit: fail_count == 0 AND error_count == 0 means ready for handoff ---
 
 if [[ $TOTAL_FAIL -eq 0 && $TOTAL_ERROR -eq 0 ]]; then
     log "SUCCESS: All $TOTAL_PASS controls passed ($TOTAL_SKIP skipped). Environment is ready for handoff."
