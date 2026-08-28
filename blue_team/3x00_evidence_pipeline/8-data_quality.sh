@@ -37,7 +37,6 @@ if not os.path.isfile(input_file):
     sys.exit(1)
 
 # --- Infer year from records with full ISO timestamps -------------------------
-# Scan first 10000 lines to find the dominant year (avoids hardcoding 2026)
 INFERRED_YEAR = 2026
 year_counts = {}
 with open(input_file, "r", errors="replace") as f:
@@ -59,8 +58,6 @@ with open(input_file, "r", errors="replace") as f:
 if year_counts:
     INFERRED_YEAR = max(year_counts, key=year_counts.get)
 
-# Year inference complete
-
 # Evidence pack date range based on inferred year and observed data (March)
 EXPECTED_START = datetime(INFERRED_YEAR, 3, 1, 0, 0, 0, tzinfo=timezone.utc)
 EXPECTED_END = datetime(INFERRED_YEAR, 3, 31, 23, 59, 59, tzinfo=timezone.utc)
@@ -78,14 +75,11 @@ REPLACEMENT_CHAR = "\ufffd"
 
 def parse_timestamp(ts_raw, year=None):
     """Parse timestamp string into datetime in UTC.
-    Properly converts timezone offsets to UTC.
-    Uses inferred year for syslog timestamps.
     Returns (datetime_utc, method) or (None, None)."""
     if not ts_raw or not isinstance(ts_raw, str):
         return None, None
     ts = ts_raw.strip()
 
-    # Method 1: Valid ISO 8601 Z
     if ISO_Z_RE.match(ts):
         try:
             dt = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ")
@@ -93,46 +87,29 @@ def parse_timestamp(ts_raw, year=None):
         except ValueError:
             pass
 
-    # Method 2: ISO with milliseconds
     m = ISO_MS_RE.match(ts)
     if m:
         try:
-            year_val = int(m.group(1))
-            mon = int(m.group(2))
-            day = int(m.group(3))
-            hh = int(m.group(4))
-            mm = int(m.group(5))
-            ss = int(m.group(6))
-            dt = datetime(year_val, mon, day, hh, mm, ss, tzinfo=timezone.utc)
+            dt = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                         int(m.group(4)), int(m.group(5)), int(m.group(6)),
+                         tzinfo=timezone.utc)
             return dt, "stripped_ms"
         except ValueError:
             pass
 
-    # Method 3: ISO with timezone offset — properly convert to UTC
     m = ISO_OFFSET_RE.match(ts)
     if m:
         try:
-            year_val = int(m.group(1))
-            mon = int(m.group(2))
-            day = int(m.group(3))
-            hh = int(m.group(4))
-            mm = int(m.group(5))
-            ss = int(m.group(6))
-            sign = m.group(8)
-            off_hh = int(m.group(9))
-            off_mm = int(m.group(10))
-
-            offset = timedelta(hours=off_hh, minutes=off_mm)
-            if sign == "-":
+            offset = timedelta(hours=int(m.group(9)), minutes=int(m.group(10)))
+            if m.group(8) == "-":
                 offset = -offset
-
-            dt = datetime(year_val, mon, day, hh, mm, ss, tzinfo=timezone(offset))
-            dt_utc = dt.astimezone(timezone.utc)
-            return dt_utc, "converted_offset_to_utc"
+            dt = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                         int(m.group(4)), int(m.group(5)), int(m.group(6)),
+                         tzinfo=timezone(offset))
+            return dt.astimezone(timezone.utc), "converted_offset_to_utc"
         except ValueError:
             pass
 
-    # Method 4: Syslog format — uses inferred year from data
     m = SYSLOG_RE.match(ts)
     if m:
         mon = MONTHS.get(m.group(1), "01")
@@ -144,14 +121,12 @@ def parse_timestamp(ts_raw, year=None):
         except ValueError:
             pass
 
-    # Method 5: pcap format — already includes full date, no year inference needed
     try:
         dt = datetime.strptime(ts, "%m/%d/%Y %I:%M:%S %p")
         return dt.replace(tzinfo=timezone.utc), "pcap"
     except ValueError:
         pass
 
-    # Method 6: Unix epoch — no year assumption
     try:
         val = float(ts)
         if 1_000_000_000 < val < 2_000_000_000:
@@ -170,9 +145,6 @@ def has_encoding_issue(text):
     return REPLACEMENT_CHAR in text
 
 def attempt_latin1_repair(text):
-    """Repair mojibake by reversing a Latin-1-as-UTF-8 double encoding.
-    Standard pattern: text encoded as UTF-8, incorrectly decoded as Latin-1.
-    Reverse: encode as Latin-1, decode as UTF-8."""
     if not has_encoding_issue(text):
         return text, False
     try:
@@ -184,11 +156,7 @@ def attempt_latin1_repair(text):
     return text, False
 
 def dedup_hash(record):
-    """Compute dedup hash from CORRECTED values in the record.
-    Uses lowercase hostname (after normalization), repaired timestamp,
-    repaired raw_message — so records that are identical after legitimate
-    corrections are properly detected as duplicates.
-    Handles missing/None fields consistently by converting to empty string."""
+    """Hash from corrected values. None fields become empty strings."""
     ts = str(record.get("timestamp") or "")
     hostname = str(record.get("hostname") or "").lower()
     source_type = str(record.get("source_type") or "")
@@ -196,22 +164,12 @@ def dedup_hash(record):
     key = f"{ts}|{hostname}|{source_type}|{raw_msg}"
     return hashlib.sha256(key.encode("utf-8", errors="replace")).hexdigest()
 
-def log_entry(defect_type, original_value, corrected_value, record_id, reason, original_record=None):
-    """Build a cleaning log entry with optional full original record context."""
-    entry = {
-        "defect_type": defect_type,
-        "original_value": str(original_value)[:500] if original_value is not None else None,
-        "corrected_value": str(corrected_value)[:500] if corrected_value is not None else None,
-        "record_id": record_id,
-        "reason": reason,
-    }
-    if original_record is not None:
-        entry["original_record"] = {
-            k: v for k, v in original_record.items()
-            if k in ("timestamp", "hostname", "source_type", "raw_message",
-                      "event_id", "src_ip", "dst_ip", "record_id")
-        }
-    return entry
+def snapshot_record(record):
+    """Capture key fields from a record for forensic logging."""
+    return {k: record.get(k) for k in (
+        "timestamp", "hostname", "source_type", "raw_message",
+        "event_id", "src_ip", "dst_ip", "record_id"
+    )}
 
 # --- Stats -------------------------------------------------------------------
 stats_mal_detected = 0
@@ -238,33 +196,40 @@ with open(input_file, "r", errors="replace") as fin, \
         try:
             record = json.loads(stripped)
         except json.JSONDecodeError as e:
-            stats_mal_dropped += 1
-            cleaning_log.append(log_entry(
-                "json_parse_error",
-                stripped[:200],
-                None,
-                "unknown",
-                f"Line {line_num}: JSON parse error - {e}",
-                original_record={"raw_message": stripped[:500]},
-            ))
+            cleaning_log.append({
+                "defect_type": "json_parse_error",
+                "original_value": stripped[:500],
+                "corrected_value": None,
+                "record_id": "unknown",
+                "reason": f"Line {line_num}: JSON parse error - {e}",
+            })
             continue
 
         record_id = record.get("record_id", "unknown")
 
-        # 1. Hostname case normalization (before dedup so duplicates match)
+        # Capture ORIGINAL snapshot BEFORE any mutations for forensic logging
+        orig_snapshot = snapshot_record(record)
+        orig_ts = record.get("timestamp", "")
+        orig_hostname = record.get("hostname")
+        orig_raw_msg = record.get("raw_message", "")
+
+        corrections_made = []
+
+        # 1. Hostname case normalization
         hostname = record.get("hostname")
         if hostname and isinstance(hostname, str) and hostname != hostname.lower():
-            record["hostname"] = hostname.lower()
+            lowered = hostname.lower()
+            record["hostname"] = lowered
             stats_hostname += 1
-            cleaning_log.append(log_entry(
-                "hostname_case",
-                hostname,
-                hostname.lower(),
-                record_id,
-                "Normalized hostname to lowercase for consistency",
-            ))
+            cleaning_log.append({
+                "defect_type": "hostname_case",
+                "original_value": hostname,
+                "corrected_value": lowered,
+                "record_id": record_id,
+                "reason": "Normalized hostname to lowercase for consistency",
+            })
 
-        # 2. Encoding repair (before dedup so duplicates match)
+        # 2. Encoding repair
         raw_msg = record.get("raw_message", "")
         if raw_msg and has_encoding_issue(raw_msg):
             stats_enc_detected += 1
@@ -272,101 +237,101 @@ with open(input_file, "r", errors="replace") as fin, \
             if ok:
                 record["raw_message"] = repaired
                 stats_enc_repaired += 1
-                cleaning_log.append(log_entry(
-                    "encoding_error",
-                    raw_msg[:200],
-                    repaired[:200],
-                    record_id,
-                    "Re-decoded from Latin-1 to UTF-8",
-                ))
+                cleaning_log.append({
+                    "defect_type": "encoding_error",
+                    "original_value": orig_raw_msg[:500],
+                    "corrected_value": repaired[:500],
+                    "record_id": record_id,
+                    "reason": "Re-decoded from Latin-1 to UTF-8",
+                })
             else:
-                cleaning_log.append(log_entry(
-                    "encoding_error",
-                    raw_msg[:200],
-                    None,
-                    record_id,
-                    "Encoding issue detected but repair failed — record retained with warning",
-                ))
+                cleaning_log.append({
+                    "defect_type": "encoding_error",
+                    "original_value": orig_raw_msg[:500],
+                    "corrected_value": None,
+                    "record_id": record_id,
+                    "reason": "Encoding issue detected but repair failed — record retained with warning",
+                })
 
         # 3. Timestamp validation and repair
-        original_ts = record.get("timestamp", "")
-        dt, method = parse_timestamp(original_ts, year=INFERRED_YEAR)
+        dt, method = parse_timestamp(orig_ts, year=INFERRED_YEAR)
 
         if not dt:
             stats_mal_detected += 1
 
             # Attempt repair: strip non-standard chars
-            cleaned_ts = re.sub(r"[^0-9TZ:.\-+]", "", original_ts)
-            if cleaned_ts and cleaned_ts != original_ts:
+            cleaned_ts = re.sub(r"[^0-9TZ:.\-+]", "", orig_ts)
+            if cleaned_ts and cleaned_ts != orig_ts:
                 repaired_dt, _ = parse_timestamp(cleaned_ts, year=INFERRED_YEAR)
                 if repaired_dt:
                     repaired_ts = fmt_ts(repaired_dt)
                     record["timestamp"] = repaired_ts
                     stats_mal_repaired += 1
-                    cleaning_log.append(log_entry(
-                        "malformed_timestamp",
-                        original_ts,
-                        repaired_ts,
-                        record_id,
-                        "Stripped invalid characters and reparsed timestamp",
-                        original_record=record,
-                    ))
+                    cleaning_log.append({
+                        "defect_type": "malformed_timestamp",
+                        "original_value": orig_ts,
+                        "corrected_value": repaired_ts,
+                        "record_id": record_id,
+                        "reason": "Stripped invalid characters and reparsed timestamp",
+                        "original_record": orig_snapshot,
+                    })
                     dt = repaired_dt
 
             if not dt:
                 stats_mal_dropped += 1
-                cleaning_log.append(log_entry(
-                    "unrepairable_timestamp",
-                    original_ts,
-                    None,
-                    record_id,
-                    f"Could not parse timestamp '{original_ts}' with any fallback method. Record dropped from cleaned dataset.",
-                    original_record=record,
-                ))
+                cleaning_log.append({
+                    "defect_type": "unrepairable_timestamp",
+                    "original_value": orig_ts,
+                    "corrected_value": None,
+                    "record_id": record_id,
+                    "reason": f"Could not parse timestamp '{orig_ts}' with any fallback method. Record dropped from cleaned dataset.",
+                    "original_record": orig_snapshot,
+                })
                 continue
         elif method == "converted_offset_to_utc":
             utc_ts = fmt_ts(dt)
-            if utc_ts != original_ts:
+            if utc_ts != orig_ts:
                 record["timestamp"] = utc_ts
-                cleaning_log.append(log_entry(
-                    "timezone_offset_normalized",
-                    original_ts,
-                    utc_ts,
-                    record_id,
-                    f"Converted timezone offset to UTC: {original_ts} -> {utc_ts}",
-                ))
+                cleaning_log.append({
+                    "defect_type": "timezone_offset_normalized",
+                    "original_value": orig_ts,
+                    "corrected_value": utc_ts,
+                    "record_id": record_id,
+                    "reason": f"Converted timezone offset to UTC: {orig_ts} -> {utc_ts}",
+                })
 
-        # 4. Timezone anomaly check
+        # 4. Timezone anomaly check (flag only, don't drop)
         if dt < EXPECTED_START - TZ_TOLERANCE or dt > EXPECTED_END + TZ_TOLERANCE:
             stats_tz_flagged += 1
-            cleaning_log.append(log_entry(
-                "suspected_wrong_tz",
-                original_ts,
-                record.get("timestamp", original_ts),
-                record_id,
-                f"Timestamp falls outside expected evidence pack date range "
-                f"({EXPECTED_START.strftime('%Y-%m-%d')} to {EXPECTED_END.strftime('%Y-%m-%d')}) "
-                f"by more than 12 hours. Flagged for analyst review.",
-            ))
+            cleaning_log.append({
+                "defect_type": "suspected_wrong_tz",
+                "original_value": orig_ts,
+                "corrected_value": record.get("timestamp", orig_ts),
+                "record_id": record_id,
+                "reason": f"Timestamp falls outside expected evidence pack date range "
+                          f"({EXPECTED_START.strftime('%Y-%m-%d')} to {EXPECTED_END.strftime('%Y-%m-%d')}) "
+                          f"by more than 12 hours. Flagged for analyst review.",
+                "original_record": orig_snapshot,
+            })
 
-        # 5. Deduplication — on corrected values for consistent matching
+        # 5. Deduplication on corrected values
         dhash = dedup_hash(record)
         if dhash in seen_hashes:
             stats_dup_detected += 1
             stats_dup_removed += 1
-            cleaning_log.append(log_entry(
-                "duplicate",
-                record.get("timestamp", ""),
-                None,
-                record_id,
-                "Duplicate of earlier record with identical timestamp, hostname, source_type, and raw_message after normalization",
-                original_record=record,
-            ))
+            cleaning_log.append({
+                "defect_type": "duplicate",
+                "original_value": orig_ts,
+                "corrected_value": None,
+                "record_id": record_id,
+                "reason": "Duplicate of earlier record with identical timestamp, hostname, "
+                          "source_type, and raw_message after normalization",
+                "original_record": orig_snapshot,
+            })
             continue
 
         seen_hashes.add(dhash)
 
-        # Write cleaned record immediately (streaming output)
         json.dump(record, fout, separators=(",", ":"), default=str)
         fout.write("\n")
 
