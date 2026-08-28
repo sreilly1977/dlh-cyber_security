@@ -4,6 +4,7 @@
 # Purpose: Detect and repair intentional quality defects in normalized_events.json.
 #          Produces cleaned_events.json plus cleaning_log.json. The cleaning log
 #          has three sections: corrections, unrepairable, and flagged.
+#          All dropped records are logged for forensic traceability.
 # Author: Steve - Cybersecurity Engineer
 # Date: 28 August 2026
 #
@@ -195,7 +196,16 @@ with open(input_file, "r", errors="replace") as fin, \
 
         try:
             record = json.loads(stripped)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            # Malformed JSON — log as unrepairable, do not drop silently
+            stats_mal_dropped += 1
+            unrepairable_log.append(log_entry(
+                "json_parse_error",
+                stripped[:500],
+                None,
+                f"line_{line_num}",
+                f"JSON parse error at line {line_num}. Record dropped from cleaned dataset.",
+            ))
             continue
 
         record_id = record.get("record_id", "unknown")
@@ -259,7 +269,7 @@ with open(input_file, "r", errors="replace") as fin, \
                 record["timestamp"] = utc_ts
                 corrections_log.append(log_entry(
                     "timezone_offset_normalized", orig_ts, utc_ts, record_id,
-                    f"Converted timezone offset to UTC",
+                    "Converted timezone offset to UTC",
                 ))
 
         # 4. Timezone anomaly check (flag only)
