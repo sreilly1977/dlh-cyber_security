@@ -1,0 +1,46 @@
+{
+  "telemetry_dir": "/home/student/evidence_pack_primary/student_telemetry",
+  "files": {
+    "windows_events.json": {
+      "file": "windows_events.json",
+      "exists": true,
+      "parseable": true,
+      "record_count": 1859,
+      "has_records": true,
+      "required_fields_present": true,
+      "unique_source_types": [
+        "Security",
+        "Sysmon"
+      ],
+      "status": "pass",
+      "errors": []
+    },
+    "linux_events.json": {
+      "file": "linux_events.json",
+      "exists": true,
+      "parseable": true,
+      "record_count": 1879,
+      "has_records": true,
+      "required_fields_present": true,
+      "unique_source_types": [
+        "auditd",
+        "auth",
+        "syslog"
+      ],
+      "status": "pass",
+      "errors": []
+    },
+    "attack_ground_truth.json": {
+      "file": "attack_ground_truth.json",
+      "exists": true,
+      "parseable": true,
+      "record_count": 12,
+      "has_records": true,
+      "required_fields_present": true,
+      "unique_source_types": [],
+      "status": "pass",
+      "errors": []
+    }
+  },
+  "all_pass": true
+}

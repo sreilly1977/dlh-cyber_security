@@ -93,3 +93,40 @@ manifest written to source_inventory.json
 
 ---
 
+# [1. Telemetry Import](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/1-telemetry_import.sh)
+### advanced
+
+## Goal: 
+
+Validate the pre-staged student telemetry files and confirm they meet the data contract before they are merged into the pipeline.
+
+## Context: 
+
+Your Module 2 telemetry has already been staged at ~/evidence_pack_primary/student_telemetry/. Before treating it as pipeline input, you must validate that it arrived intact and conforms to the expected schema. If you trust it blindly and it turns out to be malformed, every downstream stage inherits the corruption. This task validates the telemetry against the contract the pipeline expects, then writes a machine-readable report. Any mismatch is reported and the script exits non-zero so the pipeline stops before bad data propagates.
+
+## Instructions: Write a script 1-telemetry_import.sh that:
+
+    Locates the telemetry directory at ~/evidence_pack_primary/student_telemetry/
+
+    Confirms the three required files exist: windows_events.json, linux_events.json, attack_ground_truth.json
+
+    Validates each file is parseable JSON and contains at least one record
+
+    Checks that every record in windows_events.json and linux_events.json has the four required fields: timestamp, hostname, source_type, event_category
+
+    Writes import_validation.json with per-file pass or fail, record counts, and the list of unique source_type values observed
+
+The script must exit with code 0 on full pass and 1 on any failure.
+
+**Expected Output:**
+
+```bash
+$ ./1-telemetry_import.sh
+[OK] windows_events.json    1859 records    sources: Security, Sysmon
+[OK] linux_events.json      1879 records    sources: auditd, auth
+[OK] attack_ground_truth.json  12 records
+3/3 files validated. Import OK.
+```
+
+---
+
