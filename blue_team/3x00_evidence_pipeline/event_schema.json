@@ -1,0 +1,318 @@
+{
+  "version": "1.0.0",
+  "author": "Steve - Cybersecurity Engineer",
+  "fields": [
+    {
+      "name": "timestamp",
+      "type": "timestamp",
+      "required": true,
+      "description": "Normalized event timestamp in ISO 8601 UTC format",
+      "justification": "Enables chronological sorting and time-range queries across all sources in 3x02 detections and 3x03 triage",
+      "source_mapping": {
+        "windows_json": "timestamp_raw converted to ISO 8601 UTC",
+        "linux_text": "syslog timestamp or auditd epoch converted to ISO 8601 UTC",
+        "network_csv": "epoch seconds column converted to ISO 8601 UTC",
+        "network_json": "timestamp or start_time field converted to ISO 8601 UTC"
+      }
+    },
+    {
+      "name": "hostname",
+      "type": "string",
+      "required": true,
+      "description": "Hostname of the system that generated the event",
+      "justification": "Allows analysts to filter events by host and correlate activity across sources during triage",
+      "source_mapping": {
+        "windows_json": "hostname field",
+        "linux_text": "parsed hostname from syslog header or auditd hostname field",
+        "network_csv": "null (firewall events have no hostname)",
+        "network_json": "null (network sensors have no hostname)"
+      }
+    },
+    {
+      "name": "source_type",
+      "type": "string",
+      "required": true,
+      "description": "Origin source category of the event such as windows_json, linux_text, firewall, suricata_alert, or pcap_flow",
+      "justification": "Lets downstream queries filter by telemetry source without inspecting raw fields",
+      "source_mapping": {
+        "windows_json": "constant: windows_json",
+        "linux_text": "constant: linux_text",
+        "network_csv": "constant: firewall",
+        "network_json": "suricata for alert events, pcap_flow for flow summaries"
+      }
+    },
+    {
+      "name": "event_category",
+      "type": "string",
+      "required": true,
+      "description": "High-level category of the event such as authentication, process, file, network, network_alert, network_flow, audit, or powershell",
+      "justification": "Needed by 3x02 detection rules and 3x03 triage filters to group events independently of source vendor",
+      "source_mapping": {
+        "windows_json": "channel and event_id mapping table",
+        "linux_text": "program or audit_type mapping table",
+        "network_csv": "constant: network",
+        "network_json": "event_type field or constant: network_flow"
+      }
+    },
+    {
+      "name": "severity",
+      "type": "string",
+      "required": true,
+      "description": "Severity level of the event: info, low, medium, high, or critical",
+      "justification": "Enables prioritization of alerts in 3x03 triage and threshold-based detection in 3x02",
+      "source_mapping": {
+        "windows_json": "derived from event_id (e.g. 4625=medium, 4720=high)",
+        "linux_text": "derived from audit_type and res field (failed=medium, success=info)",
+        "network_csv": "constant: info",
+        "network_json": "alert.severity field for suricata, constant: info for pcap"
+      }
+    },
+    {
+      "name": "user",
+      "type": "string",
+      "required": true,
+      "description": "Username associated with the event if present",
+      "justification": "Critical for correlating user activity across hosts and detecting lateral movement in 3x02",
+      "source_mapping": {
+        "windows_json": "event_data.TargetUserName or event_data.User",
+        "linux_text": "parsed user field from syslog or acct field from auditd",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "process_name",
+      "type": "string",
+      "required": true,
+      "description": "Name of the process associated with the event if present",
+      "justification": "Enables process-based detection rules and behavioral analysis in 3x02",
+      "source_mapping": {
+        "windows_json": "event_data.Image basename or event_data.ProcessName",
+        "linux_text": "program field or auditd comm field",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "src_ip",
+      "type": "string",
+      "required": true,
+      "description": "Source IP address of the event if present",
+      "justification": "Essential for network correlation, geolocation enrichment, and detecting lateral movement in 3x02",
+      "source_mapping": {
+        "windows_json": "event_data.IpAddress or event_data.SourceIp",
+        "linux_text": "addr field from auditd or parsed IP from syslog message",
+        "network_csv": "src_ip column",
+        "network_json": "src_ip field"
+      }
+    },
+    {
+      "name": "dst_ip",
+      "type": "string",
+      "required": true,
+      "description": "Destination IP address of the event if present",
+      "justification": "Essential for identifying communication targets and exfiltration detection in 3x02",
+      "source_mapping": {
+        "windows_json": "event_data.DestinationIp",
+        "linux_text": "parsed IP from syslog message or null",
+        "network_csv": "dst_ip column",
+        "network_json": "dest_ip or dst_ip field"
+      }
+    },
+    {
+      "name": "raw_message",
+      "type": "string",
+      "required": true,
+      "description": "Original raw log line or message before normalization",
+      "justification": "Provides forensic traceability back to the source evidence for incident reconstruction in 3x03",
+      "source_mapping": {
+        "windows_json": "raw_message field",
+        "linux_text": "full original log line",
+        "network_csv": "reconstructed CSV row",
+        "network_json": "JSON serialization of the original record"
+      }
+    },
+    {
+      "name": "event_id",
+      "type": "integer",
+      "required": false,
+      "description": "Windows event ID or null for non-Windows sources",
+      "justification": "Enables Windows-specific detection rules in 3x02 that key on known event IDs",
+      "source_mapping": {
+        "windows_json": "event_id field",
+        "linux_text": "null",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "source_origin",
+      "type": "string",
+      "required": false,
+      "description": "Provenance tag indicating whether the event came from the evidence pack or student telemetry",
+      "justification": "Maintains chain of custody for forensic integrity and distinguishes test data from production evidence",
+      "source_mapping": {
+        "windows_json": "source_origin field",
+        "linux_text": "source_origin field",
+        "network_csv": "constant: evidence_pack",
+        "network_json": "constant: evidence_pack"
+      }
+    },
+    {
+      "name": "source_channel",
+      "type": "string",
+      "required": false,
+      "description": "Windows event channel such as Security, Sysmon, or PowerShell",
+      "justification": "Allows filtering by Windows logging subsystem in 3x02 detections",
+      "source_mapping": {
+        "windows_json": "channel field",
+        "linux_text": "null",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "source_provider",
+      "type": "string",
+      "required": false,
+      "description": "Windows event provider name that generated the event",
+      "justification": "Helps distinguish between Microsoft and third-party event sources in detection rules",
+      "source_mapping": {
+        "windows_json": "provider field",
+        "linux_text": "null",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "pid",
+      "type": "integer",
+      "required": false,
+      "description": "Process ID associated with the event if present",
+      "justification": "Enables process tree reconstruction and parent-child correlation in 3x02 investigations",
+      "source_mapping": {
+        "windows_json": "event_data.ProcessId or event_data.Pid",
+        "linux_text": "pid field from syslog header or auditd pid key",
+        "network_csv": "null",
+        "network_json": "null"
+      }
+    },
+    {
+      "name": "src_port",
+      "type": "integer",
+      "required": false,
+      "description": "Source port number for network events",
+      "justification": "Enables port-based correlation and service identification in network detection rules",
+      "source_mapping": {
+        "windows_json": "event_data.SourcePort",
+        "linux_text": "null",
+        "network_csv": "src_port column",
+        "network_json": "src_port field"
+      }
+    },
+    {
+      "name": "dst_port",
+      "type": "integer",
+      "required": false,
+      "description": "Destination port number for network events",
+      "justification": "Enables port-based detection rules and service identification in 3x02",
+      "source_mapping": {
+        "windows_json": "event_data.DestinationPort",
+        "linux_text": "null",
+        "network_csv": "dst_port column",
+        "network_json": "dest_port or dst_port field"
+      }
+    },
+    {
+      "name": "protocol",
+      "type": "string",
+      "required": false,
+      "description": "Network protocol such as TCP, UDP, or ICMP",
+      "justification": "Allows protocol-based filtering in detection rules and triage",
+      "source_mapping": {
+        "windows_json": "event_data.Protocol",
+        "linux_text": "null",
+        "network_csv": "protocol column",
+        "network_json": "proto field"
+      }
+    },
+    {
+      "name": "action",
+      "type": "string",
+      "required": false,
+      "description": "Action taken by the source system such as ALLOW, BLOCK, or null",
+      "justification": "Critical for firewall and IDS event analysis in 3x02 to distinguish allowed vs blocked traffic",
+      "source_mapping": {
+        "windows_json": "null",
+        "linux_text": "res field from auditd (success or failed)",
+        "network_csv": "action column",
+        "network_json": "alert.action field for suricata"
+      }
+    },
+    {
+      "name": "signature",
+      "type": "string",
+      "required": false,
+      "description": "Alert signature name from IDS or IPS systems",
+      "justification": "Enables signature-based detection correlation and threat intelligence matching in 3x02",
+      "source_mapping": {
+        "windows_json": "null",
+        "linux_text": "null",
+        "network_csv": "null",
+        "network_json": "alert.signature field for suricata"
+      }
+    },
+    {
+      "name": "bytes_in",
+      "type": "integer",
+      "required": false,
+      "description": "Bytes received in the connection or flow",
+      "justification": "Supports bandwidth anomaly detection and data exfiltration analysis in 3x02",
+      "source_mapping": {
+        "windows_json": "null",
+        "linux_text": "null",
+        "network_csv": "bytes_in column",
+        "network_json": "flow.bytes_toserver for suricata, bytes_total for pcap"
+      }
+    },
+    {
+      "name": "bytes_out",
+      "type": "integer",
+      "required": false,
+      "description": "Bytes sent in the connection or flow",
+      "justification": "Supports bandwidth anomaly detection and data exfiltration analysis in 3x02",
+      "source_mapping": {
+        "windows_json": "null",
+        "linux_text": "null",
+        "network_csv": "bytes_out column",
+        "network_json": "flow.bytes_toclient for suricata, null for pcap"
+      }
+    },
+    {
+      "name": "event_data",
+      "type": "object",
+      "required": false,
+      "description": "Original structured event data payload from the source system",
+      "justification": "Preserves vendor-specific fields for deep dive analysis without requiring re-parsing of raw logs",
+      "source_mapping": {
+        "windows_json": "event_data object",
+        "linux_text": "parsed_fields object",
+        "network_csv": "object constructed from CSV columns",
+        "network_json": "original JSON object excluding mapped fields"
+      }
+    },
+    {
+      "name": "record_id",
+      "type": "string",
+      "required": false,
+      "description": "Unique opaque identifier for the normalized record",
+      "justification": "Enables the timeline index in 3x10 to reference back to the full enriched record without storing duplicates",
+      "source_mapping": {
+        "windows_json": "SHA-256 hash of normalized record",
+        "linux_text": "SHA-256 hash of normalized record",
+        "network_csv": "SHA-256 hash of normalized record",
+        "network_json": "SHA-256 hash of normalized record"
+      }
+    }
+  ]
+}

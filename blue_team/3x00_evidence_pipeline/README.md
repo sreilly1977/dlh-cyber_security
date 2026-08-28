@@ -216,3 +216,62 @@ linux_events.json: written
 
 ---
 
+# [4. Unified Event Schema Design](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/event_schema.json)
+
+## Goal: 
+
+Design and justify the unified event schema that every source in the pipeline will be normalized into.
+
+## Context: 
+
+Every downstream project in Module 3 reads events produced by this pipeline. If your schema is missing a field, 3x02 cannot write a detection rule that looks at it. If your schema collapses two distinct concepts into one field, 3x03 analysts cannot tell them apart during triage. This is the single most consequential design decision in the module. Make it carefully and commit to it.
+
+## Instructions: 
+
+Produce event_schema.json containing your unified schema definition. The schema must be a JSON document with the following top-level structure:
+
+    version (string, your schema version)
+
+    author (string, your name)
+
+    fields (array of field definitions)
+
+Each field definition must contain:
+
+    name (the field name as it appears in a normalized record)
+
+    type (one of string, integer, float, boolean, timestamp, object, array)
+
+    required (boolean)
+
+    description (one sentence explaining what the field represents)
+
+    justification (one sentence explaining why this field exists in the schema, what downstream question it answers)
+
+    source_mapping (object mapping each source type to the intermediate field it is derived from, or null if derived)
+
+Your schema must include at minimum: timestamp, hostname, source_type, event_category, severity, user, process_name, src_ip, dst_ip, raw_message. You are expected to add additional fields as you see fit and to justify every single one.
+
+Note: this is the only task in this project where written justification is graded. Keep each justification to a single sentence. No essays.
+
+**Expected Output:**
+
+A valid JSON file. Example of one field definition:
+
+```json
+{
+  "name": "event_category",
+  "type": "string",
+  "required": true,
+  "description": "High-level category of the event such as authentication, process, file, network, or audit",
+  "justification": "Needed by 3x02 detection rules and 3x03 triage filters to group events independently of source vendor",
+  "source_mapping": {
+    "windows_json": "channel + event_id mapping table",
+    "linux_text": "program or audit_type mapping table",
+    "network_csv": "constant: network"
+  }
+}
+```
+
+---
+
