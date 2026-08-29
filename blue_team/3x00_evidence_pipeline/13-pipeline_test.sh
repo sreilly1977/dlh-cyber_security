@@ -43,15 +43,12 @@ cd "$SCRIPT_DIR"
 PIPELINE_EXIT_CODE=0
 "$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "$STDOUT_FILE" 2> "$STDERR_FILE" || PIPELINE_EXIT_CODE=$?
 
-# Combine into run log for full audit trail
 cat "$STDOUT_FILE" "$STDERR_FILE" > "$RUN_LOG"
 
 # --- JSON escape function ----------------------------------------------------
-# Safely escape strings for JSON output (handles quotes, backslashes, control chars)
 
 json_escape() {
     local str="$1"
-    # Escape backslashes first, then quotes, then control characters
     str="${str//\\/\\\\}"
     str="${str//\"/\\\"}"
     str="${str//$'\n'/\\n}"
@@ -65,33 +62,30 @@ json_escape() {
 declare -A STAGE_RESULTS
 declare -a STAGE_ORDER
 
-# Use a more flexible pattern - look for "stage X" followed by any name and status
 while IFS= read -r line; do
-    # Match patterns like "[HH:MM:SS] stage 0 source_inventory ... ok (13s)"
-    # Or "[HH:MM:SS] stage 0 ... FAIL"
     if [[ "$line" =~ stage[[:space:]]+([0-9]+)[[:space:]]+ ]]; then
         stage_num="${BASH_REMATCH[1]}"
 
-        # Determine pass/fail from the line
-        if [[ "$line" =~ \.\.\.[[:space:]]+ok ]]; then
-            STAGE_RESULTS["$stage_num"]="pass"
-        elif [[ "$line" =~ FAIL ]] || [[ "$line" =~ \.\.\.[[:space:]]+FAIL ]]; then
-            STAGE_RESULTS["$stage_num"]="fail"
-        else
-            # If line mentions stage but unclear status, mark as unknown
-            STAGE_RESULTS["$stage_num"]="unknown"
+        # Add to order array if not already tracked
+        if [[ ! " ${STAGE_ORDER[*]} " =~ " ${stage_num} " ]]; then
+            STAGE_ORDER+=("$stage_num")
         fi
 
-        # Track order and only add if not already present
-        if [[ -z "${STAGE_RESULTS[$stage_num]+isset}" ]] || [[ "$STAGE_RESULTS[$stage_num]" == "unknown" ]]; then
-            if [[ ! " ${STAGE_ORDER[*]} " =~ " ${stage_num} " ]]; then
-                STAGE_ORDER+=("$stage_num")
+        # Set result based on line content
+        if [[ "$line" =~ \.\.\.[[:space:]]+ok ]]; then
+            STAGE_RESULTS["$stage_num"]="pass"
+        elif [[ "$line" =~ FAIL ]]; then
+            STAGE_RESULTS["$stage_num"]="fail"
+        else
+            # Only set unknown if we don't already have a pass/fail
+            if [[ -z "${STAGE_RESULTS[$stage_num]+isset}" ]]; then
+                STAGE_RESULTS["$stage_num"]="unknown"
             fi
         fi
     fi
 done < "$STDOUT_FILE"
 
-# Recount from final results
+# Count results
 STAGE_PASS=0
 STAGE_FAIL=0
 STAGE_TOTAL=${#STAGE_ORDER[@]}
@@ -110,32 +104,27 @@ done
 EVENT_COUNT=0
 RUNTIME_S=0
 
-# Multiple strategies for finding these values
-# Strategy 1: Parse final line pattern
 FINAL_LINE=$(grep -E "pipeline.*ok" "$STDOUT_FILE" 2>/dev/null | tail -1 || true)
 if [[ -n "$FINAL_LINE" ]]; then
-    # Extract event count
     if [[ "$FINAL_LINE" =~ ([0-9]+)[[:space:]]+enriched ]]; then
         EVENT_COUNT="${BASH_REMATCH[1]}"
     fi
-    # Extract runtime
     if [[ "$FINAL_LINE" =~ in[[:space:]]+([0-9]+) ]]; then
         RUNTIME_S="${BASH_REMATCH[1]}"
     fi
 fi
 
-# Strategy 2: Fallback to log file patterns
 if [[ $EVENT_COUNT -eq 0 ]]; then
-    COUNT_LINE=$(grep -E "enriched events:" "$STDOUT_FILE" "$RUN_LOG" 2>/dev/null | head -1 | grep -oE '[0-9]+' | head -1 || true)
-    if [[ -n "$COUNT_LINE" ]]; then
-        EVENT_COUNT="$COUNT_LINE"
+    COUNT_LINE=$(grep -E "enriched events:" "$RUN_LOG" 2>/dev/null | head -1 || true)
+    if [[ -n "$COUNT_LINE" ]] && [[ "$COUNT_LINE" =~ ([0-9]+) ]]; then
+        EVENT_COUNT="${BASH_REMATCH[1]}"
     fi
 fi
 
 if [[ $RUNTIME_S -eq 0 ]]; then
     TIME_LINE=$(grep -E "runtime:|Total runtime:" "$RUN_LOG" 2>/dev/null | head -1 || true)
-    if [[ -n "$TIME_LINE" ]]; then
-        RUNTIME_S=$(echo "$TIME_LINE" | grep -oE '[0-9]+' | head -1 || true)
+    if [[ -n "$TIME_LINE" ]] && [[ "$TIME_LINE" =~ ([0-9]+) ]]; then
+        RUNTIME_S="${BASH_REMATCH[1]}"
     fi
 fi
 
