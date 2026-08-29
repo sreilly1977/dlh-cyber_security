@@ -13,6 +13,8 @@ PIPELINE_SCRIPT="${SCRIPT_DIR}/evidence_pipeline.sh"
 SECONDARY_PACK="${HOME}/evidence_pack_secondary"
 TEST_OUTPUT_DIR="${SCRIPT_DIR}/test_output"
 REPORT_FILE="${SCRIPT_DIR}/pipeline_test_report.json"
+STDOUT_CAPTURE="${TEST_OUTPUT_DIR}/pipeline_stdout.log"
+STDERR_CAPTURE="${TEST_OUTPUT_DIR}/pipeline_stderr.log"
 
 if [[ ! -x "$PIPELINE_SCRIPT" ]]; then
     echo "[ERROR] Pipeline script not found or not executable: $PIPELINE_SCRIPT" >&2
@@ -31,108 +33,82 @@ echo "running pipeline against ${SECONDARY_PACK}"
 
 cd "$SCRIPT_DIR"
 PIPELINE_EXIT_CODE=0
-"$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "${TEST_OUTPUT_DIR}/pipeline_stdout.log" 2> "${TEST_OUTPUT_DIR}/pipeline_stderr.log" || PIPELINE_EXIT_CODE=$?
+"$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "$STDOUT_CAPTURE" 2> "$STDERR_CAPTURE" || PIPELINE_EXIT_CODE=$?
 
-python3 - "$PIPELINE_EXIT_CODE" "$SECONDARY_PACK" "$SCRIPT_DIR" "$REPORT_FILE" <<'PYEOF'
+python3 - "$STDOUT_CAPTURE" "$STDERR_CAPTURE" "$PIPELINE_EXIT_CODE" "$SECONDARY_PACK" "$SCRIPT_DIR" "$REPORT_FILE" <<'PYEOF'
 import json
 import os
 import re
 import sys
 
-pipeline_exit_code = int(sys.argv[1])
-secondary_pack = sys.argv[2]
-script_dir = sys.argv[3]
-report_file = sys.argv[4]
+stdout_path = sys.argv[1]
+stderr_path = sys.argv[2]
+pipeline_exit_code = int(sys.argv[3])
+secondary_pack = sys.argv[4]
+script_dir = sys.argv[5]
+report_file = sys.argv[6]
 
-# Read pipeline's own run log
-run_log_path = os.path.join(script_dir, "pipeline_run.log")
-run_log_lines = []
-if os.path.isfile(run_log_path):
-    with open(run_log_path, "r", errors="replace") as f:
-        run_log_lines = f.readlines()
+with open(stdout_path, "r", errors="replace") as f:
+    stdout_content = f.read()
+with open(stderr_path, "r", errors="replace") as f:
+    stderr_content = f.read()
 
-# Read captured stdout
-stdout_path = os.path.join(script_dir, "test_output", "pipeline_stdout.log")
-stdout_lines = []
-if os.path.isfile(stdout_path):
-    with open(stdout_path, "r", errors="replace") as f:
-        stdout_lines = f.readlines()
+# ---------------------------------------------------------------------------
+# Expected artifacts per stage (mirrors pipeline's own STAGE_DEFINITIONS)
+# ---------------------------------------------------------------------------
 
-# Stage numbers in execution order (4 is design task, not a pipeline stage)
-EXPECTED_STAGES = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
+EXPECTED_ARTIFACTS = {
+    0:  ["source_inventory.json"],
+    1:  ["import_validation.json"],
+    2:  ["windows_events.json"],
+    3:  ["linux_events.json"],
+    5:  ["normalized_events.json"],
+    6:  ["network_events.json"],
+    7:  ["validation_report.json"],
+    8:  ["cleaned_events.json", "cleaning_log.json"],
+    9:  ["enriched_events.json"],
+    10: ["timeline_index.json"],
+    11: ["source_stats.json"],
+}
 
-# Build a set of stage numbers that appear as completed in stdout.
-# The pipeline prints "[HH:MM:SS] stage N name ... ok (Xs)" on success.
-# On failure it prints "FAIL" and exits.
-completed_stages = set()
-failed_stage = None
+STAGE_ORDER = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]
 
-for line in stdout_lines:
-    # Match the pipeline's own output format precisely
+# ---------------------------------------------------------------------------
+# Parse stage status from captured stdout
+# The pipeline prints: [HH:MM:SS] stage N name ... ok (Xs)
+# ---------------------------------------------------------------------------
+
+stdout_stage_status = {}  # stage_num -> "pass" or "fail"
+
+for line in stdout_content.splitlines():
+    stripped = line.strip()
     m = re.match(
-        r"^\[\d{2}:\d{2}:\d{2}\]\s+stage\s+(\d+)\s+\S+\s+\.\.\.\s+ok\s*\(\d+s\)\s*$",
-        line.strip()
+        r"^\[\d{2}:\d{2}:\d{2}\]\s+stage\s+(\d+)\s+\S+\s+\.\.\.\s+(ok|FAIL)",
+        stripped
     )
     if m:
-        completed_stages.add(int(m.group(1)))
-        continue
+        num = int(m.group(1))
+        raw = m.group(2).lower()
+        stdout_stage_status[num] = "pass" if raw == "ok" else "fail"
 
-    # Check for FAIL line (pipeline prints "FAIL" then error to stderr)
-    if "FAIL" in line:
-        m2 = re.match(
-            r"^\[\d{2}:\d{2}:\d{2}\]\s+stage\s+(\d+)\s+\S+\s+\.\.\.\s+FAIL",
-            line.strip()
-        )
-        if m2:
-            failed_stage = int(m2.group(1))
+# ---------------------------------------------------------------------------
+# Verify each stage's artifacts independently
+# ---------------------------------------------------------------------------
 
-# Also check run log for stage markers as fallback
-for line in run_log_lines:
-    if line.startswith("--- Stage ") and "started" in line:
-        m = re.search(r"---\s+Stage\s+(\d+)\s+\((\S+)\)\s+started", line)
-        if m:
-            num = int(m.group(1))
-            if num not in completed_stages and num != failed_stage:
-                # Stage started but we have no completion record
-                pass
-
-# Build stage results
-stages = []
-for num in EXPECTED_STAGES:
-    if num in completed_stages:
-        stages.append({"stage": num, "result": "pass"})
-    elif num == failed_stage:
-        stages.append({"stage": num, "result": "fail"})
-    elif pipeline_exit_code == 0:
-        stages.append({"stage": num, "result": "pass"})
-    else:
-        stages.append({"stage": num, "result": "not_reached"})
-
-stage_pass = sum(1 for s in stages if s["result"] == "pass")
-stage_fail_count = sum(1 for s in stages if s["result"] == "fail")
-
-# Runtime: read directly from pipeline_run.log "Total runtime: Ns"
-runtime_s = 0
-for line in run_log_lines:
-    m = re.match(r"^Total runtime:\s*(\d+)s\s*$", line)
-    if m:
-        runtime_s = int(m.group(1))
-        break
-
-# Event count from pipeline_run.log "Enriched events: N"
-event_count = 0
-for line in run_log_lines:
-    m = re.match(r"^Enriched events:\s*(\d+)\s*$", line)
-    if m:
-        event_count = int(m.group(1))
-        break
-
+def check_artifacts(artifacts):
+    """Return list of missing or empty artifacts."""
+    problems = []
+    for name in artifacts:
+        path = os.path.join(script_dir, name)
+        if not os.path.isfile(path):
+            problems.append(f"{name} (missing)")
+        elif os.path.getsize(path) == 0:
+            problems.append(f"{name} (empty)")
+    return problems
 
 def validate_ndjson(path, required_fields):
     """Validate NDJSON: exists, non-empty, every line parseable, first record has required fields."""
-    if not os.path.isfile(path):
-        return False, 0
-    if os.path.getsize(path) == 0:
+    if not os.path.isfile(path) or os.path.getsize(path) == 0:
         return False, 0
     count = 0
     try:
@@ -151,7 +127,66 @@ def validate_ndjson(path, required_fields):
         return False, count
     return count > 0, count
 
+stages = []
 
+for num in STAGE_ORDER:
+    artifacts = EXPECTED_ARTIFACTS[num]
+    artifact_problems = check_artifacts(artifacts)
+
+    # Determine result from multiple signals:
+    # 1. stdout status (if available)
+    # 2. artifact verification
+    # 3. pipeline exit code
+
+    stdout_says = stdout_stage_status.get(num)
+
+    if artifact_problems:
+        # Artifacts missing or empty — stage failed regardless of exit code
+        result = "fail"
+    elif stdout_says == "fail":
+        result = "fail"
+    elif stdout_says == "pass":
+        result = "pass"
+    elif pipeline_exit_code == 0:
+        # No stdout record but pipeline succeeded and artifacts exist
+        result = "pass"
+    else:
+        # Pipeline failed, no stdout record, artifacts may exist from prior run
+        result = "fail"
+
+    stages.append({
+        "stage": num,
+        "result": result,
+        "artifacts": artifacts,
+        "artifact_problems": artifact_problems if artifact_problems else None,
+    })
+
+stage_pass = sum(1 for s in stages if s["result"] == "pass")
+stage_fail_count = sum(1 for s in stages if s["result"] == "fail")
+
+# ---------------------------------------------------------------------------
+# Runtime and event count from captured stdout
+# The pipeline prints: "pipeline ok. N enriched events in Ts"
+# ---------------------------------------------------------------------------
+
+runtime_s = 0
+event_count = 0
+
+final_line = ""
+for line in stdout_content.splitlines():
+    if "pipeline ok" in line.lower():
+        final_line = line
+        break
+
+if final_line:
+    m = re.search(r"(\d+)\s+enriched\s+events", final_line, re.IGNORECASE)
+    if m:
+        event_count = int(m.group(1))
+    m = re.search(r"in\s+(\d+)s", final_line, re.IGNORECASE)
+    if m:
+        runtime_s = int(m.group(1))
+
+# Ground truth: count actual lines in enriched_events.json
 enriched_path = os.path.join(script_dir, "enriched_events.json")
 timeline_path = os.path.join(script_dir, "timeline_index.json")
 
@@ -160,36 +195,57 @@ required_fields = [
     "event_category", "severity", "summary", "event_ref"
 ]
 
-enriched_valid, enriched_count = validate_ndjson(enriched_path, required_fields)
-timeline_valid, timeline_count = validate_ndjson(timeline_path, required_fields)
+enriched_valid, enriched_record_count = validate_ndjson(enriched_path, required_fields)
+timeline_valid, timeline_record_count = validate_ndjson(timeline_path, required_fields)
 
-if enriched_valid and enriched_count > 0:
-    event_count = enriched_count
+if enriched_valid and enriched_record_count > 0:
+    event_count = enriched_record_count
 
-# Verdict
+# ---------------------------------------------------------------------------
+# Verdict: all stages must pass AND artifacts must be valid
+# ---------------------------------------------------------------------------
+
 verdict = "pass"
+
 if pipeline_exit_code != 0:
     verdict = "fail"
+
+if stage_fail_count > 0:
+    verdict = "fail"
+
 if not enriched_valid:
     verdict = "fail"
+
 if not timeline_valid:
     verdict = "fail"
+
+# ---------------------------------------------------------------------------
+# Write report
+# ---------------------------------------------------------------------------
 
 report = {
     "test_name": "pipeline_generalization",
     "pack_path": secondary_pack,
     "pipeline_exit_code": pipeline_exit_code,
-    "stages": stages,
+    "stages": [
+        {
+            "stage": s["stage"],
+            "result": s["result"],
+            "artifacts": s["artifacts"],
+            "artifact_problems": s["artifact_problems"],
+        }
+        for s in stages
+    ],
     "total_stages": len(stages),
     "passed_stages": stage_pass,
     "failed_stages": stage_fail_count,
     "enriched_events": event_count,
     "enriched_file": enriched_path,
     "enriched_file_valid": enriched_valid,
-    "enriched_record_count": enriched_count if enriched_valid else 0,
+    "enriched_record_count": enriched_record_count if enriched_valid else 0,
     "timeline_file": timeline_path,
     "timeline_file_valid": timeline_valid,
-    "timeline_record_count": timeline_count if timeline_valid else 0,
+    "timeline_record_count": timeline_record_count if timeline_valid else 0,
     "runtime_seconds": runtime_s,
     "verdict": verdict,
 }
