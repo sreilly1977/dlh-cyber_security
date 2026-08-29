@@ -174,31 +174,25 @@ def build_summary(event_category, event):
         return "Process activity"
 
     if event_category == "powershell":
-        # Check event_data.ScriptBlockText first
         event_data = event.get("event_data")
         if isinstance(event_data, dict):
             sb = event_data.get("ScriptBlockText")
             if sb:
                 return f"PowerShell: {truncate(sb.strip(), 70)}"
-        # Fall back to raw_message
         raw = event.get("raw_message", "")
         if raw and ": " in raw:
-            # Extract command after "Creating Scriptblock text (N characters):\n"
             match = re.search(r"characters\):\\n(.+)", raw)
             if match:
                 return f"PowerShell: {truncate(match.group(1).strip(), 70)}"
-            # Or just take everything after the last colon-newline
             parts = raw.split("\n", 1)
             if len(parts) > 1:
                 return f"PowerShell: {truncate(parts[1].strip(), 70)}"
         return "PowerShell activity"
 
     if event_category == "network_alert":
-        # Check top-level signature field first
         sig = event.get("signature")
         if sig and isinstance(sig, str) and sig.strip():
             return truncate(f"IDS Alert: {sig}", 80)
-        # Try parsing raw_message as JSON
         raw_obj = parse_raw_json(event)
         if raw_obj and isinstance(raw_obj, dict):
             alert = raw_obj.get("alert", {})
@@ -284,21 +278,57 @@ def build_summary(event_category, event):
         raw = event.get("raw_message", "")
         if not raw:
             return "Audit event"
-        # Extract process name and key detail from syslog format
-        # Format: Mrc DD HH:MM:SS hostname process[pid]: message
-        match = re.search(
-            r'\d{2}:\d{2}:\d{2}\s+\S+\s+(\S+?)(?:\[(\d+)\])?:\s*(.+)', raw)
-        if match:
-            proc_name = match.group(1)
-            detail = match.group(3)
-            # Extract user and command if present
-            user_match = re.search(r'(?:for user |by \(uid=\d+\)|:\s+)(\S+)', detail)
+
+        # Check event_data.message for cleaner audit text
+        event_data = event.get("event_data")
+        if isinstance(event_data, dict):
+            msg = event_data.get("message", "")
+            if msg:
+                raw = msg
+
+        # Look for process[pid]: pattern first (standard syslog)
+        proc_match = re.search(r'(\w+)\[(\d+)\]:\s*(.+)', raw)
+        if proc_match:
+            proc_name = proc_match.group(1)
+            detail = proc_match.group(3)
+
+            # Extract COMMAND= if present
             cmd_match = re.search(r'COMMAND=(.+)', detail)
             if cmd_match:
-                return f"Audit: {proc_name} {cmd_match.group(1).strip()}"
+                cmd = cmd_match.group(1).strip()
+                if "/" in cmd:
+                    cmd = cmd.split("/")[-1]
+                return f"Audit: {proc_name} {cmd}"
+
+            # Extract user if present
+            user_match = re.search(r'user\s*[:=]\s*(\S+)', detail)
             if user_match:
                 return f"Audit: {proc_name} user={user_match.group(1)}"
-            return f"Audit: {proc_name} {truncate(detail, 50)}"
+
+            # Session opened/closed
+            if "session opened" in detail:
+                sess_user_match = re.search(r'session opened for user (\S+)', detail)
+                if sess_user_match:
+                    return f"Audit: {proc_name} session opened for {sess_user_match.group(1)}"
+                return f"Audit: {proc_name} session opened"
+            if "session closed" in detail:
+                return f"Audit: {proc_name} session closed"
+
+            # Sudo command execution
+            if "sudo" in proc_name.lower():
+                # Try to extract who ran sudo and what
+                user_match = re.search(r'^(\S+)\s*:', detail)
+                if user_match:
+                    sudo_user = user_match.group(1)
+                    return f"Audit: {proc_name} executed by {sudo_user}"
+
+            return f"Audit: {proc_name} {truncate(detail[:50], 50)}"
+
+        # Fallback - try simpler pattern for process names
+        proc_simple = re.search(r'\s(\w+)\s*\[(\d+)\]', raw)
+        if proc_simple:
+            return f"Audit: {proc_simple.group(1)}"
+
         return truncate(raw[:60], 60)
 
     if event_category == "service":
