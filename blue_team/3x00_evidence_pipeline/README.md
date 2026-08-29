@@ -620,3 +620,48 @@ pipeline_test_report.json written
 ```
 
 ---
+
+# [14. Pipeline Specification](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/pipeline_spec.md)
+### advanced
+
+## Goal: 
+
+Write a bounded technical specification that documents the pipeline so another engineer can rebuild it without reading the code.
+
+## Context: 
+
+Robert Kim wants a spec. Two pages maximum. Stages in, stages out, failure modes. No prose. No marketing. If a new engineer joining the team on Monday cannot read this spec and rebuild the pipeline from it, the spec is wrong.
+
+## Instructions: 
+
+Produce pipeline_spec.md containing exactly the following sections and nothing else:
+
+    Overview (max 5 lines): one paragraph describing the pipeline's purpose and the one-command entry point
+
+    Stage Table (markdown table): one row per stage, columns: stage, script, input, output, failure_modes
+
+    Schema Summary: a reference to event_schema.json plus a bullet list of the required fields
+
+    Inputs and Outputs: the expected layout of an input evidence pack, and the final handoff directory layout
+
+    Running the Pipeline: the exact command used to run the pipeline end-to-end and to run the generalization test
+
+    Known Limitations: a bullet list of at most five items
+
+Hard constraints on this deliverable:
+
+    Maximum 2 printed A4 pages when rendered
+
+    Maximum 800 words total
+
+    No narrative introduction beyond the Overview paragraph
+
+    No section that is not listed above
+
+Note: this is the only Markdown deliverable in the project. It is graded on precision and completeness, not on style.
+
+**Expected Output:**
+
+A [pipeline_spec.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/pipeline_spec.md) file respecting the constraints above.
+
+---

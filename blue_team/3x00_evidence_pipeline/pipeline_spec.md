@@ -56,7 +56,7 @@ Optional fields (13 total): asset.criticality, asset.owner, src_zone, dst_zone, 
 
 <pre>
 &lt;handoff_dir&gt;/
-├── scripts/                       # All .sh stage scripts
+├── scripts/                      # All .sh stage scripts
 ├── event_schema.json             # Schema definition
 ├── source_inventory.json         # Stage 0 output
 ├── import_validation.json        # Stage 1 output
@@ -69,7 +69,7 @@ Optional fields (13 total): asset.criticality, asset.owner, src_zone, dst_zone, 
 ├── cleaned_events.json           # Stage 8 output
 ├── cleaning_log.json             # Stage 8 cleaning log
 ├── enriched_events.json          # Stage 9 output
-├── timeline_index.json          # Stage 10 output
+├── timeline_index.json           # Stage 10 output
 ├── source_stats.json             # Stage 11 output
 ├── pipeline_run.log              # Execution log
 ├── pipeline_test_report.json     # Generalization test report
