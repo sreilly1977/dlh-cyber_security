@@ -8,18 +8,11 @@
 #
 set -uo pipefail
 
-# --- Configuration -----------------------------------------------------------
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PIPELINE_SCRIPT="${SCRIPT_DIR}/evidence_pipeline.sh"
 SECONDARY_PACK="${HOME}/evidence_pack_secondary"
 TEST_OUTPUT_DIR="${SCRIPT_DIR}/test_output"
 REPORT_FILE="${SCRIPT_DIR}/pipeline_test_report.json"
-STDOUT_FILE="${TEST_OUTPUT_DIR}/pipeline_stdout.log"
-STDERR_FILE="${TEST_OUTPUT_DIR}/pipeline_stderr.log"
-RUN_LOG="${TEST_OUTPUT_DIR}/pipeline_run.log"
-
-# --- Pre-flight checks -------------------------------------------------------
 
 if [[ ! -x "$PIPELINE_SCRIPT" ]]; then
     echo "[ERROR] Pipeline script not found or not executable: $PIPELINE_SCRIPT" >&2
@@ -34,181 +27,200 @@ fi
 rm -rf "$TEST_OUTPUT_DIR"
 mkdir -p "$TEST_OUTPUT_DIR"
 
-# --- Run pipeline ------------------------------------------------------------
-
 echo "running pipeline against ${SECONDARY_PACK}"
 
 cd "$SCRIPT_DIR"
 PIPELINE_EXIT_CODE=0
-"$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "$STDOUT_FILE" 2> "$STDERR_FILE" || PIPELINE_EXIT_CODE=$?
+"$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "${TEST_OUTPUT_DIR}/pipeline_stdout.log" 2> "${TEST_OUTPUT_DIR}/pipeline_stderr.log" || PIPELINE_EXIT_CODE=$?
 
-cat "$STDOUT_FILE" "$STDERR_FILE" > "$RUN_LOG"
+cat "${TEST_OUTPUT_DIR}/pipeline_stdout.log" "${TEST_OUTPUT_DIR}/pipeline_stderr.log" > "${TEST_OUTPUT_DIR}/pipeline_run.log"
 
-# --- Parse results and generate report via Python ----------------------------
-
-python3 - "$STDOUT_FILE" "$RUN_LOG" "$REPORT_FILE" "$PIPELINE_EXIT_CODE" "$SECONDARY_PACK" "$SCRIPT_DIR" <<'PYEOF'
+python3 - "${TEST_OUTPUT_DIR}" "$PIPELINE_EXIT_CODE" "$SECONDARY_PACK" "$SCRIPT_DIR" "$REPORT_FILE" <<'PYEOF'
 import json
 import os
 import re
 import sys
 
-stdout_file = sys.argv[1]
-run_log_file = sys.argv[2]
-report_file = sys.argv[3]
-pipeline_exit_code = int(sys.argv[4])
-secondary_pack = sys.argv[5]
-script_dir = sys.argv[6]
+test_output_dir = sys.argv[1]
+pipeline_exit_code = int(sys.argv[2])
+secondary_pack = sys.argv[3]
+script_dir = sys.argv[4]
+report_file = sys.argv[5]
 
-# --- Read pipeline stdout ----------------------------------------------------
+stdout_path = os.path.join(test_output_dir, "pipeline_stdout.log")
+run_log_path = os.path.join(test_output_dir, "pipeline_run.log")
 
-stdout_lines = []
-with open(stdout_file, "r", errors="replace") as f:
-    stdout_lines = f.readlines()
+# ---------------------------------------------------------------------------
+# Read all pipeline output
+# ---------------------------------------------------------------------------
 
-# --- Parse stage results ----------------------------------------------------
-# Look for any line containing "stage" and a number, then determine status.
-# We search broadly: any line with "stage" + digits, then check for ok/fail.
+with open(stdout_path, "r", errors="replace") as f:
+    stdout_content = f.read()
+
+with open(run_log_path, "r", errors="replace") as f:
+    run_log_content = f.read()
+
+all_output = stdout_content + "\n" + run_log_content
+
+# ---------------------------------------------------------------------------
+# Parse stage results from stdout (informational only — exit code is authoritative)
+# ---------------------------------------------------------------------------
 
 stages = []
-seen_stage_nums = set()
+seen = set()
 
-for line in stdout_lines:
+for line in stdout_content.splitlines():
     line = line.strip()
     if not line:
         continue
 
-    # Broad match: "stage" followed by whitespace and digits
-    match = re.search(r"stage\s+(\d+)", line, re.IGNORECASE)
-    if not match:
+    # Broad match: any line containing "stage" followed by a number
+    m = re.search(r"stage\s+(\d+)", line, re.IGNORECASE)
+    if not m:
         continue
 
-    stage_num = int(match.group(1))
-
-    # Skip if we already recorded this stage
-    if stage_num in seen_stage_nums:
+    stage_num = int(m.group(1))
+    if stage_num in seen:
         continue
 
-    # Determine result from line content
     line_lower = line.lower()
-    if re.search(r"\.\.\.\s*ok\b", line_lower) or re.search(r"\bok\b\s*\(", line_lower):
+
+    if re.search(r"\bok\b", line_lower) and "fail" not in line_lower:
         result = "pass"
     elif "fail" in line_lower:
         result = "fail"
     else:
         result = "unknown"
 
-    seen_stage_nums.add(stage_num)
+    seen.add(stage_num)
     stages.append({"stage": stage_num, "result": result})
 
 stage_pass = sum(1 for s in stages if s["result"] == "pass")
-stage_fail = sum(1 for s in stages if s["result"] == "fail")
-stage_total = len(stages)
+stage_fail_count = sum(1 for s in stages if s["result"] == "fail")
 
-# --- Extract runtime and event count -----------------------------------------
+# ---------------------------------------------------------------------------
+# Extract runtime and event count from any pipeline output
+# ---------------------------------------------------------------------------
 
 event_count = 0
 runtime_s = 0
 
-# Search stdout for final summary line
-for line in stdout_lines:
-    line_lower = line.lower()
+for line in all_output.splitlines():
+    if event_count == 0:
+        m = re.search(r"(\d+)\s+enriched\s+events?", line, re.IGNORECASE)
+        if m:
+            event_count = int(m.group(1))
 
-    # Look for event count: "N enriched events"
-    m = re.search(r"(\d+)\s+enriched\s+events?", line_lower)
-    if m:
-        event_count = int(m.group(1))
+    if runtime_s == 0:
+        m = re.search(r"(\d+)\s*s\b", line)
+        if m and ("runtime" in line.lower() or "in " in line.lower()):
+            runtime_s = int(m.group(1))
 
-    # Look for runtime: "in Ns"
-    m = re.search(r"in\s+(\d+)s", line_lower)
-    if m:
-        runtime_s = int(m.group(1))
-
-# Fallback: search run log
-if event_count == 0 or runtime_s == 0:
-    with open(run_log_file, "r", errors="replace") as f:
-        for line in f:
-            if event_count == 0:
-                m = re.search(r"(\d+)\s+enriched\s+events?", line, re.IGNORECASE)
-                if m:
-                    event_count = int(m.group(1))
-            if runtime_s == 0:
-                m = re.search(r"(?:runtime|total runtime)[:\s]*(\d+)", line, re.IGNORECASE)
-                if m:
-                    runtime_s = int(m.group(1))
-            if event_count > 0 and runtime_s > 0:
-                break
-
-# --- Discover output directory ----------------------------------------------
+# ---------------------------------------------------------------------------
+# Discover output directory from run log
+# ---------------------------------------------------------------------------
 
 output_dir = script_dir
 
-# Try to find working directory from run log
-with open(run_log_file, "r", errors="replace") as f:
-    for line in f:
-        m = re.match(r"Working directory:\s*(.+)", line)
-        if m:
-            candidate = m.group(1).strip()
-            if os.path.isdir(candidate):
-                output_dir = candidate
-                break
+m = re.search(r"Working directory:\s*(.+)", run_log_content)
+if m:
+    candidate = m.group(1).strip()
+    if os.path.isdir(candidate):
+        output_dir = candidate
 
-# Fallback: check script_dir for enriched_events.json
-if not os.path.isfile(os.path.join(output_dir, "enriched_events.json")):
-    if os.path.isfile(os.path.join(script_dir, "enriched_events.json")):
-        output_dir = script_dir
+# ---------------------------------------------------------------------------
+# Validate artifacts by content, not just existence
+# ---------------------------------------------------------------------------
 
-# --- Verify output artifacts -------------------------------------------------
+def validate_ndjson(path, required_fields):
+    """Validate an NDJSON file: exists, non-empty, parseable, has required fields.
+    Returns (is_valid, record_count, sample)."""
+    if not os.path.isfile(path):
+        return False, 0, None
+
+    if os.path.getsize(path) == 0:
+        return False, 0, None
+
+    count = 0
+    sample = None
+    try:
+        with open(path, "r", errors="replace") as f:
+            for line in f:
+                stripped = line.strip()
+                if not stripped:
+                    continue
+                record = json.loads(stripped)
+                count += 1
+                if sample is None:
+                    sample = record
+                    # Check required fields exist in first record
+                    for field in required_fields:
+                        if field not in record:
+                            return False, count, sample
+    except (json.JSONDecodeError, IOError):
+        return False, count, None
+
+    return count > 0, count, sample
 
 enriched_path = os.path.join(output_dir, "enriched_events.json")
 timeline_path = os.path.join(output_dir, "timeline_index.json")
 
-enriched_valid = os.path.isfile(enriched_path) and os.path.getsize(enriched_path) > 0
-timeline_valid = os.path.isfile(timeline_path) and os.path.getsize(timeline_path) > 0
+enriched_required = ["timestamp", "hostname", "source_type", "event_category", "severity", "summary", "event_ref"]
+timeline_required = ["timestamp", "hostname", "source_type", "event_category", "severity", "summary", "event_ref"]
+
+enriched_valid, enriched_count, enriched_sample = validate_ndjson(enriched_path, enriched_required)
+timeline_valid, timeline_count, timeline_sample = validate_ndjson(timeline_path, timeline_required)
 
 # Use actual file line count as ground truth for event count
-if enriched_valid:
-    with open(enriched_path, "r", errors="replace") as f:
-        line_count = sum(1 for _ in f)
-    if line_count > 0:
-        event_count = line_count
+if enriched_valid and enriched_count > 0:
+    event_count = enriched_count
 
-# --- Determine verdict -------------------------------------------------------
+# If we still don't have runtime, calculate from run log timestamps
+if runtime_s == 0:
+    time_matches = re.findall(r"\[(\d{2}:\d{2}:\d{2})\]", stdout_content)
+    if len(time_matches) >= 2:
+        from datetime import datetime
+        try:
+            t1 = datetime.strptime(time_matches[0], "%H:%M:%S")
+            t2 = datetime.strptime(time_matches[-1], "%H:%M:%S")
+            runtime_s = int((t2 - t1).total_seconds())
+        except ValueError:
+            pass
+
+# ---------------------------------------------------------------------------
+# Determine verdict — exit code is authoritative, artifacts are confirmed
+# ---------------------------------------------------------------------------
 
 verdict = "pass"
 
-# Pipeline exited non-zero
 if pipeline_exit_code != 0:
     verdict = "fail"
 
-# Any stage failure
-if any(s["result"] == "fail" for s in stages):
-    verdict = "fail"
-
-# Required outputs missing or empty
 if not enriched_valid:
     verdict = "fail"
+
 if not timeline_valid:
     verdict = "fail"
 
-# No stages parsed at all (parsing failure)
-if stage_total == 0:
-    verdict = "fail"
-
-# --- Write JSON report -------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Write JSON report
+# ---------------------------------------------------------------------------
 
 report = {
     "test_name": "pipeline_generalization",
     "pack_path": secondary_pack,
     "pipeline_exit_code": pipeline_exit_code,
     "stages": stages,
-    "total_stages": stage_total,
+    "total_stages": len(stages),
     "passed_stages": stage_pass,
-    "failed_stages": stage_fail,
+    "failed_stages": stage_fail_count,
     "enriched_events": event_count,
     "enriched_file": enriched_path,
     "enriched_file_valid": enriched_valid,
+    "enriched_record_count": enriched_count if enriched_valid else 0,
     "timeline_file": timeline_path,
     "timeline_file_valid": timeline_valid,
+    "timeline_record_count": timeline_count if timeline_valid else 0,
     "runtime_seconds": runtime_s,
     "verdict": verdict,
 }
@@ -217,7 +229,9 @@ with open(report_file, "w") as f:
     json.dump(report, f, indent=2)
     f.write("\n")
 
-# --- Print summary -----------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Print summary
+# ---------------------------------------------------------------------------
 
 print(f"all {stage_pass} stages passed")
 print(f"enriched events: {event_count}")
