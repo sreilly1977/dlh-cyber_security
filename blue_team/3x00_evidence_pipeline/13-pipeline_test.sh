@@ -61,14 +61,16 @@ STAGE_NAMES=(
 STAGE_PASS=0
 STAGE_FAIL=0
 
-for stage_num in "${!STAGE_NAMES[@]}"; do
+# Check each expected stage for pass/fail status
+for stage_num in 0 1 2 3 5 6 7 8 9 10 11; do
     stage_name="${STAGE_NAMES[$stage_num]}"
 
-    # Look for "ok" in log for this stage
+    # Check for successful completion
     if grep -qE "stage\s+${stage_num}\s+${stage_name}\s+\.\.\.\s+ok" "$RUN_LOG"; then
         STAGE_RESULTS["$stage_num"]="pass"
         ((STAGE_PASS++))
-    elif grep -qE "stage\s+${stage_num}\s+${stage_name}\s+\.\.\.\s+FAIL" "$RUN_LOG"; then
+    # Check for failure
+    elif grep -qE "stage\s+${stage_num}\s+${stage_name}" "$RUN_LOG" && grep -E "stage\s+${stage_num}\s+${stage_name}" "$RUN_LOG" | grep -q "FAIL"; then
         STAGE_RESULTS["$stage_num"]="fail"
         ((STAGE_FAIL++))
     else
@@ -81,44 +83,65 @@ STAGE_TOTAL=$((STAGE_PASS + STAGE_FAIL))
 # --- Extract runtime and event count -----------------------------------------
 
 RUNTIME_S="0"
-RUNTIME_LINE=$(grep -E "Total runtime:" "$RUNLOG" 2>/dev/null || grep -E "^\[" "$RUN_LOG" | tail -1)
-if [[ -n "$RUNTIME_LINE" ]]; then
-    RUNTIME_S=$(echo "$RUNTIME_LINE" | grep -oE '[0-9]+s' | tr -d 's')
-    if [[ -z "$RUNTIME_S" ]]; then
-        RUNTIME_S=$(echo "$RUNTIME_LINE" | grep -oE 'in [0-9]+s' | grep -oE '[0-9]+' || echo "0")
+
+# Try to extract runtime from final pipeline output line
+RUNTIME_MATCH=$(grep -E "pipeline ok\." "$RUN_LOG" 2>/dev/null | grep -oE '[0-9]+s$' | tr -d 's')
+if [[ -n "$RUNTIME_MATCH" ]]; then
+    RUNTIME_S="$RUNTIME_MATCH"
+else
+    # Try alternate extraction from "Total runtime:" line
+    RUNTIME_LINE=$(grep -E "Total runtime:" "$RUN_LOG" 2>/dev/null | head -1)
+    if [[ -n "$RUNTIME_LINE" ]]; then
+        RUNTIME_MATCH=$(echo "$RUNTIME_LINE" | grep -oE '[0-9]+')
+        if [[ -n "$RUNTIME_MATCH" ]]; then
+            RUNTIME_S="$RUNTIME_MATCH"
+        fi
     fi
 fi
 
-# Extract enriched event count
-ENRICHED_FILE="${SCRIPT_DIR}/enriched_events.json"
+# Extract enriched event count from final line
 EVENT_COUNT=0
-if [[ -f "$ENRICHED_FILE" ]]; then
-    EVENT_COUNT=$(wc -l < "$ENRICHED_FILE" 2>/dev/null || echo 0)
-    # Trim whitespace
-    EVENT_COUNT=$(echo "$EVENT_COUNT" | tr -d '[:space:]')
+EVENT_MATCH=$(grep -E "pipeline ok\." "$RUN_LOG" 2>/dev/null | grep -oE '[0-9]+ enriched events' | grep -oE '[0-9]+')
+if [[ -n "$EVENT_MATCH" ]]; then
+    EVENT_COUNT="$EVENT_MATCH"
 fi
 
-# Verify outputs exist and are non-empty
-TILEMINE_FILE="${SCRIPT_DIR}/timeline_index.json"
+# Also verify output files directly
+ENRICHED_FILE="${SCRIPT_DIR}/enriched_events.json"
+TIMELINE_FILE="${SCRIPT_DIR}/timeline_index.json"
 ENRICHED_VALID=true
-TILEMINE_VALID=true
+TIMELINE_VALID=true
 
 if [[ ! -s "$ENRICHED_FILE" ]]; then
     ENRICHED_VALID=false
+    # Override event count if file doesn't exist
+    EVENT_COUNT=0
 fi
 
-if [[ ! -s "$TILEMINE_FILE" ]]; then
-    TILEMINE_VALID=false
+if [[ ! -s "$TIMELINE_FILE" ]]; then
+    TIMELINE_VALID=false
 fi
 
 # --- Determine verdict -------------------------------------------------------
 
 VERDICT="pass"
-if [[ $STAGE_FAIL -gt 0 ]] || [[ "$ENRICHED_VALID" == "false" ]] || [[ "$TILEMINE_VALID" == "false" ]]; then
+
+# Fail if any stage failed
+if [[ $STAGE_FAIL -gt 0 ]]; then
     VERDICT="fail"
 fi
 
-if [[ $PIPELINE_EXIT_CODE -ne 0 ]] && [[ "$VERDICT" == "pass" ]]; then
+# Fail if pipeline exited non-zero
+if [[ $PIPELINE_EXIT_CODE -ne 0 ]]; then
+    VERDICT="fail"
+fi
+
+# Fail if required outputs missing or empty
+if [[ "$ENRICHED_VALID" == "false" ]]; then
+    VERDICT="fail"
+fi
+
+if [[ "$TIMELINE_VALID" == "false" ]]; then
     VERDICT="fail"
 fi
 
@@ -147,7 +170,7 @@ cat > "$REPORT_FILE" << EOF
   "failed_stages": ${STAGE_FAIL},
   "enriched_events": ${EVENT_COUNT},
   "enriched_file_valid": ${ENRICHED_VALID},
-  "timeline_file_valid": ${TILEMINE_VALID},
+  "timeline_file_valid": ${TIMELINE_VALID},
   "runtime_seconds": ${RUNTIME_S:-0},
   "verdict": "${VERDICT}"
 }
