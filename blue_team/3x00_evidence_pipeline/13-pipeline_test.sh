@@ -51,13 +51,9 @@ report_file = sys.argv[6]
 with open(stdout_path, "r", errors="replace") as f:
     stdout_lines = f.readlines()
 
-with open(stderr_path, "r", errors="replace") as f:
-    stderr_content = f.read()
-
 # ---------------------------------------------------------------------------
 # Parse stage results from captured stdout
 # Pipeline prints: [HH:MM:SS] stage N name ... ok (Xs)
-#                  [HH:MM:SS] stage N name ... FAIL
 # ---------------------------------------------------------------------------
 
 stages = []
@@ -66,7 +62,7 @@ seen = set()
 for line in stdout_lines:
     stripped = line.strip()
     m = re.match(
-        r"^\[\d{2}:\d{2}:\d{2}\]\s+stage\s+(\d+)\s+(\S+)\s+\.\.\.\s+(ok|FAIL)",
+        r"^\[\d{2}:\d{2}:\d{2}\]\s+stage\s+(\d+)\s+\S+\s+\.\.\.\s+(ok|FAIL)",
         stripped
     )
     if not m:
@@ -75,36 +71,60 @@ for line in stdout_lines:
     if num in seen:
         continue
     seen.add(num)
-    result = "pass" if m.group(3).lower() == "ok" else "fail"
+    result = "pass" if m.group(2).lower() == "ok" else "fail"
     stages.append({"stage": num, "result": result})
 
 stage_pass = sum(1 for s in stages if s["result"] == "pass")
 stage_fail_count = sum(1 for s in stages if s["result"] == "fail")
 
 # ---------------------------------------------------------------------------
-# Extract runtime and event count from captured stdout
-# Pipeline prints final line: pipeline ok. N enriched events in Ts
+# Extract runtime and event count ONLY from the final summary line
+# Pipeline prints exactly: "pipeline ok. N enriched events in Ts"
 # ---------------------------------------------------------------------------
 
 runtime_s = 0
 event_count = 0
 
 for line in stdout_lines:
-    if "enriched events" in line.lower():
-        m = re.search(r"(\d+)\s+enriched\s+events", line, re.IGNORECASE)
+    stripped = line.strip()
+    if re.match(r"^pipeline\s+ok\.", stripped):
+        m = re.search(r"(\d+)\s+enriched\s+events", stripped)
         if m:
             event_count = int(m.group(1))
-    if "in" in line.lower() and "s" in line.lower():
-        m = re.search(r"in\s+(\d+)\s*s", line, re.IGNORECASE)
+        m = re.search(r"in\s+(\d+)s\s*$", stripped)
         if m:
             runtime_s = int(m.group(1))
+        break
 
 # ---------------------------------------------------------------------------
-# Verify output files exist and are non-empty NDJSON
-# Spec: "verifies that the secondary run produced a non-empty
-#        enriched_events.json and timeline_index.json"
-# Validate every line parses as JSON — not just the first record
-# Do not enforce specific fields — these files may have different schemas
+# Discover output directory from the pipeline's own run log
+# The pipeline writes "Working directory: /path" to pipeline_run.log
+# This is where all artifacts are written — do not assume script_dir
+# ---------------------------------------------------------------------------
+
+output_dir = None
+
+# The pipeline writes pipeline_run.log to its WORKDIR (= PWD at invocation)
+pipeline_run_log = os.path.join(script_dir, "pipeline_run.log")
+if os.path.isfile(pipeline_run_log):
+    with open(pipeline_run_log, "r", errors="replace") as f:
+        for log_line in f:
+            m = re.match(r"^Working directory:\s*(.+)$", log_line)
+            if m:
+                candidate = m.group(1).strip()
+                if os.path.isdir(candidate):
+                    output_dir = candidate
+                break
+
+# Fallback: use script_dir (we cd'd there before running the pipeline)
+if output_dir is None:
+    output_dir = script_dir
+
+# ---------------------------------------------------------------------------
+# Verify output files in the DISCOVERED output directory:
+# - File exists
+# - Non-empty
+# - Every non-blank line parses as valid JSON (full integrity check)
 # ---------------------------------------------------------------------------
 
 def validate_ndjson(path):
@@ -127,13 +147,13 @@ def validate_ndjson(path):
         return False, count
     return count > 0, count
 
-enriched_path = os.path.join(script_dir, "enriched_events.json")
-timeline_path = os.path.join(script_dir, "timeline_index.json")
+enriched_path = os.path.join(output_dir, "enriched_events.json")
+timeline_path = os.path.join(output_dir, "timeline_index.json")
 
 enriched_valid, enriched_count = validate_ndjson(enriched_path)
 timeline_valid, timeline_count = validate_ndjson(timeline_path)
 
-# Ground truth: actual file line count overrides parsed value
+# Ground truth: actual record count overrides parsed value
 if enriched_valid and enriched_count > 0:
     event_count = enriched_count
 
@@ -192,5 +212,4 @@ print(f"verdict: {verdict}")
 print(f"pipeline_test_report.json written")
 
 sys.exit(0 if verdict == "pass" else 1)
-
 PYEOF
