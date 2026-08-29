@@ -2,8 +2,8 @@
 #
 # Name: 13-pipeline_test.sh
 # Purpose: Generalization test — run pipeline against secondary evidence pack
-#          and produce structured report of per-stage results. Discovers
-#          stages dynamically from pipeline output rather than hardcoding.
+#          and produce structured report of per-stage results. Dynamically parses
+#          stages and escapes JSON safely.
 # Author: Steve - Cybersecurity Engineer
 # Date: 29 August 2026
 #
@@ -46,66 +46,107 @@ PIPELINE_EXIT_CODE=0
 # Combine into run log for full audit trail
 cat "$STDOUT_FILE" "$STDERR_FILE" > "$RUN_LOG"
 
-# --- Parse stage results dynamically from stdout -----------------------------
-# Expected line format: [HH:MM:SS] stage N name ... ok (Xs)
-# Or on failure:        [HH:MM:SS] stage N name ... FAIL
+# --- JSON escape function ----------------------------------------------------
+# Safely escape strings for JSON output (handles quotes, backslashes, control chars)
+
+json_escape() {
+    local str="$1"
+    # Escape backslashes first, then quotes, then control characters
+    str="${str//\\/\\\\}"
+    str="${str//\"/\\\"}"
+    str="${str//$'\n'/\\n}"
+    str="${str//$'\r'/\\r}"
+    str="${str//$'\t'/\\t}"
+    printf '%s' "$str"
+}
+
+# --- Parse stage results from stdout -----------------------------------------
 
 declare -A STAGE_RESULTS
-declare -A STAGE_NAMES
-STAGE_ORDER=()
+declare -a STAGE_ORDER
 
+# Use a more flexible pattern - look for "stage X" followed by any name and status
 while IFS= read -r line; do
-    if [[ "$line" =~ \]\ stage\ ([0-9]+)\ +([a-z_]+)\ \.\.\.\ (ok|FAIL) ]]; then
+    # Match patterns like "[HH:MM:SS] stage 0 source_inventory ... ok (13s)"
+    # Or "[HH:MM:SS] stage 0 ... FAIL"
+    if [[ "$line" =~ stage[[:space:]]+([0-9]+)[[:space:]]+ ]]; then
         stage_num="${BASH_REMATCH[1]}"
-        stage_name="${BASH_REMATCH[2]}"
-        raw_result="${BASH_REMATCH[3]}"
 
-        if [[ "$raw_result" == "ok" ]]; then
+        # Determine pass/fail from the line
+        if [[ "$line" =~ \.\.\.[[:space:]]+ok ]]; then
             STAGE_RESULTS["$stage_num"]="pass"
-        else
+        elif [[ "$line" =~ FAIL ]] || [[ "$line" =~ \.\.\.[[:space:]]+FAIL ]]; then
             STAGE_RESULTS["$stage_num"]="fail"
+        else
+            # If line mentions stage but unclear status, mark as unknown
+            STAGE_RESULTS["$stage_num"]="unknown"
         fi
-        STAGE_NAMES["$stage_num"]="$stage_name"
-        STAGE_ORDER+=("$stage_num")
+
+        # Track order and only add if not already present
+        if [[ -z "${STAGE_RESULTS[$stage_num]+isset}" ]] || [[ "$STAGE_RESULTS[$stage_num]" == "unknown" ]]; then
+            if [[ ! " ${STAGE_ORDER[*]} " =~ " ${stage_num} " ]]; then
+                STAGE_ORDER+=("$stage_num")
+            fi
+        fi
     fi
 done < "$STDOUT_FILE"
 
+# Recount from final results
 STAGE_PASS=0
 STAGE_FAIL=0
-for stage_num in "${STAGE_ORDER[@]}"; do
-    if [[ "${STAGE_RESULTS[$stage_num]}" == "pass" ]]; then
-        ((STAGE_PASS++))
-    else
-        ((STAGE_FAIL++))
-    fi
-done
-
 STAGE_TOTAL=${#STAGE_ORDER[@]}
 
-# --- Extract runtime and event count from final line -------------------------
-# Expected: pipeline ok. N enriched events in Ts
+for stage_num in "${STAGE_ORDER[@]}"; do
+    result="${STAGE_RESULTS[$stage_num]:-unknown}"
+    case "$result" in
+        pass) ((STAGE_PASS++)) ;;
+        fail) ((STAGE_FAIL++)) ;;
+        *) ;;
+    esac
+done
+
+# --- Extract runtime and event count -----------------------------------------
 
 EVENT_COUNT=0
 RUNTIME_S=0
 
-FINAL_LINE=$(grep -E "^pipeline ok\." "$STDOUT_FILE" 2>/dev/null | tail -1)
+# Multiple strategies for finding these values
+# Strategy 1: Parse final line pattern
+FINAL_LINE=$(grep -E "pipeline.*ok" "$STDOUT_FILE" 2>/dev/null | tail -1 || true)
 if [[ -n "$FINAL_LINE" ]]; then
-    if [[ "$FINAL_LINE" =~ ([0-9]+)\ enriched\ events ]]; then
+    # Extract event count
+    if [[ "$FINAL_LINE" =~ ([0-9]+)[[:space:]]+enriched ]]; then
         EVENT_COUNT="${BASH_REMATCH[1]}"
     fi
-    if [[ "$FINAL_LINE" =~ in\ ([0-9]+)s ]]; then
+    # Extract runtime
+    if [[ "$FINAL_LINE" =~ in[[:space:]]+([0-9]+) ]]; then
         RUNTIME_S="${BASH_REMATCH[1]}"
     fi
 fi
 
-# --- Discover output directory from pipeline run log -------------------------
-# The pipeline logs "Working directory: /path" — use that to locate artifacts.
-# Fall back to SCRIPT_DIR if not found.
+# Strategy 2: Fallback to log file patterns
+if [[ $EVENT_COUNT -eq 0 ]]; then
+    COUNT_LINE=$(grep -E "enriched events:" "$STDOUT_FILE" "$RUN_LOG" 2>/dev/null | head -1 | grep -oE '[0-9]+' | head -1 || true)
+    if [[ -n "$COUNT_LINE" ]]; then
+        EVENT_COUNT="$COUNT_LINE"
+    fi
+fi
+
+if [[ $RUNTIME_S -eq 0 ]]; then
+    TIME_LINE=$(grep -E "runtime:|Total runtime:" "$RUN_LOG" 2>/dev/null | head -1 || true)
+    if [[ -n "$TIME_LINE" ]]; then
+        RUNTIME_S=$(echo "$TIME_LINE" | grep -oE '[0-9]+' | head -1 || true)
+    fi
+fi
+
+# --- Discover output directory -----------------------------------------------
 
 OUTPUT_DIR="$SCRIPT_DIR"
-LOG_WORKDIR=$(grep -E "^Working directory:" "$RUN_LOG" 2>/dev/null | head -1 | sed 's/^Working directory: //')
+LOG_WORKDIR=$(grep -E "^Working directory:" "$RUN_LOG" 2>/dev/null | head -1 | sed 's/^Working directory:[[:space:]]*//' || true)
 if [[ -n "$LOG_WORKDIR" ]] && [[ -d "$LOG_WORKDIR" ]]; then
     OUTPUT_DIR="$LOG_WORKDIR"
+elif [[ -f "${SCRIPT_DIR}/enriched_events.json" ]]; then
+    OUTPUT_DIR="$SCRIPT_DIR"
 fi
 
 # --- Verify output artifacts -------------------------------------------------
@@ -118,7 +159,6 @@ TIMELINE_VALID=false
 
 if [[ -s "$ENRICHED_FILE" ]]; then
     ENRICHED_VALID=true
-    # Use actual line count as ground truth
     ACTUAL_COUNT=$(wc -l < "$ENRICHED_FILE" | tr -d '[:space:]')
     if [[ "$ACTUAL_COUNT" -gt 0 ]]; then
         EVENT_COUNT="$ACTUAL_COUNT"
@@ -133,59 +173,44 @@ fi
 
 VERDICT="pass"
 
-# Any stage failure = fail
-if [[ $STAGE_FAIL -gt 0 ]]; then
-    VERDICT="fail"
-fi
+[[ $STAGE_FAIL -gt 0 ]] && VERDICT="fail"
+[[ $PIPELINE_EXIT_CODE -ne 0 ]] && VERDICT="fail"
+[[ "$ENRICHED_VALID" == "false" ]] && VERDICT="fail"
+[[ "$TIMELINE_VALID" == "false" ]] && VERDICT="fail"
+[[ $STAGE_TOTAL -eq 0 ]] && VERDICT="fail"
 
-# Pipeline exited non-zero = fail
-if [[ $PIPELINE_EXIT_CODE -ne 0 ]]; then
-    VERDICT="fail"
-fi
-
-# Required output missing or empty = fail
-if [[ "$ENRICHED_VALID" == "false" ]]; then
-    VERDICT="fail"
-fi
-
-if [[ "$TIMELINE_VALID" == "false" ]]; then
-    VERDICT="fail"
-fi
-
-# No stages parsed at all = parsing failure = fail
-if [[ $STAGE_TOTAL -eq 0 ]]; then
-    VERDICT="fail"
-fi
-
-# --- Build JSON report -------------------------------------------------------
+# --- Build JSON report (safely escaped) --------------------------------------
 
 STAGES_JSON="["
 first=true
 for stage_num in "${STAGE_ORDER[@]}"; do
-    result="${STAGE_RESULTS[$stage_num]}"
-    name="${STAGE_NAMES[$stage_num]}"
+    result="${STAGE_RESULTS[$stage_num]:-unknown}"
     if [[ "$first" == "true" ]]; then
         first=false
     else
         STAGES_JSON+=","
     fi
-    STAGES_JSON+="{\"stage\":${stage_num},\"name\":\"${name}\",\"result\":\"${result}\"}"
+    STAGES_JSON+="{\"stage\":${stage_num},\"result\":\"${result}\"}"
 done
 STAGES_JSON+="]"
+
+PACK_PATH_ESCAPED=$(json_escape "$SECONDARY_PACK")
+ENRICHED_FILE_ESCAPED=$(json_escape "$ENRICHED_FILE")
+TIMELINE_FILE_ESCAPED=$(json_escape "$TIMELINE_FILE")
 
 cat > "$REPORT_FILE" << EOF
 {
   "test_name": "pipeline_generalization",
-  "pack_path": "${SECONDARY_PACK}",
+  "pack_path": "${PACK_PATH_ESCAPED}",
   "pipeline_exit_code": ${PIPELINE_EXIT_CODE},
   "stages": ${STAGES_JSON},
   "total_stages": ${STAGE_TOTAL},
   "passed_stages": ${STAGE_PASS},
   "failed_stages": ${STAGE_FAIL},
   "enriched_events": ${EVENT_COUNT},
-  "enriched_file": "${ENRICHED_FILE}",
+  "enriched_file": "${ENRICHED_FILE_ESCAPED}",
   "enriched_file_valid": ${ENRICHED_VALID},
-  "timeline_file": "${TIMELINE_FILE}",
+  "timeline_file": "${TIMELINE_FILE_ESCAPED}",
   "timeline_file_valid": ${TIMELINE_VALID},
   "runtime_seconds": ${RUNTIME_S},
   "verdict": "${VERDICT}"
