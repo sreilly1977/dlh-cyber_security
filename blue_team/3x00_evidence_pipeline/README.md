@@ -445,3 +445,43 @@ cleaning_log.json      written
 ```
 
 ---
+
+# [9. Context Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/9-enrich.sh that)
+
+## Goal: 
+
+Enrich every cleaned event with asset inventory and network zone context so analysts can tell immediately whether an event touches a critical system.
+
+## Context: 
+
+A failed login on db-patient-01 means something very different from a failed login on jenkins-sandbox-03. An outbound connection from the CLINICAL zone to the INTERNET zone means something very different from the same connection inside the DMZ. Raw events do not carry this context. Your pipeline attaches it. From this point forward, every downstream query can filter by asset criticality and network zone without ever joining back to the inventory.
+
+## Instructions: 
+
+Write a script 9-enrich.sh that:
+
+    Reads cleaned_events.json, ~/evidence_pack_primary/context/asset_inventory.json, and ~/evidence_pack_primary/context/network_zones.json
+
+    For each event, looks up the hostname in the asset inventory and adds an asset object containing role, criticality, os, owner, zone
+
+    For each event that has an src_ip or dst_ip, looks up the IP against the network zones CIDR ranges and adds src_zone and dst_zone fields (value unknown if the IP does not match any declared zone)
+
+    Writes enriched_events.json as newline-delimited JSON
+
+    Reports enrichment coverage: percentage of events with asset context, percentage with zone context
+
+Hint: the ipaddress module in python3 handles CIDR lookups cleanly. A sorted list of (network, zone) tuples is efficient enough for this scale.
+
+**Expected Output:**
+
+```bash
+$ ./9-enrich.sh
+events processed    : <total>
+asset context added : <N> (<pct>%)
+src_zone resolved   : <N> (<pct>%)
+dst_zone resolved   : <N> (<pct>%)
+unknown hosts       : <N>
+enriched_events.json written
+```
+
+---
