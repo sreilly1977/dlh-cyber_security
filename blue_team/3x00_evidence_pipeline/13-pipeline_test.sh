@@ -1,8 +1,9 @@
 #!/bin/bash
 #
 # Name: 13-pipeline_test.sh
-# Purpose: Generalization test - run pipeline against secondary evidence pack
-#          and produce structured report of per-stage results.
+# Purpose: Generalization test — run pipeline against secondary evidence pack
+#          and produce structured report of per-stage results. Discovers
+#          stages dynamically from pipeline output rather than hardcoding.
 # Author: Steve - Cybersecurity Engineer
 # Date: 29 August 2026
 #
@@ -15,6 +16,8 @@ PIPELINE_SCRIPT="${SCRIPT_DIR}/evidence_pipeline.sh"
 SECONDARY_PACK="${HOME}/evidence_pack_secondary"
 TEST_OUTPUT_DIR="${SCRIPT_DIR}/test_output"
 REPORT_FILE="${SCRIPT_DIR}/pipeline_test_report.json"
+STDOUT_FILE="${TEST_OUTPUT_DIR}/pipeline_stdout.log"
+STDERR_FILE="${TEST_OUTPUT_DIR}/pipeline_stderr.log"
 RUN_LOG="${TEST_OUTPUT_DIR}/pipeline_run.log"
 
 # --- Pre-flight checks -------------------------------------------------------
@@ -29,7 +32,6 @@ if [[ ! -d "$SECONDARY_PACK" ]]; then
     exit 1
 fi
 
-# Create test output directory
 rm -rf "$TEST_OUTPUT_DIR"
 mkdir -p "$TEST_OUTPUT_DIR"
 
@@ -39,104 +41,109 @@ echo "running pipeline against ${SECONDARY_PACK}"
 
 cd "$SCRIPT_DIR"
 PIPELINE_EXIT_CODE=0
-"$PIPELINE_SCRIPT" "$SECONDARY_PACK" >> "$RUN_LOG" 2>&1 || PIPELINE_EXIT_CODE=$?
+"$PIPELINE_SCRIPT" "$SECONDARY_PACK" > "$STDOUT_FILE" 2> "$STDERR_FILE" || PIPELINE_EXIT_CODE=$?
 
-# --- Parse per-stage results -------------------------------------------------
+# Combine into run log for full audit trail
+cat "$STDOUT_FILE" "$STDERR_FILE" > "$RUN_LOG"
+
+# --- Parse stage results dynamically from stdout -----------------------------
+# Expected line format: [HH:MM:SS] stage N name ... ok (Xs)
+# Or on failure:        [HH:MM:SS] stage N name ... FAIL
 
 declare -A STAGE_RESULTS
-STAGE_NAMES=(
-    [0]="source_inventory"
-    [1]="telemetry_import"
-    [2]="windows_parse"
-    [3]="linux_parse"
-    [5]="normalize"
-    [6]="network_normalize"
-    [7]="schema_validate"
-    [8]="data_quality"
-    [9]="enrich"
-    [10]="timeline"
-    [11]="source_stats"
-)
+declare -A STAGE_NAMES
+STAGE_ORDER=()
+
+while IFS= read -r line; do
+    if [[ "$line" =~ \]\ stage\ ([0-9]+)\ +([a-z_]+)\ \.\.\.\ (ok|FAIL) ]]; then
+        stage_num="${BASH_REMATCH[1]}"
+        stage_name="${BASH_REMATCH[2]}"
+        raw_result="${BASH_REMATCH[3]}"
+
+        if [[ "$raw_result" == "ok" ]]; then
+            STAGE_RESULTS["$stage_num"]="pass"
+        else
+            STAGE_RESULTS["$stage_num"]="fail"
+        fi
+        STAGE_NAMES["$stage_num"]="$stage_name"
+        STAGE_ORDER+=("$stage_num")
+    fi
+done < "$STDOUT_FILE"
 
 STAGE_PASS=0
 STAGE_FAIL=0
-
-# Check each expected stage for pass/fail status
-for stage_num in 0 1 2 3 5 6 7 8 9 10 11; do
-    stage_name="${STAGE_NAMES[$stage_num]}"
-
-    # Check for successful completion
-    if grep -qE "stage\s+${stage_num}\s+${stage_name}\s+\.\.\.\s+ok" "$RUN_LOG"; then
-        STAGE_RESULTS["$stage_num"]="pass"
+for stage_num in "${STAGE_ORDER[@]}"; do
+    if [[ "${STAGE_RESULTS[$stage_num]}" == "pass" ]]; then
         ((STAGE_PASS++))
-    # Check for failure
-    elif grep -qE "stage\s+${stage_num}\s+${stage_name}" "$RUN_LOG" && grep -E "stage\s+${stage_num}\s+${stage_name}" "$RUN_LOG" | grep -q "FAIL"; then
-        STAGE_RESULTS["$stage_num"]="fail"
-        ((STAGE_FAIL++))
     else
-        STAGE_RESULTS["$stage_num"]="missing"
+        ((STAGE_FAIL++))
     fi
 done
 
-STAGE_TOTAL=$((STAGE_PASS + STAGE_FAIL))
+STAGE_TOTAL=${#STAGE_ORDER[@]}
 
-# --- Extract runtime and event count -----------------------------------------
+# --- Extract runtime and event count from final line -------------------------
+# Expected: pipeline ok. N enriched events in Ts
 
-RUNTIME_S="0"
+EVENT_COUNT=0
+RUNTIME_S=0
 
-# Try to extract runtime from final pipeline output line
-RUNTIME_MATCH=$(grep -E "pipeline ok\." "$RUN_LOG" 2>/dev/null | grep -oE '[0-9]+s$' | tr -d 's')
-if [[ -n "$RUNTIME_MATCH" ]]; then
-    RUNTIME_S="$RUNTIME_MATCH"
-else
-    # Try alternate extraction from "Total runtime:" line
-    RUNTIME_LINE=$(grep -E "Total runtime:" "$RUN_LOG" 2>/dev/null | head -1)
-    if [[ -n "$RUNTIME_LINE" ]]; then
-        RUNTIME_MATCH=$(echo "$RUNTIME_LINE" | grep -oE '[0-9]+')
-        if [[ -n "$RUNTIME_MATCH" ]]; then
-            RUNTIME_S="$RUNTIME_MATCH"
-        fi
+FINAL_LINE=$(grep -E "^pipeline ok\." "$STDOUT_FILE" 2>/dev/null | tail -1)
+if [[ -n "$FINAL_LINE" ]]; then
+    if [[ "$FINAL_LINE" =~ ([0-9]+)\ enriched\ events ]]; then
+        EVENT_COUNT="${BASH_REMATCH[1]}"
+    fi
+    if [[ "$FINAL_LINE" =~ in\ ([0-9]+)s ]]; then
+        RUNTIME_S="${BASH_REMATCH[1]}"
     fi
 fi
 
-# Extract enriched event count from final line
-EVENT_COUNT=0
-EVENT_MATCH=$(grep -E "pipeline ok\." "$RUN_LOG" 2>/dev/null | grep -oE '[0-9]+ enriched events' | grep -oE '[0-9]+')
-if [[ -n "$EVENT_MATCH" ]]; then
-    EVENT_COUNT="$EVENT_MATCH"
+# --- Discover output directory from pipeline run log -------------------------
+# The pipeline logs "Working directory: /path" — use that to locate artifacts.
+# Fall back to SCRIPT_DIR if not found.
+
+OUTPUT_DIR="$SCRIPT_DIR"
+LOG_WORKDIR=$(grep -E "^Working directory:" "$RUN_LOG" 2>/dev/null | head -1 | sed 's/^Working directory: //')
+if [[ -n "$LOG_WORKDIR" ]] && [[ -d "$LOG_WORKDIR" ]]; then
+    OUTPUT_DIR="$LOG_WORKDIR"
 fi
 
-# Also verify output files directly
-ENRICHED_FILE="${SCRIPT_DIR}/enriched_events.json"
-TIMELINE_FILE="${SCRIPT_DIR}/timeline_index.json"
-ENRICHED_VALID=true
-TIMELINE_VALID=true
+# --- Verify output artifacts -------------------------------------------------
 
-if [[ ! -s "$ENRICHED_FILE" ]]; then
-    ENRICHED_VALID=false
-    # Override event count if file doesn't exist
-    EVENT_COUNT=0
+ENRICHED_FILE="${OUTPUT_DIR}/enriched_events.json"
+TIMELINE_FILE="${OUTPUT_DIR}/timeline_index.json"
+
+ENRICHED_VALID=false
+TIMELINE_VALID=false
+
+if [[ -s "$ENRICHED_FILE" ]]; then
+    ENRICHED_VALID=true
+    # Use actual line count as ground truth
+    ACTUAL_COUNT=$(wc -l < "$ENRICHED_FILE" | tr -d '[:space:]')
+    if [[ "$ACTUAL_COUNT" -gt 0 ]]; then
+        EVENT_COUNT="$ACTUAL_COUNT"
+    fi
 fi
 
-if [[ ! -s "$TIMELINE_FILE" ]]; then
-    TIMELINE_VALID=false
+if [[ -s "$TIMELINE_FILE" ]]; then
+    TIMELINE_VALID=true
 fi
 
 # --- Determine verdict -------------------------------------------------------
 
 VERDICT="pass"
 
-# Fail if any stage failed
+# Any stage failure = fail
 if [[ $STAGE_FAIL -gt 0 ]]; then
     VERDICT="fail"
 fi
 
-# Fail if pipeline exited non-zero
+# Pipeline exited non-zero = fail
 if [[ $PIPELINE_EXIT_CODE -ne 0 ]]; then
     VERDICT="fail"
 fi
 
-# Fail if required outputs missing or empty
+# Required output missing or empty = fail
 if [[ "$ENRICHED_VALID" == "false" ]]; then
     VERDICT="fail"
 fi
@@ -145,18 +152,24 @@ if [[ "$TIMELINE_VALID" == "false" ]]; then
     VERDICT="fail"
 fi
 
+# No stages parsed at all = parsing failure = fail
+if [[ $STAGE_TOTAL -eq 0 ]]; then
+    VERDICT="fail"
+fi
+
 # --- Build JSON report -------------------------------------------------------
 
 STAGES_JSON="["
 first=true
-for num in 0 1 2 3 5 6 7 8 9 10 11; do
-    result="${STAGE_RESULTS[$num]:-missing}"
+for stage_num in "${STAGE_ORDER[@]}"; do
+    result="${STAGE_RESULTS[$stage_num]}"
+    name="${STAGE_NAMES[$stage_num]}"
     if [[ "$first" == "true" ]]; then
         first=false
     else
         STAGES_JSON+=","
     fi
-    STAGES_JSON+="{\"stage\":${num},\"result\":\"${result}\"}"
+    STAGES_JSON+="{\"stage\":${stage_num},\"name\":\"${name}\",\"result\":\"${result}\"}"
 done
 STAGES_JSON+="]"
 
@@ -164,14 +177,17 @@ cat > "$REPORT_FILE" << EOF
 {
   "test_name": "pipeline_generalization",
   "pack_path": "${SECONDARY_PACK}",
+  "pipeline_exit_code": ${PIPELINE_EXIT_CODE},
   "stages": ${STAGES_JSON},
   "total_stages": ${STAGE_TOTAL},
   "passed_stages": ${STAGE_PASS},
   "failed_stages": ${STAGE_FAIL},
   "enriched_events": ${EVENT_COUNT},
+  "enriched_file": "${ENRICHED_FILE}",
   "enriched_file_valid": ${ENRICHED_VALID},
+  "timeline_file": "${TIMELINE_FILE}",
   "timeline_file_valid": ${TIMELINE_VALID},
-  "runtime_seconds": ${RUNTIME_S:-0},
+  "runtime_seconds": ${RUNTIME_S},
   "verdict": "${VERDICT}"
 }
 EOF
