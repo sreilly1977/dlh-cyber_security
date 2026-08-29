@@ -485,3 +485,48 @@ enriched_events.json written
 ```
 
 ---
+
+# [11. Per-Source Statistics](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/11-source_stats.sh)
+### advanced
+
+## Goal: 
+
+Produce a per-source statistics report describing the shape of the normalized dataset.
+
+## Context: 
+
+Before handing the evidence off to downstream projects, you produce the equivalent of a data dashboard: how many events per source, what time range they cover, how many unique hosts, the ingest rate per hour. Anomalies in these numbers (a source with zero events, a source with a time range that does not match the rest, a host appearing in only one source) are the first sign of a pipeline bug and must be caught here, not in 3x02.
+
+## Instructions: 
+
+Write a script 11-source_stats.sh that reads enriched_events.json and produces source_stats.json containing, for each source_type:
+
+    record_count
+
+    first_event and last_event
+
+    unique_hosts
+
+    top_event_categories (top five with counts)
+
+    events_per_hour (records divided by the span in hours, rounded)
+
+    coverage_gap (the largest gap between consecutive events in minutes)
+
+It must also emit an overall section with global totals.
+
+**Expected Output:**
+
+```bash
+$ ./11-source_stats.sh
+source            records    hosts   ev/hour   max_gap(min)
+windows_json      <N>        <N>     <N>       <N>
+linux_text        <N>        <N>     <N>       <N>
+firewall          <N>        <N>     <N>       <N>
+suricata_alert    <N>        <N>     <N>       <N>
+pcap_flow         <N>        <N>     <N>       <N>
+overall           <N>        <N>     <N>       <N>
+source_stats.json written
+```
+
+---
