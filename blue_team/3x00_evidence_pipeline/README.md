@@ -446,7 +446,7 @@ cleaning_log.json      written
 
 ---
 
-# [9. Context Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/9-enrich.sh that)
+# [9. Context Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/9-enrich.sh)
 
 ## Goal: 
 
@@ -576,6 +576,47 @@ $ ./evidence_pipeline.sh ~/evidence_pack_primary
 [HH:MM:SS] stage 10 timeline           ... ok (Xs)
 [HH:MM:SS] stage 11 source_stats       ... ok (Xs)
 pipeline ok. <N> enriched events in <T>s
+```
+
+---
+
+# [13. Pipeline Generalization Test](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/13-pipeline_test.sh)
+### advanced
+
+## Goal: 
+
+Run the pipeline against an unseen secondary evidence pack and report per-stage pass or fail without modifying any script.
+
+## Context: 
+
+A pipeline that only works on the data it was developed against is not a pipeline. It is a one-off parser. This test proves your pipeline generalizes. The secondary evidence pack at ~/evidence_pack_secondary/ has the same source types as the primary pack but different hosts, a different time window, different asset inventory, and different network zones. If your scripts hardcoded anything from the primary pack they will fail here and you will see it.
+
+## Instructions: 
+
+Write a script 13-pipeline_test.sh that:
+
+    Runs ./evidence_pipeline.sh ~/evidence_pack_secondary
+
+    Captures stdout and stderr
+
+    Parses the run log to record per-stage result
+
+    After the run, verifies that the secondary run produced a non-empty enriched_events.json and timeline_index.json in the expected output location
+
+    Writes pipeline_test_report.json containing: pack path, stages and their result, final event count, runtime, and a top-level verdict of pass or fail
+
+The script itself must exit 0 on full pass and 1 on any stage failure.
+
+**Expected Output:**
+
+```bash
+$ ./13-pipeline_test.sh
+running pipeline against ~/evidence_pack_secondary
+all 11 stages passed
+enriched events: <N>
+runtime: <T>s
+verdict: pass
+pipeline_test_report.json written
 ```
 
 ---
