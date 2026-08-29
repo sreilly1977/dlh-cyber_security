@@ -530,3 +530,52 @@ source_stats.json written
 ```
 
 ---
+
+# [12. End-to-End Pipeline Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/evidence_pipeline.sh)
+### advanced
+
+## Goal: 
+
+Wrap every stage into a single orchestrator script that runs the full intake-to-handoff chain with one command.
+
+## Context: 
+
+James Chen wants to be able to rerun the whole pipeline against a new evidence drop in under five minutes without remembering the stage order. The orchestrator script is that guarantee. It calls every stage script in order, fails fast on the first error, and writes a run log an engineer can read.
+
+## Instructions: 
+
+Write a script evidence_pipeline.sh that accepts one positional argument: the path to an evidence pack root directory. The script must:
+
+    Validate the argument is a directory containing the expected subdirectories (windows/, linux/, network/, context/, student_telemetry/)
+
+    Set environment variables consumed by each stage script (e.g. EVIDENCE_PACK pointing to the argument)
+
+    Run the stages in order: 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11
+
+    Fail fast: if any stage exits non-zero, stop and print the failing stage number
+
+    Print a timestamped log of each stage start and finish
+
+    On success, print the final event count, the path to enriched_events.json, and the total runtime in seconds
+
+Note that Task 4 (schema design) is not a pipeline stage. The event_schema.json file must already exist in the working directory when the pipeline runs.
+
+**Expected Output:**
+
+```bash
+$ ./evidence_pipeline.sh ~/evidence_pack_primary
+[HH:MM:SS] stage 0 source_inventory    ... ok (Xs)
+[HH:MM:SS] stage 1 telemetry_import    ... ok (Xs)
+[HH:MM:SS] stage 2 windows_parse       ... ok (Xs)
+[HH:MM:SS] stage 3 linux_parse         ... ok (Xs)
+[HH:MM:SS] stage 5 normalize           ... ok (Xs)
+[HH:MM:SS] stage 6 network_normalize   ... ok (Xs)
+[HH:MM:SS] stage 7 schema_validate     ... ok (Xs)
+[HH:MM:SS] stage 8 data_quality        ... ok (Xs)
+[HH:MM:SS] stage 9 enrich              ... ok (Xs)
+[HH:MM:SS] stage 10 timeline           ... ok (Xs)
+[HH:MM:SS] stage 11 source_stats       ... ok (Xs)
+pipeline ok. <N> enriched events in <T>s
+```
+
+---
