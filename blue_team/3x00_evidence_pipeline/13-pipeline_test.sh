@@ -2,8 +2,7 @@
 #
 # Name: 13-pipeline_test.sh
 # Purpose: Generalization test — run pipeline against secondary evidence pack
-#          and produce structured report of per-stage results. Dynamically parses
-#          stages and escapes JSON safely.
+#          and produce structured report of per-stage results.
 # Author: Steve - Cybersecurity Engineer
 # Date: 29 August 2026
 #
@@ -45,179 +44,187 @@ PIPELINE_EXIT_CODE=0
 
 cat "$STDOUT_FILE" "$STDERR_FILE" > "$RUN_LOG"
 
-# --- JSON escape function ----------------------------------------------------
+# --- Parse results and generate report via Python ----------------------------
 
-json_escape() {
-    local str="$1"
-    str="${str//\\/\\\\}"
-    str="${str//\"/\\\"}"
-    str="${str//$'\n'/\\n}"
-    str="${str//$'\r'/\\r}"
-    str="${str//$'\t'/\\t}"
-    printf '%s' "$str"
-}
+python3 - "$STDOUT_FILE" "$RUN_LOG" "$REPORT_FILE" "$PIPELINE_EXIT_CODE" "$SECONDARY_PACK" "$SCRIPT_DIR" <<'PYEOF'
+import json
+import os
+import re
+import sys
 
-# --- Parse stage results from stdout -----------------------------------------
+stdout_file = sys.argv[1]
+run_log_file = sys.argv[2]
+report_file = sys.argv[3]
+pipeline_exit_code = int(sys.argv[4])
+secondary_pack = sys.argv[5]
+script_dir = sys.argv[6]
 
-declare -A STAGE_RESULTS
-declare -a STAGE_ORDER
+# --- Read pipeline stdout ----------------------------------------------------
 
-while IFS= read -r line; do
-    if [[ "$line" =~ stage[[:space:]]+([0-9]+)[[:space:]]+ ]]; then
-        stage_num="${BASH_REMATCH[1]}"
+stdout_lines = []
+with open(stdout_file, "r", errors="replace") as f:
+    stdout_lines = f.readlines()
 
-        # Add to order array if not already tracked
-        if [[ ! " ${STAGE_ORDER[*]} " =~ " ${stage_num} " ]]; then
-            STAGE_ORDER+=("$stage_num")
-        fi
+# --- Parse stage results ----------------------------------------------------
+# Look for any line containing "stage" and a number, then determine status.
+# We search broadly: any line with "stage" + digits, then check for ok/fail.
 
-        # Set result based on line content
-        if [[ "$line" =~ \.\.\.[[:space:]]+ok ]]; then
-            STAGE_RESULTS["$stage_num"]="pass"
-        elif [[ "$line" =~ FAIL ]]; then
-            STAGE_RESULTS["$stage_num"]="fail"
-        else
-            # Only set unknown if we don't already have a pass/fail
-            if [[ -z "${STAGE_RESULTS[$stage_num]+isset}" ]]; then
-                STAGE_RESULTS["$stage_num"]="unknown"
-            fi
-        fi
-    fi
-done < "$STDOUT_FILE"
+stages = []
+seen_stage_nums = set()
 
-# Count results
-STAGE_PASS=0
-STAGE_FAIL=0
-STAGE_TOTAL=${#STAGE_ORDER[@]}
+for line in stdout_lines:
+    line = line.strip()
+    if not line:
+        continue
 
-for stage_num in "${STAGE_ORDER[@]}"; do
-    result="${STAGE_RESULTS[$stage_num]:-unknown}"
-    case "$result" in
-        pass) ((STAGE_PASS++)) ;;
-        fail) ((STAGE_FAIL++)) ;;
-        *) ;;
-    esac
-done
+    # Broad match: "stage" followed by whitespace and digits
+    match = re.search(r"stage\s+(\d+)", line, re.IGNORECASE)
+    if not match:
+        continue
+
+    stage_num = int(match.group(1))
+
+    # Skip if we already recorded this stage
+    if stage_num in seen_stage_nums:
+        continue
+
+    # Determine result from line content
+    line_lower = line.lower()
+    if re.search(r"\.\.\.\s*ok\b", line_lower) or re.search(r"\bok\b\s*\(", line_lower):
+        result = "pass"
+    elif "fail" in line_lower:
+        result = "fail"
+    else:
+        result = "unknown"
+
+    seen_stage_nums.add(stage_num)
+    stages.append({"stage": stage_num, "result": result})
+
+stage_pass = sum(1 for s in stages if s["result"] == "pass")
+stage_fail = sum(1 for s in stages if s["result"] == "fail")
+stage_total = len(stages)
 
 # --- Extract runtime and event count -----------------------------------------
 
-EVENT_COUNT=0
-RUNTIME_S=0
+event_count = 0
+runtime_s = 0
 
-FINAL_LINE=$(grep -E "pipeline.*ok" "$STDOUT_FILE" 2>/dev/null | tail -1 || true)
-if [[ -n "$FINAL_LINE" ]]; then
-    if [[ "$FINAL_LINE" =~ ([0-9]+)[[:space:]]+enriched ]]; then
-        EVENT_COUNT="${BASH_REMATCH[1]}"
-    fi
-    if [[ "$FINAL_LINE" =~ in[[:space:]]+([0-9]+) ]]; then
-        RUNTIME_S="${BASH_REMATCH[1]}"
-    fi
-fi
+# Search stdout for final summary line
+for line in stdout_lines:
+    line_lower = line.lower()
 
-if [[ $EVENT_COUNT -eq 0 ]]; then
-    COUNT_LINE=$(grep -E "enriched events:" "$RUN_LOG" 2>/dev/null | head -1 || true)
-    if [[ -n "$COUNT_LINE" ]] && [[ "$COUNT_LINE" =~ ([0-9]+) ]]; then
-        EVENT_COUNT="${BASH_REMATCH[1]}"
-    fi
-fi
+    # Look for event count: "N enriched events"
+    m = re.search(r"(\d+)\s+enriched\s+events?", line_lower)
+    if m:
+        event_count = int(m.group(1))
 
-if [[ $RUNTIME_S -eq 0 ]]; then
-    TIME_LINE=$(grep -E "runtime:|Total runtime:" "$RUN_LOG" 2>/dev/null | head -1 || true)
-    if [[ -n "$TIME_LINE" ]] && [[ "$TIME_LINE" =~ ([0-9]+) ]]; then
-        RUNTIME_S="${BASH_REMATCH[1]}"
-    fi
-fi
+    # Look for runtime: "in Ns"
+    m = re.search(r"in\s+(\d+)s", line_lower)
+    if m:
+        runtime_s = int(m.group(1))
 
-# --- Discover output directory -----------------------------------------------
+# Fallback: search run log
+if event_count == 0 or runtime_s == 0:
+    with open(run_log_file, "r", errors="replace") as f:
+        for line in f:
+            if event_count == 0:
+                m = re.search(r"(\d+)\s+enriched\s+events?", line, re.IGNORECASE)
+                if m:
+                    event_count = int(m.group(1))
+            if runtime_s == 0:
+                m = re.search(r"(?:runtime|total runtime)[:\s]*(\d+)", line, re.IGNORECASE)
+                if m:
+                    runtime_s = int(m.group(1))
+            if event_count > 0 and runtime_s > 0:
+                break
 
-OUTPUT_DIR="$SCRIPT_DIR"
-LOG_WORKDIR=$(grep -E "^Working directory:" "$RUN_LOG" 2>/dev/null | head -1 | sed 's/^Working directory:[[:space:]]*//' || true)
-if [[ -n "$LOG_WORKDIR" ]] && [[ -d "$LOG_WORKDIR" ]]; then
-    OUTPUT_DIR="$LOG_WORKDIR"
-elif [[ -f "${SCRIPT_DIR}/enriched_events.json" ]]; then
-    OUTPUT_DIR="$SCRIPT_DIR"
-fi
+# --- Discover output directory ----------------------------------------------
+
+output_dir = script_dir
+
+# Try to find working directory from run log
+with open(run_log_file, "r", errors="replace") as f:
+    for line in f:
+        m = re.match(r"Working directory:\s*(.+)", line)
+        if m:
+            candidate = m.group(1).strip()
+            if os.path.isdir(candidate):
+                output_dir = candidate
+                break
+
+# Fallback: check script_dir for enriched_events.json
+if not os.path.isfile(os.path.join(output_dir, "enriched_events.json")):
+    if os.path.isfile(os.path.join(script_dir, "enriched_events.json")):
+        output_dir = script_dir
 
 # --- Verify output artifacts -------------------------------------------------
 
-ENRICHED_FILE="${OUTPUT_DIR}/enriched_events.json"
-TIMELINE_FILE="${OUTPUT_DIR}/timeline_index.json"
+enriched_path = os.path.join(output_dir, "enriched_events.json")
+timeline_path = os.path.join(output_dir, "timeline_index.json")
 
-ENRICHED_VALID=false
-TIMELINE_VALID=false
+enriched_valid = os.path.isfile(enriched_path) and os.path.getsize(enriched_path) > 0
+timeline_valid = os.path.isfile(timeline_path) and os.path.getsize(timeline_path) > 0
 
-if [[ -s "$ENRICHED_FILE" ]]; then
-    ENRICHED_VALID=true
-    ACTUAL_COUNT=$(wc -l < "$ENRICHED_FILE" | tr -d '[:space:]')
-    if [[ "$ACTUAL_COUNT" -gt 0 ]]; then
-        EVENT_COUNT="$ACTUAL_COUNT"
-    fi
-fi
-
-if [[ -s "$TIMELINE_FILE" ]]; then
-    TIMELINE_VALID=true
-fi
+# Use actual file line count as ground truth for event count
+if enriched_valid:
+    with open(enriched_path, "r", errors="replace") as f:
+        line_count = sum(1 for _ in f)
+    if line_count > 0:
+        event_count = line_count
 
 # --- Determine verdict -------------------------------------------------------
 
-VERDICT="pass"
+verdict = "pass"
 
-[[ $STAGE_FAIL -gt 0 ]] && VERDICT="fail"
-[[ $PIPELINE_EXIT_CODE -ne 0 ]] && VERDICT="fail"
-[[ "$ENRICHED_VALID" == "false" ]] && VERDICT="fail"
-[[ "$TIMELINE_VALID" == "false" ]] && VERDICT="fail"
-[[ $STAGE_TOTAL -eq 0 ]] && VERDICT="fail"
+# Pipeline exited non-zero
+if pipeline_exit_code != 0:
+    verdict = "fail"
 
-# --- Build JSON report (safely escaped) --------------------------------------
+# Any stage failure
+if any(s["result"] == "fail" for s in stages):
+    verdict = "fail"
 
-STAGES_JSON="["
-first=true
-for stage_num in "${STAGE_ORDER[@]}"; do
-    result="${STAGE_RESULTS[$stage_num]:-unknown}"
-    if [[ "$first" == "true" ]]; then
-        first=false
-    else
-        STAGES_JSON+=","
-    fi
-    STAGES_JSON+="{\"stage\":${stage_num},\"result\":\"${result}\"}"
-done
-STAGES_JSON+="]"
+# Required outputs missing or empty
+if not enriched_valid:
+    verdict = "fail"
+if not timeline_valid:
+    verdict = "fail"
 
-PACK_PATH_ESCAPED=$(json_escape "$SECONDARY_PACK")
-ENRICHED_FILE_ESCAPED=$(json_escape "$ENRICHED_FILE")
-TIMELINE_FILE_ESCAPED=$(json_escape "$TIMELINE_FILE")
+# No stages parsed at all (parsing failure)
+if stage_total == 0:
+    verdict = "fail"
 
-cat > "$REPORT_FILE" << EOF
-{
-  "test_name": "pipeline_generalization",
-  "pack_path": "${PACK_PATH_ESCAPED}",
-  "pipeline_exit_code": ${PIPELINE_EXIT_CODE},
-  "stages": ${STAGES_JSON},
-  "total_stages": ${STAGE_TOTAL},
-  "passed_stages": ${STAGE_PASS},
-  "failed_stages": ${STAGE_FAIL},
-  "enriched_events": ${EVENT_COUNT},
-  "enriched_file": "${ENRICHED_FILE_ESCAPED}",
-  "enriched_file_valid": ${ENRICHED_VALID},
-  "timeline_file": "${TIMELINE_FILE_ESCAPED}",
-  "timeline_file_valid": ${TIMELINE_VALID},
-  "runtime_seconds": ${RUNTIME_S},
-  "verdict": "${VERDICT}"
+# --- Write JSON report -------------------------------------------------------
+
+report = {
+    "test_name": "pipeline_generalization",
+    "pack_path": secondary_pack,
+    "pipeline_exit_code": pipeline_exit_code,
+    "stages": stages,
+    "total_stages": stage_total,
+    "passed_stages": stage_pass,
+    "failed_stages": stage_fail,
+    "enriched_events": event_count,
+    "enriched_file": enriched_path,
+    "enriched_file_valid": enriched_valid,
+    "timeline_file": timeline_path,
+    "timeline_file_valid": timeline_valid,
+    "runtime_seconds": runtime_s,
+    "verdict": verdict,
 }
-EOF
 
-# --- Output summary ----------------------------------------------------------
+with open(report_file, "w") as f:
+    json.dump(report, f, indent=2)
+    f.write("\n")
 
-echo "all ${STAGE_PASS} stages passed"
-echo "enriched events: ${EVENT_COUNT}"
-echo "runtime: ${RUNTIME_S}s"
-echo "verdict: ${VERDICT}"
-echo "pipeline_test_report.json written"
+# --- Print summary -----------------------------------------------------------
 
-# --- Exit code ---------------------------------------------------------------
+print(f"all {stage_pass} stages passed")
+print(f"enriched events: {event_count}")
+print(f"runtime: {runtime_s}s")
+print(f"verdict: {verdict}")
+print(f"pipeline_test_report.json written")
 
-if [[ "$VERDICT" == "pass" ]]; then
-    exit 0
-else
-    exit 1
-fi
+sys.exit(0 if verdict == "pass" else 1)
+
+PYEOF
