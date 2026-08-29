@@ -126,6 +126,59 @@ def parse_raw_json(event):
     except (json.JSONDecodeError, ValueError):
         return None
 
+def parse_timestamp(ts_str, source_type=None, raw_message=None):
+    """Parse various timestamp formats into datetime UTC object.
+    Returns tuple: (datetime_utc, formatted_iso_string)"""
+    if not ts_str or not isinstance(ts_str, str):
+        # Try to extract from raw_message
+        if raw_message:
+            # Suricata style: "2026-03-18T00:00:31.026524+0000"
+            match = re.search(r'"timestamp"\s*:\s*"([^"]+)"', raw_message)
+            if match:
+                ts_str = match.group(1)
+        if not ts_str:
+            return None, ""
+
+    ts_str = ts_str.strip()
+
+    # Try ISO with milliseconds and offset
+    try:
+        if "." in ts_str and "+" in ts_str:
+            # Format: 2026-03-18T00:00:31.026524+0000
+            base, offset_part = ts_str.rsplit("+", 1)
+            offset_hours = int(offset_part[:2])
+            offset_mins = int(offset_part[2:4]) if len(offset_part) >= 4 else 0
+            dt = datetime.strptime(base.split(".")[0], "%Y-%m-%dT%H:%M:%S")
+            from datetime import timedelta
+            offset = timedelta(hours=offset_hours, minutes=offset_mins)
+            dt = dt.replace(tzinfo=timezone(offset))
+            return dt.astimezone(timezone.utc), dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except (ValueError, TypeError):
+        pass
+
+    # Try ISO with Z suffix (with or without milliseconds)
+    try:
+        if "T" in ts_str:
+            # Remove milliseconds if present
+            base = re.sub(r'\.\d+', '', ts_str)
+            if base.endswith("Z"):
+                base = base[:-1]
+            dt = datetime.strptime(base, "%Y-%m-%dT%H:%M:%S")
+            return dt.replace(tzinfo=timezone.utc), dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    except (ValueError, TypeError):
+        pass
+
+    # Try epoch seconds
+    try:
+        val = float(ts_str)
+        if 1_000_000_000 < val < 2_000_000_000:
+            dt = datetime.fromtimestamp(val, tz=timezone.utc)
+            return dt, dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    except (ValueError, TypeError, OSError):
+        pass
+
+    return None, ts_str
+
 # --- Summary generation ------------------------------------------------------
 
 def build_summary(event_category, event):
@@ -279,20 +332,17 @@ def build_summary(event_category, event):
         if not raw:
             return "Audit event"
 
-        # Check event_data.message for cleaner audit text
         event_data = event.get("event_data")
         if isinstance(event_data, dict):
             msg = event_data.get("message", "")
             if msg:
                 raw = msg
 
-        # Look for process[pid]: pattern first (standard syslog)
         proc_match = re.search(r'(\w+)\[(\d+)\]:\s*(.+)', raw)
         if proc_match:
             proc_name = proc_match.group(1)
             detail = proc_match.group(3)
 
-            # Extract COMMAND= if present
             cmd_match = re.search(r'COMMAND=(.+)', detail)
             if cmd_match:
                 cmd = cmd_match.group(1).strip()
@@ -300,12 +350,10 @@ def build_summary(event_category, event):
                     cmd = cmd.split("/")[-1]
                 return f"Audit: {proc_name} {cmd}"
 
-            # Extract user if present
             user_match = re.search(r'user\s*[:=]\s*(\S+)', detail)
             if user_match:
                 return f"Audit: {proc_name} user={user_match.group(1)}"
 
-            # Session opened/closed
             if "session opened" in detail:
                 sess_user_match = re.search(r'session opened for user (\S+)', detail)
                 if sess_user_match:
@@ -314,17 +362,13 @@ def build_summary(event_category, event):
             if "session closed" in detail:
                 return f"Audit: {proc_name} session closed"
 
-            # Sudo command execution
             if "sudo" in proc_name.lower():
-                # Try to extract who ran sudo and what
                 user_match = re.search(r'^(\S+)\s*:', detail)
                 if user_match:
-                    sudo_user = user_match.group(1)
-                    return f"Audit: {proc_name} executed by {sudo_user}"
+                    return f"Audit: {proc_name} executed by {user_match.group(1)}"
 
             return f"Audit: {proc_name} {truncate(detail[:50], 50)}"
 
-        # Fallback - try simpler pattern for process names
         proc_simple = re.search(r'\s(\w+)\s*\[(\d+)\]', raw)
         if proc_simple:
             return f"Audit: {proc_simple.group(1)}"
@@ -340,24 +384,10 @@ def build_summary(event_category, event):
             return f"Service {svc}"
         return "Service activity"
 
-    # Generic fallback
     msg = get_field(event, "raw_message")
     if msg:
         return truncate(msg, 80)
     return f"{event_category} event"
-
-# --- Timestamp parsing -------------------------------------------------------
-
-def parse_ts(ts_str):
-    if not ts_str:
-        return None
-    try:
-        return datetime.strptime(ts_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-    except ValueError:
-        try:
-            return datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
-        except ValueError:
-            return None
 
 # --- Main processing ---------------------------------------------------------
 
@@ -373,16 +403,20 @@ with open(input_file, "r", errors="replace") as f:
         except json.JSONDecodeError:
             continue
 
-        timestamp = event.get("timestamp", "")
+        timestamp_raw = event.get("timestamp", "")
         hostname = event.get("hostname") or ""
         source_type = event.get("source_type") or ""
+
+        # Parse timestamp properly for sorting
+        dt, timestamp_normalized = parse_timestamp(timestamp_raw, source_type, event.get("raw_message"))
 
         event_category = derive_category(source_type, event)
         severity = derive_severity(event_category, event)
         summary = build_summary(event_category, event)
 
         entry = {
-            "timestamp": timestamp,
+            "_sort_key": dt,  # Internal sort key, will be removed
+            "timestamp": timestamp_normalized if timestamp_normalized else timestamp_raw,
             "hostname": hostname,
             "source_type": source_type,
             "event_category": event_category,
@@ -392,16 +426,25 @@ with open(input_file, "r", errors="replace") as f:
         }
         entries.append(entry)
 
-# Sort ascending by timestamp
-entries.sort(key=lambda x: x["timestamp"])
+# Sort ascending by parsed datetime, not raw string
+entries.sort(key=lambda x: (x["_sort_key"] or datetime.min.replace(tzinfo=timezone.utc), x["event_ref"]))
 
 # Deduplicate consecutive identical entries within one-second window
 deduplicated = []
 collapsed_count = 0
+from datetime import timedelta
 
-for entry in entries:
+for i, entry in enumerate(entries):
     if deduplicated:
         prev = deduplicated[-1]
+        prev_dt = prev["_sort_key"]
+        curr_dt = entry["_sort_key"]
+
+        if prev_dt and curr_dt:
+            delta_seconds = abs((curr_dt - prev_dt).total_seconds())
+        else:
+            delta_seconds = float('inf')
+
         identical = (
             prev["hostname"] == entry["hostname"]
             and prev["source_type"] == entry["source_type"]
@@ -409,13 +452,8 @@ for entry in entries:
             and prev["severity"] == entry["severity"]
             and prev["summary"] == entry["summary"]
         )
-        within_window = False
-        if identical:
-            prev_dt = parse_ts(prev["timestamp"])
-            curr_dt = parse_ts(entry["timestamp"])
-            if prev_dt and curr_dt:
-                delta = abs((curr_dt - prev_dt).total_seconds())
-                within_window = delta <= 1.0
+
+        within_window = delta_seconds <= 1.0
 
         if identical and within_window:
             if "count" not in prev:
@@ -425,6 +463,10 @@ for entry in entries:
             continue
 
     deduplicated.append(entry)
+
+# Remove internal sort keys before writing output
+for entry in deduplicated:
+    del entry["_sort_key"]
 
 # Write output
 with open(output_file, "w") as f:
