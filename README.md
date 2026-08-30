@@ -21,12 +21,12 @@ A comprehensive cybersecurity study repository structured around two primary lea
 
 ## `blue_team/`
 
-Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Ten modules build practical SOC analyst skills from incident classification through executive briefing.
+Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Thirteen modules build practical SOC analyst skills from incident classification through executive briefing.
 
 ### Part 1 — Foundations (Modules 1–6)
 
 | Directory | Focus | Exercises |
-|-----------|-------|-----------|
+| --- |
 | [`1x00_first_watch/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x00_first_watch) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
 | [`1x01_know_your_enemy/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x01_know_your_enemy) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
 | [`1x02_the_weak_links/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x02_the_weak_links) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
@@ -34,14 +34,22 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | 14 |
 | [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | 6 |
 
-### Part 2 — Applied Hardening (Modules 7–10)
+### Part 2 — Applied Hardening (Modules 7–12)
 
 | Directory | Focus | Exercises |
-|-----------|-------|-----------|
+| --- |
 | [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | 14 |
 | [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | 15 |
 | [`2x02_eyes_on_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | Endpoint detection and response, EDR configuration, Sysmon deployment, host-based monitoring | 16 |
 | [`2x03_patch_equation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x03_patch_equation) | Vulnerability management lifecycle, patch prioritization, deployment strategies, compliance scanning | 16 |
+| [`2x04_perimeter_defense/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network defense control plane, nftables rule enforcement, protocol auditing, Suricata IDS analysis, PCAP investigation, DNS filtering | 16 |
+| [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 13 |
+
+### Part 3 — Evidence Pipeline (Module 13)
+
+| Directory | Focus | Exercises |
+| --- |
+| [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 14 |
 
 ### Reference Libraries
 
@@ -54,7 +62,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_CSF) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, CSWP.29) |
 | [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_Special_Publications) | NIST SP 800-series reference documents (SP 800-12, 800-30, 800-53, 800-61) |
 | [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/SANS) | SANS Institute reading room materials and security research papers |
-| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Weekly learning objectives for the course (Week 10, Week 11) |
+| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Weekly learning objectives for the course (Weeks 10 & 11 ) |
 
 ---
 
