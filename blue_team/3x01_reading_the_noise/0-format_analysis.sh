@@ -29,8 +29,22 @@ import json
 import os
 import sys
 from collections import Counter
+from datetime import datetime
 
 CARD_CAP = 10000
+
+def is_valid_ipv4(value):
+    """Check if a string is a valid IPv4 address with octets 0-255."""
+    parts = value.split(".")
+    if len(parts) != 4:
+        return False
+    for part in parts:
+        if not part.isdigit():
+            return False
+        num = int(part)
+        if num < 0 or num > 255:
+            return False
+    return True
 
 def infer_type(value):
     """Infer JSON field type from sample value."""
@@ -45,13 +59,11 @@ def infer_type(value):
     if isinstance(value, str):
         if "T" in value and len(value) >= 19:
             try:
-                from datetime import datetime
                 datetime.fromisoformat(value.replace("Z", "+00:00"))
                 return "timestamp"
             except (ValueError, TypeError):
                 pass
-        parts = value.split(".")
-        if len(parts) == 4 and all(p.isdigit() for p in parts if p):
+        if is_valid_ipv4(value):
             return "ipv4"
         return "string"
     if isinstance(value, list):
@@ -61,21 +73,37 @@ def infer_type(value):
     return "unknown"
 
 def flatten_dict(d, parent_key="", sep="_"):
-    """Flatten nested dict for field profiling."""
+    """Flatten nested dicts and lists for field profiling."""
     items = []
     for k, v in d.items():
         new_key = f"{parent_key}{sep}{k}" if parent_key else k
         if isinstance(v, dict):
             items.extend(flatten_dict(v, new_key, sep=sep).items())
+        elif isinstance(v, list):
+            # Handle non-empty lists of dicts by indexing
+            if v and all(isinstance(item, dict) for item in v):
+                for i, item in enumerate(v):
+                    sub_key = f"{new_key}{sep}{i}"
+                    items.extend(flatten_dict(item, sub_key, sep=sep).items())
+            else:
+                # Scalar or mixed list - store as-is
+                items.append((new_key, v))
         else:
             items.append((new_key, v))
     return dict(items)
+
+def serialize_example(value):
+    """Preserve native JSON types for example_values; stringify only if non-serializable."""
+    try:
+        json.dumps(value)
+        return value
+    except (TypeError, ValueError):
+        return str(value)
 
 def main():
     enriched_path = os.environ["ENRICHED_EVENTS"]
     output_pkg = os.environ["BASELINE_PKG"]
 
-    # Stream through NDJSON one line at a time - never hold full dataset in memory
     sources = {}
 
     with open(enriched_path, "r") as f:
@@ -132,11 +160,10 @@ def main():
                 fs["type_counter"][infer_type(value)] += 1
                 if value is not None:
                     if len(fs["values"]) < 3:
-                        fs["values"].append(value)
+                        fs["values"].append(serialize_example(value))
                     if len(fs["value_set"]) < CARD_CAP:
                         fs["value_set"].add(str(value))
 
-    # Build results from accumulated stats
     results = {}
 
     for st, ss in sorted(sources.items()):
@@ -155,7 +182,7 @@ def main():
                 "presence_pct": presence_pct,
                 "inferred_type": inferred_type,
                 "cardinality": cardinality,
-                "example_values": [str(v) for v in fs["values"][:3]],
+                "example_values": fs["values"][:3],
             }
 
         top_cats = [
@@ -172,18 +199,15 @@ def main():
             "top_event_categories": top_cats,
         }
 
-        # Free per-source working sets
         del ss["field_stats"]
         del ss["hosts"]
         del ss["categories"]
 
-    # Write JSON output
     output_file = os.path.join(output_pkg, "format_analysis.json")
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
 
-    # Print human-readable summary to stdout
     total_sources = len(results)
     for st, data in sorted(results.items()):
         num_fields = len(data["field_profile"])
