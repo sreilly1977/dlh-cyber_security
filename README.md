@@ -26,6 +26,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 ### Part 1 — Foundations (Modules 1–6)
 
 | Directory | Focus | Exercises |
+|-----------|-------|-----------|
 | [`1x00_first_watch/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x00_first_watch) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
 | [`1x01_know_your_enemy/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x01_know_your_enemy) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
 | [`1x02_the_weak_links/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x02_the_weak_links) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
@@ -36,6 +37,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 ### Part 2 — Applied Hardening (Modules 7–12)
 
 | Directory | Focus | Exercises |
+|-----------|-------|-----------|
 | [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | 14 |
 | [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | 15 |
 | [`2x02_eyes_on_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | Endpoint detection and response, EDR configuration, Sysmon deployment, host-based monitoring | 16 |
@@ -46,6 +48,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 ### Part 3 — Evidence Pipeline (Module 13)
 
 | Directory | Focus | Exercises |
+|-----------|-------|-----------|
 | [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 14 |
 
 ### Reference Libraries
