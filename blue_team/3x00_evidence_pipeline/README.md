@@ -665,3 +665,75 @@ Note: this is the only Markdown deliverable in the project. It is graded on prec
 A [pipeline_spec.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/pipeline_spec.md) file respecting the constraints above.
 
 ---
+
+# [15. Evidence Handoff Package](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x00_evidence_pipeline/15-handoff_package.sh)
+### advanced
+
+## Goal: 
+
+Assemble the complete evidence handoff directory that every downstream Module 3 project will consume.
+
+## Context: 
+
+This is the deliverable the rest of the module runs on. 3x01 reads the timeline index and the enriched dataset. 3x02 runs detection rules against the normalized dataset. 3x03 uses both. The directory layout you produce here is the contract.
+
+## Instructions: 
+
+Write a script 15-handoff_package.sh that assembles the handoff directory at the path given by $HANDOFF_DIR (default: ~/3x00_handoff/evidence_handoff/) with the following exact layout:
+
+<pre>
+evidence_handoff/
+  data/
+    normalized_events.json
+    enriched_events.json
+    timeline_index.json
+    network_events.json
+    quarantine.json
+  context/
+    asset_inventory.json
+    network_zones.json
+  reports/
+    source_inventory.json
+    validation_report.json
+    cleaning_log.json
+    source_stats.json
+    pipeline_test_report.json
+  schema/
+    event_schema.json
+  pipeline/
+    evidence_pipeline.sh
+    0-source_inventory.sh
+    1-telemetry_import.sh
+    2-windows_parse.sh
+    3-linux_parse.sh
+    5-normalize.sh
+    6-network_normalize.sh
+    7-schema_validate.sh
+    8-data_quality.sh
+    9-enrich.sh
+    10-timeline.sh
+    11-source_stats.sh
+  pipeline_spec.md
+  MANIFEST.json
+</pre>
+
+The script must copy every listed file from the working directory into the correct subdirectory, generate MANIFEST.json containing the path, size, and sha256 of every file in the handoff, and finish by running a sanity check that every listed file is present and non-empty.
+
+If $HANDOFF_DIR is not set, default to ~/3x00_handoff/evidence_handoff/.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && ./15-handoff_package.sh
+copying data/       ... 5 files
+copying context/    ... 2 files
+copying reports/    ... 5 files
+copying schema/     ... 1 file
+copying pipeline/   ... 12 files
+copying spec        ... 1 file
+MANIFEST.json       : 26 entries
+handoff sanity check: ok
+evidence_handoff/ ready
+```
+
+---
