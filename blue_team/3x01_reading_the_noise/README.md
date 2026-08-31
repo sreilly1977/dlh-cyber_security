@@ -374,3 +374,46 @@ baseline_file.json written
 ```
 
 ---
+
+# [8. Temporal Pattern Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/8-temporal_profile.sh)
+### advanced
+
+## Goal: 
+
+Produce hourly and daily activity profiles per source type to capture when things normally happen.
+
+## Context: 
+
+MedDefense is a hospital. Clinical staff log in at 06:00, administrative staff arrive at 08:00, backup jobs run at 02:00, nobody deploys code at midnight. A burst of auditd execve events at 03:00 on Saturday is either the weekly backup window or something that should have never happened. The temporal profile encodes those rhythms as numbers. T10, T11, and T12 will compare the evaluation window against this profile to flag time-shape anomalies.
+
+## Instructions: 
+
+Write a script 8-temporal_profile.sh that reads labeled_events.json, restricts to the baseline window, and produces temporal_profile.json containing for each source_type and each canonical_label:
+
+    hour_of_day_histogram: 24 buckets with mean count per hour of day over the baseline
+
+    day_of_week_histogram: 7 buckets with mean count per day of week
+
+    peak_hour and quiet_hour
+
+    business_offhours_ratio: the ratio of business-hours events to off-hours events
+
+The script must also emit a simple ASCII histogram for the top three most active canonical labels for human inspection.
+
+**Expected Output:**
+
+```bash
+$ ./8-temporal_profile.sh
+source_type         labels profiled
+  windows_json           <N>
+  linux_text             <N>
+  firewall               <N>
+  suricata_alert         <N>
+  pcap_flow              <N>
+top 3 labels temporal shape (per hour, baseline avg):
+  process_start  ...
+  login_success  ...
+temporal_profile.json written
+```
+
+---
