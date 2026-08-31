@@ -336,3 +336,41 @@ baseline_network.json written
 
 ---
 
+# [7. File Access Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/7-baseline_file.sh)
+### advanced
+
+## Goal: 
+
+Compute the baseline for file access events against sensitive directories on every host.
+
+## Context: 
+
+Sensitive directories are the ones where a single unexpected read or write is a signal. /etc/shadow, /etc/sudoers.d/, /var/log/audit/, C:\Windows\System32\config\, and the MedDefense application config directories are touched by a small, predictable set of processes and users during normal operation. The baseline captures that footprint so any access from outside the footprint becomes visible later.
+
+## Instructions: 
+
+Write a script 7-baseline_file.sh that reads labeled_events.json, restricts to events with canonical labels file_read_sensitive, file_write_sensitive, or file_permission_change, and produces baseline_file.json containing:
+
+    sensitive_paths: the distinct set of sensitive file paths observed during the baseline
+
+    per_path_access: for each path, the list of distinct accessing processes and users with counts
+
+    per_host_paths: for each host, the set of sensitive paths touched during the baseline
+
+    rare_accesses: paths touched fewer than three times during the whole baseline
+
+The list of sensitive path prefixes must be declared at the top of the script as a configurable array: /etc/shadow, /etc/sudoers, /etc/ssh/, /var/log/audit/, C:\\Windows\\System32\\config\\, and MedDefense application paths.
+
+**Expected Output:**
+
+```bash
+$ ./7-baseline_file.sh
+baseline window   : <start> -> <end>
+sensitive paths   : <N>
+total accesses    : <N>
+per host coverage : <N> hosts
+rare accesses     : <N>
+baseline_file.json written
+```
+
+---
