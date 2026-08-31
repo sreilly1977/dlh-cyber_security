@@ -47,7 +47,7 @@ Last thing. The scripts you write become the MedDefense SOC reference toolkit. W
 
 ---
 
-# [0. Format Analysis Across All Sources]
+# [0. Format Analysis Across All Sources](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/0-format_analysis.sh)
 
 ## Goal: 
 
@@ -89,5 +89,42 @@ format_analysis.json written
 ```
 
 ***Note: Exact counts depend on your 3x00 pipeline output.***
+
+---
+
+# [1. Critical Field Extraction and Indexing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/1-field_index.sh)
+
+## Goal: 
+
+Extract the critical analytical fields from every record and build a compact index keyed by field name for fast lookup.
+
+## Context: 
+
+During triage you do not want to scan 40,000 records every time you ask "which hosts saw a user value of svc_backup". You want an index that answers that question in milliseconds. This task builds the index once and writes it to disk so every subsequent task in the project reads from it instead of re-scanning the enriched dataset.
+
+## Instructions: 
+
+Write a script 1-field_index.sh that reads $HANDOFF_DIR/data/enriched_events.json and produces field_index.json containing, for each critical field in the schema, a reverse index mapping observed values to the list of event references where they appear. Critical fields must include at minimum: hostname, user, process_name, src_ip, dst_ip, event_category, source_type.
+
+For each value in the index, include the count of occurrences and an optional capped list of up to 50 event_ref pointers. Values that occur more than 50 times should only store the count and a capped: true marker to keep the index bounded.
+
+The script must default HANDOFF_DIR to ~/3x00_handoff/evidence_handoff if not set.
+
+Print a summary showing total fields indexed, total unique values, and index size on disk.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && ./1-field_index.sh
+indexing 7 critical fields over <N> records
+  hostname        unique values :   <N>
+  user            unique values :   <N>
+  process_name    unique values :   <N>
+  src_ip          unique values :   <N>
+  dst_ip          unique values :   <N>
+  event_category  unique values :   <N>
+  source_type     unique values :   <N>
+field_index.json written (<X> MB)
+```
 
 ---
