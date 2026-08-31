@@ -296,3 +296,43 @@ baseline_process.json written
 ```
 
 ---
+
+# [6. Network Connection Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/6-baseline_network.sh)
+### advanced
+
+## Goal: 
+
+Compute the network baseline: expected destinations, ports, and services per host, and expected cross-zone flows.
+
+## Context: 
+The network baseline captures who normally talks to whom, on which port, and across which network zone boundaries. The asset inventory and network zone enrichment from 3x00 make it possible to reason about flows at the zone level, not just at the IP level, which matters for healthcare segmentation compliance. A clinical workstation normally talks to the EHR server on 443 and to the internal DNS on 53 and to nothing else. A flow to an unknown external IP on port 8443 is immediately suspicious even if the destination is not on a threat feed.
+
+## Instructions: 
+
+Write a script 6-baseline_network.sh that reads labeled_events.json, restricts to the baseline window, and produces baseline_network.json containing:
+
+    per_host_destinations: for each host, the set of distinct dst_ip contacted with counts
+
+    per_host_ports: for each host, the set of distinct dst_port used with counts
+
+    zone_flows: counts of flows keyed by (src_zone, dst_zone) tuples derived from the enrichment
+
+    known_external_ips: the list of dst_ip values falling into an external zone with counts
+
+    service_profiles: the mapping of dst_port to the set of hosts that normally use it
+
+**Expected Output:**
+
+```bash
+$ ./6-baseline_network.sh
+baseline window   : <start> -> <end>
+hosts with network activity : <N>
+distinct dst_ip           : <N>
+distinct dst_port         : <N>
+zone flows recorded       : <N>
+known external IPs        : <N>
+baseline_network.json written
+```
+
+---
+
