@@ -172,3 +172,48 @@ query_toolkit.sh <verb> [options]
 ```
 
 ---
+
+# [3. Event Type Taxonomy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/3-event_taxonomy.sh)
+
+## Goal: 
+
+Build the MedDefense event type taxonomy that maps every observed source-specific event into a canonical analytical label.
+
+## Context: 
+
+The schema gives you event_category at a coarse grain. For baselining and anomaly analysis you need finer granularity. The taxonomy is the deterministic mapping from raw source fields to canonical labels. Every downstream script in this project labels events through the taxonomy instead of interpreting source fields directly.
+
+## Instructions: 
+
+Write a script 3-event_taxonomy.sh that reads $HANDOFF_DIR/data/enriched_events.json and produces event_taxonomy.json. The taxonomy must contain, for each canonical label, the list of rules that identify it. A rule is a record {source_type, match: {field: value, ...}, label}.
+
+At minimum the taxonomy must cover:
+
+    login_success, login_failure, logout, account_lockout, privilege_escalation
+
+    process_start, process_stop, child_process_spawn
+
+    file_read_sensitive, file_write_sensitive, file_permission_change
+
+    network_connection_outbound, network_connection_inbound, network_alert, network_blocked
+
+The script must also write the labeled dataset to labeled_events.json (newline-delimited JSON) with a new canonical_label field. Records whose label cannot be determined are assigned unlabeled.
+
+The script must default HANDOFF_DIR to ~/3x00_handoff/evidence_handoff if not set.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && ./3-event_taxonomy.sh
+taxonomy rules         : <N>
+records labeled        : <N>
+records unlabeled      : <N>
+canonical label distribution (top 10):
+  process_start              <N>
+  login_success              <N>
+  ...
+event_taxonomy.json written
+labeled_events.json written
+```
+
+---
