@@ -217,3 +217,82 @@ labeled_events.json written
 ```
 
 ---
+
+# [4. Authentication Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/4-baseline_auth.sh)
+
+## Goal: 
+
+Compute the authentication baseline over the clean window: per-host, per-user, per-time-of-day success and failure patterns.
+
+## Context: 
+
+Authentication is the most frequently queried log category in a SOC. The baseline must answer: who logs in where, when do they log in, what is the normal success-to-failure ratio, what is the largest failure burst from a single source that is considered normal. Every number in this baseline will be compared against day 8 by the anomaly script in T10.
+
+## Instructions: 
+
+Write a script 4-baseline_auth.sh that reads labeled_events.json, restricts to the baseline window (first seven days by default, overridable by $BASELINE_DAYS), and produces baseline_auth.json containing:
+
+    window: the baseline window start and end timestamps
+
+    per_host: for each host, the counts of login_success, login_failure, logout, account_lockout, privilege_escalation
+
+    per_user: list of accounts observed with per-account success and failure counts
+
+    known_accounts: the deduplicated list of usernames that appear at least once
+
+    business_hours_avg: average successes and failures per hour during 06:00 to 17:59
+
+    offhours_avg: average successes and failures per hour during 18:00 to 05:59
+
+    max_failures_1h_window: the maximum number of failures observed in any 1-hour window from a single src_ip during the baseline
+
+**Expected Output:**
+
+```bash
+$ ./4-baseline_auth.sh
+baseline window : <start> -> <end>
+hosts           : <N>
+known accounts  : <N>
+business hours  : <N> success/h  |  <N> failure/h
+off hours       : <N> success/h  |  <N> failure/h
+max 1h src_ip failures : <N>
+baseline_auth.json written
+```
+
+---
+
+# [5. Process Execution Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/5-baseline_process.sh)
+
+## Goal: 
+
+Compute the per-host process execution baseline: which processes are expected on which host and with what frequency.
+
+## Context: 
+
+A process that has never been seen on a host is an investigation trigger in almost every SOC playbook. The baseline is the authoritative list of "expected" processes per host. The key distinction is per host, not global: python3 may be normal on a data analyst workstation and deeply abnormal on a clinical imaging server. A global baseline erases that distinction and produces useless noise.
+
+## Instructions: 
+
+Write a script 5-baseline_process.sh that reads labeled_events.json, restricts to the baseline window, and produces baseline_process.json containing:
+
+    per_host: for each host, the list of expected process names with execution count, first and last seen timestamps, and distinct executing users
+
+    global_top: the 50 most executed processes across the whole baseline
+
+    rare_processes: processes that appear on only one host or run fewer than five times total during the baseline
+
+    parent_child_pairs: for process start events with parent-child information, the set of observed parent -> child pairs per host
+
+**Expected Output:**
+
+```bash
+$ ./5-baseline_process.sh
+baseline window : <start> -> <end>
+processes indexed by host: <N> hosts
+global top process    : <name> (<N> executions)
+rare processes        : <N>
+parent->child pairs   : <N>
+baseline_process.json written
+```
+
+---
