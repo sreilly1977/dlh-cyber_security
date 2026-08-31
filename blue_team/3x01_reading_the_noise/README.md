@@ -459,3 +459,42 @@ baseline_summary.json written
 ```
 
 ---
+
+# [10. Authentication Anomalies](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/10-anomalies_auth.sh)
+
+## Goal: 
+
+Scan the evaluation window for authentication anomalies using thresholds derived from the baseline summary.
+
+## Context: 
+
+This is where the baseline pays off. Every deviation you flag is a potential signal that has to be credible enough to justify an analyst's time. The script must detect the categories that matter most in practice: accounts that do not exist in the baseline, failure bursts that exceed baseline expectations, logins at unusual hours, and privilege escalations that did not appear during the baseline.
+
+## Instructions: 
+
+Write a script 10-anomalies_auth.sh that reads baseline_summary.json and labeled_events.json, restricts to the evaluation window, and writes anomalies_auth.json containing one entry per anomaly with at minimum these fields: timestamp, host, user, src_ip, anomaly_type, baseline_value, observed_value, severity, event_refs.
+
+The script must detect at minimum:
+
+    unknown_account: a user value not present in the baseline known_accounts
+
+    failure_rate_burst: any 1-hour window where the failure rate from a single src_ip exceeds the baseline max_failures_1h_window multiplied by the failure_rate_multiplier threshold
+
+    offhours_login: a login_success event outside business hours for a user that has only ever logged in during business hours in the baseline
+
+    privilege_escalation_surge: more than N privilege_escalation events on a host where the baseline has zero such events
+
+**Expected Output:**
+
+```bash
+$ ./10-anomalies_auth.sh
+evaluation window  : <start> -> <end>
+unknown_account           : <N>
+failure_rate_burst        : <N>
+offhours_login            : <N>
+privilege_escalation_surge: <N>
+total anomalies           : <N>
+anomalies_auth.json written
+```
+
+---
