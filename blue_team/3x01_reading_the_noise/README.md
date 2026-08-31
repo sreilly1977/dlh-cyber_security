@@ -417,3 +417,45 @@ temporal_profile.json written
 ```
 
 ---
+
+# [9. Cross-Source Baseline Summary](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/9-baseline_summary.sh)
+
+## Goal: 
+
+Combine all baselines into a single machine-readable baseline summary consumed by the anomaly detection block.
+
+## Context: 
+
+Each previous task produced one slice of the baseline. The anomaly scripts in the next block should not have to open four separate files and cross-reference them. The summary is the single input contract: one file that contains everything an anomaly detector needs, with clear section boundaries and a version number. It is also the artifact Tier 1 analysts will load on Monday morning.
+
+## Instructions: 
+
+Write a script 9-baseline_summary.sh that reads baseline_auth.json, baseline_process.json, baseline_network.json, baseline_file.json, and temporal_profile.json, and produces baseline_summary.json containing:
+
+    version
+
+    generated_at (ISO 8601 UTC)
+
+    baseline_window (start, end, duration in days)
+
+    evaluation_window (start, end, duration in hours)
+
+    host_inventory: the set of hosts present in the baseline
+
+    auth, process, network, file, temporal: the respective sub-documents from the prior tasks, nested
+
+    thresholds: a derived object containing the numeric thresholds anomaly scripts will apply (for example, failure_rate_multiplier: 3, unknown_process_penalty: 5, unknown_port_penalty: 4). Each threshold must include a short comment explaining how it was derived
+
+**Expected Output:**
+
+```bash
+$ ./9-baseline_summary.sh
+version           : 1.0
+baseline window   : <start> -> <end>  (<N> days)
+evaluation window : <start> -> <end>  (24h)
+hosts             : <N>
+sections included : auth, process, network, file, temporal, thresholds
+baseline_summary.json written
+```
+
+---
