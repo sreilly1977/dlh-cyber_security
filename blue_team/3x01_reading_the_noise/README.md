@@ -48,7 +48,7 @@ Last thing. The scripts you write become the MedDefense SOC reference toolkit. W
 ---
 
 # [0. Format Analysis Across All Sources](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/0-format_analysis.sh)
-
+### advanced
 ## Goal: 
 
 Profile every source type in the enriched dataset and produce a structured breakdown of fields, types, cardinality, and example values.
@@ -93,6 +93,7 @@ format_analysis.json written
 ---
 
 # [1. Critical Field Extraction and Indexing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/1-field_index.sh)
+### advanced
 
 ## Goal: 
 
@@ -125,6 +126,49 @@ indexing 7 critical fields over <N> records
   event_category  unique values :   <N>
   source_type     unique values :   <N>
 field_index.json written (<X> MB)
+```
+
+---
+
+# [2. Reusable Query Toolkit](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/2-query_toolkit.sh)
+
+## Goal: 
+
+Build a reusable CLI query toolkit that filters, projects, and aggregates events from the handoff dataset without a SIEM.
+
+## Context: 
+
+Every baseline and anomaly task in this project will need to answer small pointed questions against the dataset. Rather than reimplement that logic in every script, you build the toolkit once. Every downstream task calls it.
+
+## Instructions: 
+
+Write a script 2-query_toolkit.sh that dispatches sub-commands against the enriched dataset. It must support at minimum:
+
+    filter --source <type> --host <h> --from <iso> --to <iso> --category <c>: emits newline-delimited JSON of matching records to stdout
+
+    top --field <name> --limit <n> [filters]: emits a two-column table of the top N values of a field, sorted desc by count
+
+    distinct --field <name> [filters]: emits the distinct values of a field one per line
+
+    count [filters]: emits a single integer with the record count matching the filters
+
+    window --field <name> --bucket <hour|day> [filters]: emits a two-column table of bucket to count
+
+    help: prints the usage
+
+The toolkit must accept filters in any combination, must read from $HANDOFF_DIR/data/enriched_events.json, and must default HANDOFF_DIR to ~/3x00_handoff/evidence_handoff if not set.
+
+**Expected Output:**
+
+```bash
+$ ./2-query_toolkit.sh help
+query_toolkit.sh <verb> [options]
+  filter   emit matching records as ndjson
+  top      top N values of a field
+  distinct distinct values of a field
+  count    number of matching records
+  window   bucketed counts by time window
+  help     this message
 ```
 
 ---
