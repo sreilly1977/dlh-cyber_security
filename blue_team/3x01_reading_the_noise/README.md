@@ -625,3 +625,47 @@ correlated_anomalies.json written
 ```
 
 ---
+
+# [14. Anomaly Priority Ranking](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/14-rank_anomalies.sh)
+### advanced
+
+## Goal: 
+
+Rank every anomaly (single-source and correlated) by a composite priority score suitable for an analyst queue.
+
+## Context: 
+
+Anomaly output without ranking is useless in a real SOC. If you give a Tier 1 analyst a flat list of 40 items, they work the first few and run out of shift. You need to guarantee the highest-risk item is at the top so the first ten minutes of the shift focus on the right thing. The score must be explainable so senior analysts can audit why item number one is at the top.
+
+## Instructions: 
+
+Write a script 14-rank_anomalies.sh that reads anomalies_auth.json, anomalies_process.json, anomalies_network.json, and correlated_anomalies.json, and writes ranked_anomalies.json containing every item sorted descending by priority_score.
+
+The priority score must be a deterministic integer computed from:
+
+    Base severity value (low=1, medium=3, high=5, critical=8)
+
+    Asset criticality multiplier (low=1, medium=2, high=3, critical=4)
+
+    Cross-source correlation bonus (+2 per additional source beyond the first)
+
+    Off-hours bonus (+1 if the anomaly occurred outside business hours)
+
+    Known high-risk category bonus (+2 for high_risk_process, privilege_escalation_surge, or external_destination_new)
+
+The output must include for every ranked entry the full anomaly record plus a score_breakdown sub-object.
+
+Print the top five items as a short table for human inspection.
+
+**Expected Output:**
+
+```bash
+$ ./14-rank_anomalies.sh
+ranked anomalies total : <N>
+top 5:
+ 1  score <N>  <host>  <anomaly_type>
+ ...
+ranked_anomalies.json written
+```
+
+---
