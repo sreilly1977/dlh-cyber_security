@@ -582,3 +582,46 @@ anomalies_network.json written
 ```
 
 ---
+
+# [13. Cross-Source Correlation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/13-correlate_anomalies.sh)
+
+## Goal: 
+
+Correlate anomalies from multiple sources that share a host and a time window to produce higher confidence findings.
+
+## Context: 
+
+A single unknown process on a clinical workstation might be a developer running a one-off script. The same unknown process happening one minute before an unknown_destination_for_host anomaly on the same host is a very different story. Correlation is what turns three low-value single-source items into one high-value multi-source finding. Triage in 3x03 will consume the output of this task directly.
+
+## Instructions: 
+
+Write a script 13-correlate_anomalies.sh that reads anomalies_auth.json, anomalies_process.json, and anomalies_network.json, and writes correlated_anomalies.json. A correlated finding groups any two or more single-source anomalies that share the same host and whose timestamps fall within a configurable correlation window (default: 300 seconds).
+
+Each correlated finding must contain:
+
+    correlation_id (a short deterministic identifier)
+
+    host
+
+    window_start and window_end
+
+    sources_involved (the set of source categories: auth, process, network)
+
+    anomaly_types (the set of anomaly types from the involved items)
+
+    member_refs (list of references back to the individual anomaly entries)
+
+    score (an integer composite score: 1 per involved source, plus a bonus for each distinct anomaly type, plus an asset criticality multiplier)
+
+**Expected Output:**
+
+```bash
+$ ./13-correlate_anomalies.sh
+single-source anomalies  : <N>
+correlated findings      : <N>
+multi-host findings      : <N>
+max score                : <N>
+correlated_anomalies.json written
+```
+
+---
