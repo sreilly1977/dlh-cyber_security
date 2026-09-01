@@ -669,3 +669,48 @@ ranked_anomalies.json written
 ```
 
 ---
+
+# [15. Baseline Validation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/15-baseline_validation.sh)
+
+## Goal: 
+
+Validate the baseline by running the anomaly scripts against the baseline window itself and then against the evaluation window, then checking that the results match expectations.
+
+## Context: 
+
+An unvalidated baseline is guesswork. The only honest way to know whether your baseline produces useful output is to run the same anomaly logic over the baseline window (where you expect almost no findings) and over the evaluation window (where you expect the planted anomalies). The gap between the two tells you whether your baseline has any signal at all. This step is the equivalent of a backtest in quantitative analysis: it is what separates a baseline you can trust from a baseline you hope works.
+
+## Instructions: 
+
+Write a script 15-baseline_validation.sh that:
+
+    Re-runs the three single-source anomaly scripts (T10, T11, T12) once with the evaluation window set to the baseline window itself, capturing output as self_check_*.json
+
+    Re-runs them once with the normal evaluation window (day 8), capturing output as live_check_*.json
+
+    Produces baseline_validation.json containing:
+
+        self_check_total (expected to be very small)
+
+        live_check_total
+
+        signal_to_noise_ratio = live_check_total / max(self_check_total, 1)
+
+        per-type breakdown for both runs
+
+        a verdict: pass if self_check_total is under a declared acceptable threshold (default: 5) and signal_to_noise_ratio is at least 3.0, fail otherwise
+
+The script must exit 0 on pass and 1 on fail.
+
+**Expected Output:**
+
+```bash
+$ ./15-baseline_validation.sh
+self-check anomalies (baseline window): <N>
+live-check anomalies (evaluation win ): <N>
+signal-to-noise ratio                : <X>
+verdict                              : pass
+baseline_validation.json written
+```
+
+---

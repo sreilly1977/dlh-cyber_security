@@ -339,7 +339,7 @@ def main():
         mean_per_hour = base_out.get(host, 0) / baseline_hours
         if mean_per_hour <= 0:
             continue
-        limit = mean_per_hour * vol_mult
+        limit = max(mean_per_hour * vol_mult, 5)
         times.sort()
         n = len(times)
         best_count = 0
