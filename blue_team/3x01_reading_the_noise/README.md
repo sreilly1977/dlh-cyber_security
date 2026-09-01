@@ -539,3 +539,46 @@ anomalies_process.json written
 ```
 
 ---
+
+# [12. Network Anomalies](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/12-anomalies_network.sh)
+### advanced
+
+## Goal: 
+
+Scan the evaluation window for network anomalies relative to the per-host network baseline.
+
+## Context: 
+
+Network anomalies catch lateral movement, data exfiltration, and command and control before the endpoint side has a chance to generate high-fidelity telemetry. The baseline tells you what each host normally contacts and how. Anything outside that set is either a new service, a misconfiguration, or the thing you need to find.
+
+## Instructions: 
+
+Write a script 12-anomalies_network.sh that reads baseline_summary.json and labeled_events.json, restricts to the evaluation window, and writes anomalies_network.json containing one entry per anomaly with timestamp, host, src_ip, dst_ip, dst_port, src_zone, dst_zone, anomaly_type, severity, event_refs.
+
+The script must detect at minimum:
+
+    unknown_destination_for_host: a dst_ip that this host never contacted during the baseline
+
+    unknown_port_for_host: a dst_port this host never used during the baseline
+
+    unexpected_zone_flow: a (src_zone, dst_zone) pair that never occurred in the baseline
+
+    volume_burst: a 1-hour window where the host's outbound connection count exceeds the baseline mean multiplied by the threshold
+
+    external_destination_new: a dst_ip in an external zone that never appeared in known_external_ips
+
+**Expected Output:**
+
+```bash
+$ ./12-anomalies_network.sh
+evaluation window : <start> -> <end>
+unknown_destination_for_host : <N>
+unknown_port_for_host        : <N>
+unexpected_zone_flow         : <N>
+volume_burst                 : <N>
+external_destination_new     : <N>
+total anomalies              : <N>
+anomalies_network.json written
+```
+
+---

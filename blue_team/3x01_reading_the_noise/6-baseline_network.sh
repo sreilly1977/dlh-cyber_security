@@ -42,6 +42,12 @@ NETWORK_LABELS = {
     "network_blocked",
 }
 
+RFC1918_NETWORKS = (
+    ip_network("10.0.0.0/8"),
+    ip_network("172.16.0.0/12"),
+    ip_network("192.168.0.0/16"),
+)
+
 def parse_ts(raw):
     if not raw:
         return None
@@ -73,7 +79,8 @@ def load_zone_table(path):
 
 def resolve_zone(ip, zone_table):
     """Resolve an IP to a zone via longest-prefix match.
-    Unmatched private IPs -> INTERNAL_UNTAGGED; unmatched public IPs -> INTERNET."""
+    Unmatched RFC1918 IPs -> INTERNAL_UNTAGGED; everything else
+    (including TEST-NET ranges) -> INTERNET."""
     if not ip:
         return None
     try:
@@ -83,7 +90,7 @@ def resolve_zone(ip, zone_table):
     for network, zone_id in zone_table:
         if addr in network:
             return zone_id
-    if addr.is_private:
+    if any(addr in net for net in RFC1918_NETWORKS):
         return "INTERNAL_UNTAGGED"
     return "INTERNET"
 
