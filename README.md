@@ -30,26 +30,27 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`1x00_first_watch/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x00_first_watch) | SOC fundamentals, incident classification, asset discovery, control gap analysis, security posture assessment | 18 |
 | [`1x01_know_your_enemy/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x01_know_your_enemy) | Threat intelligence, ransomware (RaaS) analysis, insider threats, social engineering, supply chain risks, MITRE ATT&CK mapping | 19 |
 | [`1x02_the_weak_links/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x02_the_weak_links) | Vulnerability management, CVE/CVSS/CWE analysis, exploit hunting, Lynis auditing, OSINT, remediation prioritization | 24 |
-| [`1x03_defense_blueprint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x03_defense_blueprint) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 11 |
-| [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | 14 |
-| [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | 6 |
+| [`1x03_defense_blueprint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x03_defense_blueprint) | NIST CSF and CIS Controls mapping, governance, risk quantification (ALE), cost-benefit analysis, budget allocation, executive briefings | 20 |
+| [`1x04_crypto_foundation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Cryptographic principles, PKI, encryption standards, cryptographic protocol analysis, cipher implementation | 24 |
+| [`1x05_board_briefing/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive communication, risk reporting, security governance presentations, stakeholder management | 10 |
 
 ### Part 2 — Applied Hardening (Modules 7–12)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | 14 |
-| [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | 15 |
+| [`2x00_locking_the_gates/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) | Network perimeter defenses, firewall rule management, access control lists, segmentation strategies | 18 |
+| [`2x01_windows_fortress/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress) | Windows security hardening, Group Policy Objects, Active Directory security, privilege management | 17 |
 | [`2x02_eyes_on_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x02_eyes_on_endpoint) | Endpoint detection and response, EDR configuration, Sysmon deployment, host-based monitoring | 16 |
 | [`2x03_patch_equation/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x03_patch_equation) | Vulnerability management lifecycle, patch prioritization, deployment strategies, compliance scanning | 16 |
 | [`2x04_perimeter_defense/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network defense control plane, nftables rule enforcement, protocol auditing, Suricata IDS analysis, PCAP investigation, DNS filtering | 16 |
-| [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 13 |
+| [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 12 |
 
 ### Part 3 — Evidence Pipeline (Module 13)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 14 |
+| [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 16 |
+[`3x01_reading_the_noise`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x01_reading_the_noise) | Behavioral baseline construction from enriched event data: format analysis, field indexing, query toolkit, event taxonomy, authentication/process/network/file baselines, temporal activity profiling, anomaly detection across auth/process/network sources, cross-source correlation, anomaly ranking, and self-contained baseline package assembly | 17 |
 
 ### Reference Libraries
 
