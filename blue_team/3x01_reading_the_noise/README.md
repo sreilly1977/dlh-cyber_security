@@ -714,3 +714,75 @@ baseline_validation.json written
 ```
 
 ---
+
+# [16. Baseline Package Assembly](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/3x01_reading_the_noise/16-baseline_package.sh)
+### advanced
+
+## Goal: 
+
+Assemble the self-contained baseline_package/ directory that downstream projects and future analysts consume without configuration.
+
+## Context: 
+
+This is the deliverable every other Module 3 project cites as a dependency. 3x02 uses the ranked anomalies to calibrate detection rule thresholds. 3x03 uses the ranked queue as the starting seed for its triage workflow. The capstone runs the same toolkit against a fresh handoff. The directory layout is the contract.
+
+## Instructions: 
+
+Write a script 16-baseline_package.sh that assembles the package at the path given by $BASELINE_PKG (default: ~/3x01_package/baseline_package/) with the following exact layout:
+
+<pre>
+baseline_package/
+  baselines/
+    baseline_auth.json
+    baseline_process.json
+    baseline_network.json
+    baseline_file.json
+    temporal_profile.json
+    baseline_summary.json
+  anomalies/
+    anomalies_auth.json
+    anomalies_process.json
+    anomalies_network.json
+    correlated_anomalies.json
+    ranked_anomalies.json
+  taxonomy/
+    event_taxonomy.json
+    labeled_events.json
+  reports/
+    format_analysis.json
+    field_index.json
+    baseline_validation.json
+  toolkit/
+    2-query_toolkit.sh
+    4-baseline_auth.sh
+    5-baseline_process.sh
+    6-baseline_network.sh
+    7-baseline_file.sh
+    8-temporal_profile.sh
+    9-baseline_summary.sh
+    10-anomalies_auth.sh
+    11-anomalies_process.sh
+    12-anomalies_network.sh
+    13-correlate_anomalies.sh
+    14-rank_anomalies.sh
+    15-baseline_validation.sh
+  MANIFEST.json
+</pre>
+
+The script must copy every listed file, generate MANIFEST.json with path, size, and sha256 of every file, and run a final sanity check.
+
+```bash
+Expected Output:
+
+$ source ~/m3_env.sh && ./16-baseline_package.sh
+copying baselines   ... 6 files
+copying anomalies   ... 5 files
+copying taxonomy    ... 2 files
+copying reports     ... 3 files
+copying toolkit     ... 13 files
+MANIFEST.json       : 29 entries
+sanity check        : ok
+baseline_package/ ready
+```
+
+---

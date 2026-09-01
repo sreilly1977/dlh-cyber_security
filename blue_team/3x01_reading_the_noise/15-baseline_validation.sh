@@ -159,5 +159,3 @@ print("baseline_validation.json written")
 
 raise SystemExit(0 if passed else 1)
 PYEOF
-
-exit 0
