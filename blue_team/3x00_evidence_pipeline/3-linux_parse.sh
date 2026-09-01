@@ -46,11 +46,14 @@ MONTHS = {"Jan":"01","Feb":"02","Mar":"03","Apr":"04","May":"05","Jun":"06",
           "Jul":"07","Aug":"08","Sep":"09","Oct":"10","Nov":"11","Dec":"12"}
 
 def parse_syslog_timestamp(line):
-    """Parse 'Mon DD HH:MM:SS' syslog timestamp, assume 2026 UTC."""
+    """Parse 'Mon DD HH:MM:SS' syslog timestamp, assume 2026 UTC.
+    Rejects lines whose month token is not a valid abbreviation."""
     m = re.match(r"^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})", line)
     if m:
         month_name, day, hh, mm, ss = m.groups()
-        mon = MONTHS.get(month_name, "01")
+        if month_name not in MONTHS:
+            return None   # unknown month token: refuse to guess
+        mon = MONTHS[month_name]
         return f"2026-{mon}-{int(day):02d}T{hh}:{mm}:{ss}Z"
     return None
 
@@ -88,7 +91,13 @@ def parse_auth_log(filepath):
             ts = parse_syslog_timestamp(line)
             hostname, program, pid, message = extract_hostname_program(line)
 
+            if hostname and hostname.isdigit():
+                # Malformed syslog line: numeric token grabbed as hostname.
+                sys.stderr.write(f"WARNING: skipping malformed syslog line: {line[:80]}\n")
+                continue
+
             user = None
+
             user_match = re.search(r"user[= ]+(\w+)", line, re.IGNORECASE)
             if user_match:
                 user = user_match.group(1)
@@ -189,7 +198,7 @@ def parse_syslog(filepath):
     """Parse generic syslog format."""
     records = []
     with open(filepath, "r", errors="replace") as f:
-        for line in f:
+         for line in f:
             line = line.rstrip("\n")
             if not line.strip():
                 continue
@@ -197,7 +206,13 @@ def parse_syslog(filepath):
             ts = parse_syslog_timestamp(line)
             hostname, program, pid, message = extract_hostname_program(line)
 
+            if hostname and hostname.isdigit():
+                # Malformed syslog line: numeric token grabbed as hostname.
+                sys.stderr.write(f"WARNING: skipping malformed syslog line: {line[:80]}\n")
+                continue
+
             user = None
+
             user_match = re.search(r"user[= ]+(\w+)", line, re.IGNORECASE)
             if user_match:
                 user = user_match.group(1)
