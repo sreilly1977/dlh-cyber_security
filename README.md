@@ -45,7 +45,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`2x04_perimeter_defense/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network defense control plane, nftables rule enforcement, protocol auditing, Suricata IDS analysis, PCAP investigation, DNS filtering | 16 |
 | [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 12 |
 
-### Part 3 — Evidence Pipeline (Modules 13-14)
+### Part 3 — Forensics & Evidence (Modules 13-14)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
