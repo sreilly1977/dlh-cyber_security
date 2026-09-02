@@ -48,7 +48,7 @@ The curriculum follows a progressive learning path through twelve modules across
 | 11 | [`2x04_perimeter_defense`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network perimeter security, IDS/IPS deployment, DMZ architecture, firewall rule optimization, traffic analysis, and boundary monitoring | 16 |
 | 12 | [`2x05_defensible_endpoint`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Advanced endpoint hardening, application whitelisting, USB device control, sandboxing strategies, and endpoint isolation techniques | 12 |
 
-#### Part 3 — Forensics & Evidence (Module 13)
+#### Part 3 — Forensics & Evidence (Modules 13-14)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|

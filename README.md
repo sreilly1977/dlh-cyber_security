@@ -45,12 +45,12 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`2x04_perimeter_defense/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network defense control plane, nftables rule enforcement, protocol auditing, Suricata IDS analysis, PCAP investigation, DNS filtering | 16 |
 | [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 12 |
 
-### Part 3 — Evidence Pipeline (Module 13)
+### Part 3 — Evidence Pipeline (Modules 13-14)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 16 |
-[`3x01_reading_the_noise`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x01_reading_the_noise) | Behavioral baseline construction from enriched event data: format analysis, field indexing, query toolkit, event taxonomy, authentication/process/network/file baselines, temporal activity profiling, anomaly detection across auth/process/network sources, cross-source correlation, anomaly ranking, and self-contained baseline package assembly | 17 |
+| [`3x01_reading_the_noise`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x01_reading_the_noise) | Behavioral baseline construction from enriched event data: format analysis, field indexing, query toolkit, event taxonomy, authentication/process/network/file baselines, temporal activity profiling, anomaly detection across auth/process/network sources, cross-source correlation, anomaly ranking, and self-contained baseline package assembly | 17 |
 
 ### Reference Libraries
 
