@@ -152,7 +152,7 @@ Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tr
 - [TryHackMe](https://tryhackme.com) — Guided learning rooms
 - [HackTheBox](https://www.hackthebox.com) — Hands-on labs
 - [OverTheWire](https://overthewire.org) — Command line and security challenges
-- [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/?tab=defensive) - A friendly, hands-on collection of cheatsheets for cybersecurity students.
+- [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/?tab=defensive) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
 
 ### Open Source Infrastructure
 
