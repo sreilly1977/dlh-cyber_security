@@ -1,0 +1,54 @@
+title: Windows Privileged Logon During Off-Hours
+id: b4d29e17-8c3f-4a56-9e2b-1f7a6c8d0e93
+status: experimental
+description: >
+    Detects privileged Windows interactive authentication outside MedDefense business
+    hours (18:00-05:59 local dataset time), where an adversary holding stolen or
+    guessed credentials typically expects reduced staff oversight (MITRE T1078 Valid
+    Accounts, Initial Access). Threat: logon sessions for administrative/service
+    accounts initiated after hours are a hallmark of credential compromise, staging
+    before ransomware deployment, or PHI bulk access under the radar of daytime SOC
+    coverage; in a healthcare environment a single off-hours privileged logon to the
+    EHR segment (srv-ehr-01) or domain controllers can precede large-scale PHI
+    exposure with regulatory consequences under HIPAA breach notification timelines.
+    Data source: Windows Security event log telemetry from the 3x00 evidence pipeline,
+    events 4624 (successful logon) and 4672 (special privileges assigned) with
+    network logon type 3 or remote desktop logon type 10. Extension note: this rule
+    selects on a custom field hour_of_day (0-23, UTC hour number of the event
+    timestamp) which does not exist in the normalized event records; it is computed
+    by the sigma_runner at execution time from the record timestamp before the
+    detection condition is evaluated. Operational response: SOC Tier 1 verifies the
+    user and host pairing against the 3x01 authentication baseline (per-user,
+    per-host, per-hour expectations), confirms whether a change ticket covers the
+    activity, and escalates immediately to Tier 2 for session termination and
+    credential review if the account has no off-hours baseline history.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/04
+references:
+    - https://attack.mitre.org/techniques/T1078/
+logsource:
+    product: windows
+    service: security
+detection:
+    selection_logon_4624:
+        event_id: 4624
+        event_data.LogonType:
+            - '3'
+            - '10'
+    selection_special_privs_4672:
+        event_id: 4672
+    selection_evening:
+        hour_of_day|gte: 18
+        hour_of_day|lt: 24
+    selection_night:
+        hour_of_day|lt: 6
+        hour_of_day|gte: 0
+    condition: (selection_logon_4624 or selection_special_privs_4672) and (selection_evening or selection_night)
+falsepositives:
+    - After-hours IT support shifts performing remote maintenance on clinical workstations via RDP (LogonType 10)
+    - Scheduled administrative jobs and patch windows kicking off privileged service logons (LogonType 3) after 18:00
+    - On-call radiology technicians accessing imaging servers during evening imaging studies
+level: medium
+tags:
+    - attack.initial_access
+    - attack.t1078

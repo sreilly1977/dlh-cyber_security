@@ -87,3 +87,67 @@ detection_matrix.json written
 ```
 
 ---
+
+# [1. First Sigma Rule: SSH Repeated Failed Auth](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/001_ssh_brute_force.yml)
+
+## Goal: 
+
+Write your first production-grade Sigma rule and prove it matches the SSH brute force events present in the evaluation window.
+
+## Context: 
+
+Every SOC writes an SSH brute force rule. It is the canonical introductory detection because the log format is standardized, the signal is unambiguous, and the failure mode is well understood. You will write a Sigma rule that detects repeated failed SSH authentications from the same source within a short window, author it to the full Sigma specification, and confirm it fires on the exact events the 3x01 anomaly output already flagged. This is the rule every subsequent rule in the project is graded against for stylistic consistency.
+
+## Instructions: 
+
+Write a Sigma rule at rules/sigma/001_ssh_brute_force.yml that detects five or more SSH authentication failures from the same source IP within 120 seconds on any Linux host. The rule must:
+
+    Declare a valid UUID v4 id
+    Set status: experimental
+    Target logsource: product: linux, service: auth
+    Select on canonical_label: login_failure and event_category: authentication
+    Include a count() by src_ip aggregation condition with > 5 threshold and timeframe: 120s
+    Declare level: high
+    Tag with attack.credential_access and attack.t1110.001
+    Include a falsepositives list with at least two realistic MedDefense scenarios
+    Include a description naming the threat, data source, and expected operational response
+
+**Expected Output:**
+
+```bash
+$ python3 -c 'import yaml; print(yaml.safe_load(open("rules/sigma/001_ssh_brute_force.yml"))["title"])'
+SSH Repeated Authentication Failures from Single Source
+```
+
+---
+
+# [2. Windows Authentication Pattern Rule](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/002_windows_offhours_privileged_logon.yml)
+
+## Goal: 
+
+Write a Sigma rule detecting suspicious Windows authentication patterns derived from your 3x01 baseline.
+
+## Context: 
+
+Windows authentication attacks rarely look like brute force. They look like a single successful login for an account that has never logged into that host, at a time the account never logs in, from a workstation the account has never used. The 3x01 authentication baseline already captured the per-user, per-host, per-hour pattern. The rule you are writing here encodes those expectations in a form the runner can execute against any evidence drop.
+
+## Instructions: 
+
+Write a Sigma rule at rules/sigma/002_windows_offhours_privileged_logon.yml that detects privileged Windows logons during off-hours (18:00 to 05:59). The rule must:
+
+    Target logsource: product: windows, service: security
+    Select on event_id values 4624 and 4672 with LogonType: '3' or LogonType: '10'
+    Include a condition using a custom field hour_of_day (computed by the runner at execution time; document this extension in description)
+    Set level: medium
+    Tags: attack.initial_access, attack.t1078
+    falsepositives including after-hours support shifts and scheduled administrative jobs
+    description explaining why off-hours privileged logon is meaningful in a healthcare environment
+
+**Expected Output:**
+
+```bash
+$ python3 -c 'import yaml; r=yaml.safe_load(open("rules/sigma/002_windows_offhours_privileged_logon.yml")); print(r["level"], r["tags"])'
+medium ['attack.initial_access', 'attack.t1078']
+```
+
+---
