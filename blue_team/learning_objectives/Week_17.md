@@ -1,4 +1,4 @@
-# Learning objectives
+# Learning Objectives
 
 ---
 
