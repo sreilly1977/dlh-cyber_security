@@ -49,7 +49,7 @@ Robert Kim will drop the risk register at ~/3x02_assets/risk_register.json on yo
 
 ---
 
-# [0. Detection Type Analysis]()
+# [0. Detection Type Analysis](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/0-detection_matrix.sh)
 
 ## Goal: 
 

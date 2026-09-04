@@ -1,0 +1,245 @@
+{
+  "version": "1.1",
+  "project": "3x02 Alert Factory - Detection Type Decision Matrix",
+  "inputs": {
+    "enriched_events": "/home/student/3x00_handoff/evidence_handoff/data/enriched_events.json",
+    "event_schema": "/home/student/3x00_handoff/evidence_handoff/schema/event_schema.json",
+    "baseline_summary": "/home/student/3x01_package/baseline_package/baselines/baseline_summary.json"
+  },
+  "derived_baseline_days": 7.0,
+  "behavioral_min_baseline_days": 7.0,
+  "sources": [
+    {
+      "source_type": "windows_json",
+      "record_count": 122569,
+      "stable_fields": [
+        "asset",
+        "dst_zone",
+        "event_category",
+        "event_data",
+        "event_id",
+        "hostname",
+        "raw_message",
+        "record_id",
+        "severity",
+        "source_channel",
+        "source_origin",
+        "source_provider",
+        "source_type",
+        "src_zone",
+        "timestamp"
+      ],
+      "high_cardinality_fields": [
+        "event_data",
+        "record_id",
+        "timestamp"
+      ],
+      "supported_detection_types": [
+        "signature",
+        "anomaly",
+        "behavioral",
+        "correlation"
+      ],
+      "rationale": {
+        "signature": "stable event_id with multiple distinct values; stable event_category with multiple variants",
+        "anomaly": "baseline domains ['auth', 'file', 'network', 'process'] available; raw telemetry suitable for volume deviation analysis",
+        "behavioral": "stable principal field (user/hostname); 7.0 days of baseline (7 required)",
+        "correlation": "stable user/hostname join keys"
+      },
+      "recommended_attack_tactics": [
+        "TA0001",
+        "TA0002",
+        "TA0003",
+        "TA0004",
+        "TA0005",
+        "TA0006",
+        "TA0008",
+        "TA0010",
+        "TA0011"
+      ]
+    },
+    {
+      "source_type": "linux_text",
+      "record_count": 66673,
+      "stable_fields": [
+        "asset",
+        "dst_zone",
+        "event_category",
+        "event_data",
+        "hostname",
+        "pid",
+        "process_name",
+        "raw_message",
+        "record_id",
+        "severity",
+        "source_origin",
+        "source_type",
+        "src_zone",
+        "timestamp"
+      ],
+      "high_cardinality_fields": [
+        "pid",
+        "raw_message",
+        "record_id",
+        "timestamp"
+      ],
+      "supported_detection_types": [
+        "signature",
+        "anomaly",
+        "behavioral",
+        "correlation"
+      ],
+      "rationale": {
+        "signature": "stable event_category with multiple variants",
+        "anomaly": "baseline domains ['auth', 'network', 'process'] available; raw telemetry suitable for volume deviation analysis",
+        "behavioral": "stable principal field (user/hostname); 7.0 days of baseline (7 required)",
+        "correlation": "stable user/hostname join keys"
+      },
+      "recommended_attack_tactics": [
+        "TA0001",
+        "TA0002",
+        "TA0003",
+        "TA0004",
+        "TA0005",
+        "TA0006",
+        "TA0008",
+        "TA0010",
+        "TA0011"
+      ]
+    },
+    {
+      "source_type": "suricata",
+      "record_count": 9977,
+      "stable_fields": [
+        "action",
+        "asset",
+        "bytes_in",
+        "bytes_out",
+        "dst_ip",
+        "dst_port",
+        "dst_zone",
+        "event_category",
+        "event_data",
+        "protocol",
+        "raw_message",
+        "record_id",
+        "severity",
+        "signature",
+        "source_origin",
+        "source_type",
+        "src_ip",
+        "src_port",
+        "src_zone",
+        "timestamp"
+      ],
+      "high_cardinality_fields": [
+        "bytes_in",
+        "bytes_out",
+        "event_data",
+        "raw_message",
+        "record_id",
+        "src_port",
+        "timestamp"
+      ],
+      "supported_detection_types": [
+        "signature",
+        "correlation"
+      ],
+      "rationale": {
+        "signature": "stable signature field",
+        "correlation": "stable signature join key"
+      },
+      "recommended_attack_tactics": [
+        "TA0007",
+        "TA0010",
+        "TA0011"
+      ]
+    },
+    {
+      "source_type": "firewall",
+      "record_count": 67420,
+      "stable_fields": [
+        "action",
+        "asset",
+        "bytes_in",
+        "bytes_out",
+        "dst_ip",
+        "dst_port",
+        "dst_zone",
+        "event_category",
+        "event_data",
+        "protocol",
+        "raw_message",
+        "record_id",
+        "severity",
+        "source_origin",
+        "source_type",
+        "src_ip",
+        "src_port",
+        "src_zone",
+        "timestamp"
+      ],
+      "high_cardinality_fields": [
+        "raw_message",
+        "record_id",
+        "timestamp"
+      ],
+      "supported_detection_types": [
+        "anomaly",
+        "correlation"
+      ],
+      "rationale": {
+        "anomaly": "baseline domains ['network'] available; raw telemetry suitable for volume deviation analysis",
+        "correlation": "stable action + src/dst endpoint pairs"
+      },
+      "recommended_attack_tactics": [
+        "TA0010",
+        "TA0011"
+      ]
+    },
+    {
+      "source_type": "pcap_flow",
+      "record_count": 4096,
+      "stable_fields": [
+        "asset",
+        "bytes_in",
+        "dst_ip",
+        "dst_port",
+        "dst_zone",
+        "event_category",
+        "event_data",
+        "protocol",
+        "raw_message",
+        "record_id",
+        "severity",
+        "source_origin",
+        "source_type",
+        "src_ip",
+        "src_port",
+        "src_zone",
+        "timestamp"
+      ],
+      "high_cardinality_fields": [
+        "bytes_in",
+        "event_data",
+        "raw_message",
+        "record_id",
+        "src_port",
+        "timestamp"
+      ],
+      "supported_detection_types": [
+        "anomaly",
+        "behavioral"
+      ],
+      "rationale": {
+        "anomaly": "baseline domains ['network'] available; raw telemetry suitable for volume deviation analysis",
+        "behavioral": "session lifecycle fields in event_data; 7.0 days of baseline (7 required)"
+      },
+      "recommended_attack_tactics": [
+        "TA0007",
+        "TA0010",
+        "TA0011"
+      ]
+    }
+  ]
+}
