@@ -192,3 +192,44 @@ $ ./3-sigma_runner.sh rules/sigma/001_ssh_brute_force.yml --count-only
 ```
 
 ---
+
+# [4. Process Execution Detection Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/003_interpreter_abuse.yml)
+
+## Goal: 
+
+Write two Sigma rules detecting interpreter abuse and reconnaissance tool execution on endpoints.
+
+## Context: 
+
+Process execution is the highest-signal telemetry a defender has. An attacker on an endpoint almost always launches something. The 3x01 process baseline identified per-host expected processes and flagged high_risk_process anomalies for interpreters (powershell.exe, cmd.exe, wscript.exe, mshta.exe) and recon tooling (nmap, whoami, net.exe, systeminfo, tasklist). You now encode those behaviors as detection rules the runner can execute on any fresh dataset without depending on an already-computed baseline.
+
+## Instructions: 
+
+Write two Sigma rules.
+
+rules/sigma/[003_interpreter_abuse.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/003_interpreter_abuse.yml) must:
+
+    Detect execution of powershell.exe, cmd.exe, wscript.exe, cscript.exe, or mshta.exe when parent process is not a standard shell
+    Target logsource: category: process_creation, product: windows
+    Level high; tags attack.execution, attack.t1059.001, attack.t1059.003
+    Realistic falsepositives covering legitimate MedDefense scripted maintenance
+
+rules/sigma/[004_recon_tool_execution.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/004_recon_tool_execution.yml) must:
+
+    Detect execution of whoami.exe, net.exe, systeminfo.exe, tasklist.exe, netstat.exe, or nmap where the process was not seen during baseline
+    Use custom field baseline_seen: false (boolean computed by the runner from $BASELINE_PKG/baselines/baseline_process.json)
+    Target both product: windows and product: linux via two selection blocks
+    Level medium; tags attack.discovery, attack.t1087, attack.t1082
+    description citing the 3x01 anomaly report as source
+
+**Expected Output:**
+
+```bash
+$ ./3-sigma_runner.sh rules/sigma/003_interpreter_abuse.yml --count-only
+<N>
+
+$ ./3-sigma_runner.sh rules/sigma/004_recon_tool_execution.yml --count-only
+<N>
+```
+
+---

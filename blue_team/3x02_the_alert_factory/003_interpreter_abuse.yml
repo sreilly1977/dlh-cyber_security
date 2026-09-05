@@ -1,0 +1,66 @@
+title: Suspicious Interpreter Execution from Non-Standard Parent
+id: c9e84a51-2f6b-4d7c-a3e9-8b1f5c2d7e40
+status: experimental
+description: >
+    Detects execution of script interpreters (PowerShell, cmd, Windows Script Host,
+    mshta) either spawned by a parent process outside the standard shell chain
+    (MITRE T1059.001 PowerShell, T1059.003 Windows Command Shell) or invoked with
+    command-line indicators of hostile use (-ExecutionPolicy Bypass, encoded
+    commands, download cradles). Threat: interpreter execution is the dominant
+    delivery mechanism for droppers and implants; parent-child anomalies and
+    command-line abuse are complementary signals since adversaries frequently
+    launch from the standard shell or from parents not recorded in telemetry.
+    Data source: Windows process_creation telemetry from the 3x00 evidence
+    pipeline; 3x01 baseline_process flagged high-risk interpreters
+    (powershell.exe, cmd.exe, wscript.exe, mshta.exe) as recurring anomaly
+    classes. Extension notes: parent_process_name is computed by the
+    sigma_runner at execution time as the basename of event_data.ParentImage
+    and does not exist in the raw records; matches where the parent is absent
+    and no command-line signal is present are treated as non-standard parent
+    and will fire (fail-closed). Operational response: Tier 1 captures the
+    full process tree and command line, checks the host against the risk
+    register for clinical criticality, and escalates to Tier 2 for host
+    isolation if the command line indicates script execution from user-writable
+    paths or download behavior.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+    - https://attack.mitre.org/techniques/T1059/003/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_interpreters:
+        process_name:
+            - 'powershell.exe'
+            - 'cmd.exe'
+            - 'wscript.exe'
+            - 'cscript.exe'
+            - 'mshta.exe'
+    filter_standard_shell_parent:
+        parent_process_name:
+            - 'explorer.exe'
+            - 'cmd.exe'
+            - 'powershell.exe'
+            - 'pwsh.exe'
+            - 'conhost.exe'
+    selection_cmdline_abuse:
+        process_name: 'powershell.exe'
+        event_data.CommandLine|contains:
+            - '-ExecutionPolicy Bypass'
+            - '-ep bypass'
+            - '-EncodedCommand'
+            - ' -enc '
+            - 'IEX'
+            - 'DownloadString'
+    condition: (selection_interpreters and not filter_standard_shell_parent) or selection_cmdline_abuse
+falsepositives:
+    - SCCM/Intune deployment agents invoking cmd.exe or powershell.exe outside the standard shell chain during patch windows
+    - Vendor software installers (EHR client updates, imaging drivers) legitimately spawning interpreters for setup scripts
+    - Legitimate admin scripts run with -ExecutionPolicy Bypass by MedDefense IT staff during scripted maintenance
+level: high
+tags:
+    - attack.execution
+    - attack.t1059.001
+    - attack.t1059.003

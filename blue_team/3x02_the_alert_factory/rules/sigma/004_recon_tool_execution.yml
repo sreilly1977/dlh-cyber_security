@@ -1,0 +1,56 @@
+title: Reconnaissance Tool Execution Not Seen in Baseline
+id: 5a2f9c38-71e4-4b6a-9d3c-f08e2b4a6c15
+status: experimental
+description: >
+    Detects execution of reconnaissance and account-discovery utilities
+    (whoami, net, systeminfo, tasklist, netstat, nmap) on hosts where the 3x01
+    baseline never observed that binary (MITRE T1087 Account Discovery, T1082
+    System Information Discovery). Threat: discovery tooling executed for the
+    first time on a host is a hallmark of hands-on-keyboard post-exploitation
+    footprinting prior to lateral movement; in a healthcare environment this
+    frequently precedes targeting of PHI databases and imaging shares.
+    Data source: process telemetry from the 3x00 evidence pipeline scored
+    against the 3x01 baseline anomaly report (baselines/baseline_process.json,
+    anomalies_process.json, which flagged high_risk_process and
+    unknown_process_for_host anomaly classes). Extension note: this rule
+    selects on the custom field baseline_seen, a boolean computed by the
+    sigma_runner at execution time from the 3x01 per-host expected process
+    baseline; the field does not exist in the raw event records. Operational
+    response: Tier 1 reviews the executing user and host pairing, verifies
+    whether a change ticket covers authorized scanning, and escalates to
+    Tier 2 to review surrounding process activity for the same session if
+    unauthorized.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1087/
+    - https://attack.mitre.org/techniques/T1082/
+    - 3x01 baseline package, anomalies_process.json (high_risk_process anomaly class)
+logsource:
+    category: process_creation
+detection:
+    selection_windows:
+        process_name:
+            - 'whoami.exe'
+            - 'net.exe'
+            - 'systeminfo.exe'
+            - 'tasklist.exe'
+            - 'netstat.exe'
+            - 'nmap.exe'
+        baseline_seen: false
+    selection_linux:
+        process_name:
+            - 'whoami'
+            - 'netstat'
+            - 'nmap'
+            - 'arp'
+        baseline_seen: false
+    condition: selection_windows or selection_linux
+falsepositives:
+    - Authorized vulnerability scanning by the security team on MedDefense server segments outside the baseline observation window
+    - Help desk staff running systeminfo.exe or tasklist.exe manually on clinical workstations during incident troubleshooting
+level: medium
+tags:
+    - attack.discovery
+    - attack.t1087
+    - attack.t1082

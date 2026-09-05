@@ -5,7 +5,7 @@
 #          pipeline; interprets the detection block (selections, modifiers, boolean
 #          conditions, timeframe aggregations) and emits a JSON result object.
 # Author: Steve - Cybersecurity Engineer
-# Date: 04 September 2026
+# Date: 05 September 2026
 #
 # Usage: 3-sigma_runner.sh <rule.yml> [evidence.ndjson] [--dry-run] [--count-only]
 #                           [--window <start_iso>,<end_iso>]
@@ -19,7 +19,11 @@
 #   - --dry-run     : validate rule structure, print VALID or the error
 #   - --count-only  : print only the integer match count
 #   - --window      : restrict evaluation to [start, end) ISO timestamps
-#   - Runtime-computed fields: hour_of_day (UTC hour 0-23) injected when referenced.
+#   - Runtime-computed fields (documented in-rule, not present in raw records):
+#       hour_of_day        UTC hour (0-23) of the event timestamp
+#       parent_process_name basename of event_data.ParentImage
+#       baseline_seen      boolean; true iff (hostname, process_name) appears in
+#                          $BASELINE_PKG/baselines/baseline_process.json per_host
 
 set -euo pipefail
 
@@ -27,6 +31,7 @@ HANDOFF_DIR="${HANDOFF_DIR:-$HOME/3x00_handoff/evidence_handoff}"
 BASELINE_PKG="${BASELINE_PKG:-$HOME/3x01_package/baseline_package}"
 DEFAULT_EVIDENCE="$HANDOFF_DIR/data/normalized_events.json"
 LABELED_EVENTS="$BASELINE_PKG/labeled_events.json"
+BASELINE_PROCESS="$BASELINE_PKG/baselines/baseline_process.json"
 
 usage() {
     cat <<EOF
@@ -40,7 +45,7 @@ Options:
 
 Environment:
   HANDOFF_DIR   default $HOME/3x00_handoff/evidence_handoff
-  BASELINE_PKG  default $HOME/3x01_package/baseline_package
+  BASELINE_PKG   default $HOME/3x01_package/baseline_package
 EOF
 }
 
@@ -94,7 +99,8 @@ if [ -z "$EVIDENCE" ]; then
     EVIDENCE="$DEFAULT_EVIDENCE"
 fi
 
-python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
+python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" \
+    "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
 import fnmatch
 import json
 import re
@@ -102,8 +108,8 @@ import sys
 import time as timemod
 from datetime import datetime, timedelta
 
-rule_path, evidence_path, labeled_path = sys.argv[1], sys.argv[2], sys.argv[3]
-dry_run, count_only, window_arg = sys.argv[4] == "1", sys.argv[5] == "1", sys.argv[6]
+rule_path, evidence_path, labeled_path, baseline_process_path = sys.argv[1:5]
+dry_run, count_only, window_arg = sys.argv[5] == "1", sys.argv[6] == "1", sys.argv[7]
 
 import yaml
 
@@ -162,8 +168,22 @@ def validate_rule(doc):
     return doc
 
 # --------------------------------------------------------------------------
-# Field resolution and value matching
+# Derived-field support (fields computed by the runner, not in raw records)
 # --------------------------------------------------------------------------
+_baseline_table = None
+
+def load_baseline(path):
+    """Lazy-load per-host expected process table from baseline_process.json."""
+    global _baseline_table
+    if _baseline_table is None:
+        try:
+            with open(path, encoding="utf-8") as fh:
+                doc = json.load(fh)
+            _baseline_table = doc.get("per_host", {}) if isinstance(doc, dict) else {}
+        except (OSError, ValueError):
+            _baseline_table = {}
+    return _baseline_table
+
 def resolve_field(record, field, hour_cache):
     if field == "hour_of_day":
         ts = record.get("timestamp")
@@ -172,6 +192,18 @@ def resolve_field(record, field, hour_cache):
         if id(record) not in hour_cache:
             hour_cache[id(record)] = parse_ts(ts).hour
         return hour_cache[id(record)]
+    if field == "parent_process_name":
+        ed = record.get("event_data")
+        pi = ed.get("ParentImage") if isinstance(ed, dict) else None
+        if not isinstance(pi, str) or not pi.strip():
+            return None
+        return pi.replace("\\", "/").rsplit("/", 1)[-1]
+    if field == "baseline_seen":
+        table = load_baseline(baseline_process_path)
+        host = record.get("hostname")
+        proc = record.get("process_name")
+        host_procs = table.get(host or "", {})
+        return isinstance(proc, str) and proc in host_procs
     cur = record
     for part in field.split("."):
         if isinstance(cur, dict) and part in cur:
@@ -189,36 +221,44 @@ def as_num(value):
 def match_value(actual, expected, mods):
     if actual is None:
         return False
-    for mod in mods:
-        if mod in ("gte", "gt", "lte", "lt"):
-            a, b = as_num(actual), as_num(expected)
-            if a is None or b is None:
-                return False
-            if mod == "gte" and not a >= b:
-                return False
-            if mod == "gt" and not a > b:
-                return False
-            if mod == "lte" and not a <= b:
-                return False
-            if mod == "lt" and not a < b:
-                return False
-        elif mod == "contains":
-            if str(expected).lower() not in str(actual).lower():
-                return False
-        elif mod == "startswith":
-            if not str(actual).lower().startswith(str(expected).lower()):
-                return False
-        elif mod == "endswith":
-            if not str(actual).lower().endswith(str(expected).lower()):
-                return False
-        elif mod == "re":
-            if not re.search(str(expected), str(actual)):
-                return False
-        elif mod in ("all", "base", "exists"):
-            continue
-        else:
+    # explicit boolean comparison (e.g. baseline_seen: false)
+    if isinstance(expected, bool) or isinstance(actual, bool):
+        if not isinstance(expected, bool) or not isinstance(actual, bool):
             return False
-    # plain (or filter-passed) equality, with wildcard support
+        return expected == actual
+    # modifier-driven matching: every listed modifier must hold, no implicit equality
+    if mods:
+        for mod in mods:
+            if mod == "contains":
+                if str(expected).lower() not in str(actual).lower():
+                    return False
+            elif mod == "startswith":
+                if not str(actual).lower().startswith(str(expected).lower()):
+                    return False
+            elif mod == "endswith":
+                if not str(actual).lower().endswith(str(expected).lower()):
+                    return False
+            elif mod == "re":
+                if not re.search(str(expected), str(actual)):
+                    return False
+            elif mod in ("gte", "gt", "lte", "lt"):
+                a, b = as_num(actual), as_num(expected)
+                if a is None or b is None:
+                    return False
+                if mod == "gte" and not a >= b:
+                    return False
+                if mod == "gt" and not a > b:
+                    return False
+                if mod == "lte" and not a <= b:
+                    return False
+                if mod == "lt" and not a < b:
+                    return False
+            elif mod in ("all", "base", "exists"):
+                continue
+            else:
+                return False
+        return True
+    # plain equality (or wildcard match) only when no modifiers are present
     if isinstance(expected, (dict, list)) or isinstance(actual, (dict, list)):
         return False
     pat, act = str(expected), str(actual)
