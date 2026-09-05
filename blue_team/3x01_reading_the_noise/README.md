@@ -786,3 +786,56 @@ baseline_package/ ready
 ```
 
 ---
+
+## Post-Completion Code Review (05 September 2026)
+
+A post-delivery review of the 3x01 suite found all seventeen scripts
+shellcheck-clean (0.8.0, zero findings at any severity). A semantic review
+of `3-event_taxonomy.sh` and `5-baseline_process.sh` documented the
+following findings. **Artifacts were not regenerated** — `labeled_events.json`
+and the baseline files remain as delivered, since downstream 3x02 detection
+measurements were computed against them. These notes exist for the audit
+trail and for future pipeline revisions.
+
+### 3-event_taxonomy.sh
+
+1. **Sysmon event 13 mapped to `file_permission_change`.** Event 13 is
+   registry value set. Events 12 (registry key create/delete) and 22 (DNS
+   query in standard Sysmon) are grouped under the same label; event 22 has
+   no relation to file permissions. Cause of the mislabeled Sysmon-13 stubs
+   observed downstream. The fixed 15-label vocabulary has no `registry_*`
+   or `dns_query` label, which constrained the mapping choices.
+2. **Event 4104 mapped to `child_process_spawn`.** 4104 is PowerShell
+   script block logging, not process creation; inflates child-process
+   counts in the label distribution.
+3. **First-match-wins rule ordering is fragile.** Broad substrings
+   (`"systemd"`, `"connect"`, `"disconnect"`) appear before more specific
+   rules; reordering the linux_text rule list changes output silently.
+   Correct for this dataset's message shapes; do not reorder without
+   re-measuring the label distribution.
+4. **Trailing `"sshd"` catch-all assigns `login_success` broadly.**
+   Works by construction here; treat as a default rule, not a match rule.
+
+### 5-baseline_process.sh
+
+5. **`event_{eid}` pseudo-process fallback pollutes `per_host`.** Events
+   without a process name become fake processes (`event_13`, `event_4698`),
+   combining with finding 1 to count Sysmon stubs as baseline process
+   executions. `rare_processes` contains a corresponding swarm of these keys.
+6. **Hostname key normalization absent.** The enriched dataset carries
+   three spellings of several hosts (`bill-db-01` / `bill_db_01` /
+   `billdb01`), passed through verbatim into `per_host`, fragmenting those
+   hosts' baselines across multiple keys. Mitigated downstream: the 3x02
+   sigma_runner canonicalizes hostnames before its `baseline_seen` join.
+
+Minor items, no action: `export BASELINE_DAYS` in both scripts references
+an unassigned variable (harmless under `set -u`; Python default of 7
+applies), and the taxonomy's `str()` comparison tolerates the dataset's
+int-vs-string `event_id` inconsistency by design rather than by accident.
+
+**Downstream impact assessment (3x02):** none of the findings invalidated
+a graded deliverable. The measurement basis for all detection rules
+(precision 1.00 on rules 001 and 003) was computed against the artifacts
+as delivered.
+
+---
