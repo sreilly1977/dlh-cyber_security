@@ -9,7 +9,7 @@
 # Date: 05 September 2026
 #
 # Usage: 3-sigma_runner.sh <rule.yml> [evidence.ndjson] [--dry-run] [--count-only]
-#                           [--window <start_iso>,<end_iso>]
+#                           [--preprocess] [--window <start_iso>,<end_iso>]
 #
 # Behavior:
 #   - Evidence defaults to $HANDOFF_DIR/data/normalized_events.json
@@ -19,6 +19,10 @@
 #     Pass an evidence file explicitly to pin the exact input.
 #   - --dry-run     : validate rule structure, print VALID or the error
 #   - --count-only  : print only the integer match count
+#   - --preprocess  : evaluate against the correlation primitive stream
+#                     (correlation_primitives.json, built by
+#                     8-correlation_primitives.py) instead of raw evidence;
+#                     pass an evidence file explicitly to pin the input.
 #   - --window      : restrict evaluation to [start, end) ISO timestamps
 #   - Runtime-computed fields (documented in-rule, not present in raw records):
 #       hour_of_day        UTC hour (0-23) of the event timestamp
@@ -33,6 +37,8 @@
 #                          baseline_network.json per_host_ports
 #       Computer           alias for hostname (destination host on Windows logon
 #                          events; deliberately NOT WorkstationName, the source)
+#       TargetUserName     alias for the authenticating account (user, with
+#                          event_data.TargetUserName fallback)
 #       lateral_movement_allowlist
 #                          boolean; true iff the record's account is in the
 #                          lateral_movement_allowlist list of the risk register.
@@ -48,6 +54,7 @@ set -euo pipefail
 HANDOFF_DIR="${HANDOFF_DIR:-$HOME/3x00_handoff/evidence_handoff}"
 BASELINE_PKG="${BASELINE_PKG:-$HOME/3x01_package/baseline_package}"
 RISK_REGISTER="${RISK_REGISTER:-$HOME/3x02_assets/risk_register.json}"
+CORRELATION_PRIMITIVES="${CORRELATION_PRIMITIVES:-$HOME/3x02_package/correlation_primitives.json}"
 DEFAULT_EVIDENCE="$HANDOFF_DIR/data/normalized_events.json"
 LABELED_EVENTS="$BASELINE_PKG/labeled_events.json"
 BASELINE_PROCESS="$BASELINE_PKG/baselines/baseline_process.json"
@@ -60,26 +67,33 @@ Usage: $(basename "$0") <rule.yml> [evidence.ndjson] [options]
 Options:
   --dry-run              validate rule YAML and structure only; prints VALID
   --count-only           print only the match count
+  --preprocess           evaluate against correlation_primitives.json
+                         (built by 8-correlation_primitives.py) instead of
+                         raw evidence
   --window START,END     restrict evaluation to ISO8601 time range (end exclusive)
   -h, --help             show this help
 
 Environment:
-  HANDOFF_DIR   default $HOME/3x00_handoff/evidence_handoff
-  BASELINE_PKG   default $HOME/3x01_package/baseline_package
-  RISK_REGISTER  default $HOME/3x02_assets/risk_register.json
+  HANDOFF_DIR            default $HOME/3x00_handoff/evidence_handoff
+  BASELINE_PKG           default $HOME/3x01_package/baseline_package
+  RISK_REGISTER          default $HOME/3x02_assets/risk_register.json
+  CORRELATION_PRIMITIVES default $HOME/3x02_package/correlation_primitives.json
 EOF
 }
 
 RULE=""
 EVIDENCE=""
+EVIDENCE_EXPLICIT=0
 DRY_RUN=0
 COUNT_ONLY=0
+PREPROCESS=0
 WINDOW=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --dry-run)   DRY_RUN=1 ;;
         --count-only) COUNT_ONLY=1 ;;
+        --preprocess) PREPROCESS=1 ;;
         --window)
             if [ $# -lt 2 ]; then
                 echo "ERROR: --window requires START,END argument" >&2
@@ -95,6 +109,7 @@ while [ $# -gt 0 ]; do
                 RULE="$1"
             elif [ -z "$EVIDENCE" ]; then
                 EVIDENCE="$1"
+                EVIDENCE_EXPLICIT=1
             else
                 echo "ERROR: unexpected extra argument: $1" >&2
                 usage >&2
@@ -118,6 +133,17 @@ fi
 
 if [ -z "$EVIDENCE" ]; then
     EVIDENCE="$DEFAULT_EVIDENCE"
+fi
+
+if [ "$PREPROCESS" -eq 1 ]; then
+    if [ "$EVIDENCE_EXPLICIT" -eq 0 ]; then
+        EVIDENCE="$CORRELATION_PRIMITIVES"
+    fi
+    if [ ! -r "$EVIDENCE" ]; then
+        echo "ERROR: correlation primitives not found at $EVIDENCE" >&2
+        echo "Run 8-correlation_primitives.py first." >&2
+        exit 1
+    fi
 fi
 
 python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" "$NETWORK_BASELINE" \

@@ -346,3 +346,43 @@ $ ./3-sigma_runner.sh rules/sigma/009_lateral_movement_smb.yml --count-only
 ```
 
 ---
+
+# [8. Multi-Source Credential Theft Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/010_credential_theft_chain.yml)
+### advanced
+
+## Goal: 
+
+Write a multi-source correlation rule that detects a credential theft chain combining failed authentications, successful authentication from a different source, and downstream privileged activity.
+
+## Context: 
+
+Pure Sigma has limited native support for multi-source correlation. Most real SIEM implementations execute Sigma rules single-source and delegate correlation to higher layers. Here you write a Sigma rule that expresses the intent in Sigma syntax and delegate the heavy lifting of cross-source matching to the runner, which preprocesses events into correlation primitives before applying the rule predicate. This is how detection engineers actually build chain detections in practice.
+
+## Instructions: 
+
+Write a Sigma rule at rules/sigma/010_credential_theft_chain.yml that detects:
+
+    Three or more authentication failures for the same user from source IP A within 300 seconds
+    Followed by a successful authentication for the same user from source IP B (different from A) within 300 seconds
+    Followed by any privilege_escalation canonical label on the same host within 600 seconds
+
+The rule must:
+
+    Use custom field correlation_primitive: credential_compromise_chain that the runner recognizes
+    Ship with companion Python helper [8-correlation_primitives.py](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/8-correlation_primitives.py) 
+    that builds the correlation stream and writes [correlation_primitives.json](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/correlation_primitives.json)
+    Level critical; tags attack.credential_access, attack.t1110, attack.t1078
+    description explaining the three-stage pattern and its ATT&CK mapping
+
+**Expected Output:**
+
+```bash
+$ python3 8-correlation_primitives.py
+credential_compromise_chain primitives : <N>
+correlation_primitives.json written
+
+$ ./3-sigma_runner.sh rules/sigma/010_credential_theft_chain.yml --preprocess --count-only
+<N>
+```
+
+---
