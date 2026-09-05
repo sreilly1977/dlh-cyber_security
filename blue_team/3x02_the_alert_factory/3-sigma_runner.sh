@@ -23,11 +23,17 @@
 #       hour_of_day        UTC hour (0-23) of the event timestamp
 #       parent_process_name basename of event_data.ParentImage
 #       baseline_seen      boolean; true iff (hostname, process_name) appears in
-#                          $BASELINE_PKG/baselines/baseline_process.json per_host.
-#                          Hostnames are canonicalized (lowercase, - and _
-#                          stripped) on both the table and lookup side so that
-#                          dataset spelling variants (bill-db-01 / bill_db_01 /
-#                          billdb01) resolve to a single merged baseline entry.
+#                          $BASELINE_PKG/baselines/baseline_process.json per_host
+#       baseline_known_destination
+#                          boolean; true iff (hostname, dst_ip) appears in
+#                          baseline_network.json per_host_destinations
+#       baseline_known_port
+#                          boolean; true iff (hostname, dst_port) appears in
+#                          baseline_network.json per_host_ports (port compared
+#                          as string on both sides)
+#   - All hostname-keyed joins canonicalize hostnames (lowercase, - and _
+#     stripped) so dataset spelling variants (bill-db-01 / bill_db_01 /
+#     billdb01) resolve to a single merged baseline entry.
 
 set -euo pipefail
 
@@ -36,6 +42,7 @@ BASELINE_PKG="${BASELINE_PKG:-$HOME/3x01_package/baseline_package}"
 DEFAULT_EVIDENCE="$HANDOFF_DIR/data/normalized_events.json"
 LABELED_EVENTS="$BASELINE_PKG/labeled_events.json"
 BASELINE_PROCESS="$BASELINE_PKG/baselines/baseline_process.json"
+NETWORK_BASELINE="$BASELINE_PKG/baselines/baseline_network.json"
 
 usage() {
     cat <<EOF
@@ -103,7 +110,7 @@ if [ -z "$EVIDENCE" ]; then
     EVIDENCE="$DEFAULT_EVIDENCE"
 fi
 
-python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" \
+python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" "$NETWORK_BASELINE" \
     "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
 import fnmatch
 import json
@@ -112,8 +119,8 @@ import sys
 import time as timemod
 from datetime import datetime, timedelta
 
-rule_path, evidence_path, labeled_path, baseline_process_path = sys.argv[1:5]
-dry_run, count_only, window_arg = sys.argv[5] == "1", sys.argv[6] == "1", sys.argv[7]
+rule_path, evidence_path, labeled_path, baseline_process_path, network_baseline_path = sys.argv[1:6]
+dry_run, count_only, window_arg = sys.argv[6] == "1", sys.argv[7] == "1", sys.argv[8]
 
 import yaml
 
@@ -212,6 +219,35 @@ def load_baseline(path):
             _baseline_table = {}
     return _baseline_table
 
+_net_tables = None
+
+def load_network_baseline(path):
+    """Lazy-load per-host destination and port tables from baseline_network.json.
+
+    Converts {host: {value: count}} structures into canonical-hostname-keyed
+    sets, union-merging hostname spelling variants as in the process baseline.
+    """
+    global _net_tables
+    if _net_tables is None:
+        _net_tables = {"destinations": {}, "ports": {}}
+        try:
+            with open(path, encoding="utf-8") as fh:
+                doc = json.load(fh)
+            if isinstance(doc, dict):
+                for host, entries in doc.get("per_host_destinations", {}).items():
+                    if not isinstance(entries, dict):
+                        continue
+                    canon = canonical_hostname(host)
+                    _net_tables["destinations"].setdefault(canon, set()).update(entries.keys())
+                for host, entries in doc.get("per_host_ports", {}).items():
+                    if not isinstance(entries, dict):
+                        continue
+                    canon = canonical_hostname(host)
+                    _net_tables["ports"].setdefault(canon, set()).update(entries.keys())
+        except (OSError, ValueError):
+            pass
+    return _net_tables
+
 def resolve_field(record, field, hour_cache):
     if field == "hour_of_day":
         ts = record.get("timestamp")
@@ -232,6 +268,18 @@ def resolve_field(record, field, hour_cache):
         proc = record.get("process_name")
         host_procs = table.get(host, {})
         return isinstance(proc, str) and proc in host_procs
+    if field == "baseline_known_destination":
+        tables = load_network_baseline(network_baseline_path)
+        host = canonical_hostname(record.get("hostname"))
+        dip = record.get("dst_ip")
+        return isinstance(dip, str) and dip in tables["destinations"].get(host, set())
+    if field == "baseline_known_port":
+        tables = load_network_baseline(network_baseline_path)
+        host = canonical_hostname(record.get("hostname"))
+        dport = record.get("dst_port")
+        if dport is None:
+            return False
+        return str(dport) in tables["ports"].get(host, set())
     cur = record
     for part in field.split("."):
         if isinstance(cur, dict) and part in cur:

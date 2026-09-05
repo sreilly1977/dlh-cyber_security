@@ -1,0 +1,51 @@
+title: Outbound Connection on Uncommon Port
+id: b2e7a9c5-6d4f-4b8e-a3f6-8f5b1d3a7e97
+status: experimental
+description: >
+    Detects outbound network connections on ports outside the enterprise
+    common-service set {53, 80, 123, 389, 443, 445, 636, 3306, 5432} on hosts
+    where that port was never observed during the 3x01 baseline window (MITRE
+    T1571 Non-Standard Port). Threat: C2 channels deliberately select
+    non-standard ports to evade egress allowlisting and blend with occasional
+    legitimate odd traffic; requiring both conditions, port outside the common
+    set AND absent from the host's own baseline port history, suppresses the
+    routine long tail of legitimate one-off ports. Data source: network
+    telemetry from the 3x00 evidence pipeline scored against the 3x01 network
+    baseline per-host port lists. Extension note: baseline_known_port is a
+    boolean computed by the sigma_runner at execution time from the 3x01
+    per-host port baseline and does not exist in raw event records; hostnames
+    are canonicalized before the join. Operational response: Tier 1 confirms
+    the destination and owning service, checks change-management coverage, and
+    escalates to Tier 2 for payload capture if the port carries sustained
+    volume from a clinical asset.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1571/
+logsource:
+    category: network_connection
+detection:
+    selection_outbound:
+        canonical_label: 'network_connection_outbound'
+        dst_port|gte: 1
+        baseline_known_port: false
+    filter_common_ports:
+        dst_port:
+            - 53
+            - 80
+            - 123
+            - 389
+            - 443
+            - 445
+            - 636
+            - 3306
+            - 5432
+    condition: selection_outbound and not filter_common_ports
+falsepositives:
+    - Developer and admin workstations (admin-ws fleet) running ad hoc tooling on ephemeral high ports
+    - Patch management servers pulling content from vendor repositories on non-standard ports
+    - Software update agents briefly using vendor-selected alternate ports during failover
+level: medium
+tags:
+    - attack.command_and_control
+    - attack.t1571

@@ -277,3 +277,42 @@ $ ./3-sigma_runner.sh rules/sigma/006_registry_autorun_modify.yml --count-only
 ```
 
 ---
+
+# [6. Network Connection Pattern Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/007_unknown_outbound_destination.yml)
+### advanced
+
+## Goal: 
+
+Write two Sigma rules detecting outbound connections to unknown destinations and connections on uncommon ports.
+
+## Context: 
+
+The 3x01 network baseline captured per-host destinations, ports, and zone flows. You already know every production host's expected talker set. Translating that knowledge into Sigma rules lets the runner reproduce the same findings without rerunning the full baseline script, and gives Dr. Morales a single detection catalog entry for each behavior rather than a buried line in an anomalies report.
+
+## Instructions: 
+
+Write two Sigma rules.
+
+rules/sigma/[007_unknown_outbound_destination.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/) must:
+
+    Detect an outbound network connection where dst_ip is not in per-host destination list from $BASELINE_PKG/baselines/baseline_network.json and destination is in an external zone
+    Use custom field baseline_known_destination: false (computed by the runner)
+    Level medium; tags attack.command_and_control, attack.t1071
+
+rules/sigma/[008_uncommon_port_outbound.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/) must:
+
+    Detect outbound connections on ports outside {53, 80, 123, 389, 443, 445, 636, 3306, 5432} when host has never used that port during baseline
+    Level medium; tags attack.command_and_control, attack.t1571
+    falsepositives including developer hosts, patch management servers, and update agents
+
+**Expected Output:**
+
+```bash
+$ ./3-sigma_runner.sh rules/sigma/007_unknown_outbound_destination.yml --count-only
+<N>
+
+$ ./3-sigma_runner.sh rules/sigma/008_uncommon_port_outbound.yml --count-only
+<N>
+```
+
+---

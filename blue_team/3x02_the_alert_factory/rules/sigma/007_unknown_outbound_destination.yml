@@ -1,0 +1,42 @@
+title: Outbound Connection to Unknown External Destination
+id: a1d6f8b4-5c3e-4a7f-b2d9-9e4a7c1f5d86
+status: experimental
+description: >
+    Detects outbound network connections from a production host to an external
+    destination address never observed in that host's 3x01 baseline destination
+    list (MITRE T1071 Application Layer Protocol / C2 over unfamiliar
+    infrastructure). Threat: post-compromise beaconing and exfiltration are
+    visible first as traffic to destinations outside the host's expected talker
+    set; in this environment PHI-bearing hosts (db-patient fleet, srv-ehr-01)
+    have narrow, well-characterized destination footprints, making any novel
+    external peer a high-value lead. Data source: network telemetry from the
+    3x00 evidence pipeline scored against the 3x01 network baseline
+    (baselines/baseline_network.json per-host destination lists). Extension
+    note: baseline_known_destination is a boolean computed by the sigma_runner
+    at execution time from the 3x01 per-host destination baseline and does not
+    exist in raw event records; hostnames are canonicalized before the join.
+    Events without a resolvable destination address cannot satisfy the
+    selection and do not fire. Operational response: Tier 1 identifies the
+    owning process where telemetry permits, checks whether a change ticket or
+    vendor onboarding covers the destination, and escalates to Tier 2 for DNS
+    and proxy correlation if the host holds clinical data.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1071/
+logsource:
+    category: network_connection
+detection:
+    selection_outbound:
+        canonical_label: 'network_connection_outbound'
+        dst_zone: 'INTERNET'
+        baseline_known_destination: false
+    condition: selection_outbound
+falsepositives:
+    - Vendor onboarding adding a new legitimate cloud endpoint to a subset of hosts before baseline refresh
+    - DNS failover routing clinical workstations to secondary resolvers outside the learned destination set
+    - Transient CDN address ranges rotating between evaluations
+level: medium
+tags:
+    - attack.command_and_control
+    - attack.t1071
