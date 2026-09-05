@@ -1,0 +1,45 @@
+title: Medical Segment Egress Policy Violation
+id: 8c1d3b7e-6f2a-4d9c-b4e8-5c1f7a3d9e26
+status: experimental
+description: >
+    Detects any outbound network connection from a host in the medical
+    devices segment whose destination lies outside the device and
+    management zones. Policy basis: the medical devices segment has no
+    egress by policy - device firmware receives inbound updates exclusively
+    from the management zone, and no device workflow initiates outbound
+    connections to any other segment, ever. This is an absolute invariant,
+    not a statistical norm: any observed connection with this zone pairing
+    is a configuration fault, compromised device, or rogue endpoint, and
+    because medical devices cannot be patched on commodity timelines (FDA
+    validation cycles), network-layer containment is the only practical
+    control - making this detection the primary compensating control for
+    the segment's flat trust model. In HIPAA audit terms this rule evidences
+    technical safeguards over the device segment's transmission security.
+    Vocabulary note: the enrichment tier names the device segment
+    MEDICAL_IOT (the instruction's medical_devices) and carries no literal
+    management zone - ADMIN serves as the management-zone allowance per
+    the instruction's semantic. Zero tolerance response: Tier 1 confirms
+    the pairing from flow records; Tier 2 isolates the source device at
+    the switch and opens a device engineering ticket, since the least
+    unlikely causes are both reportable.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1071/001/
+logsource:
+    category: network_connection
+detection:
+    selection:
+        src_zone: 'MEDICAL_IOT'
+    filter_internal:
+        dst_zone:
+            - 'MEDICAL_IOT'
+            - 'ADMIN'
+    condition: selection and not filter_internal
+falsepositives:
+    - DHCP scope migration or re-zoning events where a device address temporarily enriches to the wrong zone
+    - Firewall policy testing during approved maintenance windows
+level: critical
+tags:
+    - attack.command_and_control
+    - attack.t1071.001

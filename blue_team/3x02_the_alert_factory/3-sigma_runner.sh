@@ -43,6 +43,20 @@
 #                          boolean; true iff the record's account is in the
 #                          lateral_movement_allowlist list of the risk register.
 #                          Fail-closed: absence from the register means false.
+#       clinical_access_whitelist
+#                          boolean; true iff the record's account (user, with
+#                          event_data.TargetUserName / SubjectUserName fallback)
+#                          is in the register's clinical_access_whitelist list.
+#                          Register entries carry a domain prefix (MEDDEFENSE\x)
+#                          which is stripped before comparison. Fail-closed.
+#       shift_hour_match  boolean; true iff the event's hour falls inside the
+#                          3x01 temporal profile's typical-hours envelope for
+#                          the event's class (source_type/canonical_label).
+#                          The profile models event-class seasonality, not
+#                          per-account shifts; an hour is in-shift when its
+#                          histogram count is >= 50% of the class mean.
+#                          Unknown classes or missing timestamps are treated
+#                          as in-shift (fail-open for this field).
 #   - Aggregations support both event counting (count() by F > N) and distinct
 #     value counting (count(distinct F2) by F > N) within a timeframe.
 #   - All hostname-keyed joins canonicalize hostnames (lowercase, - and _
@@ -54,6 +68,7 @@ set -euo pipefail
 HANDOFF_DIR="${HANDOFF_DIR:-$HOME/3x00_handoff/evidence_handoff}"
 BASELINE_PKG="${BASELINE_PKG:-$HOME/3x01_package/baseline_package}"
 RISK_REGISTER="${RISK_REGISTER:-$HOME/3x02_assets/risk_register.json}"
+TEMPORAL_PROFILE="${TEMPORAL_PROFILE:-$HOME/3x01_package/baseline_package/temporal_profile.json}"
 CORRELATION_PRIMITIVES="${CORRELATION_PRIMITIVES:-$HOME/3x02_package/correlation_primitives.json}"
 DEFAULT_EVIDENCE="$HANDOFF_DIR/data/normalized_events.json"
 LABELED_EVENTS="$BASELINE_PKG/labeled_events.json"
@@ -77,6 +92,7 @@ Environment:
   HANDOFF_DIR            default $HOME/3x00_handoff/evidence_handoff
   BASELINE_PKG           default $HOME/3x01_package/baseline_package
   RISK_REGISTER          default $HOME/3x02_assets/risk_register.json
+  TEMPORAL_PROFILE       default $HOME/3x01_package/baseline_package/temporal_profile.json
   CORRELATION_PRIMITIVES default $HOME/3x02_package/correlation_primitives.json
 EOF
 }
@@ -147,7 +163,7 @@ if [ "$PREPROCESS" -eq 1 ]; then
 fi
 
 python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" "$NETWORK_BASELINE" \
-    "$RISK_REGISTER" "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
+    "$RISK_REGISTER" "$TEMPORAL_PROFILE" "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
 import fnmatch
 import json
 import re
@@ -156,8 +172,8 @@ import time as timemod
 from datetime import datetime, timedelta
 
 rule_path, evidence_path, labeled_path, baseline_process_path, network_baseline_path, \
-    risk_register_path = sys.argv[1:7]
-dry_run, count_only, window_arg = sys.argv[7] == "1", sys.argv[8] == "1", sys.argv[9]
+    risk_register_path, temporal_path = sys.argv[1:8]
+dry_run, count_only, window_arg = sys.argv[8] == "1", sys.argv[9] == "1", sys.argv[10]
 
 import yaml
 
@@ -305,6 +321,58 @@ def load_lm_allowlist(path):
             pass
     return _lm_allowlist
 
+_clinical_whitelist = None
+
+def load_clinical_whitelist(path):
+    """Lazy-load the clinical access whitelist from the risk register,
+    normalizing domain-prefixed accounts (MEDDEFENSE\\name -> name),
+    lowercased for case-insensitive comparison. Fail-closed: an
+    unreadable register yields an empty whitelist."""
+    global _clinical_whitelist
+    if _clinical_whitelist is None:
+        _clinical_whitelist = set()
+        try:
+            with open(path, encoding="utf-8") as fh:
+                doc = json.load(fh)
+            wl = doc.get("clinical_access_whitelist", []) if isinstance(doc, dict) else []
+            if isinstance(wl, list):
+                for entry in wl:
+                    if isinstance(entry, str):
+                        name = entry.rsplit("\\", 1)[-1].strip().lower()
+                        if name:
+                            _clinical_whitelist.add(name)
+        except (OSError, ValueError):
+            pass
+    return _clinical_whitelist
+
+_temporal = None
+
+def load_temporal(path):
+    """Lazy-load the 3x01 temporal profile: class-keyed hourly histograms.
+
+    Builds an in-shift hour set per event class (source_type/canonical_label):
+    an hour is in-shift when its histogram count is >= 50% of the class's
+    mean hourly activity. Fail-open for the shift_hour_match field: an
+    unreadable profile yields no entries, so all events are treated as
+    in-shift and never flagged out-of-shift."""
+    global _temporal
+    if _temporal is None:
+        _temporal = {}
+        try:
+            with open(path, encoding="utf-8") as fh:
+                doc = json.load(fh)
+            profiles = doc.get("profiles", {}) if isinstance(doc, dict) else {}
+            for key, prof in profiles.items():
+                hist = prof.get("hour_of_day_histogram") if isinstance(prof, dict) else None
+                if isinstance(hist, list) and len(hist) == 24:
+                    vals = [v for v in hist if isinstance(v, (int, float))]
+                    mean = sum(vals) / len(vals) if vals else 0.0
+                    _temporal[key] = {h for h, v in enumerate(hist)
+                                      if isinstance(v, (int, float)) and v >= 0.5 * mean}
+        except (OSError, ValueError):
+            pass
+    return _temporal
+
 def resolve_field(record, field, hour_cache):
     if field == "hour_of_day":
         ts = record.get("timestamp")
@@ -356,6 +424,28 @@ def resolve_field(record, field, hour_cache):
             ed = record.get("event_data")
             account = ed.get("TargetUserName") if isinstance(ed, dict) else None
         return isinstance(account, str) and account in allowlist
+    if field == "clinical_access_whitelist":
+        wl = load_clinical_whitelist(risk_register_path)
+        account = record.get("user")
+        if not isinstance(account, str) or not account:
+            ed = record.get("event_data")
+            if isinstance(ed, dict):
+                account = ed.get("TargetUserName") or ed.get("SubjectUserName")
+        return isinstance(account, str) and account.strip().lower() in wl
+    if field == "shift_hour_match":
+        profiles = load_temporal(temporal_path)
+        cls = f"{record.get('source_type')}/{record.get('canonical_label')}"
+        hours = profiles.get(cls)
+        if not hours:
+            # unknown class: fail-open, treat as in-shift
+            return True
+        ts = record.get("timestamp")
+        if ts is None:
+            return True
+        try:
+            return parse_ts(ts).hour in hours
+        except (ValueError, TypeError):
+            return True
     cur = record
     for part in field.split("."):
         if isinstance(cur, dict) and part in cur:
@@ -536,7 +626,7 @@ for sel in detection.values():
         for sub in sel:
             if isinstance(sub, dict):
                 referenced_fields.update(k.split("|")[0] for k in sub)
-if "canonical_label" in referenced_fields \
+if referenced_fields & {"canonical_label", "src_zone", "dst_zone", "shift_hour_match"} \
         and evidence_path.endswith("normalized_events.json") \
         and labeled_path.endswith("labeled_events.json"):
     import os

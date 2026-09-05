@@ -1,0 +1,43 @@
+title: Privileged Account Activity Outside Shift Profile
+id: 6e2f9a3c-4d1b-4e8f-a5c7-9b3d1e5f7a81
+status: experimental
+description: >
+    Detects special privilege assignments (Windows event 4672) for accounts
+    whose activity hour falls outside the shift pattern the 3x01 temporal
+    baseline learned for them (T1078 Valid Accounts used outside the
+    principal's observed operating hours). Why shift-profile matching
+    matters here specifically: MedDefense's privileged accounts follow
+    clinical and facilities shift patterns that do not match generic
+    Windows norms - administrative activity concentrates in day-shift
+    windows with weekend troughs, so generic "off-hours" thresholds tuned
+    to corporate norms (18:00-06:00) both over-fire and under-fire in this
+    fleet. The per-account shift join encodes the organization's own
+    staffing rhythm instead, which is what makes the rule citable as a
+    compensating control in a HIPAA audit: it demonstrates the covered
+    entity detects privileged access inconsistent with authorized duty
+    schedules. Extension note: shift_hour_match is a custom field computed
+    by the sigma_runner from the 3x01 temporal profile at execution time,
+    true when the event hour falls inside the account's observed shift
+    envelope and false otherwise; the rule fires on explicit false.
+    Operational response: Tier 1 verifies the administrator's schedule
+    against the on-call roster; unexplained hour mismatches on PHI-adjacent
+    hosts proceed to session review and supervisor confirmation.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1078/
+logsource:
+    product: windows
+detection:
+    selection:
+        event_id: 4672
+        shift_hour_match: false
+    condition: selection
+falsepositives:
+    - On-call incident response rotations, where administrators legitimately exercise privileges at hours outside their normal shift pattern during active incidents
+    - Emergency maintenance windows approved out-of-band, whose privileged activity predates profile refresh
+    - Timezone skew between the temporal profile's source data and the event pipeline's clock
+level: high
+tags:
+    - attack.privilege_escalation
+    - attack.t1078

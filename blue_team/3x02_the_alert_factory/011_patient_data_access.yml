@@ -1,0 +1,53 @@
+title: Patient Data Access Outside Clinical Whitelist
+id: a9c3e5f1-2b7d-4c8e-9f0a-3e5b7d9c1a62
+status: experimental
+description: >
+    Detects access to protected patient data stores by accounts outside the
+    clinical access whitelist (MITRE T1005 Data from Local System;
+    collection). Windows detects Event ID 4663 (An attempt was made to
+    access an object) where the target object falls under the
+    \\\\meddb\\patient_data\\ tree; Linux auditd syscall events are matched
+    where the target path falls under /mnt/ehr/patient_records/. Why the
+    whitelist join matters more than generic path monitoring: patient data
+    access is routine for a clinical workforce, so value-less file-access
+    alerting would drown analysts within an hour of deployment. The
+    discriminating property is organizational, not technical - the MedDefense
+    risk register enumerates precisely which accounts are sanctioned to touch
+    PHI, and access by any account outside that list on these specific paths
+    is a policy violation regardless of how ordinary the access looks
+    technically. These are the rules cited in a HIPAA audit as compensating
+    detection controls for the privacy rule's access safeguard, and in this
+    environment they matter acutely because the 25 March chain staged against
+    patient data on database hosts. Extension note: clinical_access_whitelist
+    is a custom boolean field computed by the sigma_runner at execution time
+    from the lateral asset inventory's clinical_access_whitelist list;
+    fail-closed - an account absent from the register is never whitelisted.
+    Operational response: Tier 1 verifies the account against HR records and
+    the accessing host's ownership; Tier 2 presumes compromise on unmatched
+    accounts touching patient data, initiating containment ahead of
+    credential investigation, with PHI-zone impact assessment per HIPAA
+    breach-notification timelines.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1005/
+logsource:
+    product: windows
+    category: file_access
+detection:
+    selection_windows:
+        event_id: 4663
+        event_data.ObjectName|startswith: '\\meddb\patient_data\'
+    selection_linux:
+        event_category: audit_syscall
+        file_path|startswith: '/mnt/ehr/patient_records/'
+    filter_whitelisted:
+        clinical_access_whitelist: true
+    condition: (selection_windows or selection_linux) and not filter_whitelisted
+falsepositives:
+    - New clinical staff provisioned after the register's last revision, exercising legitimate access ahead of whitelist updates
+    - Locum or travel nurse accounts shared under a pool identity missing from the whitelist
+level: critical
+tags:
+    - attack.collection
+    - attack.t1005
