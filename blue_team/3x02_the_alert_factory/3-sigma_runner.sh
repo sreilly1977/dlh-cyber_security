@@ -23,7 +23,11 @@
 #       hour_of_day        UTC hour (0-23) of the event timestamp
 #       parent_process_name basename of event_data.ParentImage
 #       baseline_seen      boolean; true iff (hostname, process_name) appears in
-#                          $BASELINE_PKG/baselines/baseline_process.json per_host
+#                          $BASELINE_PKG/baselines/baseline_process.json per_host.
+#                          Hostnames are canonicalized (lowercase, - and _
+#                          stripped) on both the table and lookup side so that
+#                          dataset spelling variants (bill-db-01 / bill_db_01 /
+#                          billdb01) resolve to a single merged baseline entry.
 
 set -euo pipefail
 
@@ -170,16 +174,40 @@ def validate_rule(doc):
 # --------------------------------------------------------------------------
 # Derived-field support (fields computed by the runner, not in raw records)
 # --------------------------------------------------------------------------
+def canonical_hostname(host):
+    """Canonicalize hostname keys: lowercase, strip - and _ separators.
+
+    Collapses dataset variants like bill-db-01 / bill_db_01 / billdb01
+    into a single key so baselines are not fragmented by spelling.
+    """
+    if not isinstance(host, str):
+        return ""
+    return host.strip().lower().replace("-", "").replace("_", "")
+
 _baseline_table = None
 
 def load_baseline(path):
-    """Lazy-load per-host expected process table from baseline_process.json."""
+    """Lazy-load per-host expected process table, with hostname canonicalization.
+
+    Merges all spelling variants of a host (dashes/underscores removed)
+    so a per_host baseline is a union of all its key variants' processes.
+    """
     global _baseline_table
     if _baseline_table is None:
+        _baseline_table = {}
         try:
             with open(path, encoding="utf-8") as fh:
                 doc = json.load(fh)
-            _baseline_table = doc.get("per_host", {}) if isinstance(doc, dict) else {}
+            per_host = doc.get("per_host", {}) if isinstance(doc, dict) else {}
+            for host, procs in per_host.items():
+                if not isinstance(procs, dict):
+                    continue
+                canon = canonical_hostname(host)
+                merged = _baseline_table.setdefault(canon, {})
+                for proc in procs:
+                    # first variant wins on collision; identical keys across
+                    # variants carry the same process list content
+                    merged.setdefault(proc, procs[proc])
         except (OSError, ValueError):
             _baseline_table = {}
     return _baseline_table
@@ -200,9 +228,9 @@ def resolve_field(record, field, hour_cache):
         return pi.replace("\\", "/").rsplit("/", 1)[-1]
     if field == "baseline_seen":
         table = load_baseline(baseline_process_path)
-        host = record.get("hostname")
+        host = canonical_hostname(record.get("hostname"))
         proc = record.get("process_name")
-        host_procs = table.get(host or "", {})
+        host_procs = table.get(host, {})
         return isinstance(proc, str) and proc in host_procs
     cur = record
     for part in field.split("."):

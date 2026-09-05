@@ -1,0 +1,55 @@
+title: Suspicious Scheduled Task Creation
+id: e7b1d4f9-3a8c-4e2b-9f5d-6c1a8b7e9d32
+status: experimental
+description: >
+    Detects creation of Windows scheduled tasks (MITRE T1053.005 Scheduled Task/Job),
+    the most common persistence mechanism on Windows, via either Windows Security
+    event 4698 (scheduled task created) or Sysmon event 1 process creation where
+    the image is schtasks.exe invoked with a /create argument. Threat: after
+    achieving execution an adversary plants a task to survive reboots and
+    credential rotation; in a healthcare environment persistent footholds on
+    clinical workstations and pharmacy application servers outlast nightly
+    re-imaging windows and undermine patch-based remediation. Excludes routine
+    task registrations by the SYSTEM account and Windows Defender maintenance
+    tasks. Data source: Windows process_creation and Security telemetry from the
+    3x00 evidence pipeline; 3x01 baseline_process correlated scheduled task
+    activity with per-host expected behavior. Extension note: event_data fields
+    (Image, CommandLine) resolve via nested dotted paths; filter selections
+    missing parent telemetry pass fail-open by design since the monitored
+    security channels do not always carry them. Operational response: Tier 1
+    captures the task name, action, and registering user, verifies against
+    change management, and escalates to Tier 2 for task removal and full
+    host review if the task action invokes user-writable paths.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_task_created:
+        event_id: 4698
+    selection_schtasks_create:
+        event_id: 1
+        event_data.Image|endswith: 'schtasks.exe'
+        event_data.CommandLine|contains: '/create'
+    filter_system:
+        user:
+            - 'SYSTEM'
+            - 'LOCAL SYSTEM'
+            - 'NT AUTHORITY\SYSTEM'
+    filter_defender:
+        event_data.CommandLine|contains:
+            - 'Defender'
+            - 'MsMpSvc'
+            - 'MsMpEng'
+    condition: (selection_task_created or selection_schtasks_create) and not filter_system and not filter_defender
+falsepositives:
+    - Software installers (EHR client updates, imaging drivers) registering scheduled update tasks during installation
+    - Known MedDefense automation: SCCM maintenance tasks and backup agents registering recurring jobs on server fleet
+    - Windows Defender antimalware platform updates registering scheduled scan tasks
+level: high
+tags:
+    - attack.persistence
+    - attack.t1053.005

@@ -233,3 +233,47 @@ $ ./3-sigma_runner.sh rules/sigma/004_recon_tool_execution.yml --count-only
 ```
 
 ---
+
+# [5. Scheduled Task and Registry Persistence Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/005_scheduled_task_creation.yml)
+### advanced
+
+## Goal: 
+
+Write two Sigma rules detecting persistence via scheduled tasks and registry autorun modification.
+
+## Context: 
+
+Persistence is the attacker's insurance policy. Once an attacker has code execution, they immediately plant a mechanism to survive reboots and credential rotations. Scheduled task creation and registry autorun modification are the two most common persistence techniques on Windows and appear in almost every red team engagement. On the detection side they are straightforward because the underlying events are structured, logged by default, and rarely touched by clinical software.
+
+## Instructions: 
+
+Write two Sigma rules.
+
+rules/sigma/[005_scheduled_task_creation.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/005_scheduled_task_creation.yml) must:
+
+    Detect Windows Event ID 4698 (scheduled task created) or Sysmon Event ID 1 where image is schtasks.exe with /create argument
+    Exclude tasks created by SYSTEM account or Windows Defender via a Sigma filter selection
+    Level high; tags attack.persistence, attack.t1053.005
+    falsepositives including software installers and known MedDefense automation
+
+rules/sigma/[006_registry_autorun_modify.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/005_scheduled_task_creation.yml006_registry_autorun_modify.yml) must:
+
+    Detect Sysmon Event ID 13 (registry value set) on autorun paths:
+    HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+    HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
+    HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+    HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce
+    Level high; tags attack.persistence, attack.t1547.001
+    falsepositives including OEM software and clinical imaging vendor update agent
+
+**Expected Output:**
+
+```bash
+$ ./3-sigma_runner.sh rules/sigma/005_scheduled_task_creation.yml --count-only
+<N>
+
+$ ./3-sigma_runner.sh rules/sigma/006_registry_autorun_modify.yml --count-only
+<N>
+```
+
+---

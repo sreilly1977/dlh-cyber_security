@@ -1,0 +1,42 @@
+title: Registry Autorun Key Modification
+id: f8c2e5a0-4b9d-4f3c-a6e8-7d2b9c1f0e43
+status: experimental
+description: >
+    Detects modification of Windows registry autorun keys (MITRE T1547.001
+    Registry Run Keys / Startup Folder) via Sysmon event 13 (registry value
+    set) against the HKLM and HKCU Run and RunOnce hives under
+    Software\Microsoft\Windows\CurrentVersion. Threat: autorun keys are the
+    classic lightweight persistence mechanism, executing attacker payloads at
+    each interactive logon; on shared clinical workstations this converts a
+    single compromised session into a durable foothold surviving password
+    resets across the entire shift roster using that host. Data source:
+    Sysmon registry telemetry from the 3x00 evidence pipeline. Extension note:
+    matching uses a contains comparison against the registry hive prefix,
+    which covers both Windows registry notation (HKLM\...) and Sysmon
+    TargetObject notation (\REGISTRY\MACHINE\SOFTWARE\...) and
+    substring-matches RunOnce keys as well. Operational response: Tier 1
+    captures the value name, data, and process writing the key, checks the
+    referenced executable path against the 3x01 process baseline, and
+    escalates to Tier 2 for autorun removal and parent-process investigation
+    if the payload path is user-writable or previously unseen.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1547/001/
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection_registry_set:
+        event_id: 13
+    selection_autorun_key:
+        event_data.TargetObject|contains: 'Windows\CurrentVersion\Run'
+    condition: selection_registry_set and selection_autorun_key
+falsepositives:
+    - OEM software and hardware drivers registering first-run or update stubs in RunOnce during installation
+    - Clinical imaging vendor update agents (rad-srv fleet) writing legitimate startup entries
+    - Third-party printer and DICOM viewer software adding per-user autorun values on shared clinical workstations
+level: high
+tags:
+    - attack.persistence
+    - attack.t1547.001
