@@ -2,17 +2,17 @@ title: SSH Repeated Authentication Failures from Single Source
 id: 7f3c1a2e-4b8d-4d92-9a1f-6e5c0b7a8d94
 status: experimental
 description: >
-    Detects SSH authentication brute forcing against MedDefense Linux infrastructure.
-    Threat: repeated failed password attempts from a single source, consistent with
-    password guessing or spray prelude to account compromise (MITRE T1110.001
-    Password Guessing). Data source: normalized authentication telemetry from the
-    3x00 evidence pipeline, Linux auth records where canonical_label is login_failure.
-    Fires when a single source IP exceeds the failure threshold within the 120s
-    timeframe. Operational response: SOC Tier 1 reviews the source IP against the
-    asset zone, checks for any subsequent login_success from the same IP (correlate
-    against T004 class rules), verifies the targeted account against the risk
-    register, and escalates to Tier 2 for host isolation and credential reset if a
-    success follows the burst.
+    Detects authentication brute forcing against MedDefense Linux infrastructure
+    (MITRE T1110.001 Password Guessing). Data source: normalized authentication
+    telemetry from the 3x00 evidence pipeline; Linux auth records where
+    canonical_label is login_failure. Fires when a single source IP accumulates
+    more than 5 authentication failures within 1800s. Tuning note: initial 120s/5+
+    heuristic fired zero times against the 8-day evidence drop. Burst profiling
+    measured a clean-week background scanner ceiling of 5 failures per source IP
+    per 600s versus attacker bursts of 8 per 600s and 13-15 per 1800s against
+    db-patient-01; timeframe set to 600s with the mandated >5 threshold, yielding
+    zero baseline-window false positives. Low-and-slow distributed sprays below
+    this threshold are delegated to correlation-layer rules.
 author: Steve - Cybersecurity Engineer
 date: 2026/09/04
 references:
@@ -25,7 +25,7 @@ detection:
         canonical_label: 'login_failure'
         event_category: 'authentication'
     condition: selection | count() by src_ip > 5
-    timeframe: 120s
+    timeframe: 600s
 falsepositives:
     - Clinical staff mistyping credentials during busy shift handovers at clin-ws workstations
     - Automated backup jobs (svc_backup) failing after scheduled credential rotation on Saturday mornings

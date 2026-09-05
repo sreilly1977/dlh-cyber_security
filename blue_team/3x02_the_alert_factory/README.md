@@ -151,3 +151,44 @@ medium ['attack.initial_access', 'attack.t1078']
 ```
 
 ---
+
+# [3. Sigma Toolchain and Runner](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/3-sigma_runner.sh)
+
+## Goal: 
+
+Install the Sigma toolchain and build the runner script that executes Sigma rules against the flat normalized dataset.
+
+## Context: 
+
+sigma-cli converts rules to SIEM query languages but does not execute rules directly against flat JSON files. The runner you build here closes the gap: it loads a Sigma rule YAML, interprets the detection block, and executes the predicate against the normalized dataset.
+
+Note: sigma-cli is not pre-installed on the lab. Build 3-sigma_runner.sh using Python3 and the standard yaml library (which is available). If you choose to install sigma-cli, use pip install sigma-cli pysigma --user.
+
+## Instructions: 
+
+Write 3-sigma_runner.sh that takes a Sigma rule file and optionally an evidence file as arguments and emits a JSON object to stdout with:
+
+    rule_id, rule_title, level, evidence_path
+    match_count
+    matches: list of event references (each with timestamp, hostname, event_ref)
+    execution_time_ms
+
+The runner must support:
+
+    --dry-run: only validates the rule YAML and prints VALID or the parse error
+    --count-only: returns only the match count
+    --window <start_iso,end_iso>: restricts evaluation to a time range
+
+The runner reads from $HANDOFF_DIR/data/normalized_events.json by default and uses python3 with import yaml to parse the rule. Aggregation conditions (count() by src_ip > 5 within 120s) must be implemented in a Python helper.
+
+**Expected Output:**
+
+```bash
+$ ./3-sigma_runner.sh rules/sigma/001_ssh_brute_force.yml --dry-run
+VALID
+
+$ ./3-sigma_runner.sh rules/sigma/001_ssh_brute_force.yml --count-only
+<N>
+```
+
+---
