@@ -3,7 +3,8 @@
 # Name: 3-sigma_runner.sh
 # Purpose: Execute Sigma detection rules against flat NDJSON evidence from the 3x00
 #          pipeline; interprets the detection block (selections, modifiers, boolean
-#          conditions, timeframe aggregations) and emits a JSON result object.
+#          conditions, timeframe aggregations, distinct-count aggregations) and
+#          emits a JSON result object.
 # Author: Steve - Cybersecurity Engineer
 # Date: 05 September 2026
 #
@@ -29,8 +30,15 @@
 #                          baseline_network.json per_host_destinations
 #       baseline_known_port
 #                          boolean; true iff (hostname, dst_port) appears in
-#                          baseline_network.json per_host_ports (port compared
-#                          as string on both sides)
+#                          baseline_network.json per_host_ports
+#       Computer           alias for hostname (destination host on Windows logon
+#                          events; deliberately NOT WorkstationName, the source)
+#       lateral_movement_allowlist
+#                          boolean; true iff the record's account is in the
+#                          lateral_movement_allowlist list of the risk register.
+#                          Fail-closed: absence from the register means false.
+#   - Aggregations support both event counting (count() by F > N) and distinct
+#     value counting (count(distinct F2) by F > N) within a timeframe.
 #   - All hostname-keyed joins canonicalize hostnames (lowercase, - and _
 #     stripped) so dataset spelling variants (bill-db-01 / bill_db_01 /
 #     billdb01) resolve to a single merged baseline entry.
@@ -39,6 +47,7 @@ set -euo pipefail
 
 HANDOFF_DIR="${HANDOFF_DIR:-$HOME/3x00_handoff/evidence_handoff}"
 BASELINE_PKG="${BASELINE_PKG:-$HOME/3x01_package/baseline_package}"
+RISK_REGISTER="${RISK_REGISTER:-$HOME/3x02_assets/risk_register.json}"
 DEFAULT_EVIDENCE="$HANDOFF_DIR/data/normalized_events.json"
 LABELED_EVENTS="$BASELINE_PKG/labeled_events.json"
 BASELINE_PROCESS="$BASELINE_PKG/baselines/baseline_process.json"
@@ -57,6 +66,7 @@ Options:
 Environment:
   HANDOFF_DIR   default $HOME/3x00_handoff/evidence_handoff
   BASELINE_PKG   default $HOME/3x01_package/baseline_package
+  RISK_REGISTER  default $HOME/3x02_assets/risk_register.json
 EOF
 }
 
@@ -111,7 +121,7 @@ if [ -z "$EVIDENCE" ]; then
 fi
 
 python3 - "$RULE" "$EVIDENCE" "$LABELED_EVENTS" "$BASELINE_PROCESS" "$NETWORK_BASELINE" \
-    "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
+    "$RISK_REGISTER" "$DRY_RUN" "$COUNT_ONLY" "$WINDOW" <<'PY'
 import fnmatch
 import json
 import re
@@ -119,8 +129,9 @@ import sys
 import time as timemod
 from datetime import datetime, timedelta
 
-rule_path, evidence_path, labeled_path, baseline_process_path, network_baseline_path = sys.argv[1:6]
-dry_run, count_only, window_arg = sys.argv[6] == "1", sys.argv[7] == "1", sys.argv[8]
+rule_path, evidence_path, labeled_path, baseline_process_path, network_baseline_path, \
+    risk_register_path = sys.argv[1:7]
+dry_run, count_only, window_arg = sys.argv[7] == "1", sys.argv[8] == "1", sys.argv[9]
 
 import yaml
 
@@ -129,7 +140,8 @@ REQUIRED_KEYS = ("title", "id", "status", "description", "logsource",
 LEVELS = {"informational", "low", "medium", "high", "critical"}
 TIMEFRAME_RE = re.compile(r"^(\d+)\s*([smhd])$")
 AGG_RE = re.compile(
-    r"^\s*count(?:\s*\(\s*\))?(?:\s+by\s+([A-Za-z_][A-Za-z0-9_.]*))?"
+    r"^\s*count\s*(?:\(\s*distinct\s+([A-Za-z_][A-Za-z0-9_.]*)\s*\)|\s*\(\s*\)|)"
+    r"(?:\s+by\s+([A-Za-z_][A-Za-z0-9_.]*))?"
     r"\s*(>=|<=|==|>|<)\s*(\d+)\s*$", re.IGNORECASE)
 TOKEN_RE = re.compile(r"\(|\)|[^\s()]+")
 
@@ -248,6 +260,25 @@ def load_network_baseline(path):
             pass
     return _net_tables
 
+_lm_allowlist = None
+
+def load_lm_allowlist(path):
+    """Lazy-load the lateral movement service-account allowlist from the risk
+    register. Fail-closed: an unreadable register yields an empty allowlist,
+    so no account is excluded from detection."""
+    global _lm_allowlist
+    if _lm_allowlist is None:
+        _lm_allowlist = set()
+        try:
+            with open(path, encoding="utf-8") as fh:
+                doc = json.load(fh)
+            al = doc.get("lateral_movement_allowlist", []) if isinstance(doc, dict) else []
+            if isinstance(al, list):
+                _lm_allowlist.update(a for a in al if isinstance(a, str))
+        except (OSError, ValueError):
+            pass
+    return _lm_allowlist
+
 def resolve_field(record, field, hour_cache):
     if field == "hour_of_day":
         ts = record.get("timestamp")
@@ -262,6 +293,18 @@ def resolve_field(record, field, hour_cache):
         if not isinstance(pi, str) or not pi.strip():
             return None
         return pi.replace("\\", "/").rsplit("/", 1)[-1]
+    if field == "Computer":
+        # Sigma field name for the destination host on Windows logon events.
+        # Deliberately NOT WorkstationName, which is the logon SOURCE.
+        return record.get("hostname")
+    if field == "TargetUserName":
+        # Sigma field name for the authenticating account on Windows logon
+        # events; resolves to the canonical user field with event_data fallback.
+        u = record.get("user")
+        if isinstance(u, str) and u:
+            return u
+        ed = record.get("event_data")
+        return ed.get("TargetUserName") if isinstance(ed, dict) else None
     if field == "baseline_seen":
         table = load_baseline(baseline_process_path)
         host = canonical_hostname(record.get("hostname"))
@@ -280,6 +323,13 @@ def resolve_field(record, field, hour_cache):
         if dport is None:
             return False
         return str(dport) in tables["ports"].get(host, set())
+    if field == "lateral_movement_allowlist":
+        allowlist = load_lm_allowlist(risk_register_path)
+        account = record.get("user")
+        if account is None:
+            ed = record.get("event_data")
+            account = ed.get("TargetUserName") if isinstance(ed, dict) else None
+        return isinstance(account, str) and account in allowlist
     cur = record
     for part in field.split("."):
         if isinstance(cur, dict) and part in cur:
@@ -402,7 +452,7 @@ class CondEvaluator:
         raise ValueError(f"unknown selection in condition: {tokens[pos]}")
 
 # --------------------------------------------------------------------------
-# Aggregation: count() by <field> <op> <n> within timeframe
+# Aggregation: count() / count(distinct F) by <field> <op> <n> within timeframe
 # --------------------------------------------------------------------------
 def parse_timeframe(text):
     m = TIMEFRAME_RE.match(str(text))
@@ -438,7 +488,7 @@ if "|" in condition:
     m = AGG_RE.match(agg_part)
     if not m:
         fail(f"{rule_path}: unsupported aggregation syntax: {agg_part.strip()!r}")
-    agg = {"by": m.group(1), "op": m.group(2), "n": int(m.group(3))}
+    agg = {"distinct": m.group(1), "by": m.group(2), "op": m.group(3), "n": int(m.group(4))}
     base_condition = base_condition.strip()
 
 tokens = TOKEN_RE.findall(base_condition)
@@ -508,14 +558,16 @@ else:
         except (ValueError, TypeError):
             continue
         key = resolve_field(rec, agg["by"], hour_cache) if agg["by"] else None
-        keyed.append((key, ts, rec))
+        dist_val = (resolve_field(rec, agg["distinct"], hour_cache)
+                    if agg["distinct"] else None)
+        keyed.append((key, dist_val, ts, rec))
     cmp_fn = AGG_OPS[agg["op"]]
     flagged_ids = set()
     groups = {}
-    for i, (key, ts, rec) in enumerate(keyed):
+    for i, (key, dist_val, ts, rec) in enumerate(keyed):
         groups.setdefault(key, []).append(i)
     for _, idxs in groups.items():
-        entries = sorted(((keyed[i][1], i) for i in idxs))
+        entries = sorted(((keyed[i][2], i) for i in idxs))
         times = [e[0] for e in entries]
         i = 0
         while i < len(times):
@@ -525,10 +577,16 @@ else:
                     j += 1
             else:
                 j = len(times)
-            if cmp_fn(j - i, agg["n"]):
+            if agg["distinct"]:
+                # distinct-count of the distinct-field within the window
+                seen_vals = {keyed[entries[k][1]][1] for k in range(i, j)}
+                qty = len(seen_vals)
+            else:
+                qty = j - i
+            if cmp_fn(qty, agg["n"]):
                 flagged_ids.update(entries[k][1] for k in range(i, j))
             i += 1
-    matched = [keyed[i][2] for i in sorted(flagged_ids)]
+    matched = [keyed[i][3] for i in sorted(flagged_ids)]
 
 elapsed_ms = int(round((timemod.perf_counter() - t0) * 1000))
 

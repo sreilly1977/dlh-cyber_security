@@ -316,3 +316,33 @@ $ ./3-sigma_runner.sh rules/sigma/008_uncommon_port_outbound.yml --count-only
 ```
 
 ---
+
+# [7. Cross-Host Lateral Movement Rule](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/009_lateral_movement_smb.yml)
+### advanced
+
+## Goal: 
+
+Write a Sigma rule detecting cross-host authentication patterns consistent with lateral movement.
+
+## Context: 
+
+Lateral movement is the defining behavior that turns a foothold into a breach. On Windows it surfaces as network logons to multiple hosts from the same source within a short window, often using administrative protocols like SMB or WinRM. On Linux it surfaces as remote SSH sessions establishing connections outward after landing. The rule here captures the Windows variant, which is the more common pattern at MedDefense based on the 3x01 auth baseline.
+
+## Instructions: 
+
+Write a Sigma rule at rules/sigma/009_lateral_movement_smb.yml that:
+
+    Detects Windows Event ID 4624 with LogonType: '3' where the same account authenticates to three or more distinct destination hosts within 300 seconds
+    Excludes service accounts via a lateral_movement_allowlist field populated from $ASSETS_DIR/risk_register.json at runner time
+    Uses aggregation condition count(distinct Computer) by TargetUserName > 2 with timeframe: 5m
+    Level high; tags attack.lateral_movement, attack.t1021.002
+    description explaining why three distinct targets in five minutes is the canonical lateral movement signature
+
+**Expected Output:**
+
+```bash
+$ ./3-sigma_runner.sh rules/sigma/009_lateral_movement_smb.yml --count-only
+<N>
+```
+
+---

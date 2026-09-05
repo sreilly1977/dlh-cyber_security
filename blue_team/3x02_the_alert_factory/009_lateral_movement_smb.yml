@@ -1,0 +1,54 @@
+title: SMB Cross-Host Authentication to Multiple Hosts
+id: d3f8b1e6-7a4c-4e9d-b5a1-0c6e2f9a4b73
+status: experimental
+description: >
+    Detects a single account authenticating over SMB (Windows event 4624,
+    LogonType 3, network logon) to three or more distinct destination hosts
+    within a five-minute window (MITRE T1021.002 SMB/Windows Admin Shares;
+    lateral movement). Why three distinct targets in five minutes is the
+    canonical signature: legitimate interactive work produces network logons
+    that cluster on the small set of hosts a person's session actually touches
+    (their workstation, a file server, a print server) at human cadence, and
+    administrative automation authenticates from fixed service accounts which
+    this rule excludes via the MedDefense risk register allowlist. An
+    adversary moving laterally with harvested credentials works against the
+    clock instead: PsExec-style tooling, remote service installation, and
+    scheduled task deployment sweep sequentially through targets within the
+    same seconds-scale burst, because the stolen session validity is bounded
+    and speed minimizes exposure. Three distinct destinations inside 300
+    seconds therefore sits above every routine single-user pattern the 3x01
+    auth baseline observed while remaining tight enough that slow-trawling
+    sprays across days do not consume analyst attention. In this environment
+    the technique crosses PHI boundaries (CLINICAL to DATA zone) and precedes
+    the staging observed in the March 25 chain. Extension note: the service
+    account exclusion uses the custom field lateral_movement_allowlist,
+    computed by the sigma_runner at execution time and not present in raw
+    records; the allowlist is populated from the MedDefense risk register
+    (svc_backup, svc_rad_transfer) at runner time, fail-closed so accounts
+    absent from the register are never excluded. Operational response: Tier 1
+    pulls the full host list, the source system, and ticket coverage for the
+    account; Tier 2 proceeds to credential rotation and session termination
+    on confirmed movement, prioritizing CRITICAL register assets.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/05
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+logsource:
+    category: logon
+    product: windows
+detection:
+    selection:
+        event_id: 4624
+        event_data.LogonType: '3'
+    filter_service_accounts:
+        lateral_movement_allowlist: true
+    condition: selection and not filter_service_accounts | count(distinct Computer) by TargetUserName > 2
+    timeframe: 5m
+falsepositives:
+    - IT staff running legitimate mass administrative actions (scripted health checks, software pushes) from their own account during maintenance windows
+    - Monitoring and deployment platforms authenticating from non-allowlisted service identities during agent rollouts
+    - Incident responders sweeping hosts during active triage under time pressure
+level: high
+tags:
+    - attack.lateral_movement
+    - attack.t1021.002
