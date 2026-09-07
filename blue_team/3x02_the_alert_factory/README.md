@@ -584,3 +584,61 @@ attack_coverage.json written
 ```
 
 ---
+
+# [13. Per-Rule Quality Metrics](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/13-rule_quality.sh)
+
+## Goal: 
+
+Compute precision, recall, and F1 for every rule in the catalog against the 3x01 labeled ground truth.
+
+## Context: 
+
+You already have fp_count from T10. You need tp_count to compute precision and recall. The ground truth is the 3x01 ranked_anomalies.json and labeled_events.json, which between them identify the events that actually correspond to malicious activity in the dataset. A rule that flags 80 percent of those events and nothing else has recall 0.8 precision 1.0. A rule that flags all of them and also one hundred innocent events has recall 1.0 precision 0.1. Neither is sufficient. This task makes the trade-off explicit for every rule.
+
+## Instructions: 
+
+Write a script 13-rule_quality.sh that:
+
+    Reads $BASELINE_PKG/anomalies/ranked_anomalies.json and $BASELINE_PKG/taxonomy/labeled_events.json to build a ground truth set of true_positive_event_refs
+
+    For each rule in rules/sigma/ and rules/sigma/tuned/, invokes the runner with --window set to the evaluation window
+
+    Computes:
+
+        tp_count = matches that intersect true_positive_event_refs
+
+        fp_count = matches that do not intersect plus the baseline-window matches from fp_baseline.json
+
+        fn_count = ground truth events of the same category that were not matched by this rule
+
+        precision = tp / (tp + fp)
+
+        recall = tp / (tp + fn)
+
+        f1 = 2 * precision * recall / (precision + recall)
+
+    Writes rule_quality.json with one entry per rule
+
+    Prints the top five and bottom five rules by F1
+
+Rules with f1 < 0.3 are marked [WEAK], rules with f1 >= 0.7 are marked [STRONG].
+
+**Expected Output:**
+
+```bash
+$ ./13-rule_quality.sh
+evaluating 13 rules against labeled ground truth
+strongest
+  010 credential_theft_chain      f1=1.00  p=1.00 r=1.00  [STRONG]
+  012 medical_segment_egress      f1=0.86  p=1.00 r=0.75  [STRONG]
+  001 ssh_brute_force             f1=0.80  p=1.00 r=0.67  [STRONG]
+  009 lateral_movement_smb        f1=0.80  p=1.00 r=0.67  [STRONG]
+  005 scheduled_task_creation     f1=0.75  p=1.00 r=0.60  [STRONG]
+weakest
+  004 recon_tool_execution        f1=0.36  p=0.29 r=0.50
+  002 windows_offhours_priv_logon f1=0.25  p=0.20 r=0.33  [WEAK]
+  007 unknown_outbound_destinatio f1=0.22  p=0.17 r=0.33  [WEAK]
+rule_quality.json written
+```
+
+---
