@@ -21,7 +21,7 @@ set -euo pipefail
 
 ASSETS_DIR="${ASSETS_DIR:-$HOME/3x02_assets}"
 RULES_DIR="${RULES_DIR:-$HOME/3x02_scripts/rules/sigma}"
-OUTPUT_PATH="${ATTACK_COVERAGE_OUT=$HOME/3x02_package/attack_coverage.json}"
+OUTPUT_PATH="${ATTACK_COVERAGE_OUT:-$HOME/3x02_package/attack_coverage.json}"
 
 TAXONOMY_FILE="$ASSETS_DIR/attack_taxonomy.json"
 
