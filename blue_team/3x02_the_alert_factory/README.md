@@ -689,3 +689,151 @@ rule_prioritization.json written
 ```
 
 ---
+
+# [15. Generate Alert Queue for Triage](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/15-generate_alerts.sh)
+
+## Goal: 
+
+Produce the ranked alert_queue.json that 3x03 Triage Shift will consume directly.
+
+## Context: 
+
+This is the contract with 3x03. Every Sigma rule in the catalog gets executed against the evaluation window by the runner. Every match becomes an alert. Every alert is enriched with asset context, priority score from T14, and a stable alert identifier. The resulting queue is the literal input file the Tier 1 triage team reads on Monday. If the schema changes, 3x03 breaks. If the ranking is wrong, Tier 1 works the wrong thing first. If the deduplication is wrong, the queue looks twice as bad as it actually is. Treat this file as a production API.
+
+## Instructions: 
+
+Write a script 15-generate_alerts.sh that:
+
+    Enumerates every active rule (tuned variant when present, original otherwise)
+
+    Runs each rule via 3-sigma_runner.sh against the evaluation window
+
+    Converts every match into an alert object with:
+
+        alert_id (deterministic uuid5 from rule_id + event_ref)
+
+        generated_at (ISO 8601 UTC)
+
+        rule_id, rule_title, rule_level
+
+        priority_score from rule_prioritization.json
+
+        event_ref back to normalized_events.json
+
+        event_summary: flattened subset containing timestamp, hostname, user, src_ip, dst_ip, process_name, canonical_label, event_category
+
+        asset_context from $HANDOFF_DIR/context/asset_inventory.json
+
+        attack_techniques: list of ATT&CK technique IDs from the rule tags
+
+        status: always new
+
+        evidence_hash: sha256 of the matched event's raw record
+
+    Deduplicates alerts that fire within sixty seconds on the same (rule_id, hostname, user) key
+
+    Sorts descending by priority_score, breaks ties by event_summary.timestamp ascending
+
+    Writes alert_queue.json as a JSON array
+
+    Writes a companion alert_queue_schema.json containing the field-level schema for the queue so 3x03 has an explicit contract
+
+Print the top five alerts in the same compact format T14 used, plus total counts.
+
+**Expected Output:**
+
+```bash
+$ ./15-generate_alerts.sh
+rules executed            : 13
+raw matches               : 47
+after deduplication       : 38
+top 5 alerts
+ 1  30.0  critical  010 credential_theft_chain         db-patient-01
+ 2  24.5  critical  011 patient_data_access            meddb-01
+ 3  21.0  critical  012 medical_segment_egress         med-img-02
+ 4  18.0  high      001 ssh_brute_force                db-patient-01
+ 5  16.0  high      009 lateral_movement_smb           clin-ws-07
+alert_queue.json        : 38 alerts
+alert_queue_schema.json : written
+```
+
+---
+
+# [16. Detection Catalog Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/16-detection_catalog.sh)
+### advanced
+
+## Goal: 
+
+Assemble the detection_catalog/ directory containing every rule, every metric, every ranking, and the alert queue, packaged as the MedDefense detection deliverable.
+
+## Context: 
+
+Dr. Morales walks into the boardroom with one artifact. James Chen hands it to the next SOC engineer when they join the team. The Tier 1 team in 3x03 loads it as the dependency for their triage workflow. Everything you built this project collapses into this single directory with a locked layout. Nothing else you produced matters if the layout is wrong.
+
+## Instructions: 
+
+Write a script 16-detection_catalog.sh that assembles the catalog at $CATALOG_DIR (default: ~/3x02_package/detection_catalog/) with this exact layout:
+
+<pre>
+detection_catalog/
+  rules/
+    sigma/
+      001_ssh_brute_force.yml
+      002_windows_offhours_privileged_logon.yml
+      003_interpreter_abuse.yml
+      004_recon_tool_execution.yml
+      005_scheduled_task_creation.yml
+      006_registry_autorun_modify.yml
+      007_unknown_outbound_destination.yml
+      008_uncommon_port_outbound.yml
+      009_lateral_movement_smb.yml
+      010_credential_theft_chain.yml
+      011_patient_data_access.yml
+      012_medical_segment_egress.yml
+      013_privileged_account_shift_violation.yml
+    tuned/
+      [any tuned variants produced in T11]
+  metrics/
+    detection_matrix.json
+    fp_baseline.json
+    tuning_report.json
+    rule_quality.json
+  coverage/
+    attack_coverage.json
+    rule_prioritization.json
+  alerts/
+    alert_queue.json
+    alert_queue_schema.json
+  runtime/
+    3-sigma_runner.sh
+    8-correlation_primitives.py
+    10-fp_baseline.sh
+    11-tune_rules.sh
+    12-attack_coverage.sh
+    13-rule_quality.sh
+    14-rule_prioritization.sh
+    15-generate_alerts.sh
+  spec/
+    detection_spec.md
+  MANIFEST.json
+</pre>
+
+The script must copy every listed file, generate MANIFEST.json with path, size, and sha256 for each entry, verify that every required file exists and is non-empty, and fail loudly on any missing file. The spec/ directory is populated by T17 and the script should error gracefully if T17 has not been run yet.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && ./16-detection_catalog.sh
+copying rules/sigma   ... 13 files
+copying rules/tuned   ...  2 files
+copying metrics       ...  4 files
+copying coverage      ...  2 files
+copying alerts        ...  2 files
+copying runtime       ...  8 files
+copying spec          ...  1 file
+MANIFEST.json         : 32 entries
+sanity check          : ok
+detection_catalog/ ready
+```
+
+---
