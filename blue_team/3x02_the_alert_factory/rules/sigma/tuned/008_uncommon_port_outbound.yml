@@ -1,0 +1,57 @@
+title: Outbound Connection on Uncommon Port (Tuned)
+id: c3f8bad6-7e5a-4c9f-b5a6-9f6c3e5b9f08
+status: experimental
+description: >
+    Tuned variant of 008 (Outbound Connection on Uncommon Port). Baseline
+    fp analysis: 16,189 false positives whose sampled distribution is
+    carried by six standard-service ports (22 SSH, 25 SMTP, 88 Kerberos,
+    135 RPC, 993 IMAPS, 3389 RDP) - well-known services absent from the
+    original common-port filter set, appearing per-host because the 3x01
+    per-host port tables are keyed by host and a given host legitimately
+    used only a subset. The tune adds those six ports to the excluded
+    service set. The dual condition (port outside the common set AND
+    absent from the host's own baseline port history) is retained
+    unchanged, so genuinely non-standard egress still fires. Tradeoff,
+    documented: C2 over these six standard ports on a novel host-port
+    pairing is no longer alerted by this rule; accepted because each is
+    individually covered by dedicated detections (SSH by rule 001,
+    RDP-lateral by rule 009) or is a mail/infrastructure service with its
+    own controls. Retains MITRE T1571 coverage.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/07
+references:
+    - https://attack.mitre.org/techniques/T1571/
+logsource:
+    category: network_connection
+detection:
+    selection_outbound:
+        canonical_label: 'network_connection_outbound'
+        dst_port|gte: 1
+        baseline_known_port: false
+    filter_common_ports:
+        dst_port:
+            - 53
+            - 80
+            - 123
+            - 389
+            - 443
+            - 445
+            - 636
+            - 3306
+            - 5432
+    filter_standard_service_ports:
+        dst_port:
+            - 22
+            - 25
+            - 88
+            - 135
+            - 993
+            - 3389
+    condition: selection_outbound and not filter_common_ports and not filter_standard_service_ports
+falsepositives:
+    - Ad hoc admin tooling on ephemeral high ports
+level: medium
+tags:
+    - attack.command_and_control
+    - attack.t1571
+justification: Six standard-service ports carry ~96% of baseline volume; excluding them relies on rules 001/009 for those channels and keeps the host-novelty condition intact.

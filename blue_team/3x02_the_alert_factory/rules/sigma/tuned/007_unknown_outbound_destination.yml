@@ -1,0 +1,44 @@
+title: Outbound Connection to Unknown External Destination (Tuned)
+id: b2e7f9c5-6d4f-4c8e-a4f7-9a5b2d4c8f95
+status: experimental
+description: >
+    Tuned variant of 007 (Outbound Connection to Unknown External
+    Destination). Baseline fp analysis: 12,982 false positives whose
+    sampled distribution is concentrated on exactly five destination
+    addresses (13.107.42.14, 140.82.112.22, 52.168.112.78, 52.168.112.45,
+    104.16.51.111 - corporate cloud, code-hosting, and CDN ranges),
+    i.e. recurring legitimate egress that the enrichment tier never
+    resolved into host destination baselines: the T6 attribution gap
+    converted into an explicit allowlist. The tune excludes those five
+    measured corporate destinations. Deliberately NOT excluded:
+    198.51.100.73, the destination of the March 25 MEDICAL_IOT egress
+    burst caught by rule 012, and every address absent from the baseline
+    distributions. The per-host novelty condition (baseline_known_destination)
+    is retained unchanged, so any genuinely novel external peer still fires.
+    Retains MITRE T1071 coverage.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/07
+references:
+    - https://attack.mitre.org/techniques/T1071/
+logsource:
+    category: network_connection
+detection:
+    selection_outbound:
+        canonical_label: 'network_connection_outbound'
+        dst_zone: 'INTERNET'
+        baseline_known_destination: false
+    filter_corporate_destinations:
+        dst_ip:
+            - 13.107.42.14
+            - 140.82.112.22
+            - 52.168.112.78
+            - 52.168.112.45
+            - 104.16.51.111
+    condition: selection_outbound and not filter_corporate_destinations
+falsepositives:
+    - Vendor onboarding adding further legitimate endpoints before baseline refresh
+level: medium
+tags:
+    - attack.command_and_control
+    - attack.t1071
+justification: Five corporate egress destinations carry essentially all baseline volume; allowlisting them converts the documented enrichment attribution gap into explicit policy without touching the novelty condition.

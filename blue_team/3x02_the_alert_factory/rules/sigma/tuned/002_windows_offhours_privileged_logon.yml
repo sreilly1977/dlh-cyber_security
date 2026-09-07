@@ -1,0 +1,58 @@
+title: Windows Privileged Logon During Deep Night Hours (Tuned)
+id: b5d29e18-9d4a-4b67-b3c8-2a8b7d9f1e04
+status: experimental
+description: >
+    Tuned variant of 002 (Windows Privileged Logon During Off-Hours).
+    Baseline fp analysis (fp_baseline.json, window 2026-03-17 to 2026-03-24)
+    measured 349 false positives: 28 human accounts distributed uniformly
+    across the 18:00-05:59 off-hours band (fleet activity is hour-flat), plus
+    an 11% service-account share (svc_backup, svc_ehr). The tune narrows to
+    the deep-night core (23:00-03:59) by excluding the moderate evening band
+    (18:00-22:59) where IT and on-call staff are demonstrably still active,
+    and the early-morning tail (04:00-05:59), and excludes service accounts
+    via both the top-level user field (4624 records) and
+    event_data.SubjectUserName (4672 records, whose top-level user is null).
+    Tradeoff, documented: privileged logons during 18:00-22:59 and
+    04:00-05:59 fall out of scope; this is accepted because the baseline
+    shows those hours are dominated by legitimate staff activity, while the
+    March 25 intrusion chain events (01:47-02:20) sit squarely inside the
+    retained band. Retains MITRE T1078 coverage.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/07
+references:
+    - https://attack.mitre.org/techniques/T1078/
+logsource:
+    product: windows
+    service: security
+detection:
+    selection_logon_4624:
+        event_id: 4624
+        event_data.LogonType:
+            - '3'
+            - '10'
+    selection_special_privs_4672:
+        event_id: 4672
+    selection_evening:
+        hour_of_day|gte: 18
+        hour_of_day|lt: 24
+    selection_night:
+        hour_of_day|lt: 6
+        hour_of_day|gte: 0
+    filter_moderate_evening:
+        hour_of_day|gte: 18
+        hour_of_day|lt: 23
+    filter_early_morning:
+        hour_of_day|gte: 4
+        hour_of_day|lt: 6
+    filter_service_user:
+        user|startswith: 'svc_'
+    filter_service_subject:
+        event_data.SubjectUserName|startswith: 'svc_'
+    condition: (selection_logon_4624 or selection_special_privs_4672) and (selection_evening or selection_night) and not filter_moderate_evening and not filter_early_morning and not filter_service_user and not filter_service_subject
+falsepositives:
+    - On-call staff working the deep-night window on non-critical workstations
+level: medium
+tags:
+    - attack.initial_access
+    - attack.t1078
+justification: Deep-night band exclusion of measured-staff-heavy hours (18-23, 04-06) plus service accounts; compromise-hour events retained; fp predicted under half per flat-hour scaling.

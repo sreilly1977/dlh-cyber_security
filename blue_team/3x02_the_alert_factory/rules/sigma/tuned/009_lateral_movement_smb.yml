@@ -1,0 +1,48 @@
+title: SMB Cross-Host Authentication to Multiple Hosts (Tuned)
+id: e4a9c2d7-8b6f-5da8-c7b4-1d7d4f6a8b19
+status: experimental
+description: >
+    Tuned variant of 009 (SMB Cross-Host Authentication to Multiple
+    Hosts). Baseline fp analysis: all 13 baseline false positives are
+    fully attributed to four named human accounts (robert.kim, t.anderson,
+    s.patel, n.white) performing legitimate cross-host SMB sweeps during
+    the clean week - characterized administrator behavior, not unknown
+    noise. The tune excludes those four accounts by name. Tradeoff,
+    documented and important: this converts characterized behavioral
+    norms into an explicit allowlist, meaning lateral movement performed
+    WITH one of these four accounts is no longer detected by this rule;
+    that is a real coverage loss accepted in exchange for a zero-noise
+    rule, and it should be revisited if credential-theft tradecraft
+    targeting senior IT accounts becomes a concern. Accounts absent from
+    the list (including the March 25 chain's p.morales) retain full
+    coverage. The service-account allowlist (lateral_movement_allowlist)
+    and the 3-hosts-in-5-minutes aggregation are retained unchanged.
+    Retains MITRE T1021.002 coverage.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/07
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+logsource:
+    category: logon
+    product: windows
+detection:
+    selection:
+        event_id: 4624
+        event_data.LogonType: '3'
+    filter_service_accounts:
+        lateral_movement_allowlist: true
+    filter_characterized_sweeps:
+        TargetUserName:
+            - robert.kim
+            - t.anderson
+            - s.patel
+            - n.white
+    condition: selection and not filter_service_accounts and not filter_characterized_sweeps | count(distinct Computer) by TargetUserName > 2
+    timeframe: 5m
+falsepositives:
+    - Further administrator sweeps by accounts not yet characterized
+level: high
+tags:
+    - attack.lateral_movement
+    - attack.t1021.002
+justification: All 13 baseline fps are four named, characterized administrator accounts; excluding them by name trades explicit allowlist risk for zero noise, documented as a revisit-if-tradecraft-changes decision.

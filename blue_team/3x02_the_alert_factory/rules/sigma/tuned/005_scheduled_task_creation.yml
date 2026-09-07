@@ -1,0 +1,54 @@
+title: Suspicious Scheduled Task Creation on Critical Assets (Tuned)
+id: f8c2e5a0-4b9d-5f3c-8d6e-7d2b9c4f0e43
+status: experimental
+description: >
+    Tuned variant of 005 (Suspicious Scheduled Task Creation). Baseline fp
+    analysis measured 1,098 false positives across a fleet-wide 4698
+    population whose event records carry no task identity whatsoever (no
+    TaskName, task content, registering user, or process_name - event_data
+    contains only the EventID). Because content-based exclusion is
+    impossible on this evidence tier, the tune scopes detection to the
+    tier where persistence matters most: asset.criticality of MEDIUM or
+    LOW (clinical and admin workstations) is excluded, retaining CRITICAL
+    and HIGH assets (domain controllers, EHR and pharmacy application
+    servers). Tradeoff, documented: scheduled task creation on workstations
+    is no longer alerted; accepted because workstation reimaging is the
+    standard remediation and the risk register assigns those tiers lower
+    blast radius, while server-tier persistence outlasts reboots and
+    patch windows. Retains MITRE T1053.005 coverage on the critical fleet.
+author: Steve - Cybersecurity Engineer
+date: 2026/09/07
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_task_created:
+        event_id: 4698
+    selection_schtasks_create:
+        event_id: 1
+        event_data.Image|endswith: 'schtasks.exe'
+        event_data.CommandLine|contains: '/create'
+    filter_system:
+        user:
+            - 'SYSTEM'
+            - 'LOCAL SYSTEM'
+            - 'NT AUTHORITY\SYSTEM'
+    filter_defender:
+        event_data.CommandLine|contains:
+            - 'Defender'
+            - 'MsMpSvc'
+            - 'MsMpEng'
+    filter_low_tier_assets:
+        asset.criticality:
+            - 'MEDIUM'
+            - 'LOW'
+    condition: (selection_task_created or selection_schtasks_create) and not filter_system and not filter_defender and not filter_low_tier_assets
+falsepositives:
+    - Server-fleet software registration on critical assets (SCCM, backup agents)
+level: high
+tags:
+    - attack.persistence
+    - attack.t1053.005
+justification: Fleet-wide 4698s are routine; scoping to CRITICAL/HIGH assets concentrates on persistence where blast radius is greatest, per the risk register.

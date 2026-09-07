@@ -433,7 +433,7 @@ $ for r in 011 012 013; do
 
 ---
 
-# [10. False Positive Baseline](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/)
+# [10. False Positive Baseline](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/10-fp_baseline.sh)
 
 ## Goal: 
 
@@ -475,5 +475,66 @@ evaluating 13 rules against baseline window 2026-03-18 -> 2026-03-24
   013 privileged_shift_violation     fp=  6
 fp_baseline.json written
 ```
+
+### The false-positive ledger (T10)
+
+Eight of thirteen rules ship with zero baseline FPs. 99.96% of the 30,631
+baseline FPs come from three rules (005/007/008) shipped deliberately as
+correlation-input tiers, not solo alerts.
+
+---
+
+# [11. Tuning Pass on Noisy Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/11-tune_rules.sh)
+### advanced
+
+## Goal: 
+
+Produce tuned variants of every rule marked TUNE in the false positive baseline and prove the tuning worked without destroying recall.
+
+## Context: 
+
+Tuning is the defining discipline of a working SOC. A rule that catches the bad thing but fires on ten innocent things per day will be silenced within a week by the first analyst who gets tired of clicking through it. The correct response is neither to delete the rule nor to leave it alone. It is to narrow the predicate with a surgical exclusion that keeps the malicious match intact. This task forces you to practice that skill against your own rules, not somebody else's.
+
+## Instructions: 
+
+Write a script 11-tune_rules.sh that:
+
+    Reads fp_baseline.json and identifies rules with fp_count > 10
+    For each noisy rule, reads the matched events and inspects distribution of user, hostname, process_name
+    Writes a tuned variant under rules/sigma/tuned/NNN_name.yml with explicit Sigma filter exclusions added
+    Re-runs the tuned rule against both windows
+    Writes tuning_report.json with: original_rule_id, tuned_rule_id, fp_before, fp_after, tp_before, tp_after, exclusions_added, tuning_justification
+    Accepts a tuned rule only if fp_after < fp_before * 0.5 AND tp_after >= tp_before
+
+Print a per-rule summary.
+
+**Expected Output:**
+
+```bash
+$ ./11-tune_rules.sh
+tuning 002 windows_offhours_priv_logon
+  exclusions added : 2
+  fp 14 -> 4    tp 1 -> 1    ACCEPTED
+tuning 007 unknown_outbound_destination
+  exclusions added : 3
+  fp 18 -> 6    tp 5 -> 5    ACCEPTED
+2 rules tuned  2 accepted  0 rejected
+tuning_report.json written
+```
+
+### Tuning findings (T11)
+
+Five noisy rules tuned; 1 accepted, 4 rejected by the acceptance criterion
+(fp halved AND tp preserved). Post-hoc audit of the rejections:
+
+- **Rule 007's tuned variant achieved precision 1.00**: zero baseline matches,
+  and its five eval-window matches are — verified to record ID — the March 25
+  egress burst. Rejected only because the criterion counts discarded ambient
+  volume as lost recall.
+- **Key lesson**: on an ambient-dominated fleet, `tp_after >= tp_before` measures
+  match-volume preservation, not recall. Ambient eval-window traffic exceeds
+  malicious traffic by ~three orders of magnitude, so any honest noise
+  reduction fails the recall leg mathematically. Characterized-baseline
+  exclusion design plus malicious-retention audit is the defensible alternative.
 
 ---
