@@ -837,3 +837,55 @@ detection_catalog/ ready
 ```
 
 ---
+
+# [17. Detection Engineering Specification](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/detection_spec.md)
+
+## Goal: 
+
+Write the bounded detection engineering specification that accompanies the catalog.
+
+## Context: 
+
+Robert Kim asked for the pipeline spec in 3x00. He is asking for the detection spec in 3x02. Same format, same bound, same audience. The spec is the document a new SOC engineer reads on their first day to understand how MedDefense detection works. It is not a tutorial, not a rule-by-rule walkthrough, and not marketing. It is the contract description of the detection layer.
+
+## Instructions: 
+
+Write detection_spec.md, bounded to two pages and 800 words, with these exact sections in this order:
+
+    Purpose (2 sentences)
+
+    Inputs (list of dependency paths and the environment variables that resolve them)
+
+    Rule Authoring Standard (Sigma structure, required fields, naming convention, ATT&CK tag requirement)
+
+    Execution Model (the runner, preprocessing primitives, window semantics)
+
+    Quality Thresholds (the precision, recall, F1, and false positive rate gates that a rule must pass to ship)
+
+    Tuning Protocol (how a noisy rule is tuned and how the tuning is validated)
+
+    Risk Ranking Model (how priority_score is derived from the risk register)
+
+    Outputs (the alert_queue.json schema and the downstream 3x03 contract)
+
+    Failure Modes (at least three realistic failures and their symptoms)
+
+    Reviewer Checklist (a short list a new detection engineer uses to validate a new rule before merging it into the catalog)
+
+Any section exceeding the budget must be trimmed. The full spec must fit in two pages rendered on A4 at 11pt.
+
+This file goes into detection_catalog/spec/detection_spec.md via T16.
+
+**Expected Output:**
+
+```bash
+$ wc -w detection_spec.md
+<= 800 detection_spec.md
+
+$ head -3 detection_spec.md
+# MedDefense Detection Engineering Specification
+
+## Purpose
+```
+
+---
