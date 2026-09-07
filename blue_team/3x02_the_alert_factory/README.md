@@ -207,14 +207,14 @@ Process execution is the highest-signal telemetry a defender has. An attacker on
 
 Write two Sigma rules.
 
-rules/sigma/[003_interpreter_abuse.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/003_interpreter_abuse.yml) must:
+rules/sigma/003_interpreter_abuse.yml must:
 
     Detect execution of powershell.exe, cmd.exe, wscript.exe, cscript.exe, or mshta.exe when parent process is not a standard shell
     Target logsource: category: process_creation, product: windows
     Level high; tags attack.execution, attack.t1059.001, attack.t1059.003
     Realistic falsepositives covering legitimate MedDefense scripted maintenance
 
-rules/sigma/[004_recon_tool_execution.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/004_recon_tool_execution.yml) must:
+rules/sigma/004_recon_tool_execution.yml must:
 
     Detect execution of whoami.exe, net.exe, systeminfo.exe, tasklist.exe, netstat.exe, or nmap where the process was not seen during baseline
     Use custom field baseline_seen: false (boolean computed by the runner from $BASELINE_PKG/baselines/baseline_process.json)
@@ -249,14 +249,14 @@ Persistence is the attacker's insurance policy. Once an attacker has code execut
 
 Write two Sigma rules.
 
-rules/sigma/[005_scheduled_task_creation.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/005_scheduled_task_creation.yml) must:
+rules/sigma/005_scheduled_task_creation.yml must:
 
     Detect Windows Event ID 4698 (scheduled task created) or Sysmon Event ID 1 where image is schtasks.exe with /create argument
     Exclude tasks created by SYSTEM account or Windows Defender via a Sigma filter selection
     Level high; tags attack.persistence, attack.t1053.005
     falsepositives including software installers and known MedDefense automation
 
-rules/sigma/[006_registry_autorun_modify.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/005_scheduled_task_creation.yml006_registry_autorun_modify.yml) must:
+rules/sigma/006_registry_autorun_modify.yml must:
 
     Detect Sysmon Event ID 13 (registry value set) on autorun paths:
     HKLM\Software\Microsoft\Windows\CurrentVersion\Run
@@ -293,13 +293,13 @@ The 3x01 network baseline captured per-host destinations, ports, and zone flows.
 
 Write two Sigma rules.
 
-rules/sigma/[007_unknown_outbound_destination.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/) must:
+rules/sigma/007_unknown_outbound_destination.yml must:
 
     Detect an outbound network connection where dst_ip is not in per-host destination list from $BASELINE_PKG/baselines/baseline_network.json and destination is in an external zone
     Use custom field baseline_known_destination: false (computed by the runner)
     Level medium; tags attack.command_and_control, attack.t1071
 
-rules/sigma/[008_uncommon_port_outbound.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/) must:
+rules/sigma/008_uncommon_port_outbound.yml must:
 
     Detect outbound connections on ports outside {53, 80, 123, 389, 443, 445, 636, 3306, 5432} when host has never used that port during baseline
     Level medium; tags attack.command_and_control, attack.t1571
@@ -317,7 +317,7 @@ $ ./3-sigma_runner.sh rules/sigma/008_uncommon_port_outbound.yml --count-only
 
 ---
 
-# [7. Cross-Host Lateral Movement Rule](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/009_lateral_movement_smb.yml)
+# [7. Cross-Host Lateral Movement Rule](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/009_lateral_movement_smb.yml)
 ### advanced
 
 ## Goal: 
@@ -347,7 +347,7 @@ $ ./3-sigma_runner.sh rules/sigma/009_lateral_movement_smb.yml --count-only
 
 ---
 
-# [8. Multi-Source Credential Theft Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/010_credential_theft_chain.yml)
+# [8. Multi-Source Credential Theft Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/010_credential_theft_chain.yml)
 ### advanced
 
 ## Goal: 
@@ -383,6 +383,97 @@ correlation_primitives.json written
 
 $ ./3-sigma_runner.sh rules/sigma/010_credential_theft_chain.yml --preprocess --count-only
 <N>
+```
+
+---
+
+# [9. MedDefense-Specific Detection Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/011_patient_data_access.yml)
+### advanced
+
+## Goal: 
+
+Write three Sigma rules that encode MedDefense-specific risks derived from the asset inventory and network zones.
+
+## Context: 
+
+Generic detection catalogs only take you so far. The rules that make the biggest difference at a specific organization are the ones nobody else could have written because they encode the organization's own data flows and regulatory posture. MedDefense is a healthcare provider. The medical device segment does not talk to the internet. Patient data lives in a small set of database hosts. Privileged accounts follow shift patterns that do not match generic Windows norms. This task produces the rules that would be cited in a HIPAA audit as compensating detection controls.
+
+## Instructions: 
+
+Write three Sigma rules.
+
+rules/sigma/011_patient_data_access.yml must:
+
+    Detect Windows Event ID 4663 (file access) or Linux auditd syscall events where target path matches \\meddb\\patient_data\\* (Windows) or /mnt/ehr/patient_records/* (Linux) and accessing account is not in clinical_access_whitelist from $ASSETS_DIR/risk_register.json
+    Level critical; tags attack.collection, attack.t1005
+
+rules/sigma/012_medical_segment_egress.yml must:
+
+    Detect any outbound network connection from a host whose src_zone enrichment equals medical_devices and whose dst_zone is not medical_devices or management
+    Level critical; tags attack.command_and_control, attack.t1071.001
+    description stating that the medical devices segment has no egress by policy
+
+rules/sigma/013_privileged_account_shift_violation.yml must:
+
+    Detect Windows Event ID 4672 (special privileges assigned) for accounts whose shift pattern in the 3x01 temporal profile does not include the current hour
+    Use custom field shift_hour_match: false from the runner
+    Level high; tags attack.privilege_escalation, attack.t1078
+    falsepositives referencing on-call incident response rotations
+
+**Expected Output:**
+
+```bash
+$ for r in 011 012 013; do
+    ./3-sigma_runner.sh rules/sigma/${r}_*.yml --count-only
+  done
+<N>
+<N>
+<N>
+```
+
+---
+
+# [10. False Positive Baseline](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/)
+
+## Goal: 
+
+Run every rule authored so far against the clean baseline window and record the false positive count per rule.
+
+## Context: 
+
+A rule is only as good as its false positive rate on clean data. The baseline window is seven days of confirmed clean activity from 3x01. Any match a rule produces during that window is by definition a false positive, because nothing malicious was present. The resulting fp_baseline.json is the foundation for every tuning decision in the rest of this project. Rules with unacceptable baseline false positive rates will be tuned in T11 or retired.
+
+## Instructions: 
+
+Write a script 10-fp_baseline.sh that:
+
+    Enumerates every rule under rules/sigma/
+    For each rule, invokes 3-sigma_runner.sh with --window set to the baseline window from $BASELINE_PKG/baselines/baseline_summary.json
+    Records match_count as the rule's fp_count
+    Writes fp_baseline.json with one entry per rule: rule_id, rule_title, level, fp_count, baseline_window_start, baseline_window_end, fp_rate_per_day
+    Prints a summary sorted by fp_count descending; marks rules with fp_count > 10 as [TUNE]
+
+Rules with fp_count > 10 on a seven-day clean window must be clearly marked in the output because they are the first tuning targets.
+
+**Expected Output:**
+
+```bash
+$ ./10-fp_baseline.sh
+evaluating 13 rules against baseline window 2026-03-18 -> 2026-03-24
+  001 ssh_brute_force                fp=  0
+  002 windows_offhours_priv_logon    fp= 14   [TUNE]
+  003 interpreter_abuse              fp=  3
+  004 recon_tool_execution           fp=  7
+  005 scheduled_task_creation        fp=  1
+  006 registry_autorun_modify        fp=  0
+  007 unknown_outbound_destination   fp= 18   [TUNE]
+  008 uncommon_port_outbound         fp=  9
+  009 lateral_movement_smb           fp=  0
+  010 credential_theft_chain         fp=  0
+  011 patient_data_access            fp=  2
+  012 medical_segment_egress         fp=  0
+  013 privileged_shift_violation     fp=  6
+fp_baseline.json written
 ```
 
 ---
