@@ -1,0 +1,73 @@
+{
+  "contract": "MedDefense 3x02 alert queue for 3x03 triage",
+  "version": "1.0",
+  "generator": "15-generate_alerts.sh",
+  "queue_shape": "JSON array of alert objects; sorted by priority_score descending, then event_summary.timestamp ascending, then alert_id",
+  "fields": {
+    "alert_id": {
+      "type": "string (uuid5)",
+      "derivation": "uuid5(NAMESPACE_DNS, 'meddefense.alerts.<rule_id>.<event_ref>')"
+    },
+    "generated_at": {
+      "type": "string (ISO 8601 UTC)"
+    },
+    "rule_id": {
+      "type": "string (Sigma rule UUID)"
+    },
+    "rule_title": {
+      "type": "string"
+    },
+    "rule_level": {
+      "type": "string",
+      "enum": [
+        "informational",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "priority_score": {
+      "type": "number",
+      "source": "rule_prioritization.json (T14), joined on (rule stem, variant)"
+    },
+    "event_ref": {
+      "type": "string",
+      "desc": "record_id of the matched event in the evidence file"
+    },
+    "event_summary": {
+      "type": "object",
+      "fields": [
+        "timestamp",
+        "hostname",
+        "user",
+        "src_ip",
+        "dst_ip",
+        "process_name",
+        "canonical_label",
+        "event_category"
+      ]
+    },
+    "asset_context": {
+      "type": "object or null",
+      "source": "asset_inventory.json entry matching hostname"
+    },
+    "attack_techniques": {
+      "type": "array of strings",
+      "desc": "ATT&CK technique IDs from rule tags (attack.tXXXX)"
+    },
+    "status": {
+      "type": "string",
+      "const": "new"
+    },
+    "evidence_hash": {
+      "type": "string (sha256 hex)",
+      "derivation": "sha256 of the matched event's raw NDJSON record"
+    },
+    "dedup_suppressed_count": {
+      "type": "integer",
+      "desc": "events collapsed into this alert by the 60s dedup rule"
+    }
+  },
+  "dedup_rule": "same (rule_id, hostname, user) within a sliding 60-second window collapses to the earliest event"
+}
