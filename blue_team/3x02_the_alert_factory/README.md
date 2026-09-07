@@ -642,3 +642,50 @@ rule_quality.json written
 ```
 
 ---
+
+# [14. Risk-Based Rule Prioritization](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/14-rule_prioritization.sh)
+
+## Goal: 
+
+Rank every rule by organizational risk using the risk register provided by Robert Kim.
+
+## Context: 
+
+Quality metrics tell you which rule works. Risk prioritization tells you which rule matters. A perfect rule covering a technique nobody would use against MedDefense ranks lower than an imperfect rule covering a technique that shows up in healthcare breaches every quarter. The risk register at $ASSETS_DIR/risk_register.json is a structured inventory of threat scenarios, each with a likelihood score, an impact score, and a list of detection-relevant ATT&CK techniques. The ranking you compute here is the order Dr. Morales uses when she presents the catalog to the board.
+
+## Instructions: 
+
+Write a script 14-rule_prioritization.sh that:
+
+    Reads $ASSETS_DIR/risk_register.json, rule_quality.json, and attack_coverage.json
+
+    For each rule, computes a risk_score as the sum of (likelihood * impact) for every threat scenario in the risk register whose covered techniques intersect the rule's attack.tXXXX tags
+
+    Computes a priority_score = risk_score * f1 with a floor of risk_score * 0.1 for rules with f1 = 0
+
+    Writes rule_prioritization.json with one entry per rule containing rule_id, rule_title, risk_score, f1, priority_score, covering_scenarios, level
+
+    Prints the top ten rules ordered by priority_score
+
+Rules whose priority_score is zero (no risk register scenario covers their technique) must be printed in a separate ORPHAN section to flag detection work that does not map to MedDefense risk.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && export ASSETS_DIR=$HOME/3x02_assets && ./14-rule_prioritization.sh
+top 10 rules by priority_score
+ 1  30.0  010 credential_theft_chain
+ 2  24.5  011 patient_data_access
+ 3  21.0  012 medical_segment_egress
+ 4  18.0  001 ssh_brute_force
+ 5  16.0  009 lateral_movement_smb
+ 6  15.0  005 scheduled_task_creation
+ 7  12.0  006 registry_autorun_modify
+ 8   9.8  003 interpreter_abuse
+ 9   8.0  013 privileged_shift_violation
+10   5.4  008 uncommon_port_outbound
+orphan rules (no risk scenario covers) : 0
+rule_prioritization.json written
+```
+
+---

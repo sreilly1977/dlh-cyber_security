@@ -1,0 +1,329 @@
+{
+  "generator": "14-rule_prioritization.sh",
+  "inputs": {
+    "risk_register": "/home/student/3x02_assets/risk_register.json",
+    "rule_quality": "/home/student/3x02_package/rule_quality.json",
+    "attack_coverage": "/home/student/3x02_package/attack_coverage.json"
+  },
+  "likelihood_scale": {
+    "low": 1,
+    "medium": 2,
+    "high": 3
+  },
+  "impact_scale": {
+    "low": 1,
+    "medium": 2,
+    "high": 3,
+    "critical": 4
+  },
+  "matching_semantics": "hierarchical case-insensitive ATT&CK technique intersection (base technique matches its sub-techniques); risk_score = sum(likelihood*impact) over covering scenarios; priority_score = risk_score * f1 with risk_score*0.1 floor when f1 is 0 or null",
+  "coverage_summary": {
+    "tactics_total": 11,
+    "tactics_covered": 7,
+    "tactics_with_zero_coverage": 4,
+    "techniques_in_taxonomy": 29,
+    "techniques_covered": 9,
+    "distinct_unmapped_tags": 3
+  },
+  "rules": [
+    {
+      "rule_id": "7f3c1a2e-4b8d-4d92-9a1f-6e5c0b7a8d94",
+      "rule": "001_ssh_brute_force",
+      "rule_title": "SSH Repeated Authentication Failures from Single Source",
+      "variant": "base",
+      "display": "001 ssh_brute_force",
+      "level": "high",
+      "techniques": [
+        "T1110.001"
+      ],
+      "covering_scenarios": [
+        "RR-01"
+      ],
+      "risk_score": 12,
+      "f1": 0.7466666666666666,
+      "priority_score": 8.96
+    },
+    {
+      "rule_id": "8c1d3b7e-6f2a-4d9c-b4e8-5c1f7a3d9e26",
+      "rule": "012_medical_segment_egress",
+      "rule_title": "Medical Segment Egress Policy Violation",
+      "variant": "base",
+      "display": "012 medical_segment_egress",
+      "level": "critical",
+      "techniques": [
+        "T1071.001"
+      ],
+      "covering_scenarios": [
+        "RR-04"
+      ],
+      "risk_score": 6,
+      "f1": 0.923076923076923,
+      "priority_score": 5.5385
+    },
+    {
+      "rule_id": "b2e7f9c5-6d4f-4c8e-a4f7-9a5b2d4c8f95",
+      "rule": "007_unknown_outbound_destination",
+      "rule_title": "Outbound Connection to Unknown External Destination (Tuned)",
+      "variant": "tuned",
+      "display": "007 unknown_outbound_destination (tuned)",
+      "level": "medium",
+      "techniques": [
+        "T1071"
+      ],
+      "covering_scenarios": [
+        "RR-04"
+      ],
+      "risk_score": 6,
+      "f1": 0.9090909090909091,
+      "priority_score": 5.4545
+    },
+    {
+      "rule_id": "c9e84a51-2f6b-4d7c-a3e9-8b1f5c2d7e40",
+      "rule": "003_interpreter_abuse",
+      "rule_title": "Suspicious Interpreter Execution from Non-Standard Parent",
+      "variant": "base",
+      "display": "003 interpreter_abuse",
+      "level": "high",
+      "techniques": [
+        "T1059.001",
+        "T1059.003"
+      ],
+      "covering_scenarios": [
+        "RR-02"
+      ],
+      "risk_score": 8,
+      "f1": 0.4444444444444444,
+      "priority_score": 3.5556
+    },
+    {
+      "rule_id": "b4d29e17-8c3f-4a56-9e2b-1f7a6c8d0e93",
+      "rule": "002_windows_offhours_privileged_logon",
+      "rule_title": "Windows Privileged Logon During Off-Hours",
+      "variant": "base",
+      "display": "002 windows_offhours_privileged_logon",
+      "level": "medium",
+      "techniques": [
+        "T1078"
+      ],
+      "covering_scenarios": [
+        "RR-01",
+        "RR-02"
+      ],
+      "risk_score": 20,
+      "f1": null,
+      "priority_score": 2.0
+    },
+    {
+      "rule_id": "b5d29e18-9d4a-4b67-b3c8-2a8b7d9f1e04",
+      "rule": "002_windows_offhours_privileged_logon",
+      "rule_title": "Windows Privileged Logon During Deep Night Hours (Tuned)",
+      "variant": "tuned",
+      "display": "002 windows_offhours_privileged_logon (tuned)",
+      "level": "medium",
+      "techniques": [
+        "T1078"
+      ],
+      "covering_scenarios": [
+        "RR-01",
+        "RR-02"
+      ],
+      "risk_score": 20,
+      "f1": null,
+      "priority_score": 2.0
+    },
+    {
+      "rule_id": "f5b0c1d7-8e5a-4b0f-c7a2-1d7f3e6b9c84",
+      "rule": "010_credential_theft_chain",
+      "rule_title": "Credential Theft Chain - Brute Force to Foreign-Source Success to Privilege Escalation",
+      "variant": "base",
+      "display": "010 credential_theft_chain",
+      "level": "critical",
+      "techniques": [
+        "T1078",
+        "T1110"
+      ],
+      "covering_scenarios": [
+        "RR-01",
+        "RR-02"
+      ],
+      "risk_score": 20,
+      "f1": null,
+      "priority_score": 2.0
+    },
+    {
+      "rule_id": "6e2f9a3c-4d1b-4e8f-a5c7-9b3d1e5f7a81",
+      "rule": "013_privileged_account_shift_violation",
+      "rule_title": "Privileged Account Activity Outside Shift Profile",
+      "variant": "base",
+      "display": "013 privileged_account_shift_violation",
+      "level": "high",
+      "techniques": [
+        "T1078"
+      ],
+      "covering_scenarios": [
+        "RR-01",
+        "RR-02"
+      ],
+      "risk_score": 20,
+      "f1": null,
+      "priority_score": 2.0
+    },
+    {
+      "rule_id": "d3f8b1e6-7a4c-4e9d-b5a1-0c6e2f9a4b73",
+      "rule": "009_lateral_movement_smb",
+      "rule_title": "SMB Cross-Host Authentication to Multiple Hosts",
+      "variant": "base",
+      "display": "009 lateral_movement_smb",
+      "level": "high",
+      "techniques": [
+        "T1021.002"
+      ],
+      "covering_scenarios": [
+        "RR-03"
+      ],
+      "risk_score": 8,
+      "f1": null,
+      "priority_score": 0.8
+    },
+    {
+      "rule_id": "e4a9c2d7-8b6f-5da8-c7b4-1d7d4f6a8b19",
+      "rule": "009_lateral_movement_smb",
+      "rule_title": "SMB Cross-Host Authentication to Multiple Hosts (Tuned)",
+      "variant": "tuned",
+      "display": "009 lateral_movement_smb (tuned)",
+      "level": "high",
+      "techniques": [
+        "T1021.002"
+      ],
+      "covering_scenarios": [
+        "RR-03"
+      ],
+      "risk_score": 8,
+      "f1": null,
+      "priority_score": 0.8
+    },
+    {
+      "rule_id": "a1d6f8b4-5c3e-4a7f-b2d9-9e4a7c1f5d86",
+      "rule": "007_unknown_outbound_destination",
+      "rule_title": "Outbound Connection to Unknown External Destination",
+      "variant": "base",
+      "display": "007 unknown_outbound_destination",
+      "level": "medium",
+      "techniques": [
+        "T1071"
+      ],
+      "covering_scenarios": [
+        "RR-04"
+      ],
+      "risk_score": 6,
+      "f1": 0.0005839075090505664,
+      "priority_score": 0.0035
+    },
+    {
+      "rule_id": "5a2f9c38-71e4-4b6a-9d3c-f08e2b4a6c15",
+      "rule": "004_recon_tool_execution",
+      "rule_title": "Reconnaissance Tool Execution Not Seen in Baseline",
+      "variant": "base",
+      "display": "004 recon_tool_execution",
+      "level": "medium",
+      "techniques": [
+        "T1082",
+        "T1087"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "e7b1d4f9-3a8c-4e2b-9f5d-6c1a8b7e9d32",
+      "rule": "005_scheduled_task_creation",
+      "rule_title": "Suspicious Scheduled Task Creation",
+      "variant": "base",
+      "display": "005 scheduled_task_creation",
+      "level": "high",
+      "techniques": [
+        "T1053.005"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "f8c2e5a0-4b9d-5f3c-8d6e-7d2b9c4f0e43",
+      "rule": "005_scheduled_task_creation",
+      "rule_title": "Suspicious Scheduled Task Creation on Critical Assets (Tuned)",
+      "variant": "tuned",
+      "display": "005 scheduled_task_creation (tuned)",
+      "level": "high",
+      "techniques": [
+        "T1053.005"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "f8c2e5a0-4b9d-4f3c-a6e8-7d2b9c1f0e43",
+      "rule": "006_registry_autorun_modify",
+      "rule_title": "Registry Autorun Key Modification",
+      "variant": "base",
+      "display": "006 registry_autorun_modify",
+      "level": "high",
+      "techniques": [
+        "T1547.001"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "b2e7a9c5-6d4f-4b8e-a3f6-8f5b1d3a7e97",
+      "rule": "008_uncommon_port_outbound",
+      "rule_title": "Outbound Connection on Uncommon Port",
+      "variant": "base",
+      "display": "008 uncommon_port_outbound",
+      "level": "medium",
+      "techniques": [
+        "T1571"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "c3f8bad6-7e5a-4c9f-b5a6-9f6c3e5b9f08",
+      "rule": "008_uncommon_port_outbound",
+      "rule_title": "Outbound Connection on Uncommon Port (Tuned)",
+      "variant": "tuned",
+      "display": "008 uncommon_port_outbound (tuned)",
+      "level": "medium",
+      "techniques": [
+        "T1571"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    },
+    {
+      "rule_id": "a9c3e5f1-2b7d-4c8e-9f0a-3e5b7d9c1a62",
+      "rule": "011_patient_data_access",
+      "rule_title": "Patient Data Access Outside Clinical Whitelist",
+      "variant": "base",
+      "display": "011 patient_data_access",
+      "level": "critical",
+      "techniques": [
+        "T1005"
+      ],
+      "covering_scenarios": [],
+      "risk_score": 0,
+      "f1": null,
+      "priority_score": 0.0
+    }
+  ]
+}
