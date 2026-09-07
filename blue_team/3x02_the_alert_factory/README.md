@@ -538,3 +538,49 @@ Five noisy rules tuned; 1 accepted, 4 rejected by the acceptance criterion
   exclusion design plus malicious-retention audit is the defensible alternative.
 
 ---
+
+# [12. ATT&CK Coverage Map](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/12-attack_coverage.sh)
+### advanced
+
+## Goal: 
+
+Aggregate every rule in the catalog into an ATT&CK coverage map showing which techniques have detection and which do not.
+
+## Context: 
+
+Dr. Morales's board presentation needs one chart: the MedDefense ATT&CK coverage map. It has to show every technique the catalog covers, every technique it does not cover, and how densely each tactic column is populated. This is the single most common slide in a modern SOC status update and it is the concrete answer to "what can we detect". You will generate it from the rules you have written, not from a vendor report.
+
+## Instructions: 
+
+Write a script [12-attack_coverage.sh](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/12-attack_coverage.sh) that:
+
+    Parses every rule under rules/sigma/ and rules/sigma/tuned/
+
+    Extracts every attack.tXXXX[.YYY] tag
+
+    Groups techniques by tactic (use a bundled attack_taxonomy.json from $ASSETS_DIR or fetch from the ATT&CK Enterprise JSON one time into the assets directory)
+
+    Writes attack_coverage.json containing a matrix of tactic -> list of covered techniques and a separate uncovered_tactics list flagging tactics with zero coverage
+
+    Prints a compact tactic-by-tactic coverage summary as a text table
+
+**Expected Output:**
+
+```bash
+$ ./12-attack_coverage.sh
+initial_access        1 technique
+execution             2 techniques
+persistence           2 techniques
+privilege_escalation  1 technique
+defense_evasion       0 techniques  [GAP]
+credential_access     2 techniques
+discovery             2 techniques
+lateral_movement      1 technique
+collection            1 technique
+command_and_control   3 techniques
+exfiltration          0 techniques  [GAP]
+impact                0 techniques  [GAP]
+attack_coverage.json written
+```
+
+---
