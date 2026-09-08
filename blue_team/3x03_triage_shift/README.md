@@ -284,3 +284,49 @@ tickets/batch3_benign.json
 ```
 
 ---
+
+# [6. Batch 4: Ambiguous Authentication Alerts](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/6-triage_ambiguous_auth.sh)
+
+## Goal: 
+
+Resolve the authentication alerts where neither the IOC nor the baseline gives a clean verdict and the decision depends on cross-referencing multiple context files.
+
+## Context: 
+
+This is where triage becomes a real skill. The queue contains authentication alerts where the account is in known_accounts but logged in from an IP the host has never seen, or where the failure count is above the business-hours average but below the clean baseline's maximum failure burst. Neither the baseline nor the IOC feed alone answers the question. You have to fetch the user's historical pattern, cross-reference with the enriched events to confirm the sequence, and consider the asset criticality before deciding. This is the batch that separates a competent Tier 1 from a clicker.
+
+## Instructions: 
+
+Write a script 6-triage_ambiguous_auth.sh that reads enriched_queue.json and processes every authentication alert not already handled in batches 1 to 3. For each alert:
+
+    Fetch the user's historical login pattern from baseline_summary.json (per-user login times, source IPs, and host set)
+
+    Fetch the last twenty authentication events for the same user from enriched_events.json
+
+    Apply this decision tree:
+
+        Unknown source IP on a critical or high asset AND baseline shows the user has never logged in to that host -> true_positive, escalate_tier2
+
+        Unknown source IP on a medium or low asset AND no IOC hit -> false_positive, tune_rule, fp_reason: unknown_ip_low_asset
+
+        Known source IP AND failure burst between max_failures_1h_window and max_failures_1h_window * 2 -> false_positive, tune_rule, fp_reason: baseline_edge_burst
+
+        Any other ambiguous state -> true_positive, recommended_action: monitor, with a justification that documents the uncertainty and cites the specific fields checked
+
+Write the tickets to tickets/batch4_auth.json.
+
+**Expected Output:**
+
+```bash
+$ ./6-triage_ambiguous_auth.sh
+batch 4 ambiguous authentication
+  alert_00006  001 ssh_brute_force                true_positive   escalate
+  alert_00012  002 windows_offhours_priv_logon    false_positive  tune_rule
+  alert_00020  001 ssh_brute_force                true_positive   monitor
+  alert_00028  013 privileged_shift_violation     true_positive   escalate
+batch size               : 4
+tickets written          : 4
+tickets/batch4_auth.json
+```
+
+---
