@@ -663,3 +663,75 @@ $ head -3 shift_report.md
 ```
 
 ---
+
+# [14. Triage Package Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/14-triage_package.sh)
+### advanced
+
+## Goal: 
+
+Assemble the triage_package/ directory that Tier 2, compliance, and the detection engineering team all consume from one location.
+
+## Context: 
+
+This is the final deliverable of the shift. Everything you produced today collapses into one directory with a locked layout. Tier 2 opens it on Monday to begin containment. The compliance auditor opens it next quarter to validate the classification discipline. The detection engineer opens it next week to process the tuning recommendations. If the directory is well-formed, every one of those downstream consumers gets what they need without asking you a single follow-up question. If it is missing files, every consumer has to chase you.
+
+## Instructions: 
+
+Write a script 14-triage_package.sh that assembles the package at $TRIAGE_PKG (default: ~/3x03_package/triage_package/) with this exact layout:
+
+<pre>
+triage_package/
+  tickets/
+    batch1_clearcut_tp.json
+    batch2_clearcut_fp.json
+    batch3_benign.json
+    batch4_auth.json
+    batch5_proc_net.json
+    batch6_incidents.json
+    batch7_overrides.json
+  incidents/
+    incidents.json
+  tuning/
+    tuning_recommendations.json
+  metrics/
+    queue_assessment.json
+    shift_metrics.json
+  reports/
+    shift_report.md
+  spec/
+    triage_methodology.md
+  runtime/
+    0-queue_assessment.sh
+    2-context_assembly.sh
+    3-triage_clearcut_tp.sh
+    4-triage_clearcut_fp.sh
+    5-triage_benign.sh
+    6-triage_ambiguous_auth.sh
+    7-triage_ambiguous_proc_net.sh
+    8-triage_correlation.sh
+    9-triage_priority_conflicts.sh
+    10-fp_tuning.sh
+    11-incident_assembly.sh
+    12-shift_metrics.sh
+  MANIFEST.json
+</pre>
+
+The script must copy every listed file, generate MANIFEST.json with path, size, and sha256 for each entry, verify every required file exists and is non-empty, and fail loudly on any missing file. The shift report and methodology documents must be present or the script aborts.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && export ASSETS_DIR=$HOME/3x03_assets && ./14-triage_package.sh
+copying tickets     ... 7 files
+copying incidents   ... 1 file
+copying tuning      ... 1 file
+copying metrics     ... 2 files
+copying reports     ... 1 file
+copying spec        ... 1 file
+copying runtime     ... 12 files
+MANIFEST.json       : 25 entries
+sanity check        : ok
+triage_package/ ready
+```
+
+---
