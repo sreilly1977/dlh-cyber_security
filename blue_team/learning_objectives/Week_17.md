@@ -77,3 +77,97 @@
 **A:** When raw events are voluminous, heterogeneous, or noisy; normalizing and summarizing them into standardized primitives (parsed fields, sessions, entity timelines, aggregates such as per-host/per-user counts) makes correlation rules simpler, faster, and more reliable than evaluating logic over raw logs.
 
 ---
+
+## Triage Shift
+
+---
+
+### SOC Triage Operations – Q&A
+
+**Q: Describe the full SOC triage workflow from queue receipt to ticket closure?**
+
+**A:** Receive alert, validate and enrich, classify (TP/FP/benign), prioritize against SLA, escalate or close, then document — mapping onto NIST SP 800-61's Detection & Analysis phase.
+
+**Q: How do you combine rule severity, asset criticality, and baseline deviation into triage priority?**
+
+**A:** Score each factor (rule severity, asset value, deviation from baseline), weight and sum them into a single priority value used to order the queue.
+
+**Q: What is the difference between closing and escalating an alert?**
+
+**A:** Close for false positives or benign/authorized activity; escalate true positives that need Tier 2 investigation or response.
+
+**Q: What must a structured SOC ticket contain and why?**
+
+**A:** Alert ID, timestamps, classification, evidence, actions taken, and disposition rationale — documentation discipline ensures auditability, continuity, and evidence integrity.
+
+---
+
+### Alert Classification Under Ambiguity
+
+**Q: Define true positive, false positive, true negative, and false negative?**
+
+**A:** TP = real threat detected, FP = alert fired on legitimate activity, TN = no alert and no threat, FN = threat present but no alert.
+
+**Q: Why is a rule that correctly fires on authorized activity still a false positive?**
+
+**A:** Because accuracy is judged against the specific context — firing on approved activity means the detection does not indicate a security incident, so operationally it is an FP.
+
+**Q: How can the same rule fire as FP on one dataset and TP on another?**
+
+**A:** Classification depends on context (asset, user behaviour, timing, baselines) — identical activity is benign on an admin workstation but malicious elsewhere.
+
+**Q: How do you resolve ambiguous alerts without repeating a full investigation?**
+
+**A:** Leverage baseline data, asset criticality context, and IOC enrichment (reputation, prevalence, threat intel) to confirm or dismiss quickly.
+
+**Q: Why group multiple alerts into a single incident before acting?**
+
+**A:** They often describe one underlying event — grouping avoids duplicated effort, preserves analytical context, and gives an accurate incident count.
+
+---
+
+### Operational Improvement
+
+**Q: How do you distinguish a systemic rule issue from a one-off misclassification?**
+
+**A:** Analyze FP patterns across the shift — repeated FPs from one rule, signature, or data source indicate tuning is needed, not analyst error.
+
+**Q: What makes a rule tuning recommendation actionable?**
+
+**A:** It specifies the exact change, the expected FP reduction, and the trade-off risk of introducing false negatives.
+
+**Q: Name four core SOC KPIs?**
+
+**A:** MTTD (mean time to detect), MTTR (mean time to respond), false positive rate, and SLA compliance.
+
+**Q: How does triage quality affect these KPIs?**
+
+**A:** Faster, accurate triage lowers MTTD/MTTR and FP rate, and keeps escalation within SLA windows.
+
+**Q: What does an effective shift handoff report include?**
+
+**A:** Open incidents and their status, pending escalations, environment changes, and watch items — enabling seamless operational continuity.
+
+---
+
+### Incident Response Foundations
+
+**Q: List the NIST SP 800-61 incident response phases?**
+
+**A:** Preparation, Detection & Analysis, Containment, Eradication, Recovery, Lessons Learned (Post-Incident Activity).
+
+**Q: Where does Tier 1 triage sit in the IR lifecycle?**
+
+**A:** In Detection & Analysis — confirming events, assessing scope/severity, and triggering escalation.
+
+**Q: When should a triage finding trigger formal incident declaration?**
+
+**A:** When confirmed evidence shows an actual policy violation or threat with real impact/risk — not on suspicion alone.
+
+**Q: What must an escalation package contain?**
+
+**A:** Timeline, evidence and artifacts, IOCs, scope and impact assessment, actions taken, and initial classification.
+
+**Q: Why does chain-of-custody discipline start at Tier 1?**
+
+**A:** Evidence collected and documented at triage feeds legal/regulatory proceedings and post-incident review — mishandling early breaks admissibility and analysis later.
