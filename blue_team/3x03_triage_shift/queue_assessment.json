@@ -1,0 +1,60 @@
+{
+  "queue_size": 653,
+  "validation_errors": [],
+  "by_priority_band": {
+    "critical": 0,
+    "high": 0,
+    "medium": 30,
+    "low": 207,
+    "none": 416
+  },
+  "by_rule": {
+    "005_scheduled_task_creation": 416,
+    "002_windows_offhours_privileged_logon": 205,
+    "001_ssh_brute_force": 20,
+    "007_unknown_outbound_destination": 5,
+    "012_medical_segment_egress": 5,
+    "003_interpreter_abuse": 2
+  },
+  "by_hostname": {
+    "srv-dc-02": 73,
+    "srv-dc-01": 72,
+    "srv-ehr-01": 69,
+    "clin-ws-01": 54,
+    "clin-ws-12": 53,
+    "clin-ws-03": 49,
+    "admin-ws-02": 48,
+    "clin-ws-07": 44,
+    "clin-ws-05": 42,
+    "bill-ws-09": 41,
+    "pharm-app-01": 41,
+    "admin-ws-01": 37,
+    "db-patient-01": 20,
+    "(unattributed)": 10
+  },
+  "by_attack_tactic": {
+    "persistence": 416,
+    "initial_access": 205,
+    "credential_access": 20,
+    "command_and_control": 10,
+    "execution": 2
+  },
+  "time_span": {
+    "first": "2026-03-24T00:02:48Z",
+    "last": "2026-03-26T00:56:30Z"
+  },
+  "top_targets": [
+    {
+      "hostname": "db-patient-01",
+      "cumulative_priority_score": 179.2000000000001
+    },
+    {
+      "hostname": "(unattributed)",
+      "cumulative_priority_score": 54.96500000000001
+    },
+    {
+      "hostname": "clin-ws-12",
+      "cumulative_priority_score": 51.5556
+    }
+  ]
+}

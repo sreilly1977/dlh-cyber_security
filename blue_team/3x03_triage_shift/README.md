@@ -64,3 +64,57 @@ Good luck. Work the queue top to bottom. If you need me, I am on the bridge.
 -- James Chen
 
 ---
+
+# [0. Queue Assessment](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/0-queue_assessment.sh)
+
+## Goal: 
+
+Load the alert queue, validate its schema, and produce a structured shift briefing that tells you exactly what you are walking into.
+
+## Context: 
+
+A shift begins with situational awareness, not with opening the first ticket. Before you touch any individual alert you need to know the shape of the queue: how many alerts, distributed across which priority bands, hitting which hosts, firing which rules. This briefing is the first artifact you produce every day of your career in a SOC. It is the document you show James Chen in the first five minutes of your shift when he asks "how are we looking".
+
+## Instructions: 
+
+Write a script 0-queue_assessment.sh that reads $CATALOG_DIR/alerts/alert_queue.json and $CATALOG_DIR/alerts/alert_queue_schema.json, validates every alert against the schema, and produces queue_assessment.json containing:
+
+    queue_size
+    validation_errors: list of alerts that failed schema validation
+    by_priority_band: counts for critical (>= 20), high (10–19), medium (5–9), low (1–4)
+    by_rule: count per rule_id sorted descending
+    by_hostname: count per target host sorted descending
+    by_attack_tactic: count per ATT&CK tactic derived from rule tags
+    time_span: first and last event_summary.timestamp in the queue
+    top_targets: the three hosts with the highest cumulative priority_score
+
+Default CATALOG_DIR to ~/3x02_package/detection_catalog if not set. Print a human-readable shift briefing to stdout.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && ./0-queue_assessment.sh
+=== SHIFT BRIEFING <date> ===
+queue size           : <N> alerts
+validation errors    :  <N>
+time span            : <start> -> <end>
+priority bands
+  critical  :  6
+  high      : 14
+  medium    : 12
+  low       :  6
+top rules (5)
+  010 credential_theft_chain         4
+  012 medical_segment_egress         4
+  007 unknown_outbound_destination   5
+  001 ssh_brute_force                3
+  011 patient_data_access            3
+top hosts (3 by cumulative score)
+  db-patient-01   score 78
+  clin-ws-07      score 54
+  med-img-02      score 42
+attack tactics covered : 7
+queue_assessment.json written
+```
+
+---
