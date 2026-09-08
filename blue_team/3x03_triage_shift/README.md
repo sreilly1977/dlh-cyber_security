@@ -198,3 +198,47 @@ tickets/batch1_clearcut_tp.json
 ```
 
 ---
+
+# [4. Batch 2: Clear-Cut False Positives](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/4-triage_clearcut_fp.sh)
+
+## Goal: 
+
+Process the batch of alerts that clearly match authorized activity and close them with the minimum documentation that satisfies the methodology.
+
+## Context: 
+
+The second batch is the other side of the clear-cut line. These are alerts where the rule fired correctly on something that is either a known service behavior, a scheduled administrative task, or an authorized change that shows up in the asset context. You close them, you justify the close with the specific evidence that made it obvious, and you tag them for the tuning engine so T10 can aggregate the root cause later. Speed matters here too. If you spend as much time on a clear false positive as on a real incident, you will never finish the shift.
+
+## Instructions: 
+
+Write a script 4-triage_clearcut_fp.sh that reads enriched_queue.json and processes every alert matching ANY of these false positive signatures:
+
+    Target user matches the service_account_prefix in the asset_inventory.json owner metadata (for example svc_) AND the rule is one of the authentication or process rules
+
+    Source IP is in the asset inventory management_subnets range AND the rule is a network rule
+
+    The event references a process_name that appears in the baseline_host_profile.process.expected set for the target host
+
+    All ioc_hits have reputation == clean AND baseline deviation is absent
+
+For each match produce a ticket with classification: false_positive, recommended_action: tune_rule, a one-sentence justification naming the specific false positive signature matched, and an fp_reason tag (one of service_account_activity, management_subnet, baseline_match, clean_ioc_no_deviation) used in T10.
+
+Write all resulting tickets to tickets/batch2_clearcut_fp.json.
+
+**Expected Output:**
+
+```bash
+$ ./4-triage_clearcut_fp.sh
+batch 2 clear-cut false positives
+  alert_00003  002 windows_offhours_priv_logon  CLOSE  service_account_activity
+  alert_00008  007 unknown_outbound_destination CLOSE  management_subnet
+  alert_00011  003 interpreter_abuse            CLOSE  baseline_match
+  alert_00025  002 windows_offhours_priv_logon  CLOSE  service_account_activity
+  alert_00029  004 recon_tool_execution         CLOSE  baseline_match
+  alert_00034  007 unknown_outbound_destination CLOSE  management_subnet
+batch size               : 6
+tickets written          : 6
+tickets/batch2_clearcut_fp.json
+```
+
+---
