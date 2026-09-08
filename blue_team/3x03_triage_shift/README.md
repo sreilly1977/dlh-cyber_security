@@ -379,3 +379,50 @@ tickets/batch5_proc_net.json
 ```
 
 ---
+
+# [8. Batch 6: Multi-Alert Correlation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/8-triage_correlation.sh)
+
+## Goal: 
+
+Group multiple related alerts into single incident records before classifying, so that one attack does not produce six unrelated tickets.
+
+## Context: 
+
+A real attack rarely produces one alert. It produces a brute force alert, then a successful authentication alert, then a privilege escalation alert, then a network connection alert, all on the same host within a few minutes. If you triage each one independently you end up with six tickets referencing the same event and three duplicate escalations. The correlation step groups related alerts into a single incident record keyed by host and time window, classifies the incident once, and references every contributing alert from the incident ticket.
+
+## Instructions: 
+
+Write a script 8-triage_correlation.sh that reads enriched_queue.json and groups alerts into incidents using this rule: any two alerts on the same hostname whose event_summary.timestamp values are within six hundred seconds of each other belong to the same incident. Incidents with three or more alerts are marked high_confidence, incidents with two are marked medium_confidence.
+
+For each incident produce a single ticket with:
+
+    ticket_id: incident_<hostname>_<start_iso>
+
+    classification: true_positive if any contributing alert is already true_positive from a previous batch, else evaluated fresh using the highest priority_score in the group
+
+    contributing_alerts: list of all alert_ids in the group
+
+    incident_window: start and end timestamps
+
+    attack_techniques: deduplicated union of techniques from all contributing rules
+
+    recommended_action: escalate_tier2 for any high_confidence group on a critical or high asset
+
+Alerts that belong to a correlated incident must be marked grouped: true in their individual tickets so T10 and T12 can deduplicate counts.
+
+Write the incident tickets to tickets/batch6_incidents.json.
+
+**Expected Output:**
+
+```bash
+$ ./8-triage_correlation.sh
+batch 6 correlated incidents
+  incident_db-patient-01_2026-03-25T02:14:08Z  alerts=4  high_confidence  escalate
+  incident_clin-ws-07_2026-03-25T09:41:22Z     alerts=3  high_confidence  escalate
+  incident_med-img-02_2026-03-25T17:08:39Z     alerts=2  medium_confidence monitor
+incidents assembled      : 3
+alerts regrouped         : 9
+tickets/batch6_incidents.json
+```
+
+---
