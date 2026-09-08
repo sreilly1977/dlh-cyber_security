@@ -82,7 +82,7 @@
 
 ---
 
-### SOC Triage Operations – Q&A
+### SOC Triage Operations
 
 **Q: Describe the full SOC triage workflow from queue receipt to ticket closure?**
 
