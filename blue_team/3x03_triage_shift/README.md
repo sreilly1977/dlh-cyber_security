@@ -330,3 +330,52 @@ tickets/batch4_auth.json
 ```
 
 ---
+
+# [7. Batch 5: Ambiguous Process and Network Alerts](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/7-triage_ambiguous_proc_net.sh)
+
+## Goal: 
+
+Resolve process execution and network connection alerts that require joining the enriched event record with IOC context before a verdict is possible.
+
+## Context: 
+
+Process and network alerts are ambiguous for a different reason than authentication alerts. A powershell.exe execution might be a scheduled maintenance job the asset owner is running, or it might be post-exploitation code execution. An outbound connection to an unknown IP might be a new software update source, or it might be command-and-control. The deciding factor is almost always in the IOC context: is the destination known to the threat feed, how recently was it seen, what category is it in. This batch exercises that join discipline.
+
+## Instructions: 
+
+Write a script 7-triage_ambiguous_proc_net.sh that reads enriched_queue.json and processes every process or network alert not already handled. For each alert:
+
+    For process alerts, extract the process_name, parent_process, and command_line from the enriched event record
+
+    For network alerts, extract every dst_ip, dst_host, and dst_port, and look up reputation in ioc_context.json
+
+    Apply this decision tree:
+
+        Any IOC hit with reputation == malicious -> true_positive, escalate_tier2
+
+        IOC reputation suspicious AND asset criticality critical or high -> true_positive, recommended_action: monitor
+
+        IOC reputation suspicious AND asset criticality medium or low AND process or destination is present in baseline_host_profile for a different host -> false_positive, tune_rule, fp_reason: suspicious_but_baseline_known_elsewhere
+
+        IOC reputation clean AND no baseline deviation -> false_positive, tune_rule, fp_reason: clean_ioc_no_deviation
+
+        Any other state -> true_positive, recommended_action: monitor, with a justification documenting what was checked
+
+Write the tickets to tickets/batch5_proc_net.json.
+
+**Expected Output:**
+
+```bash
+$ ./7-triage_ambiguous_proc_net.sh
+batch 5 ambiguous process and network
+  alert_00014  003 interpreter_abuse              true_positive   escalate
+  alert_00018  007 unknown_outbound_destination   true_positive   monitor
+  alert_00023  008 uncommon_port_outbound         false_positive  tune_rule
+  alert_00026  004 recon_tool_execution           true_positive   monitor
+  alert_00030  003 interpreter_abuse              true_positive   escalate
+batch size               : 5
+tickets written          : 5
+tickets/batch5_proc_net.json
+```
+
+---
