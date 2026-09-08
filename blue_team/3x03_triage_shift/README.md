@@ -618,3 +618,48 @@ shift_metrics.json written
 ```
 
 ---
+
+# [13. Shift Report Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/shift_report.md)
+### advanced
+
+## Goal: 
+
+Produce the bounded shift handoff report the next analyst reads when they sit down at the console.
+
+## Context: 
+
+The shift report is the continuity document. It is the thing the next analyst reads in the first five minutes of their shift to know what happened while they were asleep and what they should watch for today. A bad shift report creates blind spots that the next analyst has no way to detect. A good shift report lets the next analyst start productive work immediately. This is a bounded writing exercise and the format is fixed so the next analyst always knows where to find what they need.
+
+## Instructions: 
+
+Write shift_report.md, bounded to two pages and 900 words, with these exact sections in this order:
+
+    Shift Identification (analyst ID, shift start and end, queue size received, queue size handed off)
+
+    Summary Numbers (the key metrics from shift_metrics.json: total tickets, TP, FP, benign, escalated, FP rate, MTTD, MTTR, SLA compliance)
+
+    Escalated Incidents (a numbered list of every incident from incidents.json, one line each, with incident ID, target host, summary, and recommended containment)
+
+    False Positive Highlights (the three rules with the highest FP counts in this shift and the tuning recommendation for each)
+
+    Open Items for the Next Shift (alerts with recommended_action: monitor that are waiting for additional context, plus anything flagged grouped: true but not yet resolved)
+
+    Notable Patterns (up to three sentences on any systemic observation, for example a cluster of alerts on the same host or a new IOC category appearing for the first time this week)
+
+    Signature (analyst ID and timestamp)
+
+The report lives at triage_package/reports/shift_report.md in T14.
+
+**Expected Output:**
+
+```bash
+$ wc -w shift_report.md
+823 shift_report.md
+
+$ head -3 shift_report.md
+# MedDefense SOC Shift Report 2026-03-26
+
+## Shift Identification
+```
+
+---
