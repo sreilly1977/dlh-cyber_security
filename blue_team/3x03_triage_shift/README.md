@@ -242,3 +242,45 @@ tickets/batch2_clearcut_fp.json
 ```
 
 ---
+
+# [5. Batch 3: Benign Activity Filter](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/5-triage_benign.sh)
+### advanced
+
+## Goal: 
+
+Identify and close the low-priority alerts that are technically correct but operationally benign, with minimal ticket overhead.
+
+## Context: 
+
+The benign classification is the one new analysts misuse most often. A benign alert is not a false positive: the rule was right to fire and the behavior happened, but it has no security meaning at MedDefense. A single failed login followed by success is benign. A DHCP renewal is benign. An NTP drift warning is benign. These alerts still need a ticket because the compliance auditor will ask why they were closed, but the ticket is short and the justification references a fixed list of benign patterns declared in triage_methodology.md.
+
+## Instructions: 
+
+Write a script 5-triage_benign.sh that reads enriched_queue.json and processes every alert where priority_band == low OR the alert matches one of these benign patterns:
+
+    A single login_failure event immediately followed by a login_success for the same user on the same host within sixty seconds (looked up in event_record.correlated_events or the enriched event store)
+
+    A DHCP renewal pattern visible in the event record
+
+    An NTP drift event with delta < 500 ms
+
+    A blocked SMB scan from an external perimeter IP that never bypassed the firewall
+
+For each match produce a ticket with classification: benign, recommended_action: close, and a one-line justification naming the benign pattern. Write the tickets to tickets/batch3_benign.json.
+
+**Expected Output:**
+
+```bash
+$ ./5-triage_benign.sh
+batch 3 benign
+  alert_00001  low   single_fail_then_success
+  alert_00004  low   dhcp_renewal
+  alert_00015  low   ntp_drift_under_threshold
+  alert_00022  low   perimeter_smb_block
+  alert_00027  low   single_fail_then_success
+batch size               : 5
+tickets written          : 5
+tickets/batch3_benign.json
+```
+
+---
