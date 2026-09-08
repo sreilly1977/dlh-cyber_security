@@ -118,3 +118,43 @@ queue_assessment.json written
 ```
 
 ---
+
+# [2. Context Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/2-context_assembly.sh)
+
+## Goal: 
+
+Merge the alert queue with every supporting artifact into a single enriched queue that every subsequent triage script reads from.
+
+## Context: 
+
+Opening five JSON files for every single alert is the fastest way to waste a shift. The context assembly step reads the queue once, joins each alert with the matching asset context, the baseline profile for the target host, the event record referenced by event_ref, and any IOC context hits for IPs or domains present in the alert, and writes the whole thing to a single enriched queue file. Every downstream script in Block 2 reads from the enriched queue and never re-opens the individual sources.
+
+## Instructions: 
+
+Write a script 2-context_assembly.sh that reads alert_queue.json, $HANDOFF_DIR/context/asset_inventory.json, $HANDOFF_DIR/data/enriched_events.json, $BASELINE_PKG/baselines/baseline_summary.json, and $ASSETS_DIR/ioc_context.json, and produces enriched_queue.json. For every alert the enriched entry must contain:
+
+    All original alert fields
+    asset: full asset record (criticality, role, data_classification, owner, network_zone)
+    baseline_host_profile: per-host baseline slices relevant to the alert category
+    event_record: the full enriched event dereferenced from event_ref
+    ioc_hits: list of IOC context entries matched by any IP/domain fields; entries with reputation != clean must have ioc_flag: true
+    priority_band: one of critical, high, medium, low derived from priority_score
+
+All env vars default to their standard paths if not set. Create tickets/ directory if it does not exist.
+
+**Expected Output:**
+
+```bash
+$ source ~/m3_env.sh && export ASSETS_DIR=$HOME/3x03_assets && ./2-context_assembly.sh
+alerts processed          : 38
+assets joined             : 38
+missing asset records     :  0
+alerts with IOC hits      : 11
+  malicious               :  3
+  suspicious              :  6
+  unknown                 :  2
+baseline profiles joined  : 38
+enriched_queue.json written (612 KB)
+```
+
+---
