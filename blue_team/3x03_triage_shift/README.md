@@ -426,3 +426,42 @@ tickets/batch6_incidents.json
 ```
 
 ---
+
+# [9. Batch 7: Priority Conflicts](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/9-triage_priority_conflicts.sh)
+### advanced
+
+## Goal: 
+
+Resolve the alerts where the rule-driven priority score conflicts with the asset-driven or context-driven urgency and document the override decision.
+
+## Context: 
+
+This is the last batch, and the one Dr. Morales will ask you about first. The 3x02 runner assigns priority by rule quality and risk score. But sometimes a medium-priority rule fires on a critical asset in a way that the rule author did not anticipate, and sometimes a critical-priority rule fires on a test box where the finding does not matter. The triage analyst is the human layer that catches these conflicts and documents why the machine ranking was overridden. The audit trail is the point: if you override a priority you must say which field and value forced the override, and the downstream tuning engine will later use the override record to propose a permanent rule-side fix.
+
+## Instructions: 
+
+Write a script 9-triage_priority_conflicts.sh that reads enriched_queue.json plus the tickets already produced in batches 1 to 6, and identifies conflicts matching any of these patterns:
+
+    priority_band == low or medium AND asset.criticality == critical AND asset.data_classification in (phi, pci, confidential) -> force classification: true_positive, recommended_action: escalate_tier2, with override_reason: critical_data_asset
+
+    priority_band == critical AND asset.criticality == low AND asset.role == test -> downgrade to false_positive, recommended_action: monitor, with override_reason: test_asset_not_production
+
+    Any alert whose ioc_hits all have reputation == unknown AND the asset is in a regulated zone (phi, medical_devices) -> force recommended_action: monitor, with override_reason: regulated_zone_unknown_reputation
+
+Every override must emit a ticket with the override reason recorded in justification. Write to tickets/batch7_overrides.json. Alerts without a conflict that are still unclassified after batches 1 to 6 must be carried forward with classification: true_positive, recommended_action: monitor, and a justification stating that they fell through every previous batch and require human review.
+
+**Expected Output:**
+
+```bash
+$ ./9-triage_priority_conflicts.sh
+batch 7 priority conflicts
+  alert_00035  medium -> true_positive   critical_data_asset
+  alert_00037  low    -> true_positive   critical_data_asset
+  alert_00009  critical -> false_positive test_asset_not_production
+  alert_00016  medium -> monitor         regulated_zone_unknown_reputation
+unclassified carried forward : 2
+tickets written              : 6
+tickets/batch7_overrides.json
+```
+
+---
