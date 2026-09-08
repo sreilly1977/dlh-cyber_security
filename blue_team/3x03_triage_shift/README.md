@@ -561,3 +561,60 @@ incidents.json written
 ```
 
 ---
+
+# [12. Shift Metrics](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/12-shift_metrics.sh)
+### advanced
+
+## Goal: 
+
+Compute the SOC KPIs for this shift: MTTD, MTTR, FP rate, SLA compliance, and escalation ratio.
+
+## Context: 
+
+Every shift ends with a metrics snapshot that goes into the weekly SOC scorecard James Chen presents to Dr. Morales. The metrics are the same four numbers every SOC on the planet tracks, and they are computed the same way. The point of computing them in this task is not to see nice numbers. The point is that you will be measured by them in every future SOC job and you need to know exactly how they are derived before you can improve them.
+
+## Instructions: 
+
+Write a script 12-shift_metrics.sh that reads every ticket and the queue_assessment.json from T0, and produces shift_metrics.json containing:
+
+    shift_start and shift_end
+
+    queue_size
+
+    tickets_total
+
+    tickets_by_classification: counts for each class
+
+    fp_rate: false_positive / tickets_total
+
+    escalation_ratio: escalate_tier2 count / tickets_total
+
+    mttd_seconds: median difference between each true positive ticket's event_record.timestamp and the alert's generated_at
+
+    mttr_seconds: median difference between the alert's generated_at and the ticket's created_at
+
+    sla_compliance: percentage of tickets where analyst_time_seconds is within the SLA declared for the alert's priority_band in triage_methodology.md
+
+    per_rule_metrics: nested object with TP, FP, and FP rate per rule_id
+
+Print a compact human-readable summary.
+
+**Expected Output:**
+
+```bash
+$ ./12-shift_metrics.sh
+=== SHIFT METRICS 2026-03-26 ===
+tickets total         : 38
+  true_positive       : 18
+  false_positive      : 11
+  benign              :  5
+  escalated           :  6 (incidents)
+fp_rate               : 0.289
+escalation_ratio      : 0.158
+mttd                  : 00:14:22
+mttr                  : 00:23:41
+sla compliance        : 94.7 %
+shift_metrics.json written
+```
+
+---
