@@ -465,3 +465,50 @@ tickets/batch7_overrides.json
 ```
 
 ---
+
+# [10. False Positive Aggregation and Tuning Recommendations](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/10-fp_tuning.sh)
+### advanced
+
+## Goal: 
+
+Aggregate every false positive ticket from the shift into root-cause patterns and write a tuning recommendation per pattern.
+
+## Context: 
+
+Individual false positive tickets are the raw material. The tuning recommendations are the finished product the detection engineer consumes next week. The goal of this task is to stop treating false positives as isolated events and start treating them as evidence of systematic rule drift. A rule that produced four false positives in one shift is not a rule that needs four one-off exclusions. It is a rule that needs one surgical predicate change. Your job is to name the pattern and propose the change.
+
+## Instructions: 
+
+Write a script 10-fp_tuning.sh that reads every tickets/batchN_*.json file, collects every ticket with classification: false_positive, and groups them by rule_id and fp_reason. For each group with two or more tickets, produce a tuning recommendation with:
+
+    rule_id
+
+    rule_title
+
+    fp_count
+
+    fp_reason
+
+    sample_alert_ids: up to five example ticket references
+
+    proposed_change: a concrete Sigma filter modification expressed as a YAML fragment the detection engineer can paste into the rule
+
+    expected_fp_reduction: integer count
+
+    tp_risk_note: a one-sentence assessment of whether the change could introduce a false negative, citing a specific scenario
+
+Write the full output to tuning_recommendations.json and print a compact summary ordered by fp_count descending.
+
+**Expected Output:**
+
+```bash
+$ ./10-fp_tuning.sh
+tuning recommendations
+  002 windows_offhours_priv_logon     fp=3  reason=service_account_activity
+  007 unknown_outbound_destination    fp=2  reason=management_subnet
+  003 interpreter_abuse               fp=2  reason=baseline_match
+recommendations written : 3
+tuning_recommendations.json
+```
+
+---
