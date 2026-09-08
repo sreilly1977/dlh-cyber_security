@@ -512,3 +512,52 @@ tuning_recommendations.json
 ```
 
 ---
+
+# [11. Incident Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/11-incident_assembly.sh)
+
+## Goal: 
+
+Assemble every true positive and correlated incident into a structured incident record that Tier 2 can act on without repeating your work.
+
+## Context: 
+
+The escalation package is the most operationally important artifact this shift produces. It is the document Tier 2 opens first on Monday morning. It has to contain everything they need to start containment without asking you a single clarifying question. A vague escalation wastes an hour of Tier 2 time per incident and costs MTTR directly. A precise escalation lets Tier 2 hit the ground running and shortens the gap between detection and containment.
+
+## Instructions: 
+
+Write a script 11-incident_assembly.sh that reads every ticket produced in batches 1 to 7, selects every ticket with classification: true_positive AND recommended_action in (escalate_tier2, monitor), and for each produces an incident record with:
+
+    incident_id (deterministic from the ticket)
+
+    summary (one sentence derived from the rule title and target host)
+
+    timeline: ordered list of event records referenced by the ticket, with timestamp, hostname, event_category, and a short description
+
+    affected_assets: deduplicated list of host records from the asset inventory, each with hostname, criticality, data_classification, and network_zone
+
+    iocs: deduplicated list of IPs, domains, user accounts, and process names extracted from the event records
+
+    attack_techniques: deduplicated list from the source rules
+
+    recommended_containment: a specific first action drawn from a fixed table (for example isolate_host for confirmed C2, disable_account for credential compromise, block_ip_at_egress for egress to malicious destination)
+
+    related_incidents: list of other incident IDs that share any IOC or hostname
+
+Write the incidents to incidents.json and print one line per incident.
+
+**Expected Output:**
+
+```bash
+$ ./11-incident_assembly.sh
+incidents assembled
+  INC-20260326-0001  db-patient-01  credential_theft_chain       isolate_host
+  INC-20260326-0002  clin-ws-07     interpreter_abuse            isolate_host
+  INC-20260326-0003  meddb-01       patient_data_access          disable_account
+  INC-20260326-0004  med-img-02     medical_segment_egress       block_ip_at_egress
+  INC-20260326-0005  db-patient-01  ssh_brute_force              block_source_ip
+  INC-20260326-0006  clin-ws-07     privileged_shift_violation   disable_account
+total incidents         : 6
+incidents.json written
+```
+
+---
