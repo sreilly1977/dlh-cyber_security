@@ -158,3 +158,43 @@ enriched_queue.json written (612 KB)
 ```
 
 ---
+
+# [3. Batch 1: Clear-Cut True Positives](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift/3-triage_clearcut_tp.sh)
+
+## Goal: 
+
+Process the high-confidence true positives at the top of the queue where priority, IOC hits, and baseline deviation all point at the same conclusion.
+
+## Context: 
+
+The first batch is the easy one. These are the alerts where everything lines up: a high-priority rule from the 3x02 catalog, a malicious IOC match on the destination, an event that violates every relevant baseline, and an asset in a critical zone. The correct action is a fast, clean escalation. The goal of this task is to prove that you can close clear-cut cases quickly without over-investigating, because the rest of the shift depends on the hour you save here.
+
+## Instructions: 
+
+Write a script 3-triage_clearcut_tp.sh that reads enriched_queue.json and processes every alert matching ALL of these predicates:
+
+    priority_band == critical
+
+    At least one ioc_hit with reputation == malicious
+
+    The source rule's category (auth, process, network, file, correlation) shows a baseline violation against baseline_host_profile
+
+For each matching alert, produce a ticket with classification: true_positive, recommended_action: escalate_tier2, justification naming the specific IOC category and the baseline field that was violated, and evidence_refs listing the event reference from the alert plus any linked correlation primitives.
+
+Write all resulting tickets to tickets/batch1_clearcut_tp.json as an array and print a compact summary table.
+
+**Expected Output:**
+
+```bash
+$ ./3-triage_clearcut_tp.sh
+batch 1 clear-cut true positives
+  alert_00042  010 credential_theft_chain     db-patient-01   malicious  ESCALATE
+  alert_00031  011 patient_data_access        meddb-01        malicious  ESCALATE
+  alert_00017  012 medical_segment_egress     med-img-02      malicious  ESCALATE
+  alert_00019  012 medical_segment_egress     med-img-02      malicious  ESCALATE
+batch size               : 4
+tickets written          : 4
+tickets/batch1_clearcut_tp.json
+```
+
+---
