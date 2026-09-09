@@ -37,7 +37,7 @@ The curriculum follows a progressive learning path through twelve modules across
 | 5 | [`1x04_crypto_foundation`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x04_crypto_foundation) | Symmetric/asymmetric encryption (AES, RSA, ECC, ChaCha20-Poly1305), hashing, digital signatures, PKI/certificate management, TLS hardening, disk encryption (LUKS), steganography as a threat vector, and key management (TPM/HSM) | 24 |
 | 6 | [`1x05_board_briefing`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/1x05_board_briefing) | Executive synthesis: Crimson Tide attack chain overlay, control interception mapping, gap analysis, crypto emergency assessment, budget ROI analysis, and technical proficiency demonstration | 10 |
 
-#### Part 2 — Implementation (Modules 7–11)
+#### Part 2 — Applied Hardening (Modules 7–11)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
