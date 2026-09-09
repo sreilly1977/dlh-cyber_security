@@ -482,6 +482,12 @@ Eight of thirteen rules ship with zero baseline FPs. 99.96% of the 30,631
 baseline FPs come from three rules (005/007/008) shipped deliberately as
 correlation-input tiers, not solo alerts.
 
+### In plain English
+
+- 8 of 13 tuned rules have zero baseline false positives.
+- 99.96% of the 30,631 baseline FPs come from just three rules: 005, 007, and 008.
+- Those three were intentionally broad; they act as inputs to correlation, not standalone alerts. Clean-up effort should focus there.
+
 ---
 
 # [11. Tuning Pass on Noisy Rules](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory/11-tune_rules.sh)
@@ -528,7 +534,7 @@ Five noisy rules tuned; 1 accepted, 4 rejected by the acceptance criterion
 (fp halved AND tp preserved). Post-hoc audit of the rejections:
 
 - **Rule 007's tuned variant achieved precision 1.00**: zero baseline matches,
-  and its five eval-window matches are — verified to record ID — the March 25
+  and its five eval-window matches are **verified to record ID** the March 25
   egress burst. Rejected only because the criterion counts discarded ambient
   volume as lost recall.
 - **Key lesson**: on an ambient-dominated fleet, `tp_after >= tp_before` measures
@@ -536,6 +542,14 @@ Five noisy rules tuned; 1 accepted, 4 rejected by the acceptance criterion
   malicious traffic by ~three orders of magnitude, so any honest noise
   reduction fails the recall leg mathematically. Characterized-baseline
   exclusion design plus malicious-retention audit is the defensible alternative.
+
+### In plain English
+
+Five noisy rules tuned; 1 passed, 4 rejected. Acceptance required halving false positives and preserving true-positive match volume. Post-hoc audit:
+
+- Rule 007's tuned version had zero baseline matches and its five eval-window alerts were confirmed to catch the March 25 egress burst. Rejected only because the criterion treats dropped ambient volume as lost recall.
+- On a fleet where benign traffic outweighs malicious traffic ~1000:1, honest noise reduction can't preserve match volume, so the tp-preservation test is mathematically stacked against any real fix.
+- Recommended criterion instead: clean characterised baseline plus a malicious-retention audit.
 
 ---
 
