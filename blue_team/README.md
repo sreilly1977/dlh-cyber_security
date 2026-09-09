@@ -14,7 +14,7 @@ Supporting characters (e.g., James Chen, Marcus) and realistic artifacts (networ
 
 ## Total Exercise Count
 
-**243 exercises** across all **14 scenario modules**.
+**275 exercises** across all **16 scenario modules**.
 
 Those marked as advanced are not required to pass the course.
 
