@@ -175,6 +175,12 @@ Configuration templates for:
 > **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
 > wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
+### Threat Intelligence Sources
+
+- [MISP - open-source threat intelligence](https://www.misp-project.org/)
+- [VirusTotal](https://www.virustotal.com/)
+- [AbuseIPDB](https://www.abuseipdb.com/)
+
 ---
 
 ## License
