@@ -21,7 +21,7 @@ A comprehensive cybersecurity study repository structured around two primary lea
 
 ## `blue_team/`
 
-Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Thirteen modules build practical SOC analyst skills from incident classification through executive briefing.
+Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization. Sixteen modules build practical SOC analyst skills.
 
 ### Part 1 — Foundations (Modules 1–6)
 
@@ -45,12 +45,14 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`2x04_perimeter_defense/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network defense control plane, nftables rule enforcement, protocol auditing, Suricata IDS analysis, PCAP investigation, DNS filtering | 16 |
 | [`2x05_defensible_endpoint/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Integrated endpoint hardening capstone, baseline snapshots, Linux/Windows hardening, telemetry deployment, compliance reporting, handoff packaging | 12 |
 
-### Part 3 — Forensics & Evidence (Modules 13-14)
+### Part 3 — Detection & Response Operations (Modules 13-16)
 
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`3x00_evidence_pipeline/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Evidence pipeline construction, multi-format log parsing, data normalization, schema validation, event enrichment, timeline indexing | 16 |
 | [`3x01_reading_the_noise/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x01_reading_the_noise) | Behavioral baseline construction from enriched event data: format analysis, field indexing, query toolkit, event taxonomy, authentication/process/network/file baselines, temporal activity profiling, anomaly detection across auth/process/network sources, cross-source correlation, anomaly ranking, and self-contained baseline package assembly | 17 |
+| [`3x02_the_alert_factory`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory) | Detection engineering with Sigma rules: detection matrix mapping, rule authoring across signature/correlation types, Sigma rule execution, correlation primitives, false-positive baseline measurement, rule tuning, attack coverage mapping, rule quality scoring and prioritization, alert generation, and detection catalog assembly | 17 |
+| [`3x03_triage_shift`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift) | SOC triage operations: alert queue assessment, triaging true positives, false positives, benign, and ambiguous auth/process/network alerts with IOC context joins, cross-alert correlation, priority conflict resolution, FP tuning, incident assembly, shift metrics, and bounded shift handoff report writing | 15 |
 
 ### Reference Libraries
 
@@ -154,7 +156,7 @@ Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tr
 - [OverTheWire](https://overthewire.org) — Command line and security challenges
 - [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/?tab=defensive) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
 
-### Open Source Infrastructure
+### [Open Source Infrastructure](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md)
 
 Setup guides and configuration files available in the repository for:
 - Wazuh SIEM deployment
@@ -162,13 +164,13 @@ Setup guides and configuration files available in the repository for:
 - Security Onion network monitoring
 - Home lab architecture recommendations
 
-### AuditD & SysMon Configs
+### [AuditD](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) & [SysMon Configs](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress)
 
 Configuration templates for:
-- Linux audit daemon rules
-- Windows Sysmon Event ID filtering
-- Log retention policies
-- Compliance-aligned baselines
+- [Linux audit daemon rules](https://github.com/neo23x0/auditd)
+- [Swift-on-Security Windows Sysmon Event ID filtering](https://github.com/SwiftOnSecurity/sysmon-config)
+- [Log retention policies](https://www.groundcover.com/learn/logging/log-retention-policies)
+- [Compliance-aligned baselines](https://learn.cisecurity.org/benchmarks)
 
 > **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
 > wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
