@@ -48,12 +48,14 @@ The curriculum follows a progressive learning path through twelve modules across
 | 11 | [`2x04_perimeter_defense`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network perimeter security, IDS/IPS deployment, DMZ architecture, firewall rule optimization, traffic analysis, and boundary monitoring | 16 |
 | 12 | [`2x05_defensible_endpoint`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Advanced endpoint hardening, application whitelisting, USB device control, sandboxing strategies, and endpoint isolation techniques | 12 |
 
-#### Part 3 — Forensics & Evidence (Modules 13-14)
+#### Part 3 — Detection & Response Operations (Modules 13-16)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
 | 13 | [`3x00_evidence_pipeline`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x00_evidence_pipeline) | Digital forensics fundamentals, chain of custody procedures, evidence acquisition, memory/disk imaging, artifact analysis, and reporting for legal proceedings | 16 |
 | 14 | [`3x01_reading_the_noise`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x01_reading_the_noise) | Behavioral baseline construction from enriched event data: format analysis, field indexing, query toolkit, event taxonomy, authentication/process/network/file baselines, temporal activity profiling, anomaly detection across auth/process/network sources, cross-source correlation, anomaly ranking, and self-contained baseline package assembly | 17 |
+| 15 | [`3x02_the_alert_factory`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory) | Detection engineering with Sigma rules: detection matrix mapping, rule authoring across signature/correlation types, Sigma rule execution, correlation primitives, false-positive baseline measurement, rule tuning, attack coverage mapping, rule quality scoring and prioritization, alert generation, and detection catalog assembly | 17 |
+| 16 | [`3x03_triage_shift`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift) | SOC triage operations: alert queue assessment, triaging true positives, false positives, benign, and ambiguous auth/process/network alerts with IOC context joins, cross-alert correlation, priority conflict resolution, FP tuning, incident assembly, shift metrics, and bounded shift handoff report writing | 15 |
 
 ### Reference Materials
 
