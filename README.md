@@ -164,13 +164,14 @@ Setup guides and configuration files available in the repository for:
 - Security Onion network monitoring
 - Home lab architecture recommendations
 
-### [AuditD](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x00_locking_the_gates) & [SysMon Configs](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x01_windows_fortress)
-
+### Detection, Logging, Baselines and Auditing Frameworks
 Configuration templates for:
 - [Linux audit daemon rules](https://github.com/neo23x0/auditd)
 - [Swift-on-Security Windows Sysmon Event ID filtering](https://github.com/SwiftOnSecurity/sysmon-config)
 - [Log retention policies](https://www.groundcover.com/learn/logging/log-retention-policies)
 - [Compliance-aligned baselines](https://learn.cisecurity.org/benchmarks)
+- [Advanced Intrusion Detection Environment](https://aide.github.io/)
+- [Rootkit Hunter](https://rkhunter.sourceforge.net/)
 
 > **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
 > wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
