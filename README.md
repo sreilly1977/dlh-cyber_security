@@ -165,7 +165,6 @@ Setup guides and configuration files available in the repository for:
 - Home lab architecture recommendations
 
 ### Detection, Logging, Baselines and Auditing Frameworks
-Configuration templates for:
 - [Linux AuditD - Linux audit daemon rules](https://github.com/neo23x0/auditd)
 - [Swift-on-Security Windows Sysmon Event ID filtering](https://github.com/SwiftOnSecurity/sysmon-config)
 - [Groundcover - Log retention policies](https://www.groundcover.com/learn/logging/log-retention-policies)
