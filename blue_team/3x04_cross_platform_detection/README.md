@@ -155,3 +155,47 @@ finding     : findings/anchor_cli.json written
 ```
 
 ---
+
+# [3. Wazuh Export Investigation of the Anchor Event](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/3-export_anchor.sh)
+
+## Goal: 
+
+Investigate the same anchor event through the Wazuh export artifacts and produce the matching export-interface finding.
+
+## Context: 
+
+Same event, same question, different interface. In live-dashboard mode, Task 3 requires opening a browser, logging into http://localhost:5601, navigating to Discover, typing a KQL query, and expanding matching documents. In export mode, you read the pre-generated equivalent: $ASSETS_DIR/wazuh_exports/anchor_search_results.json contains the Wazuh documents that match the anchor query; anchor_dashboard_trace.json records the equivalent click path a browser analyst would follow; anchor_dashboard_summary.md captures the field observations.
+
+The key analytical work is the field name reconciliation. src_ip in your flat files is source.ip in the Wazuh documents. hostname is agent.name. user is user.name. The field_mapping.json file documents every translation. Part of this task is finding the matching documents in the export and extracting the Wazuh field values for the same underlying events you found in Task 2.
+
+## Instructions: 
+
+Write 3-export_anchor.sh that:
+
+    Reads $ASSETS_DIR/wazuh_exports/anchor_search_results.json — extracts hits_total, the KQL query used, and the time range
+    Reads the events array and extracts the first and last event @timestamp values and their source.ip field from _source
+    Reads $ASSETS_DIR/wazuh_exports/anchor_dashboard_trace.json — extracts the click_path array and estimated_time_seconds
+    Reads $ASSETS_DIR/wazuh_exports/field_mapping.json and prints a side-by-side comparison of 5 field names (normalized schema → Wazuh field name) that appear in the anchor export
+    Records wall clock time from first file read to finding written
+    Writes findings/anchor_export.json conforming to the finding schema with scenario_id: "anchor", interface: "wazuh_export", and actions containing the click path from the dashboard trace
+
+**Expected Output:**
+
+```bash
+$ ./3-export_anchor.sh
+reading     : $ASSETS_DIR/wazuh_exports/anchor_search_results.json
+hits_total  : 47
+kql_query   : source.ip:("203.0.113.41" OR ...) AND destination.ip:"10.1.2.10"
+first event : 2026-03-25T01:15:00Z
+last event  : 2026-03-25T01:47:00Z
+field map   : src_ip        -> source.ip
+              hostname      -> agent.name
+              user          -> user.name
+              event_ref     -> _id
+              raw_message   -> full_log
+click_path  : 7 steps loaded from dashboard_trace
+elapsed     : 19 seconds, 4 file reads
+finding     : findings/anchor_export.json written
+```
+
+---
