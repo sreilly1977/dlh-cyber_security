@@ -116,3 +116,42 @@ workspace_init.json written
 ```
 
 ---
+
+# [2. CLI Investigation of the Anchor Event](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/2-cli_anchor.sh)
+
+## Goal: 
+
+Investigate the known anchor event end to end using only CLI tools and produce the first structured finding.
+
+## Context: 
+
+Before you run the three full scenarios through both interfaces, you run one known anchor event through the CLI. The anchor is a 48-event SSH brute force cluster against db-patient-01 from four external IPs, culminating in a successful root login at 01:47Z. The anchor manifest is at $ASSETS_DIR/anchor_event.json. You already know what this event is because your rule wrote the alert. The point is to measure what the CLI workflow looks like on a known incident so you have a clean baseline for the scenario comparisons.
+
+## Instructions: 
+
+Write 2-cli_anchor.sh that:
+
+    Reads the anchor event manifest from $ASSETS_DIR/anchor_event.json — extracts target_host, time_window, attacker_ips
+    Uses jq to filter $HANDOFF_DIR/data/enriched_events.json for events matching the anchor time window and attacker IPs, and counts matching records
+    Extracts the earliest and latest matching events and prints their timestamps
+    If $CATALOG_DIR/rules/sigma/001_ssh_brute_force.yml exists, reads it with yq and prints the detection and logsource sections
+    Records wall clock time from first command to finding written
+    Writes findings/anchor_cli.json conforming to the finding schema with scenario_id: "anchor", interface: "cli"
+
+**Expected Output:**
+
+```bash
+$ ./2-cli_anchor.sh
+reading     : $ASSETS_DIR/anchor_event.json
+host        : db-patient-01 (10.1.2.10)
+window      : 2026-03-25T01:15:00Z -> 2026-03-25T01:47:00Z
+attacker ips: 203.0.113.41 203.0.113.42 203.0.113.43 203.0.113.44
+matched     : 47 events in enriched_events.json
+first event : 2026-03-25T01:15:00Z
+last event  : 2026-03-25T01:47:00Z
+rule        : 001_ssh_brute_force (T1110.003)
+elapsed     : 28 seconds, 5 commands
+finding     : findings/anchor_cli.json written
+```
+
+---
