@@ -199,3 +199,42 @@ finding     : findings/anchor_export.json written
 ```
 
 ---
+
+# [4. Scenario A via CLI: Credential Theft Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/4-cli_scenario_a.sh)
+
+## Goal: 
+
+Investigate the credential theft chain incident from scratch through the CLI and produce a complete structured finding.
+
+## Context: 
+
+Scenario A is the credential theft chain on clin-ws-12. The scenario manifest at $ASSETS_DIR/scenarios/scenario_a_credential_theft.json gives you the host, the time window (2026-03-25T14:22:00Z – 14:28:00Z), and the primary techniques (T1003.001, T1550.002, T1021.002). A credential theft chain involves an LSASS memory access event (Sysmon EID 10), a dump file creation (EID 11), and a lateral movement network connection (EID 3). Your CLI investigation reconstructs this chain through jq queries against the enriched events.
+
+## Instructions: 
+
+Write 4-cli_scenario_a.sh that:
+
+    Reads the scenario manifest from $ASSETS_DIR/scenarios/scenario_a_credential_theft.json
+    Queries $HANDOFF_DIR/data/enriched_events.json with jq for events on clin-ws-12 within the scenario time window
+    Filters for Sysmon events 10, 11, and 3 and prints the matching records
+    Forms an investigation hypothesis from the ordered event chain
+    Writes findings/scenario_a_cli.json conforming to the finding schema with scenario_id: "scenario_a", interface: "cli", and all three ATT&CK techniques
+
+**Expected Output:**
+
+```bash
+$ ./4-cli_scenario_a.sh
+scenario    : scenario_a_credential_theft
+host        : clin-ws-12
+window      : 2026-03-25T14:22:00Z -> 2026-03-25T14:28:00Z
+scoped      : 10 events on clin-ws-12 in window
+EID 10      : lsass.exe accessed by rundll32.exe at 14:22:00Z
+EID 11      : C:\Temp\debug.dmp created at 14:22:11Z
+EID 3       : cmd.exe -> 10.1.1.10:445 at 14:24:11Z
+hypothesis  : LSASS dump via rundll32, lateral move to DC via SMB
+attack      : T1003.001 T1550.002 T1021.002
+elapsed     : 52 seconds, 8 commands
+finding     : findings/scenario_a_cli.json written
+```
+
+---
