@@ -564,3 +564,53 @@ comparison/workflow_comparison.json written
 ```
 
 ---
+
+# [14. Tool-Agnostic Investigation Playbook](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/tool_agnostic_playbook.md)
+
+## Goal: 
+
+Write the bounded tool-agnostic investigation playbook that a Tier 1 analyst can execute against any SIEM.
+
+## Context: 
+
+The playbook is the durable output of the evaluation week. Vendors change. Interfaces change. The investigation workflow does not. The playbook encodes the workflow as a sequence of steps with a CLI path and a dashboard path side by side, so that a new analyst can follow it on any platform without rewriting. This is the document that outlasts every platform migration MedDefense ever goes through.
+
+The playbook is bounded by the same convention as pipeline_spec.md in 3x00, baseline_spec.md in 3x01, detection_spec.md in 3x02, and triage_methodology.md in 3x03. Two pages. Nine hundred words maximum. Fixed sections. Short sentences. No marketing. The writing discipline is part of the deliverable.
+
+## Instructions: 
+
+Write playbook/tool_agnostic_playbook.md, bounded to two pages and 900 words, with these exact sections in this order:
+
+    Purpose (2 sentences)
+
+    Scope (what kind of investigations the playbook covers and what it does not)
+
+    Inputs (locked list of artifacts the analyst must have access to: enriched events, asset inventory, baseline, detection catalog, triage package, ioc context)
+
+    Workflow Steps (numbered, each step has a CLI action column and a export/dashboard action column side by side, maximum 8 steps)
+
+    Field Name Translation Table (short table mapping normalized schema to Wazuh field names for the 10 most common fields)
+
+    Query Decomposition Rule (the three-part rule: filter, aggregation, time window, and how to express each in jq, Sigma, KQL, and Lucene)
+
+    Finding Schema (the locked finding schema from the Requirements section, listed in short form)
+
+    Exit Criteria (when an investigation is considered complete and ready for a finding)
+
+    Known Pitfalls (at least three gotchas discovered during the Block 2 investigations, each in one sentence)
+
+Any section exceeding the budget must be trimmed. The full playbook must fit in two pages rendered on A4 at 11pt.
+
+This file goes into tool_evaluation/playbook/tool_agnostic_playbook.md via T15.
+
+**Expected Output:**
+
+```bash
+$ wc -w playbook/tool_agnostic_playbook.md
+847 playbook/tool_agnostic_playbook.md
+
+$ head -n 1 playbook/tool_agnostic_playbook.md
+# MedDefense Tool-Agnostic Investigation Playbook v1
+```
+
+---
