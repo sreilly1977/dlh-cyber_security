@@ -483,3 +483,35 @@ comparison/query_comparison.json written
 ```
 
 ---
+
+# [12. Structured Trade-off Analysis](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/12-tradeoff_analysis.sh)
+
+## Goal: 
+
+Produce a counted, evidence-based trade-off table identifying interface advantages drawn from the six findings produced in Tasks 2–9.
+
+## Context: 
+
+Everyone who compares two interfaces falls into the same trap: subjective preference dressed in technical vocabulary. The only way out is counted evidence. You have six findings. Each contains time to first answer and action count. The trade-off analysis is mechanical: join the findings by scenario_id, compute deltas, identify where each interface had the advantage, and attribute the advantage to a specific operational cause.
+
+## Instructions: 
+
+Write 12-tradeoff_analysis.sh that:
+
+    Loads every finding in findings/ and pairs CLI and wazuh_export findings by scenario_id
+    Computes delta in time_to_first_answer_seconds and action count for each scenario
+    Identifies which interface was faster per scenario and attributes the advantage to one cause from: native_field_surface, text_speed_iteration, context_join_ergonomics, timeline_visualization, reproducibility, filter_bar_efficiency, pipeline_expressiveness
+    Emits comparison/tradeoff_table.json and comparison/tradeoff_table.md
+
+**Expected Output:**
+
+```bash
+$ ./12-tradeoff_analysis.sh
+scenarios analyzed   : 4 (anchor + 3)
+export advantages    : (your findings)
+cli advantages       : (your findings)
+comparison/tradeoff_table.json written
+comparison/tradeoff_table.md written
+```
+
+---
