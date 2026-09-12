@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ASSETS_DIR="${ASSETS_DIR:-$HOME/3x04_assets}"
 FINDINGS_DIR="${FINDINGS_DIR:-$SCRIPT_DIR/findings}"
 
-RESULTS_FILE="$ASSETS_DIR/wazuh_exports/scenario_a_search_results.json"
+RES_FILE="$ASSETS_DIR/wazuh_exports/scenario_a_search_results.json"
 TRACE_FILE="$ASSETS_DIR/wazuh_exports/scenario_a_dashboard_trace.json"
 SUMMARY_FILE="$ASSETS_DIR/dashboard_exports/scenario_a_dashboard_summary.md"
 CLI_FINDING="$FINDINGS_DIR/scenario_a_cli.json"
@@ -34,7 +34,7 @@ t0_epoch=$(date +%s)
 t_start_iso=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 file_reads=0
 
-for f in "$RESULTS_FILE" "$TRACE_FILE" "$SUMMARY_FILE" "$CLI_FINDING"; do
+for f in "$RES_FILE" "$TRACE_FILE" "$SUMMARY_FILE" "$CLI_FINDING"; do
     if [[ ! -s "$f" ]]; then
         fail "prereq" "missing or empty: $f"
     fi
@@ -47,7 +47,7 @@ fi
 # 1. Search results: hits_total, KQL query, events array census.
 # ---------------------------------------------------------------------------
 IFS=$'\t' read -r hits_total kql ev_count <<< "$(jq -r '
-    [.hits_total, .query.kql, (.events | length)] | @tsv' < "$RESULTS_FILE")"
+    [.hits_total, .query.kql, (.events | length)] | @tsv' < "$RES_FILE")"
 file_reads=$((file_reads + 1))
 
 printf '%-12s : scenario_a_search_results.json (%s events)\n' "reading" "$ev_count"
@@ -78,7 +78,7 @@ jq -r '
               + (._source.event_data.DestinationIp // "") + ":"
               + (._source.event_data.DestinationPort // "") + " (SMB)")
           else (._source.full_log // "") end)
-       + " at " + $t)' < "$RESULTS_FILE"
+       + " at " + $t)' < "$RES_FILE"
 cmd_extract_done=1
 
 # ---------------------------------------------------------------------------
@@ -149,7 +149,7 @@ jq -n \
     --argjson actions "$CLICK_PATH_JSON" \
     --argjson techs "$TECHS_JSON" \
     --arg conf "$trace_conf" \
-    --slurpfile res "$RESULTS_FILE" \
+    --slurpfile res "$RES_FILE" \
     --arg hyp "Credential theft chain on clin-ws-12: j.martinez used rundll32.exe with comsvcs.dll MiniDump to dump LSASS (T1003.001) to C:\Temp\debug.dmp, then moved laterally via SMB (T1021.002) to 10.1.1.10:445 (srv-dc-01). Export-side reconstruction confirms the CLI verdict: 10 documents returned for the same KQL shape, all three techniques tagged identically to the rule." \
     '{
         finding_id: "scenario_a_export",

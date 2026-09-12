@@ -315,3 +315,44 @@ finding     : findings/scenario_c_cli.json written
 ```
 
 ---
+
+# [7. Scenario A via Wazuh Export: Credential Theft Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/7-export_scenario_a.sh)
+
+## Goal: 
+
+Investigate the credential theft chain through the Wazuh export artifacts and produce the matching export-interface finding.
+
+## Context: 
+
+Same scenario, different interface. In live-dashboard mode, Task 7 would require opening the Discover module, typing a KQL query for agent.name:"clin-ws-12", and expanding the EID 10, 11, and 3 events through the document flyout. In export mode, you read scenario_a_search_results.json to find the matching events in Wazuh document format, scenario_a_dashboard_trace.json to obtain the equivalent click path, and scenario_a_dashboard_summary.md for the field name observations. The analytical work is identical. What you measure is how long each interface takes for this scenario shape.
+
+## Instructions: 
+
+Write 7-export_scenario_a.sh that:
+
+    Reads $ASSETS_DIR/wazuh_exports/scenario_a_search_results.json — extracts hits_total, the KQL query, and the events array
+    Filters the events array for documents where _source.winlog.event_id is 10, 11, or 3 and prints each with its @timestamp and key Wazuh fields
+    Reads $ASSETS_DIR/wazuh_exports/scenario_a_dashboard_trace.json — extracts click_path, field_name_translation, and estimated_time_seconds
+    Reads $ASSETS_DIR/dashboard_exports/scenario_a_dashboard_summary.md and prints the ATT&CK mapping section
+    Records elapsed time
+    Writes findings/scenario_a_export.json with scenario_id: "scenario_a", interface: "wazuh_export", actions containing the click path, and correct ATT&CK techniques
+    Prints a comparison summary between this finding's elapsed time and the T4 CLI finding's elapsed time
+
+**Expected Output:**
+
+```bash
+$ ./7-export_scenario_a.sh
+reading     : scenario_a_search_results.json (10 events)
+kql         : agent.name:"clin-ws-12" AND winlog.event_id:(10 OR 1 OR 11 OR 3)
+EID 10      : _source.process.name present at 14:22:00Z
+EID 11      : _source.full_log at 14:22:11Z (file created)
+EID 3       : _source.destination.ip 10.1.1.10 at 14:24:11Z
+click_path  : 7 steps
+field_map   : hostname -> agent.name, event_id -> winlog.event_id
+attack      : T1003.001 T1550.002 T1021.002
+elapsed     : 33 seconds, 4 file reads
+delta_vs_cli: 19 seconds faster via export
+finding     : findings/scenario_a_export.json written
+```
+
+---
