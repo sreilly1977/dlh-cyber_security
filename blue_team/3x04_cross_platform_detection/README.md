@@ -565,7 +565,7 @@ comparison/workflow_comparison.json written
 
 ---
 
-# [14. Tool-Agnostic Investigation Playbook](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/tool_agnostic_playbook.md)
+# [14. Tool-Agnostic Investigation Playbook](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/playbook/tool_agnostic_playbook.md)
 
 ## Goal: 
 
@@ -611,6 +611,86 @@ $ wc -w playbook/tool_agnostic_playbook.md
 
 $ head -n 1 playbook/tool_agnostic_playbook.md
 # MedDefense Tool-Agnostic Investigation Playbook v1
+```
+
+---
+
+# [15. Vendor Evaluation Brief and Tool Evaluation Package](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/15-tool_evaluation_package.sh)
+
+## Goal: 
+
+Write the bounded vendor evaluation brief for Dr. Morales and assemble the final tool_evaluation/ package with a locked layout.
+
+## Context: 
+
+This is the final deliverable of the week. The vendor brief is the two-page document that goes on Dr. Morales's desk and into the compliance audit folder. It answers James Chen's question: based on the six findings, the rule translations, and the workflow comparison, which interface should MedDefense select as the primary analyst surface, under what conditions should we plan for a secondary, and what is the operational cost of being wrong. The brief cites the counted evidence from T13 and the trade-off table from T12. It does not cite marketing. It does not cite feature matrices. It cites numbers you produced yourself this week.
+
+The package assembly is the same discipline as the evidence_handoff/ in 3x00, the baseline_package/ in 3x01, the detection_catalog/ in 3x02, and the triage_package/ in 3x03. Locked layout. Manifest with sha256 hashes. Every downstream consumer opens exactly one directory.
+
+## Instructions: 
+
+Write vendor_brief.md, bounded to two pages and 900 words, with these exact sections in this order:
+
+    Purpose (2 sentences)
+
+    Evaluation Methodology (how the six scenarios were selected and how the measurements were produced)
+
+    Findings Summary (per-interface totals from workflow_comparison.json, cited by number)
+
+    Strengths and Weaknesses per Interface (two short paragraphs, one per interface, each citing at least two trade-off entries from tradeoff_table.json)
+
+    Recommendation (a single clear sentence naming the primary interface and a single sentence naming the conditions under which the secondary should be used)
+
+    Operational Risks of Being Wrong (at least three concrete risks with their estimated cost in analyst hours per week)
+
+    Security+ 4.7 Considerations (how automation, efficiency, scaling, complexity, cost, and technical debt inform the recommendation, in two sentences)
+
+    Next Steps (a short numbered list of follow-up actions for the detection engineering team, the compliance team, and the SOC manager)
+
+Then write 15-tool_evaluation_package.sh that assembles tool_evaluation/ with this exact layout and generates MANIFEST.json with sha256 hashes::
+
+<pre>
+tool_evaluation/
+  findings/
+    anchor_cli.json           anchor_export.json
+    scenario_a_cli.json       scenario_a_export.json
+    scenario_b_cli.json       scenario_b_export.json
+    scenario_c_cli.json       scenario_c_export.json
+  rules/wazuh/
+    001_ssh_brute_force.xml   003_interpreter_abuse.xml
+    010_credential_theft_chain.xml   translation_report.json
+  comparison/questions/
+    q1.yml   q2.yml   q3.yml   q4.yml
+  comparison/
+    query_comparison.json   tradeoff_table.json
+    tradeoff_table.md       workflow_comparison.json
+  playbook/tool_agnostic_playbook.md
+  brief/vendor_brief.md
+  workspace/workspace_init.json
+  runtime/
+    (all task scripts 0-13)
+  MANIFEST.json
+</pre>
+
+The script must copy every listed file, generate MANIFEST.json with path, size, and sha256 for each entry, verify every required file exists and is non-empty, and fail loudly on any missing file. The vendor brief and the playbook must be present or the script aborts.
+
+**Expected Output:**
+
+```bash
+$ wc -w brief/vendor_brief.md
+872 brief/vendor_brief.md
+
+$ ./15-tool_evaluation_package.sh
+copying findings   ... 8 files
+copying rules      ... 4 files
+copying comparison ... 8 files
+copying playbook   ... 1 file
+copying brief      ... 1 file
+copying workspace  ... 1 file
+copying runtime    ... 14 files
+MANIFEST.json      : 37 entries
+sanity check       : ok
+tool_evaluation/ ready
 ```
 
 ---
