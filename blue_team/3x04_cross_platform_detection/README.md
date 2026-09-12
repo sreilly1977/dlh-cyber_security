@@ -276,3 +276,42 @@ finding     : findings/scenario_b_cli.json written
 ```
 
 ---
+
+# [6. Scenario C via CLI: Medical IoT Segment Egress](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/6-cli_scenario_c.sh)
+
+## Goal: 
+
+Investigate the medical IoT segment egress from med-mri-02 through the CLI and produce the structured finding.
+
+## Context: 
+
+Scenario C is an IoT device in the MEDICALIOT zone (10.2.3.0/24) beaconing outbound to 198.51.100.73:443 five times over 48 minutes with increasing bytesout. The signal is narrow — no authentication event, no process event, just five firewall flows — but the significance is high because MEDICAL_IOT devices should never initiate direct internet connections. Your CLI investigation joins the network events to the zone information and identifies the C2 beacon pattern.
+
+## Instructions: 
+
+Write 6-cli_scenario_c.sh that:
+
+    Reads the scenario manifest from $ASSETS_DIR/scenarios/scenario_c_medical_egress.json
+    Queries $HANDOFF_DIR/data/network_events.json (or enriched_events.json) with jq for events with src_ip: "10.2.3.2" and dst_ip: "198.51.100.73"
+    Reads $HANDOFF_DIR/context/network_zones.json and verifies that 10.2.3.0/24 is in the MEDICAL_IOT zone
+    Reads $ASSETS_DIR/3x03_assets/ioc_context.json (if available) and checks the destination IP
+    Orders the beacon events chronologically, computes the interval between events, and prints the pattern
+    Writes findings/scenario_c_cli.json with scenario_id: "scenario_c", interface: "cli", techniques T1071.001 and T1041
+
+**Expected Output:**
+
+```bash
+$ ./6-cli_scenario_c.sh
+scenario    : scenario_c_medical_egress
+src_ip      : 10.2.3.2 (MEDICAL_IOT zone)
+dst_ip      : 198.51.100.73:443
+matched     : 6 flows in enriched_events.json
+beacon_1    : 2026-03-25T11:44:00Z  (bytes_out: ~8KB)
+beacon_2    : 2026-03-25T11:56:00Z  (interval: 12 min)
+beacon_3    : 2026-03-25T12:08:00Z  (interval: 12 min)
+zone        : MEDICAL_IOT — no direct internet access permitted
+attack      : T1071.001 T1041
+finding     : findings/scenario_c_cli.json written
+```
+
+---
