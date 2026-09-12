@@ -238,3 +238,41 @@ finding     : findings/scenario_a_cli.json written
 ```
 
 ---
+
+# [5. Scenario B via CLI: Off-Hours Privileged Logon on PHI Workstation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/5-cli_scenario_b.sh)
+
+## Goal: 
+
+Investigate the off-hours privileged logon on clin-ws-07 through the CLI and produce the structured finding.
+
+## Context: 
+
+Scenario B is the 02:17Z off-hours privileged logon on clin-ws-07 (a PHI-classified clinical workstation). The scenario manifest points you at events 4624 (logon), 4672 (special privileges), and Sysmon EID 1 (PowerShell execution). The host is PHI-classified and the logon falls well outside the expected business hours window. The finding must capture the asset criticality, data classification, ATT&CK technique chain, and the ambiguity note: the user p.morales is the CISO and is authorized for EHR access, but the ExecutionPolicy Bypass and off-hours timing warrant escalation.
+
+## Instructions: 
+
+Write 5-cli_scenario_b.sh that:
+
+    Reads the scenario manifest from $ASSETS_DIR/scenarios/scenario_b_offhours_phi.json
+    Queries $HANDOFF_DIR/data/enriched_events.json for events on clin-ws-07 in the window (2026-03-25T02:17:00Z – 02:23:00Z)
+    Queries $HANDOFF_DIR/context/asset_inventory.json for the host record and extracts criticality and data_classification
+    Filters for Windows events 4624, 4672, and Sysmon EID 1; prints each with its timestamp and key fields
+    Notes the ambiguity from the scenario manifest and includes it in the finding
+    Writes findings/scenario_b_cli.json with scenario_id: "scenario_b", interface: "cli", techniques T1078.002 and T1059.001
+
+**Expected Output:**
+
+```bash
+$ ./5-cli_scenario_b.sh
+scenario    : scenario_b_offhours_phi
+host        : clin-ws-07 (criticality: MEDIUM, data: PHI)
+window      : 2026-03-25T02:17:00Z -> 2026-03-25T02:23:00Z
+EID 4624    : p.morales RemoteInteractive logon at 02:17:00Z
+EID 4672    : SeBackupPrivilege SeRestorePrivilege at 02:17:02Z
+EID 1       : powershell.exe -ExecutionPolicy Bypass at 02:20:00Z
+ambiguity   : p.morales is CISO, authorized for EHR, but timing+bypass warrant escalation
+attack      : T1078.002 T1059.001
+finding     : findings/scenario_b_cli.json written
+```
+
+---
