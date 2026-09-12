@@ -515,3 +515,52 @@ comparison/tradeoff_table.md written
 ```
 
 ---
+
+# [13. Workflow Comparison](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/13-workflow_comparison.sh)
+
+## Goal: 
+
+Compute the aggregate workflow metrics across every finding and produce the final cross-platform workflow comparison dataset.
+
+## Context: 
+
+The trade-off analysis in T12 was scenario-by-scenario. The workflow comparison in T13 is aggregate. You sum the time to first answer across all scenarios by interface, you sum the actions, you compute the per-finding average, you compute the median, and you produce a single dataset that powers both the playbook in T14 and the vendor brief in T15. This is the underlying numerical substrate of the evaluation. Everything downstream cites these numbers.
+
+The goal is a single workflow_comparison.json object with clear interface totals and per-scenario details, computed from the findings with zero human judgment. James Chen can read it without you in the room and reach the same conclusions.
+
+## Instructions: 
+
+Write 13-workflow_comparison.sh that aggregates the findings and produces comparison/workflow_comparison.json. The script must:
+
+    Load every finding in findings/
+
+    Compute per-interface totals and averages for time_to_first_answer_seconds, action_count, fields_touched_count, and event_refs_count
+
+    Compute per-scenario deltas between CLI and wazuh_export
+
+    Compute aggregate confidence distribution per interface (how many low, medium, high)
+
+    Emit a single JSON object with keys per_interface, per_scenario, confidence_distribution, and generated_at
+
+    Print a summary table that is safe to paste into the vendor brief
+
+**Expected Output:**
+
+```bash
+$ ./13-workflow_comparison.sh
+findings loaded       : 8 (4 cli + 4 wazuh_export)
+per interface totals:
+  cli         : 928s total, avg 232s, median 247s, 39 actions
+  wazuh_export   : 788s total, avg 197s, median 193s, 22 actions
+per interface confidence:
+  cli         : high=3 medium=1 low=0
+  wazuh_export   : high=3 medium=1 low=0
+per scenario deltas (wazuh_export - cli):
+  anchor      : -34s (wazuh_export faster)
+  scenario_a  : -130s (wazuh_export faster)
+  scenario_b  : +26s (cli faster)
+  scenario_c  : -73s (wazuh_export faster)
+comparison/workflow_comparison.json written
+```
+
+---
