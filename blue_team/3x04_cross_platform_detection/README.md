@@ -394,3 +394,49 @@ finding     : findings/scenario_c_export.json written
 ```
 
 ---
+
+# [10. Sigma to Wazuh Rule Translation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/10-rule_translation.sh)
+### advanced
+
+## Goal: 
+
+Translate three Sigma rules from the 3x02 catalog into native Wazuh XML rules, validate them with xmllint, and produce a translation report.
+
+## Context: 
+
+Sigma is vendor-neutral on purpose, but the day a detection rule ships into a specific SIEM it has to speak that SIEM's native language. Wazuh uses an XML rule format with <if_sid>, <frequency>, <timeframe>, and <same_source_ip/>. The translation is validated with xmllint (not wazuh-logtest, which is not available outside the container) to confirm the XML is well-formed. A match count verification compares how many events each Sigma rule matches against the enriched events with your 3x02 runner, then verifies the Wazuh XML would match the same events based on the field logic.
+
+## Instructions: 
+
+Write 10-rule_translation.sh that produces, validates, and reports three translations. The script must:
+
+    Translate $CATALOG_DIR/rules/sigma/001_ssh_brute_force.yml to rules/wazuh/001_ssh_brute_force.xml — use Wazuh frequency syntax: <if_sid>5710</if_sid>, <frequency>5</frequency>, <timeframe>120</timeframe>, <same_source_ip/>
+    Translate $CATALOG_DIR/rules/sigma/003_interpreter_abuse.yml to rules/wazuh/003_interpreter_abuse.xml — single-event rule with <field name="win.eventdata.image"> matches
+    Translate $CATALOG_DIR/rules/sigma/010_credential_theft_chain.yml (or 009_credential_theft_chain.yml if numbered differently) to rules/wazuh/010_credential_theft_chain.xml
+    Validate every produced XML file with xmllint --noout file.xml and record exit code
+    Run the original Sigma rule against a scoped event set using your 3x02 runner and count matches
+    Emit rules/wazuh/translation_report.json with: input Sigma rule path, output XML path, xmllint status, sigma match count, and translation status
+
+**Expected Output:**
+
+```bash
+$ ./10-rule_translation.sh
+001_ssh_brute_force   : xml written
+  xmllint             : valid
+  sigma match count   : 47
+  status              : translated
+
+003_interpreter_abuse : xml written
+  xmllint             : valid
+  sigma match count   : (your count)
+  status              : translated
+
+010_credential_theft  : xml written
+  xmllint             : valid
+  sigma match count   : (your count)
+  status              : translated
+
+translation_report.json written
+```
+
+---
