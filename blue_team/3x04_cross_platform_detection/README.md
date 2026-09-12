@@ -356,3 +356,41 @@ finding     : findings/scenario_a_export.json written
 ```
 
 ---
+
+# [9. Scenario C via Wazuh Export: Medical IoT Segment Egress](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/9-export_scenario_c.sh)
+
+## Goal: 
+
+Investigate the medical IoT egress scenario through the Wazuh export artifacts and produce the matching finding.
+
+## Context: 
+
+Scenario C is the narrow-signal test. The CLI investigation in T6 was fast because the jq filter joining src_ip to zone was a one-line expression. The export investigation in T9 depends on whether the Wazuh document's source.zone field is populated. You check scenario_c_search_results.json for _source.source.zone, extract the beacon pattern, and record whether the zone information was immediately available or required a secondary lookup.
+
+## Instructions: Write 9-export_scenario_c.sh that:
+
+    Reads $ASSETS_DIR/wazuh_exports/scenario_c_search_results.json and extracts the events array
+    Extracts @timestamp, _source.source.ip, _source.destination.ip, _source.source.zone, and the raw message from each event
+    Orders the beacon events chronologically and prints the interval between each pair
+    Checks whether source.zone is populated in the export. If yes, records that the zone was immediately available. If not, records the fallback step.
+    Reads $ASSETS_DIR/wazuh_exports/scenario_c_dashboard_trace.json
+    Writes findings/scenario_c_export.json with scenario_id: "scenario_c", interface: "wazuh_export", techniques T1071.001 and T1041
+    Prints a comparison summary against T6
+
+**Expected Output:**
+
+```bash
+$ ./9-export_scenario_c.sh
+reading     : scenario_c_search_results.json (6 events)
+src_ip      : 10.2.3.2
+dst_ip      : 198.51.100.73:443
+src_zone    : MEDICAL_IOT (from source.zone — immediately available)
+beacon_1    : 2026-03-25T11:44:00Z
+beacon_2    : 2026-03-25T11:56:00Z  (12 min interval)
+attack      : T1071.001 T1041
+elapsed     : 21 seconds, 3 file reads
+delta_vs_cli: -18 seconds (export faster for this signal shape)
+finding     : findings/scenario_c_export.json written
+```
+
+---
