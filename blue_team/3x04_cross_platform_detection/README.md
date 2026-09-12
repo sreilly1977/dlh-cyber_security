@@ -440,3 +440,46 @@ translation_report.json written
 ```
 
 ---
+
+# [11. Query Language Comparison](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection/11-query_comparison.sh)
+### advanced
+
+## Goal: 
+
+Express four investigative questions in four query languages and verify that all formulations are semantically equivalent.
+
+## Context: 
+
+The analyst who can translate a question into any query language understands the underlying operation in a way that a dashboard operator never will. You pick four questions and express each in jq, Sigma YAML, KQL, and Lucene. The jq formulations run live against the enriched events. The KQL and Lucene result counts come from the pre-computed query result files in $ASSETS_DIR/query_results/, which record what the live dashboard would return. You compare the counts and flag any mismatch.
+
+## Instructions: 
+
+Write 11-query_comparison.sh that:
+
+    Defines four investigative questions:
+
+    Q1: All failed SSH logins from IPs in the attacker_ips list in anchor_event.json
+    Q2: All privileged Windows logons (EID 4672) between 18:00 and 06:00 on clinical hosts
+    Q3: All process creation events (Sysmon EID 1) on clin-ws-12 in the scenario A window
+    Q4: All outbound flows from 10.2.3.0/24 to destinations not in MedDefense managed ranges
+
+    For each question, writes the jq filter and runs it against $HANDOFF_DIR/data/enriched_events.json, recording the count
+    For each question, writes the Sigma detection block as comparison/questions/q{1..4}.yml
+    For each question, reads the pre-computed KQL result from $ASSETS_DIR/query_results/kql_* and extracts the result_count
+    For each question, notes the Lucene equivalent from $ASSETS_DIR/query_results/lucene_* if available
+    Emits comparison/query_comparison.json with all four formulations, counts, and a pass/fail flag per question
+
+**Expected Output:**
+
+```bash
+$ ./11-query_comparison.sh
+question                  | jq  | sigma | kql | lucene | status
+--------------------------|----|-------|-----|--------|--------
+q1_failed_ssh_source      | 47 |    47 |  47 |     47 | match
+q2_offhours_priv_logon    |  4 |     4 |   4 |      4 | match
+q3_clin_ws12_proc_create  | 10 |    10 |  10 |     10 | match
+q4_medical_egress_ext     |  6 |     6 |   6 |      6 | match
+comparison/query_comparison.json written
+```
+
+---
