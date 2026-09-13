@@ -85,3 +85,67 @@
 **A:** Domain 4.4 security monitoring and alert handling, plus Domain 4.7 automation and orchestration concepts.
 
 ---
+
+## The 24-Hour Watch
+
+---
+
+### Full-Chain Shift Operation
+
+**Q: How is an end-to-end detection chain executed against an unseen evidence pack?**
+
+**A:** The pipeline, baseline, catalog, and triage phases run sequentially to ingest, normalize, score, and disposition evidence from a pack the analyst has never seen before.
+
+**Q: How does the pipeline recover from dirty data without manual intervention?**
+
+**A:** Bad records are quarantined and logged to a rejected-events artifact while clean records continue processing, so no human fix is needed mid-shift.
+
+**Q: Why must countable artifacts be produced at every phase?**
+
+**A:** Quantifiable outputs like event counts, baseline deviations, catalog hits, and triage dispositions make the entire shift measurable, auditable, and defensible.
+
+---
+
+### Investigative Depth
+
+**Q: How are multi-step intrusions reconstructed from fragmented evidence?**
+
+**A:** Correlating events across disparate sources by time, host, and indicator lets the analyst stitch scattered fragments into a coherent kill-chain narrative.
+
+**Q: How are true incidents distinguished from approved activity and noise?**
+
+**A:** Bounded, auditable reasoning applies explicit criteria, baselines, and allowlist checks so every disposition can be traced back to its supporting evidence.
+
+**Q: How do analysts operate across CLI and pre-exported Wazuh artifacts in one investigation?**
+
+**A:** Live command-line querying and exported Wazuh dashboards, alerts, and logs are treated as complementary inputs joined within the same investigative workflow.
+
+---
+
+### Campaign Analysis
+
+**Q: How are incidents linked into a campaign?**
+
+**A:** Shared indicators, temporal proximity, and consistent tactics across incidents are used to cluster related activity into a single coordinated campaign.
+
+**Q: How do you determine whether observed activity maps to HC-RED7 or an unrelated actor?**
+
+**A:** Comparing observed TTPs, indicators, and timing against the HC-RED7 profile confirms attribution or identifies the activity as an unrelated actor.
+
+---
+
+### Professional Handoff
+
+**Q: What does an incident report conforming to a locked schema look like?**
+
+**A:** A standardized report with fixed fields for classification, evidence, timeline, and disposition, ensuring consistency across every incident documented.
+
+**Q: How are tuning changes justified?**
+
+**A:** Each proposal cites specific, counted evidence such as alert volumes, false positive rates, or baseline deviations that demonstrably motivate the change.
+
+**Q: What goes into a complete shift handoff package?**
+
+**A:** Incident reports, tuning proposals, countable phase artifacts, and campaign findings bundled so the incoming shift can pick up with full context.
+
+---
