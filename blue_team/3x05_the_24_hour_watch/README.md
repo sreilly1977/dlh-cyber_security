@@ -654,3 +654,74 @@ $ ./5-triage_queue.sh
 ```
 
 ---
+
+# 6. Incident Grouping and Correlation(https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/6-correlate_alerts.sh)
+
+## Goal: 
+
+Cluster true-positive alerts into candidate incidents using shared IOCs, hosts, accounts, and temporal proximity.
+
+## Context: 
+
+Alerts are events. Incidents are stories. Grouping collapses a wall of alerts into a small number of investigable cases. The grouping is mechanical and evidence-based, not intuition-based, so a grader can verify the clusters by re-running the same rules.
+
+The clustering rules are fixed so two analysts with the same evidence reach the same grouping. Alerts within 15 minutes on the same host are grouped. Alerts sharing a user account are grouped regardless of host. Alerts sharing a source IP from the IOC feed are grouped. Everything else is a standalone candidate that forms its own incident.
+
+You must produce at least 3 incidents from the TP alerts. If your catalog produced at least 3 TP alerts covering the three planted scenarios, the grouping will yield exactly 3 incidents. If your triage classified too aggressively as NOISE and the TP count is below 3, this task exits non-zero and forces you to re-examine the prior step.
+
+## Instructions: 
+
+Write 6-correlate_alerts.sh that:
+
+    Reads $SHIFT_WORKSPACE/alerts/triage_log.jsonl and extracts all records with classification: "TP".
+
+    Groups TP records by the following clustering rules (applied in order):
+
+    Same host + temporal proximity: two TP alerts on the same host (after hostname normalisation to lowercase) within 15 minutes of each other belong to the same candidate.
+    Shared user: two TP alerts with the same non-null user field belong to the same candidate, regardless of host.
+    IOC match: two TP alerts where at least one entry in matches_ioc is shared belong to the same candidate.
+    Residual: any remaining TP alert not grouped by the above forms its own single-alert candidate.
+
+    Assigns incident IDs in the order candidates surface: INC-YYYYMMDD-A, INC-YYYYMMDD-B, INC-YYYYMMDD-C. Uses today's date in the YYYYMMDD portion.
+
+    Writes $SHIFT_WORKSPACE/alerts/incidents.json:
+
+```json
+{
+  "shift_id": "string",
+  "generated_at": "ISO-8601",
+  "incidents": [
+    {
+      "incident_id": "INC-YYYYMMDD-A",
+      "host_list": ["string"],
+      "user_list": ["string"],
+      "ioc_list": ["string"],
+      "alert_ids": ["string"],
+      "first_seen": "ISO-8601",
+      "last_seen": "ISO-8601",
+      "grouping_rule": "temporal | shared_user | ioc_match | residual",
+      "tentative_category": "credential_abuse | persistence | c2 | staging | lateral_movement | unknown",
+      "confidence": "low | medium | high"
+    }
+  ],
+  "incident_count": 0,
+  "unmatched_tp_count": 0
+}
+```
+
+    Prints a one-line summary per incident and exits non-zero if incident_count is lower than 3.
+
+**Expected Output:**
+
+```bash
+$ ./6-correlate_alerts.sh
+[group] TP alerts: N
+[group] grouping by temporal proximity, shared user, IOC match
+[group] INC-YYYYMMDD-A: N alerts  host=hostname-1  rule=temporal
+[group] INC-YYYYMMDD-B: N alerts  host=hostname-2  rule=ioc_match
+[group] INC-YYYYMMDD-C: N alerts  host=hostname-3  rule=shared_user
+[group] incident_count=3
+[group] incidents.json written
+```
+
+---
