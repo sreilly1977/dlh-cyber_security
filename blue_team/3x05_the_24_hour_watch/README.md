@@ -108,7 +108,7 @@ You are NOT told which host is compromised, which user is involved, or which rul
 
 Every investigation finding across this project must conform to this schema:
 
-```jason
+```json
 {
   "finding_id": "string",
   "incident_id": "INC-YYYYMMDD-X",
@@ -245,7 +245,7 @@ Write 0-shift_intake.sh that:
 
     Writes $SHIFT_WORKSPACE/runtime/shift_start.json:
 
-```jason
+```json
 {
   "shift_id": "SHIFT-YYYYMMDD-HHMM",
   "analyst_host": "hostname-of-lab-container",
@@ -332,7 +332,7 @@ Write 1-run_pipeline.sh that:
 
     Writes $SHIFT_WORKSPACE/runtime/pipeline_run.json:
 
-```jason
+```json
 {
   "pipeline_version": "string (from $PIPELINE_BIN --version or 'unknown')",
   "started_at": "ISO-8601",
@@ -448,6 +448,79 @@ $ ./2-run_baselines.sh
 [baseline] hot hosts: hostname-1 hostname-2 hostname-3
 [baseline] markers: N total (unseen_src_ip: N  off_hours: N  new_service: N)
 [baseline] baseline_run.json written
+```
+
+---
+
+# [3. Detection Catalog Execution](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/3-run_detections.sh)
+
+## Goal: 
+
+Run your 3x02 Sigma detection catalog against the enriched events and produce the shift alert queue.
+
+## Context: 
+
+The catalog is your detection layer. Running it produces alert_queue.json, the artifact that drives every downstream triage and investigation task. If a rule that should fire does not, you discover it here — or you discover it in Task 12 when you realize an incident you found through investigation should have produced an alert that it did not. That gap is detection engineering feedback. Both outcomes are graded.
+
+The secondary pack was deliberately built with at least three incidents, each of which fires at least one rule from your catalog. If zero alerts fire, the catalog is broken or the enriched events are malformed. The script must exit non-zero in that case so the shift does not continue on a false foundation.
+
+## Instructions: 
+
+Write 3-run_detections.sh that:
+
+    Reads $SHIFT_WORKSPACE/runtime/pipeline_run.json and confirms exit_status is 0.
+
+    Counts the total number of .yml rule files in $CATALOG_DIR/rules/sigma/ (or the path structure your 3x02 catalog uses) and prints the count.
+
+    Invokes your 3x02 detection runner — either sigma-cli directly or the wrapper script you built in 3x02 — against the enriched events file from $SHIFT_WORKSPACE/enriched/. Passes the catalog directory and the output path $SHIFT_WORKSPACE/alerts/alert_queue.json as arguments.
+
+    After the detection run, verifies that $SHIFT_WORKSPACE/alerts/alert_queue.json exists and is non-empty.
+
+    Reads alert_queue.json and computes:
+
+    Total alert count
+    Alert count by severity (critical, high, medium, low)
+    Alert count per rule ID, sorted descending Prints a human-readable summary table.
+
+    Writes $SHIFT_WORKSPACE/runtime/catalog_run.json:
+
+```json
+{
+  "catalog_rules_total": 0,
+  "catalog_rules_fired": 0,
+  "alerts_total": 0,
+  "alerts_by_severity": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "alerts_by_rule": {
+    "rule_id_string": 0
+  },
+  "started_at": "ISO-8601",
+  "ended_at": "ISO-8601",
+  "exit_status": 0
+}
+```
+
+The script exits non-zero if the detection runner fails or if alerts_total is zero.
+
+**Expected Output:**
+
+```bash
+$ ./3-run_detections.sh
+[detect] pipeline check: OK
+[detect] catalog loaded: N rules
+[detect] invoking detection runner
+[detect] matched: N rules / N alerts
+[detect] severity critical=N high=N medium=N low=N
+[detect] top rules:
+  001_ssh_brute_force   : N alerts
+  002_offhours_priv     : N alerts
+  ...
+[detect] alert_queue.json written
+[detect] catalog_run.json written
 ```
 
 ---
