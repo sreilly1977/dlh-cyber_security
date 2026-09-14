@@ -2,21 +2,21 @@
 # Name: 6-correlate_alerts.sh
 # Purpose: Cluster true-positive alerts from triage_log.jsonl into candidate
 #          incidents using the fixed 3x03 grouping rules, applied in order:
-#            1. temporal - same host (lowercase-normalised) within 15 minutes
-#            2. shared_user - same non-null user, regardless of host or time
+#            1. temporal - same host (lowercase-normalised) within 15
+#               minutes of the cluster's anchor (first alert); cluster span
+#               never exceeds 15 minutes (no transitive over-chaining)
+#            2. shared_user - same non-null user, regardless of host/time
 #            3. ioc_match - shared entry in matches_ioc
 #            4. residual - remaining TPs form single-alert candidates
-#          Because triage_log.jsonl carries no event timestamps, each alert
-#          is joined back to alert_queue.json on alert_id to recover
-#          event_summary.timestamp for the temporal rule (fail-loud if the
-#          join misses). Labels: a cluster's grouping_rule is the phase that
-#          last merged it (phase-1 clusters untouched later keep "temporal";
-#          singletons are "residual"). Incident IDs INC-YYYYMMDD-A.. are
-#          assigned to clusters ordered by first_seen then lowest alert_id.
-#          tentative_category is the majority member rule_id mapped via
-#          002->credential_abuse, 005->persistence, 009->lateral_movement.
-#          confidence: high if >=5 alerts or any IOC, medium if 2-4, low if 1.
-#          unmatched_tp_count counts TP alerts in residual singletons.
+#          Every TP alert_id is verified present in alert_queue.json
+#          (fail-loud per-alert timestamp join). Incident IDs
+#          INC-YYYYMMDD-A.. assigned to clusters ordered by first_seen then
+#          lowest alert_id. grouping_rule is the LAST phase that merged the
+#          final cluster (deterministic union-find root stamping).
+#          tentative_category from majority member rule_id (002->
+#          credential_abuse, 005->persistence, 009->lateral_movement).
+#          confidence: high if >=5 alerts or any IOC, medium if 2-4, low if
+#          1. unmatched_tp_count counts TP alerts in residual singletons.
 #          Exits non-zero if fewer than 3 incidents are formed.
 # Author: Steve - Cybersecurity Engineer
 # Date: 14 September 2026
@@ -59,17 +59,22 @@ def parse_ts(s):
     except ValueError:
         return None
 
-# --- event timestamps from the alert queue (join on alert_id) --------------
+# --- event timestamps from the alert queue (fail-loud per-alert join) ------
 with open(queue_path, encoding="utf-8") as fh:
     queue = json.load(fh)
 if isinstance(queue, dict):
     queue = queue.get("alerts", [])
+
 ts_by_id = {}
+raw_by_id = {}
 for a in queue:
     if not isinstance(a, dict):
         continue
     es = a.get("event_summary") or {}
-    ts_by_id[a.get("alert_id")] = parse_ts(es.get("timestamp"))
+    raw_ts = es.get("timestamp")
+    if raw_ts is not None:
+        raw_by_id[a.get("alert_id")] = raw_ts
+    ts_by_id[a.get("alert_id")] = parse_ts(raw_ts)
 
 # --- true positives from the triage log -------------------------------------
 tp = []
@@ -85,23 +90,21 @@ with open(log_path, encoding="utf-8", errors="replace") as fh:
         if rec.get("classification") != "TP":
             continue
         aid = rec.get("alert_id")
-        if not ts_by_id and aid not in ts_by_id:
-            sys.exit("alert {} not found in alert_queue.json - cannot recover timestamp".format(aid))
-        raw_ts = None
-        if aid in ts_by_id:
-            for a in queue:
-                if a.get("alert_id") == aid:
-                    raw_ts = (a.get("event_summary") or {}).get("timestamp")
-                    break
+        # Fail-loud per-alert join: every TP alert must resolve to a
+        # timestamp in alert_queue.json so the temporal rule is verifiable.
+        if aid not in ts_by_id:
+            sys.exit("alert {} not found in alert_queue.json - cannot "
+                     "recover timestamp for temporal correlation".format(aid))
+        if ts_by_id[aid] is None:
+            sys.exit("alert {} has no parseable event_summary.timestamp in "
+                     "alert_queue.json".format(aid))
         tp.append({
             "aid": aid,
             "host": (str(rec["host"]).lower() if rec.get("host") else None),
             "user": rec.get("user") if isinstance(rec.get("user"), str) else None,
             "iocs": set(rec.get("matches_ioc") or []),
             "rule_id": rec.get("rule_id"),
-            "ts": ts_by_id.get(aid),
-            "raw_ts": raw_ts,
-            "classified_at": rec.get("classified_at"),
+            "ts": ts_by_id[aid],
         })
 
 n = len(tp)
@@ -111,7 +114,7 @@ if n == 0:
 print("[group] TP alerts: {}".format(n))
 print("[group] grouping by temporal proximity, shared user, IOC match")
 
-# --- union-find with per-cluster rule labels ---------------------------------
+# --- union-find; label[root] = phase of the LAST successful merge ----------
 parent = list(range(n))
 label = ["residual"] * n
 
@@ -124,21 +127,26 @@ def find(x):
 def union(x, y, rule):
     rx, ry = find(x), find(y)
     if rx == ry:
-        return
+        return False
     parent[ry] = rx
     label[rx] = rule
+    return True
 
-# Phase 1: temporal - same host, consecutive-gap chaining within 900s
+# Phase 1: temporal - same host, within 15 min of the CLUSTER ANCHOR.
+# Anchored windows bound every cluster's total span to <= 900 seconds;
+# a late alert cannot join transitively through intermediate alerts.
 by_host = defaultdict(list)
 for i, t in enumerate(tp):
-    if t["host"] and t["ts"] is not None:
+    if t["host"]:
         by_host[t["host"]].append(i)
 for host, idxs in by_host.items():
     idxs.sort(key=lambda i: (tp[i]["ts"], tp[i]["aid"] or ""))
-    for k in range(1, len(idxs)):
-        gap = (tp[idxs[k]]["ts"] - tp[idxs[k - 1]]["ts"]).total_seconds()
-        if gap <= 900:
-            union(idxs[k - 1], idxs[k], "temporal")
+    anchor = idxs[0]
+    for i in idxs[1:]:
+        if (tp[i]["ts"] - tp[anchor]["ts"]).total_seconds() <= 900:
+            union(anchor, i, "temporal")
+        else:
+            anchor = i  # start a new window anchored at this alert
 
 # Phase 2: shared user - chain every non-null user's alerts into one cluster
 by_user = defaultdict(list)
@@ -160,7 +168,7 @@ for value, idxs in sorted(by_ioc.items()):
     for k in range(1, len(idxs)):
         union(idxs[k - 1], idxs[k], "ioc_match")
 
-# --- assemble clusters --------------------------------------------------------
+# --- assemble clusters; read label from the final root ----------------------
 comps = defaultdict(list)
 for i in range(n):
     comps[find(i)].append(i)
@@ -177,17 +185,11 @@ def category(rule_id):
 
 clusters = []
 for root, members in comps.items():
-    dated = [tp[i] for i in members if tp[i]["ts"] is not None]
-    if dated:
-        first = min(dated, key=lambda t: (t["ts"], t["aid"] or ""))
-        last = max(dated, key=lambda t: (t["ts"], t["aid"] or ""))
-        first_seen, last_seen = first["raw_ts"], last["raw_ts"]
-        sort_key = (first["ts"], min(tp[i]["aid"] or "" for i in members))
-    else:
-        cas = [tp[i]["classified_at"] for i in members if tp[i]["classified_at"]]
-        first_seen = last_seen = min(cas) if cas else None
-        sort_key = (datetime.datetime.max.replace(tzinfo=datetime.timezone.utc),
-                    min(tp[i]["aid"] or "" for i in members))
+    dated = [tp[i] for i in members]
+    first = min(dated, key=lambda t: (t["ts"], t["aid"] or ""))
+    last = max(dated, key=lambda t: (t["ts"], t["aid"] or ""))
+    raw_first = raw_by_id.get(first["aid"])
+    raw_last = raw_by_id.get(last["aid"])
     cats = Counter(category(tp[i]["rule_id"]) for i in members)
     best = max(cats.items(), key=lambda kv: (kv[1], kv[0]))[0]
     iocs = sorted(set().union(*(tp[i]["iocs"] for i in members)))
@@ -198,9 +200,9 @@ for root, members in comps.items():
         "iocs": iocs,
         "rule": label[root],
         "category": best,
-        "first_seen": first_seen,
-        "last_seen": last_seen,
-        "sort_key": sort_key,
+        "raw_first": raw_first,
+        "raw_last": raw_last,
+        "sort_key": (first["ts"], min(tp[i]["aid"] or "" for i in members)),
     })
 
 clusters.sort(key=lambda c: c["sort_key"])
@@ -208,7 +210,7 @@ clusters.sort(key=lambda c: c["sort_key"])
 incidents = []
 unmatched = 0
 for idx, c in enumerate(clusters):
-    letter = string.ascii_uppercase[idx] if idx < 26 else str(idx)
+    letter = string.ascii_uppercase[idx % 26] if idx < 26 else str(idx)
     inc_id = "INC-{}-{}".format(today, letter)
     aids = sorted(tp[i]["aid"] for i in c["members"])
     if len(c["members"]) == 1:
@@ -224,8 +226,8 @@ for idx, c in enumerate(clusters):
         "user_list": c["users"],
         "ioc_list": c["iocs"],
         "alert_ids": aids,
-        "first_seen": c["first_seen"],
-        "last_seen": c["last_seen"],
+        "first_seen": c["raw_first"],
+        "last_seen": c["raw_last"],
         "grouping_rule": c["rule"],
         "tentative_category": c["category"],
         "confidence": conf,
