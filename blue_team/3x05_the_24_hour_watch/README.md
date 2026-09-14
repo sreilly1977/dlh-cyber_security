@@ -411,7 +411,7 @@ Write 2-run_baselines.sh that:
 
     Writes $SHIFT_WORKSPACE/runtime/baseline_run.json:
 
-```jason
+```json
 {
   "baseline_version": "string",
   "hosts_total": 0,
@@ -595,6 +595,62 @@ $ ./4-shift_briefing.sh
 [brief] baseline hot hosts: 6
 [brief] cluster ID cross-check: OK
 [brief] shift_briefing.json written
+```
+
+---
+
+# [5. Alert Queue Triage and Classification](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/5-triage_queue.sh)
+
+## Goal: 
+
+Run your 3x03 triage methodology over the full alert queue and produce a classified triage log where every alert has a disposition.
+
+## Context: 
+
+This is the main triage pass. Every alert gets classified as TP, FP, or NOISE using the schema you locked in 3x03. The classification must be backed by evidence from the briefing, the baseline, and the events themselves. Nothing is closed on intuition and nothing is left unclassified — an unclassified alert at the end of a shift is a missed incident waiting to happen.
+
+The secondary pack has approved change activity that partially covers some alerts. A billing database maintenance window covers some network activity on bill-db-01. An off-hours domain controller GPO push covers some authentication events on srv-dc-01. Cross-referencing every alert against the change tickets before classifying as FP is not optional. An alert classified FP that is actually a TP because the change window did not match exactly is a critical failure in this task.
+
+## Instructions: 
+
+Write 5-triage_queue.sh that:
+
+    Reads $SHIFT_WORKSPACE/alerts/alert_queue.json and $SHIFT_WORKSPACE/alerts/shift_briefing.json. Confirms both exist (exit non-zero if either is missing).
+
+    Invokes $TRIAGE_BIN against alert_queue.json, passing shift_briefing.json, $SHIFT_WORKSPACE/enriched/baseline.json, and $ASSETS_DIR/assets.json as context inputs. Your 3x03 triage script handles the actual classification logic.
+
+    For each alert, appends one record to $SHIFT_WORKSPACE/alerts/triage_log.jsonl. Each record must conform to this schema:
+
+```json
+{
+  "alert_id": "string",
+  "rule_id": "string",
+  "host": "string (lowercase)",
+  "user": "string or null",
+  "classification": "TP | FP | NOISE",
+  "severity": "critical | high | medium | low",
+  "matches_ioc": ["string (IOC value matched, empty list if none)"],
+  "baseline_deviation": true,
+  "change_ticket_match": "ticket_id or null",
+  "analyst_note": "string (reason for classification, <= 200 chars)",
+  "classified_at": "ISO-8601"
+}
+```
+
+    After classification completes, reads triage_log.jsonl and counts records by classification. Verifies that zero alerts remain unclassified. Exit non-zero if any alert is missing from the log.
+
+    Prints a one-line summary with TP, FP, NOISE, and unclassified counts.
+
+**Expected Output:**
+
+```bash
+$ ./5-triage_queue.sh
+[triage] alert_queue: N alerts
+[triage] briefing loaded (12 IOCs, 3 change tickets)
+[triage] invoking $TRIAGE_BIN
+[triage] classifying N alerts
+[triage] TP=N FP=N NOISE=N unclassified=0
+[triage] triage_log.jsonl written
 ```
 
 ---
