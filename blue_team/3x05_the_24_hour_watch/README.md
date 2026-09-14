@@ -154,17 +154,18 @@ No prose outside these sections. Per-section caps are defined in Task 11.
 
 ### Provided Files
 
-File 	Description
-$ASSETS_DIR/assets.json 	Updated asset inventory
-$ASSETS_DIR/ioc_feed.json 	HC-RED7 IOC feed
-$ASSETS_DIR/hc_red7_advisory.md 	ISAC advisory summary
-$ASSETS_DIR/change_tickets.json 	Change management log
-$ASSETS_DIR/prior_shift_notes.md 	Prior shift open items
-$WAZUH_EXPORTS/incident_A_search_results.json 	Wazuh export for incident A
-$WAZUH_EXPORTS/incident_B_search_results.json 	Wazuh export for incident B
-$WAZUH_EXPORTS/incident_C_search_results.json 	Wazuh export for incident C
-$WAZUH_EXPORTS/campaign_dashboard_summary.md 	Campaign overview
-$WAZUH_EXPORTS/exported_dashboard_workflow.json 	Dashboard pivot workflow
+| File | Description |
+|------|-------------|
+| `$ASSETS_DIR/assets.json` | Updated asset inventory |
+| `$ASSETS_DIR/ioc_feed.json` | HC-RED7 IOC feed |
+| `$ASSETS_DIR/hc_red7_advisory.md` | ISAC advisory summary |
+| `$ASSETS_DIR/change_tickets.json` | Change management log |
+| `$ASSETS_DIR/prior_shift_notes.md` | Prior shift open items |
+| `$WAZUH_EXPORTS/incident_A_search_results.json` | Wazuh export for incident A |
+| `$WAZUH_EXPORTS/incident_B_search_results.json` | Wazuh export for incident B |
+| `$WAZUH_EXPORTS/incident_C_search_results.json` | Wazuh export for incident C |
+| `$WAZUH_EXPORTS/campaign_dashboard_summary.md` | Campaign overview |
+| `$WAZUH_EXPORTS/exported_dashboard_workflow.json` | Dashboard pivot workflow |
 
 ### Shift Workspace Layout (locked)
 
