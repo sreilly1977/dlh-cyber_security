@@ -524,3 +524,77 @@ $ ./3-run_detections.sh
 ```
 
 ---
+
+# [4. Shift Briefing and Context Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/4-shift_briefing.sh)
+
+## Goal: 
+
+Build the shift briefing document that ties the IOC feed, advisory, change tickets, prior shift notes, and baseline deviations into a single reference object for triage.
+
+## Context: 
+
+The briefing is the reference you open every time you touch an alert. It tells you what the threat actor looks like, what approved activity to expect in the window, what the previous shift already flagged, and which hosts are already on the deviation list. Without it, triage becomes guesswork because you cannot distinguish an alert on a host with ten deviation markers from an alert on a host the baseline never saw before.
+
+The briefing is machine-readable so that later scripts can join it mechanically without requiring human memory. The IOC list embedded in it lets triage scripts flag alerts that share an indicator with the feed. The change ticket list lets them identify alerts that correspond to approved maintenance. Both lookups are O(1) if the briefing is structured correctly.
+
+## Instructions: 
+
+Write 4-shift_briefing.sh that:
+
+    Reads and validates all five required input files exist: $ASSETS_DIR/hc_red7_advisory.md, $ASSETS_DIR/ioc_feed.json, $ASSETS_DIR/change_tickets.json, $ASSETS_DIR/prior_shift_notes.md, and $SHIFT_WORKSPACE/runtime/baseline_run.json. Exit non-zero if any is missing.
+
+    From $ASSETS_DIR/ioc_feed.json, extracts: total IOC count, IOC count by type (ip, domain, hash, account, service_name, port). Builds a flat list of all IOC values for fast lookup in later scripts.
+
+    From $ASSETS_DIR/hc_red7_advisory.md, extracts the cluster ID (scan for HC-RED7), the listed tactics (lines beginning with T1), and the note count. Confirms the cluster ID matches shift_start.json.advisory_cluster_id. Exit non-zero if they differ.
+
+    From $ASSETS_DIR/change_tickets.json, extracts every approved change window: ticket ID, window start/end, host list, owner, and approved activity description.
+
+    From $ASSETS_DIR/prior_shift_notes.md, extracts the open items list (lines under the "Open Items" heading).
+
+    From $SHIFT_WORKSPACE/runtime/baseline_run.json, extracts the hot_hosts list and the count of hosts with deviations.
+
+    Writes $SHIFT_WORKSPACE/alerts/shift_briefing.json:
+
+```json
+{
+  "cluster_id": "HC-RED7",
+  "cluster_tactics": ["T1078", "T1543", "T1071"],
+  "ioc_count": 0,
+  "ioc_by_type": {
+    "ip": 0, "domain": 0, "hash": 0, "account": 0, "service_name": 0, "port": 0
+  },
+  "ioc_values": ["string"],
+  "active_change_tickets": [
+    {
+      "ticket_id": "string",
+      "window_start": "ISO-8601",
+      "window_end": "ISO-8601",
+      "hosts": ["string"],
+      "owner": "string",
+      "approved_activity": "string"
+    }
+  ],
+  "prior_shift_open_items": ["string"],
+  "baseline_hot_hosts": ["string"],
+  "hosts_with_deviations": 0
+}
+```
+
+The script exits non-zero if any required input file is missing or if the cluster ID cross-check fails.
+
+**Expected Output:**
+
+```bash
+$ ./4-shift_briefing.sh
+[brief] checking input files... OK
+[brief] cluster HC-RED7 loaded
+[brief] tactics: T1078 T1543 T1071 T1110 T1041
+[brief] IOCs: ip=5 domain=2 hash=1 account=2 service_name=2 port=0 total=12
+[brief] active change tickets in window: 3
+[brief] prior shift open items: 2
+[brief] baseline hot hosts: 6
+[brief] cluster ID cross-check: OK
+[brief] shift_briefing.json written
+```
+
+---
