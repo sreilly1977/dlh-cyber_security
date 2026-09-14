@@ -297,3 +297,88 @@ $ echo $?
 ```
 
 ---
+
+# [1. Evidence Pipeline Execution](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/1-run_pipeline.sh)
+
+## Goal: 
+
+Run your 3x00 pipeline against the fresh evidence pack and produce normalized, enriched, and timelined events ready for detection.
+
+## Context: 
+
+The pipeline you built and tested in 3x00 now runs against data you have never seen. Any fragility in your pipeline scripts will surface here. Missing field handling, hardcoded paths, syslog year assumptions, timestamp format edge cases — every one of these was a theoretical concern in 3x00. Now it is a real failure mode against production-style data.
+
+The secondary evidence pack has the same directory layout as the primary — windows/, linux/, network/, context/, student_telemetry/ — but different hosts, a different 8-day time window, and deliberately injected dirty data: clock skew on one host, a duplicate event stream on another, a gap in Sysmon telemetry during an agent restart, and a handful of malformed syslog lines. Your pipeline must handle all of these and report what it corrected.
+
+This task is graded on whether the pipeline completes cleanly, not on whether your detection rules fire. The enriched events file it produces is the substrate for every downstream task.
+
+## Instructions: 
+
+Write 1-run_pipeline.sh that:
+
+    Reads $SHIFT_WORKSPACE/runtime/shift_start.json to confirm the intake check passed (exit non-zero with a message if shift_start.json is absent or empty).
+
+    Invokes $PIPELINE_BIN with $CAPSTONE_PACK as the input pack and $SHIFT_WORKSPACE/enriched/ as the output directory. Passes the output directory path as the second argument exactly as your 3x00 pipeline expects.
+
+    Captures the pipeline's stdout and stderr together into $SHIFT_WORKSPACE/runtime/pipeline_run.log. The script prints a progress line every time a stage completes so the analyst can see the pipeline is alive.
+
+    After the pipeline exits, verifies that the following files exist and are non-empty in $SHIFT_WORKSPACE/enriched/:
+
+    enriched_events.jsonl or enriched_events.json
+    timeline.jsonl or timeline_index.json
+    source_stats.json Exit non-zero with a message identifying the missing file if any is absent.
+
+    Reads source_stats.json and confirms that at least four source types show a non-zero event count. Print a one-line summary per source type.
+
+    Writes $SHIFT_WORKSPACE/runtime/pipeline_run.json:
+
+```jason
+{
+  "pipeline_version": "string (from $PIPELINE_BIN --version or 'unknown')",
+  "started_at": "ISO-8601",
+  "ended_at": "ISO-8601",
+  "duration_seconds": 0,
+  "input_pack": "$CAPSTONE_PACK",
+  "events_in": 0,
+  "events_out": 0,
+  "events_dropped": 0,
+  "source_counts": {
+    "windows_json": 0,
+    "linux_text": 0,
+    "firewall": 0,
+    "suricata_alert": 0,
+    "pcap_flow": 0
+  },
+  "dirty_data_detected": [],
+  "exit_status": 0
+}
+```
+
+The script exits non-zero if the pipeline itself returns non-zero, if any required output file is missing, or if all source counts are zero.
+
+**Expected Output:**
+
+```bash
+$ ./1-run_pipeline.sh
+[pipeline] intake check: OK
+[pipeline] invoking $PIPELINE_BIN
+[pipeline] input: $CAPSTONE_PACK
+[pipeline] output: $SHIFT_WORKSPACE/enriched/
+[pipeline] stage 0 source_inventory ... ok
+[pipeline] stage 1 telemetry_import ... ok
+[pipeline] stage 2 windows_parse    ... ok
+[pipeline] stage 3 linux_parse      ... ok
+[pipeline] stage 5 normalize        ... ok
+[pipeline] stage 6 network_normalize... ok
+[pipeline] stage 7 schema_validate  ... ok
+[pipeline] stage 8 data_quality     ... ok
+[pipeline] stage 9 enrich           ... ok
+[pipeline] stage 10 timeline        ... ok
+[pipeline] stage 11 source_stats    ... ok
+[pipeline] duration 180s
+[pipeline] events_in=N events_out=N dropped=N
+[pipeline] source windows_json=N linux_text=N firewall=N suricata_alert=N
+[pipeline] pipeline_run.json written
+```
+
+---
