@@ -207,3 +207,93 @@ $SHIFT_WORKSPACE/
 </pre>
 
 ---
+
+# [0. Shift Intake and Toolchain Verification](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/0-shift_intake.sh)
+
+## Goal: 
+
+Acknowledge the shift, verify the complete environment, and write a machine-readable shift start record before touching any evidence.
+
+## Context: 
+
+A shift that begins with a broken tool ends with a missed incident. Before you touch the evidence pack, confirm that every moving part from prior projects is available and functional: the pipeline binary you wrote in 3x00, the baseline script from 3x01, the detection catalog from 3x02, and the triage runner from 3x03. The shift intake record is also the clock reference for every metric that follows — time-to-detection, time-to-first-finding, shift duration. If the record is missing or malformed, downstream scripts that compute those metrics will fail.
+
+You also verify that the Wazuh export artifacts are staged correctly. For Task 9, you will need the incident-level search result exports from $WAZUH_EXPORTS/. Confirming they exist now prevents a surprise failure six tasks later when you are deep in investigation.
+
+## Instructions: 
+
+Write 0-shift_intake.sh that:
+
+    Verifies presence of all required binaries on PATH: jq, python3, yq, sigma-cli, sha256sum. Print each binary name and its version on a single line. Exit non-zero with a message naming the missing binary if any is absent.
+
+    Verifies that the four prior-project binaries or directories exist and are accessible:
+
+    $PIPELINE_BIN — executable file
+    $BASELINE_BIN — executable file
+    $CATALOG_DIR — readable directory containing at least one .yml file
+    $TRIAGE_BIN — executable file Print the result of each check on its own line.
+
+    Verifies that $CAPSTONE_PACK/ is a non-empty directory accessible to the student user. Print the top-level subdirectory list.
+
+    Verifies that $ASSETS_DIR/ contains all five required context files: assets.json, ioc_feed.json, hc_red7_advisory.md, change_tickets.json, prior_shift_notes.md. Exit non-zero if any is missing.
+
+    Verifies that $WAZUH_EXPORTS/ contains the four required export files: incident_A_search_results.json, incident_B_search_results.json, incident_C_search_results.json, campaign_dashboard_summary.md. Exit non-zero if any is missing.
+
+    Reads $ASSETS_DIR/ioc_feed.json and extracts the total IOC count (jq '.iocs | length'). Reads $ASSETS_DIR/hc_red7_advisory.md and extracts the cluster ID by scanning for the line containing HC-RED7. Prints both values.
+
+    Creates $SHIFT_WORKSPACE/ with the full locked workspace layout. Use mkdir -p for every subdirectory in the layout. Stub empty files where required by later tasks: $SHIFT_WORKSPACE/MANIFEST.json, the four runtime/ JSON files, all four enriched/ files, all four alerts/ files, the four investigations/ finding files, campaign/campaign_assessment.json, three reports/ Markdown files, three response/ JSON files, handoff/shift_handoff.md.
+
+    Writes $SHIFT_WORKSPACE/runtime/shift_start.json:
+
+```jason
+{
+  "shift_id": "SHIFT-YYYYMMDD-HHMM",
+  "analyst_host": "hostname-of-lab-container",
+  "started_at": "ISO-8601-UTC",
+  "tools": {
+    "jq": "x.y.z",
+    "python3": "x.y.z",
+    "yq": "x.y.z",
+    "sigma-cli": "x.y.z",
+    "sha256sum": "present"
+  },
+  "prior_project_bins": {
+    "pipeline": true,
+    "baseline": true,
+    "catalog": true,
+    "triage": true
+  },
+  "capstone_pack": "$CAPSTONE_PACK resolved path",
+  "ioc_feed_count": 0,
+  "advisory_cluster_id": "HC-RED7",
+  "wazuh_exports_verified": true
+}
+```
+
+The script exits non-zero immediately on any failed check and prints the failing check on stderr so the output is unambiguous.
+
+**Expected Output:**
+
+```bash
+$ ./0-shift_intake.sh
+[intake] jq 1.6 OK
+[intake] python3 3.10.12 OK
+[intake] yq 4.44.3 OK
+[intake] sigma-cli 1.0.4 OK
+[intake] sha256sum OK
+[intake] PIPELINE_BIN OK
+[intake] BASELINE_BIN OK
+[intake] CATALOG_DIR OK (13 rules)
+[intake] TRIAGE_BIN OK
+[intake] CAPSTONE_PACK OK
+[intake] ASSETS_DIR: 5 meta files OK
+[intake] WAZUH_EXPORTS: 4 export files OK
+[intake] ioc_feed.json OK (12 entries)
+[intake] advisory HC-RED7 loaded
+[intake] workspace layout created at $SHIFT_WORKSPACE
+[intake] shift_start.json written
+$ echo $?
+0
+```
+
+---
