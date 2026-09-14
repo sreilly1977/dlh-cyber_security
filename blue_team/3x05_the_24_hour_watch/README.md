@@ -382,3 +382,72 @@ $ ./1-run_pipeline.sh
 ```
 
 ---
+
+# [2. Behavioral Baseline Execution](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/2-run_baselines.sh)
+
+## Goal: 
+
+Run your 3x01 baselining methodology against the enriched events and produce per-host deviation markers that the triage step uses to separate signal from noise.
+
+## Context: 
+
+Baselines turn raw events into "what is abnormal on this specific host." Running them against unseen data shows whether your baseline scripts generalize beyond the dataset you built them against. A baseline script that hardcodes the primary pack's host list will produce zero deviation markers here and make Task 5 triage useless. The deviation markers are one of the two most important inputs to shift triage — the other is the IOC feed. Together they tell you which alerts to prioritize and which to batch-close as expected activity.
+
+## Instructions: 
+
+Write 2-run_baselines.sh that:
+
+    Reads $SHIFT_WORKSPACE/runtime/pipeline_run.json and confirms exit_status is 0 (exit non-zero if not).
+
+    Invokes $BASELINE_BIN with the enriched events file from $SHIFT_WORKSPACE/enriched/ as input. Passes the output path $SHIFT_WORKSPACE/enriched/baseline.json as an argument or through environment variables as your 3x01 script expects.
+
+    After the baseline run, verifies that $SHIFT_WORKSPACE/enriched/baseline.json exists and is non-empty.
+
+    Reads baseline.json and computes:
+
+    Total unique hosts processed
+    Number of hosts with at least one deviation marker
+    The five hosts with the highest total deviation score Prints a one-line summary for each hot host.
+
+    Writes $SHIFT_WORKSPACE/runtime/baseline_run.json:
+
+```jason
+{
+  "baseline_version": "string",
+  "hosts_total": 0,
+  "hosts_with_deviations": 0,
+  "deviation_markers": [
+    {
+      "host": "string",
+      "marker": "unseen_src_ip | off_hours_login | unusual_parent_process | unknown_destination | new_service | encoding_anomaly",
+      "field": "string (the specific field that triggered the marker)",
+      "observed_value": "string",
+      "baseline_reference": "string (what the baseline expected)",
+      "deviation_score": 0.0
+    }
+  ],
+  "hot_hosts": ["string"],
+  "started_at": "ISO-8601",
+  "ended_at": "ISO-8601",
+  "exit_status": 0
+}
+```
+
+The script exits non-zero if the baseline script fails or if hosts_total is zero.
+
+**Expected Output:**
+
+```bash
+$ ./2-run_baselines.sh
+[baseline] pipeline check: OK
+[baseline] invoking $BASELINE_BIN
+[baseline] input: $SHIFT_WORKSPACE/enriched/enriched_events.jsonl
+[baseline] output: $SHIFT_WORKSPACE/enriched/baseline.json
+[baseline] hosts processed: N
+[baseline] hosts with deviations: N
+[baseline] hot hosts: hostname-1 hostname-2 hostname-3
+[baseline] markers: N total (unseen_src_ip: N  off_hours: N  new_service: N)
+[baseline] baseline_run.json written
+```
+
+---
