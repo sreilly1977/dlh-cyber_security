@@ -842,7 +842,7 @@ $ ./8-investigate_B.sh
 
 ---
 
-# (9. Incident C Dual-Interface Investigation (CLI + Wazuh Export))(https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/9-investigate_C.sh)
+# [9. Incident C Dual-Interface Investigation (CLI + Wazuh Export)](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/9-investigate_C.sh)
 ### advanced
 
 ## Goal: 
@@ -1038,6 +1038,82 @@ $ ./11-incident_reports.sh
 [report] C: section caps respected
 [report] N event references verified against enriched_events.jsonl
 [report] reports written
+```
+
+---
+
+# [12. Detection Gap Analysis and Tuning Recommendations](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/12-tuning_recommendations.sh)
+### advanced
+
+## Goal: 
+
+Produce tuning recommendations grounded in counted false positives, missed detections, and rule noise from the shift.
+
+## Context: 
+
+A good shift always produces tuning. Your catalog is not static. The evidence from this shift tells you exactly where to adjust thresholds, add rules, or suppress noise. False positives from approved change activity should produce suppression rules scoped to the change window. Missed detections from incidents you found through investigation but whose alerting rule did not fire are detection gaps that need new or modified rules. Noise rules that fired 30 times on routine activity need threshold adjustments.
+
+Every recommendation must be backed by a counted observation in triage_log.jsonl, incidents.json, or an investigation finding. A recommendation that says "add a rule for T1543.003" with no evidence that you observed T1543.003 activity in this shift is not a recommendation — it is a guess. The machine-readable format ensures that recommendations can be fed back into 3x02 in a future sprint without requiring manual transcription.
+
+## Instructions: 
+
+Write 12-tuning_recommendations.sh that:
+
+    Reads $SHIFT_WORKSPACE/alerts/triage_log.jsonl and computes per-rule FP rate: count of FP classifications divided by total classifications for that rule.
+
+    Identifies rules with FP rate > 0 as rules_with_fp. Identifies rules where every classification was NOISE as rules_with_noise.
+
+    Compares the ATT&CK techniques in all three investigation findings against the alerts_by_rule map in catalog_run.json. Any technique identified in a finding that does not have a corresponding rule match is a detection gap → rules_that_missed.
+
+    Writes $SHIFT_WORKSPACE/response/tuning_recommendations.json:
+
+```json
+{
+  "shift_id": "string",
+  "fp_rate_by_rule": {"rule_id": 0.0},
+  "rules_with_fp": ["rule_id"],
+  "rules_with_noise": ["rule_id"],
+  "rules_that_missed": [
+    {
+      "expected_behavior": "string (<= 160 chars)",
+      "incident_id": "INC-...",
+      "missed_because": "threshold | field_mapping | correlation_gap | missing_rule",
+      "proposed_fix": "string (<= 240 chars)",
+      "estimated_fp_risk": "low | medium | high"
+    }
+  ],
+  "rules_to_suppress": [
+    {
+      "rule_id": "string",
+      "reason": "string (<= 160 chars)",
+      "supporting_observation": "alert_id or triage_log line number"
+    }
+  ],
+  "new_rules_proposed": [
+    {
+      "working_name": "string",
+      "logsource_category": "string",
+      "detection_sketch": "string (<= 240 chars, pseudocode Sigma detection block)",
+      "attack_technique": "Txxxx[.yyy]",
+      "estimated_fp_risk": "low | medium | high"
+    }
+  ]
+}
+```
+
+Every rules_that_missed entry must cite an incident_id from incidents.json. Every rules_to_suppress entry must cite a supporting_observation from triage_log.jsonl. The script exits non-zero if any entry references a rule that did not appear in catalog_run.json or if any missed_because value is outside the allowed set.
+
+**Expected Output:**
+
+```bash
+$ ./12-tuning_recommendations.sh
+[tune] triage_log: N alerts (TP=N FP=N NOISE=N)
+[tune] rules_with_fp: N (fp_rate > 0)
+[tune] rules_with_noise: N (100% noise)
+[tune] detection gaps: N (techniques in findings not matched by catalog)
+[tune] rules_to_suppress: N
+[tune] new_rules_proposed: N
+[tune] tuning_recommendations.json written
 ```
 
 ---
