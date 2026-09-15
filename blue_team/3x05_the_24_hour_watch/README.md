@@ -781,3 +781,209 @@ $ ./7-investigate_A.sh
 ```
 
 ---
+
+# [8. Incident B Deep Investigation (CLI)](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/8-investigate_B.sh)
+
+## Goal: 
+
+Investigate the second candidate incident and resolve any ambiguity between authorized activity and malicious behavior using change tickets, baseline, and asset context.
+
+## Context: 
+
+Incident B is the ambiguous case. On the surface it looks like it might be covered by an approved change ticket. The change ticket CHG-2026-0341 authorizes disk expansion work on rad-srv-02, but the delegating account (rad_admin_miller) is on annual leave. An activity window that looks like maintenance but is carried out by an account that should not be active is the exact pattern HC-RED7 uses to blend in. You must decide based on evidence what it actually is, and document your reasoning whether or not you settle the question.
+
+The prior shift notes flagged unusual outbound HTTPS from rad-srv-02 to 198.51.100.73. That IP is in the IOC feed. The change ticket does not cover outbound network activity to that destination. These two data points together raise the confidence level. You must document both the ticket match outcome and the IOC match outcome in the finding.
+
+## Instructions: 
+
+Write 8-investigate_B.sh that:
+
+    Loads $SHIFT_WORKSPACE/alerts/incidents.json and extracts the INC-YYYYMMDD-B record.
+
+    Pulls events for every host in the incident's host_list from enriched_events.jsonl in the incident time window (±15 minutes).
+
+    Loads $ASSETS_DIR/change_tickets.json and attempts to match the incident activity:
+
+    Check whether each incident host appears in any active ticket's hosts list.
+    Check whether the incident time window overlaps the ticket's approved window.
+    Check whether the account identified in the incident matches the ticket owner. Print the outcome of each check: match or mismatch with the specific field that mismatches.
+
+    Checks all outbound destination IPs in the incident events against $ASSETS_DIR/ioc_feed.json. Print each match found with the IOC type and confidence.
+
+    Reads $ASSETS_DIR/assets.json and extracts the criticality and data_classification for each affected host. Print them.
+
+    Forms the investigation hypothesis. If the ticket check produces a mismatch on any field (owner, window, host, or scope), the activity is not covered by the approved change and must be treated as a TP regardless of the partial match. Explains this logic in ambiguity_notes if confidence is not high.
+
+    Writes $SHIFT_WORKSPACE/investigations/incident_B.json conforming to the Locked Finding Schema with interface: "cli". The finding must include:
+
+    ambiguity_notes populated if confidence is "medium" or "low" (empty string if "high")
+    At least one matches_ioc value if any IOC hit was found
+    A ticket_match_outcome field in event_data (not in the schema proper, but embed it in the actions list narrative)
+
+The script exits non-zero if the finding is missing ambiguity_notes when confidence is not high, or if the ticket match outcome is not documented.
+
+**Expected Output:**
+
+```bash
+$ ./8-investigate_B.sh
+[inv-B] loading INC-YYYYMMDD-B
+[inv-B] host: rad-srv-02 (criticality: HIGH, data_class: RADIOLOGY)
+[inv-B] events in window: N
+[inv-B] ticket match: CHG-2026-0341 FOUND
+[inv-B]   host match:   OK (rad-srv-02 in ticket)
+[inv-B]   window match: OK (within approved window)
+[inv-B]   owner match:  FAIL (rad_admin_miller — account on leave)
+[inv-B]   scope match:  FAIL (outbound 198.51.100.73:443 not in approved activity)
+[inv-B] ioc_match: 198.51.100.73 (type: ip, confidence: high, cluster: HC-RED7)
+[inv-B] verdict: TP (ticket does not cover observed activity scope or actor)
+[inv-B] confidence: high
+[inv-B] incident_B.json written
+```
+
+---
+
+# (9. Incident C Dual-Interface Investigation (CLI + Wazuh Export))(https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/9-investigate_C.sh)
+### advanced
+
+## Goal: 
+
+Investigate the third candidate incident through both the CLI pipeline and the pre-exported Wazuh evidence artifacts, and confirm that both interfaces reach the same hypothesis.
+
+## Context: 
+
+In this capstone, the "dashboard" side of the dual-interface investigation uses local Wazuh export files from $WAZUH_EXPORTS/ instead of a live dashboard. The Wazuh exports were generated from the primary evidence pack and represent what an analyst would see in the Wazuh interface for scenarios of this type. The analytical workflow is identical to what 3x04 taught: read the export document, extract the equivalent of a dashboard query result, record the click path from the dashboard trace, compare field names against field_mapping.json.
+
+Both interfaces must converge on the same hypothesis and the same ATT&CK techniques. If they do not, the script exits non-zero and the discrepancy must be resolved before grading. Two independent readings of the same incident from two different vantage points that disagree on technique attribution means one of the readings is wrong.
+
+## Instructions: 
+
+Write 9-investigate_C.sh that:
+
+Part 1 — CLI investigation:
+
+    Loads $SHIFT_WORKSPACE/alerts/incidents.json and extracts the INC-YYYYMMDD-C record.
+
+    Pulls events for incident C hosts from enriched_events.jsonl in the incident time window.
+
+    Reconstructs the timeline, identifies at least 2 ATT&CK techniques, checks the IOC feed, reads baseline deviation markers, and forms a hypothesis.
+
+    Writes $SHIFT_WORKSPACE/investigations/incident_C_cli.json conforming to the Locked Finding Schema with interface: "cli". Requires at least 4 event_refs and at least 2 attack_techniques.
+
+Part 2 — Wazuh export investigation:
+
+    Reads $WAZUH_EXPORTS/incident_C_search_results.json:
+
+    Extracts hits_total, the kql query used, the time range, and the events array.
+    For the first 3 events, prints the Wazuh field names and values: @timestamp, _source.agent.name, _source.source.ip, _source.destination.ip, _source.rule.description.
+    Reads field_mapping.json (from $HOME/3x04_assets/wazuh_exports/field_mapping.json or $WAZUH_EXPORTS/../3x04_assets/wazuh_exports/) and documents the field name translation for at least 4 fields.
+
+    Reads $WAZUH_EXPORTS/exported_dashboard_workflow.json and extracts the steps list. These steps form the actions list for the export-interface finding.
+
+    Writes $SHIFT_WORKSPACE/investigations/incident_C_export.json conforming to the Locked Finding Schema with interface: "wazuh_export". The actions list must contain the dashboard workflow steps extracted from exported_dashboard_workflow.json. The attack_techniques list must be identical to the CLI finding.
+
+Part 3 — Agreement check:
+
+    Reads both findings and compares:
+
+    attack_techniques lists must contain the same techniques (order-independent).
+    hypothesis strings must describe the same attack category (the check is fuzzy: both must contain at least one of the same ATT&CK technique IDs in their attack_techniques lists).
+    Exit non-zero if the techniques lists do not overlap.
+    Print a per-interface summary and an agreement line.
+
+**Expected Output:**
+
+```bash
+$ ./9-investigate_C.sh
+[inv-C] loading INC-YYYYMMDD-C
+[inv-C] --- CLI investigation ---
+[inv-C] events in window: N
+[inv-C] cli: techniques=T1021.002,T1053.005 conf=medium
+[inv-C] incident_C_cli.json written
+[inv-C] --- Wazuh export investigation ---
+[inv-C] reading incident_C_search_results.json (hits_total=N)
+[inv-C] click path: N steps loaded from exported_dashboard_workflow.json
+[inv-C] export: techniques=T1021.002,T1053.005 conf=high
+[inv-C] incident_C_export.json written
+[inv-C] --- Agreement check ---
+[inv-C] techniques match: OK
+[inv-C] both findings complete
+```
+
+---
+
+# [10. Campaign Correlation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/10-campaign_correlation.sh)
+
+## Goal: 
+
+Determine whether the three incidents are components of a single campaign linked to HC-RED7, using mechanical rules over counted evidence.
+
+## Context: 
+
+Campaign analysis is not a feeling. It is a counting exercise over shared IOCs, temporal windows, and tactical signatures. The output is a single JSON record that says what you found, counted the way you found it. The rules are fixed so that two analysts with the same evidence reach the same verdict.
+
+The Wazuh export artifacts also provide a campaign-level view: $WAZUH_EXPORTS/campaign_dashboard_summary.md documents what an analyst would see in the Wazuh security events module when correlating the incidents. $WAZUH_EXPORTS/exported_dashboard_workflow.json records the dashboard pivot path used to establish the link. Reading both provides a second evidence view alongside the mechanical rule output.
+
+A campaign is declared campaign_linked: true if at least two of the three incidents are pairwise linked by any of the mechanical rules. The cluster ID is HC-RED7 only if at least one of the linked incidents has a direct feed match. If neither linked incident has a feed match, the cluster is unknown.
+
+## Instructions: 
+
+Write 10-campaign_correlation.sh that:
+
+    Loads the three CLI finding files: incident_A.json, incident_B.json, and incident_C_cli.json (use the CLI finding for this mechanical analysis).
+
+    Loads $ASSETS_DIR/ioc_feed.json and builds a set of all IOC values for fast lookup.
+
+    For each incident, computes the IOC feed match count: how many event_refs reference events whose IP addresses or user accounts appear in the feed.
+
+    Builds a pairwise overlap matrix for all three incident pairs (A-B, A-C, B-C):
+
+    IOC overlap: count of IOC values that appear in both incidents' matches_ioc lists (from incidents.json).
+    Tactic overlap: count of ATT&CK techniques shared between the two findings' attack_techniques lists.
+    Temporal distance: difference in minutes between the earlier incident's last_seen and the later incident's first_seen (from incidents.json).
+
+    Applies mechanical linkage rules to each pair:
+
+    Shared IOC count >= 1 AND at least one incident in the pair has a direct feed match → linked
+    Shared tactic count >= 2 AND temporal distance <= 360 minutes → linked
+    Shared user or shared host across the two incidents → linked
+
+    Reads $WAZUH_EXPORTS/campaign_dashboard_summary.md and $WAZUH_EXPORTS/exported_dashboard_workflow.json to extract the export-view campaign verdict. Prints the export view alongside the mechanical result.
+
+    Writes $SHIFT_WORKSPACE/campaign/campaign_assessment.json:
+
+```json
+{
+  "incidents": ["INC-YYYYMMDD-A", "INC-YYYYMMDD-B", "INC-YYYYMMDD-C"],
+  "ioc_overlap_matrix": {"A-B": 0, "A-C": 0, "B-C": 0},
+  "tactic_overlap_matrix": {"A-B": 0, "A-C": 0, "B-C": 0},
+  "temporal_distance_minutes": {"A-B": 0, "A-C": 0, "B-C": 0},
+  "ioc_feed_matches": {"A": 0, "B": 0, "C": 0},
+  "linked_pairs": ["A-B"],
+  "campaign_linked": true,
+  "cluster_id": "HC-RED7 | unknown",
+  "confidence": "low | medium | high",
+  "export_view_verdict": "string (from campaign_dashboard_summary.md)",
+  "supporting_counts": {
+    "shared_iocs_total": 0,
+    "shared_tactics_total": 0
+  }
+}
+```
+
+**Expected Output:**
+
+```bash
+$ ./10-campaign_correlation.sh
+[campaign] loading 3 incident findings
+[campaign] ioc feed: N IOCs loaded
+[campaign] A-B: ioc_overlap=N tactic_overlap=N temporal_dist=Nmin
+[campaign] A-C: ioc_overlap=N tactic_overlap=N temporal_dist=Nmin
+[campaign] B-C: ioc_overlap=N tactic_overlap=N temporal_dist=Nmin
+[campaign] feed matches: A=N B=N C=N
+[campaign] linked pairs: A-B (shared_ioc + temporal)
+[campaign] export view: campaign_linked=true cluster=HC-RED7
+[campaign] verdict: campaign_linked=true cluster=HC-RED7 confidence=high
+[campaign] campaign_assessment.json written
+```
+
+---
