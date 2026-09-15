@@ -655,7 +655,7 @@ $ ./5-triage_queue.sh
 
 ---
 
-# 6. Incident Grouping and Correlation(https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/6-correlate_alerts.sh)
+# [6. Incident Grouping and Correlation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/6-correlate_alerts.sh)
 
 ## Goal: 
 
@@ -722,6 +722,62 @@ $ ./6-correlate_alerts.sh
 [group] INC-YYYYMMDD-C: N alerts  host=hostname-3  rule=shared_user
 [group] incident_count=3
 [group] incidents.json written
+```
+
+---
+
+# [7. Incident A Deep Investigation (CLI)](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/7-investigate_A.sh)
+
+## Goal: 
+
+Use CLI tools to investigate the first candidate incident end to end and produce a finding conforming to the Locked Finding Schema.
+
+## Context: 
+
+The candidate came out of correlation. Now you build the case. Walk the events chronologically, pivot across sources, confirm the kill chain, map the techniques, write the finding. CLI only for this task: jq for event extraction, yq for rule reading, sha256sum for integrity checks on referenced files.
+
+The IOC feed has already been cross-referenced mechanically in Task 5 and 6. The investigation step is the human work: reading the event chain, forming a hypothesis, checking the hypothesis against the asset inventory, deciding whether the ambiguity in the evidence is resolvable or must be documented. A finding with confidence: "high" must leave no material question open. A finding with lower confidence must document exactly what information would resolve the ambiguity — not vague uncertainty, but a specific question with a specific data source that would answer it.
+
+## Instructions: 
+
+Write 7-investigate_A.sh that:
+
+    Reads $SHIFT_WORKSPACE/alerts/incidents.json and loads the INC-YYYYMMDD-A record. Print the incident summary (host list, alert count, tentative category).
+
+    Pulls all events from $SHIFT_WORKSPACE/enriched/enriched_events.jsonl (or .json) that match any host in the incident's host_list within the time range first_seen - 15min to last_seen + 15min. Print the count.
+
+    Reconstructs the event timeline: sort the matching events by timestamp ascending, extract at minimum the 6 events with the highest analytical significance (authentication events, process events, network events closest to the incident time window). Print each event as a one-liner: TIMESTAMP HOST SOURCE_TYPE EVENT_CATEGORY RAW_MESSAGE[:80].
+
+    Checks every event src_ip and dst_ip against $ASSETS_DIR/ioc_feed.json IOC values. Print each IOC match found.
+
+    Reads $SHIFT_WORKSPACE/enriched/baseline.json (or $SHIFT_WORKSPACE/runtime/baseline_run.json) and checks whether the incident hosts appear in the deviation markers. Print the relevant markers.
+
+    Forms an investigation hypothesis: one sentence describing the attack pattern observed, supported by at minimum 2 ATT&CK technique IDs.
+
+    Writes $SHIFT_WORKSPACE/investigations/incident_A.json conforming to the Locked Finding Schema with interface: "cli". The actions list must contain every jq or yq command executed. The event_refs list must contain at least 6 event IDs from the enriched events file. The attack_techniques list must contain at least 2 technique IDs.
+
+The script exits non-zero if the finding contains fewer than 6 event_refs or fewer than 2 attack_techniques.
+
+**Expected Output:**
+
+```bash
+$ ./7-investigate_A.sh
+[inv-A] loading INC-YYYYMMDD-A
+[inv-A] host_list: hostname-1
+[inv-A] events in window: N
+[inv-A] timeline (top 6):
+  TIMESTAMP  hostname-1  windows_json  authentication  An account failed...
+  TIMESTAMP  hostname-1  windows_json  authentication  An account failed...
+  TIMESTAMP  hostname-1  windows_json  authentication  Logon successful...
+  TIMESTAMP  hostname-1  linux_text    process         new_service installed...
+  TIMESTAMP  hostname-1  suricata_alert network_alert  C2 beacon pattern...
+  TIMESTAMP  hostname-1  firewall      network         outbound 443 match IOC
+[inv-A] ioc_matches: 2 (198.51.100.73, MedSyncHelper)
+[inv-A] baseline deviations: 3 markers for hostname-1
+[inv-A] hypothesis: service-based persistence installed after credential brute force
+[inv-A] techniques: T1110.003 T1543.003 T1071.001
+[inv-A] confidence: high
+[inv-A] incident_A.json written
 ```
 
 ---
