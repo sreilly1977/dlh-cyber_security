@@ -1205,3 +1205,81 @@ $ ./13-containment_package.sh
 ```
 
 ---
+
+# [14. Shift Handoff Package Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/14-shift_handoff.sh)
+
+## Goal: 
+
+Assemble the full shift workspace into the locked handoff layout, write the handoff markdown document, and generate the shift MANIFEST.json.
+
+## Context: 
+
+The handoff is the one artifact the next analyst actually opens. It is the sum of the shift. If it is incomplete, the rest of the shift does not exist as far as the organization is concerned. The handoff document is not a narrative about what you did — it is a machine-readable structured document that the incoming analyst uses as a checklist. The Artifact Index section tells them exactly where every artifact is. The Open Items section tells them exactly what they need to follow up on. The Campaign Assessment section tells them whether they are still in an active intrusion or looking at a closed incident.
+
+The MANIFEST.json gives the incoming analyst (and the grader) a sha256 hash of every artifact produced during the shift. If an artifact is missing or was modified after the shift ended, the manifest catches it.
+
+## Instructions: 
+
+Write 14-shift_handoff.sh that:
+
+    Verifies that every file in the Shift Workspace Layout exists and is non-empty. Print a check result per file. Exit non-zero on the first missing or empty file.
+
+    Reads $SHIFT_WORKSPACE/runtime/shift_start.json to get shift_id, analyst_host, and started_at. Sets ended_at to the current UTC time.
+
+    Reads $SHIFT_WORKSPACE/alerts/incidents.json to get the incident ID list.
+
+    Reads $SHIFT_WORKSPACE/campaign/campaign_assessment.json to get campaign_linked and cluster_id.
+
+    Writes $SHIFT_WORKSPACE/handoff/shift_handoff.md with exactly these sections, bounded to approximately 900 words total:
+
+    ## Shift Identifier — shift_id, analyst host, start/end times, duration in hours
+    ## Situation — 3 to 5 sentences summarising the threat context (HC-RED7 advisory, IOC count, pack period)
+    ## Incidents — one paragraph per incident citing the incident ID, the verdict (TP or ambiguous), the primary ATT&CK technique, and the path to the incident report file
+    ## Campaign Assessment — one paragraph stating whether the incidents are campaign-linked, the cluster ID, and confidence level; cites campaign_assessment.json
+    ## Open Items for Next Shift — bullet list, at most 8 items; each item is one sentence describing what remains open and what data source would resolve it
+    ## Artifact Index — a table listing every artifact in the workspace with its relative path and sha256 hash (copy from MANIFEST.json)
+
+    Verifies the shift_handoff.md word count does not exceed 900 words. Exit non-zero if it does.
+
+    Verifies all 6 required sections exist as headings in shift_handoff.md. Exit non-zero if any heading is missing.
+
+    Computes the sha256 hash of every file in $SHIFT_WORKSPACE/ recursively. Writes $SHIFT_WORKSPACE/MANIFEST.json:
+
+```json
+{
+  "shift_id": "string",
+  "analyst_host": "string",
+  "started_at": "ISO-8601",
+  "ended_at": "ISO-8601",
+  "duration_hours": 0.0,
+  "files": [
+    {"path": "relative/path", "sha256": "hex", "size": 0}
+  ],
+  "artifact_counts": {
+    "runtime": 0, "enriched": 0, "alerts": 0,
+    "investigations": 0, "campaign": 0, "reports": 0,
+    "response": 0, "handoff": 0
+  },
+  "incident_ids": ["INC-..."],
+  "campaign_linked": true,
+  "cluster_id": "HC-RED7 | unknown"
+}
+```
+
+    Verifies every incident ID in handoff/shift_handoff.md appears in incidents.json. Exit non-zero on a mismatch.
+
+**Expected Output:**
+
+```bash
+$ ./14-shift_handoff.sh
+[handoff] checking workspace layout... 22 files OK
+[handoff] shift_id: SHIFT-YYYYMMDD-HHMM
+[handoff] duration: N.N hours
+[handoff] shift_handoff.md: N words, 6 sections OK
+[handoff] incident IDs in handoff: A B C (all in incidents.json: OK)
+[handoff] MANIFEST.json: 22 files, N KB total
+[handoff] campaign_linked=true cluster=HC-RED7
+[handoff] handoff package complete
+```
+
+---
