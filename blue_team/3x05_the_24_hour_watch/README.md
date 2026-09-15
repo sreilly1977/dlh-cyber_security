@@ -1117,3 +1117,91 @@ $ ./12-tuning_recommendations.sh
 ```
 
 ---
+
+# [13. Containment Actions and IOC Package](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch/13-containment_package.sh)
+
+## Goal: 
+
+Produce the prioritized containment action list and the shareable IOC package for the shift.
+
+## Context: 
+
+This is what the next shift and the on-call network team actually execute. The containment list is prioritized and bounded. An immediate action must be executable without a change approval process. A short-term action requires standard change approval. A medium-term action requires security architecture review. The on-call engineer reading this list at 03:00 should not have to interpret anything — the action, the target, the operational impact, and who must approve it are all explicit.
+
+The IOC package is in a structured format suitable for forwarding to the H-ISAC and to peer hospitals under TLP:AMBER. Every IOC in the package must be traceable to at least one event from the shift. The cluster ID matches HC-RED7 if the campaign assessment confirmed the linkage. IOC values for network indicators must be defanged in the package.
+
+## Instructions: 
+
+Write 13-containment_package.sh that:
+
+    Reads $SHIFT_WORKSPACE/campaign/campaign_assessment.json and $SHIFT_WORKSPACE/alerts/incidents.json.
+
+    For each incident, derives containment actions from the investigation findings:
+
+    Immediate: block confirmed IOC IPs at the perimeter firewall, isolate the confirmed compromised host from the network.
+    Short-term: reset credentials for accounts identified in findings, audit service accounts matching the IOC service name patterns.
+    Medium-term: review and tighten firewall rules for the affected zones, deploy additional Sysmon rules on affected hosts.
+
+    Writes $SHIFT_WORKSPACE/response/containment.json:
+
+```json
+{
+  "shift_id": "string",
+  "generated_at": "ISO-8601",
+  "actions": [
+    {
+      "action_id": "ACT-001",
+      "priority": "immediate | short_term | medium_term",
+      "action": "string (<= 160 chars)",
+      "target_type": "host | user | ip | service | rule",
+      "target_value": "string",
+      "incident_id": "INC-...",
+      "operational_impact": "string (<= 160 chars)",
+      "requires_approval_from": "string"
+    }
+  ]
+}
+```
+
+Maximum 12 total actions. Each action must cite an incident_id that exists in incidents.json. The script exits non-zero if any action cites a non-existent incident.
+
+    For each IP address, domain, hash, account, or service name observed in the investigation findings that is not already in the $ASSETS_DIR/ioc_feed.json feed (newly discovered indicators), adds them to the shareable package. For all IOC values, defangs network indicators (198[.]51[.]100[.]73).
+
+    Writes $SHIFT_WORKSPACE/response/ioc_package.json:
+
+```json
+{
+  "shift_id": "string",
+  "tlp": "AMBER",
+  "cluster_id": "HC-RED7 | unknown",
+  "generated_at": "ISO-8601",
+  "iocs": [
+    {
+      "type": "ip | domain | hash | account | service_name | port",
+      "value": "string (defanged for network indicators)",
+      "first_seen": "ISO-8601",
+      "last_seen": "ISO-8601",
+      "incident_id": "INC-...",
+      "source": "ioc_feed | shift_discovered",
+      "confidence": "low | medium | high"
+    }
+  ]
+}
+```
+
+Every IOC must be traceable to at least one event_ref in an investigation finding. The script exits non-zero if any IOC has no event backing.
+
+**Expected Output:**
+
+```bash
+$ ./13-containment_package.sh
+[resp] loading campaign_assessment and incidents
+[resp] actions: immediate=N short_term=N medium_term=N total=N
+[resp] IOCs: ip=N domain=N hash=N account=N service=N total=N
+[resp] newly discovered (not in feed): N
+[resp] all IOCs traced to events: OK
+[resp] containment.json written
+[resp] ioc_package.json written
+```
+
+---
