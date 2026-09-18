@@ -306,7 +306,6 @@ Your file must include the following suspicious domains or IP indicators:
 ---
 
 # [5. The Attachment Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/5-attachment_analysis.md)
-
 ### advanced
 
 ## Goal: 
@@ -353,6 +352,52 @@ Include:
 - Campaign correlation:
 - Safe reputation-check commands:
 - Risk assessment:
+</pre>
+
+---
+
+# [6. The IOC Correlation Plan](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/6-ioc_correlation.md)
+### advanced
+
+## Goal: 
+
+Correlate the phishing indicators from the email batch and document how a SOC analyst would search local logs or security tools if available.
+
+## Context: 
+
+This module must be independent and must not require Wazuh, Sysmon, Suricata or earlier module environments. Instead of querying a live SIEM, create an IOC correlation plan using the indicators from the evidence batch and the provided click note for Diane Marsh. The goal is to show what should be searched, why it matters and what evidence is already confirmed by the batch.
+
+## Instructions: 
+
+Create a file named 6-ioc_correlation.md.
+
+Your report must include:
+
+    A normalized IOC list containing domains, URLs, sending IPs, recipient accounts and relevant timestamps from the evidence batch
+    A short exposure timeline from first suspicious delivery through the reported click
+    A section for DNS, proxy/web, endpoint and authentication logs explaining what queries would be performed if those logs were available
+    A clear distinction between evidence confirmed by the batch and evidence that would require additional logs
+    Specific mention of Diane Marsh, WS-NURSE-04, 10.10.2.15, Email 2 and the click timestamp 2026-04-14 15:02:33 CDT
+    A detection gap analysis explaining what a team should monitor for in future phishing investigations
+
+Do not write a script and do not require a live SIEM. This is a local investigation report based on the provided evidence.
+
+**Expected Output Format:**
+
+<pre>
+## IOC Correlation Report
+
+### Normalized IOC List
+
+### Exposure Timeline
+
+### Confirmed Evidence From Batch
+
+### Queries To Run If Logs Are Available
+
+### Detection Gaps
+
+### Conclusion
 </pre>
 
 ---
