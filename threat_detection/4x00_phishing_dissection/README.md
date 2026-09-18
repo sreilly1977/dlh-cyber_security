@@ -163,3 +163,45 @@ Do not rely on live Wazuh, Sysmon, Suricata or endpoint telemetry. This task mus
 </pre>
 
 ---
+
+# [2. The Email Authentication Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/2-authentication_analysis.md)
+
+## Goal: 
+
+Validate the SPF, DKIM and DMARC results for all 8 emails and explain what each result means for the investigation.
+
+## Context: 
+
+Email authentication helps determine whether the sending infrastructure is authorized for the claimed domain. SPF checks sending IP authorization. DKIM checks whether the message was cryptographically signed by a domain. DMARC connects authentication results to the visible From: domain.
+
+However, authentication does not prove that an email is safe. A malicious sender can register a lookalike domain and configure SPF, DKIM and DMARC correctly.
+
+## Instructions: 
+
+Create a file named 2-authentication_analysis.md.
+
+For each of the 8 emails, document:
+
+    SPF result and what it means
+    DKIM result and what it means
+    DMARC result and action or policy shown in the header
+    Whether authentication supports or contradicts the apparent legitimacy of the email
+    A short final verdict
+
+For Email 3, explain why passing SPF, DKIM and DMARC does not make the email legitimate. Your explanation must mention that outlook-protection.com is not the same as microsoft.com or outlook.com.
+
+Avoid hardcoded dramatic notes such as “CRITICAL NOTE”. Use clear analyst language instead.
+
+**Expected Output Format:**
+
+<pre>
+## Email 3 — outlook-protection.com
+
+- SPF:
+- DKIM:
+- DMARC:
+- Authentication verdict:
+- Investigation meaning:
+</pre>
+
+---
