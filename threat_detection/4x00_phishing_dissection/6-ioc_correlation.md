@@ -115,7 +115,7 @@ The following queries define what a SOC analyst should search for, per telemetry
 - Search for any traffic to the E5 payment portal from Accounts Payable VLAN/subnets, and any access to meddefense-benefits[.]org/enroll from billing networks.
 - Search for requests from egress IPs other than expected MedDefense ranges hitting the same harvesting token (token=a8f3e2d1 is attacker-side unique — its presence in any outbound request string identifies the victim session even across NAT).
 
-**Endpoint artifacts on WS-NURSE-04 (Windows-native, no special tooling required):**
+**Endpoint artifacts on WS-NURSE-04 (Windows-native):**
 
 - Browser history files for Diane Marsh's account covering 2026-04-14 14:00–16:00 CDT: confirm the visited URL, whether a form was autofilled or typed, and whether credentials appear in form-history artifacts. Common locations: %USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\History or equivalent for Edge/Firefox.
 - Windows event log (System/Application) around 15:02:33 CDT — check for browser process start times correlating with the click event, and any unexpected child processes spawned by the browser in the subsequent hours.
