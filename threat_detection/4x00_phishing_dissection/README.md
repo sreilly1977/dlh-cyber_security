@@ -304,3 +304,55 @@ Your file must include the following suspicious domains or IP indicators:
     203.0.113.228
 
 ---
+
+# [5. The Attachment Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/5-attachment_analysis.md)
+
+### advanced
+
+## Goal: 
+
+Analyze the PDF attachment indicators from Email 5 using metadata and structural clues visible in the raw evidence, without opening the file.
+
+## Context: 
+
+The evidence batch includes a stripped PDF attachment embedded in Email 5. In this project, you do not need the original file and must not open suspicious attachments on your workstation. Use only metadata and indicators visible in the raw email source, including the attachment filename, MIME type, PDF producer string, embedded URI and hash string visible in the encoded content.
+
+## Instructions: 
+
+Create a file named 5-attachment_analysis.md.
+
+Analyze the Email 5 attachment INV-2026-04891.pdf using evidence visible in the raw email source.
+
+Include:
+
+    Attachment filename and content type
+    Whether the attachment is base64 encoded
+    Available hash evidence from the raw content. If MD5 is not provided, state that it is not available in the batch instead of inventing one
+    The visible SHA-256 indicator from the PDF text
+    PDF creator or producer evidence, including wkhtmltopdf 0.12.6
+    Embedded URL evidence from the PDF annotation or URI string
+    Whether JavaScript, forms or embedded executable files are proven by the provided evidence. Do not claim features that are not shown
+    Relationship between the attachment URL and the Email 5 body URLs
+    Whether the attachment appears connected to the same campaign as E2 and E7, based on shared patterns such as PHPMailer, urgency, lookalike domains, targeted business process and suspicious infrastructure
+    Safe hash or file reputation commands that could be used in a real investigation, such as VirusTotal API lookup, without requiring the student to run them
+    A final risk assessment
+
+**Expected Output Format:**
+
+<pre>
+## Attachment: INV-2026-04891.pdf
+
+- Source email:
+- Filename:
+- Content type:
+- Encoding:
+- Available hash evidence:
+- PDF producer / creator evidence:
+- Embedded URLs:
+- Structural findings:
+- Campaign correlation:
+- Safe reputation-check commands:
+- Risk assessment:
+</pre>
+
+---
