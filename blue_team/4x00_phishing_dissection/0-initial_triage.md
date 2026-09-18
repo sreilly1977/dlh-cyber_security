@@ -1,7 +1,11 @@
 **0-initial_triage.md**
+
 **Name:** Initial Email Triage
+
 **Purpose:** Rapid classification of 8-email evidence batch into SPAM/SUSPICIOUS/LEGITIMATE categories
+
 **Author:** Steve - Cybersecurity Engineer
+
 **Date:** 18 September 2026
 
 ================================================================================
