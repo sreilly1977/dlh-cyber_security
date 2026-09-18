@@ -44,11 +44,11 @@ He outlines three priorities:
 
 Sarah Park adds one more concern: "The email Diane clicked claimed to be from our patient portal. The domain looks almost right. If other staff received similar emails, we might have more clicks that nobody reported."
 
-The email evidence batch can be downloaded here: [email batch](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/4x00_phishing_dissection/email_batch.txt)
+The email evidence batch can be downloaded here: [email batch](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/threat_detection/4x00_phishing_dissection/email_batch.txt)
 
 ---
 
-# [0. The Initial Email Triage](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/4x00_phishing_dissection/0-initial_triage.md)
+# [0. The Initial Email Triage](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/threat_detection/4x00_phishing_dissection/0-initial_triage.md)
 
 ## Goal: 
 
