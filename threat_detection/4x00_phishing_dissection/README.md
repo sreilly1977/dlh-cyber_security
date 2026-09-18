@@ -448,3 +448,39 @@ Do not claim that Sysmon, Wazuh, Suricata or Windows Security logs were searched
 </pre>
 
 ---
+
+# [8. The Verdict Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/8-verdict_matrix.md)
+
+## Goal: 
+
+Produce the final classification of all 8 emails, replacing the initial triage with a definitive evidence-based verdict.
+
+## Context: 
+
+The initial triage was based on surface indicators. After deeper analysis, you should now produce a final verdict for each email. The final verdict must be evidence-based and actionable.
+
+## Instructions: 
+
+Create a file named 8-verdict_matrix.md.
+
+Include:
+
+    A table with all 8 emails showing initial classification, final classification, confidence level and key evidence
+    Classification labels such as SPAM, PHISHING-OPPORTUNISTIC, PHISHING-TARGETED, LEGITIMATE or LEGITIMATE-WITH-ISSUE
+    For any email where initial and final classification differ, explain what deeper analysis revealed
+    A triage accuracy assessment showing how many emails were classified correctly during initial triage
+    A short recommended action for each malicious or suspicious email
+
+**Expected Output Format:**
+
+| Email | Initial Class | Final Class | Confidence | Key Evidence | Recommended Action |
+|---|---|---|---|---|---|
+| E1 | ... | ... | ... | ... | ... |
+
+<pre>
+## Triage Accuracy Assessment
+
+...
+</pre>
+
+---
