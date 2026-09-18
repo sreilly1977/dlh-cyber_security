@@ -1,4 +1,4 @@
-**0-initial_triage.md**
+# **0-initial_triage.md**
 
 **Name:** Initial Email Triage
 
@@ -10,7 +10,7 @@
 
 ================================================================================
 
-MEDDEFENSE HEALTH SYSTEMS — INITIAL EMAIL TRIAGE
+## MEDDEFENSE HEALTH SYSTEMS — INITIAL EMAIL TRIAGE
 
 ================================================================================
 
