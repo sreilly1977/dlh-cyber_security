@@ -401,3 +401,50 @@ Do not write a script and do not require a live SIEM. This is a local investigat
 </pre>
 
 ---
+
+# [7. The Click Investigation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/7-click_investigation.md)
+
+## Goal: 
+
+Assess Diane Marsh’s reported click on the Email 2 phishing link and define the evidence needed to determine whether compromise occurred.
+
+## Context: 
+
+The evidence batch states that Diane Marsh clicked the Email 2 link from WS-NURSE-04. Because this independent project does not provide endpoint or SIEM logs, the correct analyst response is to document what is confirmed, what is unknown and what follow-up checks would be required.
+
+## Instructions: 
+
+Create a file named 7-click_investigation.md.
+
+Your report must include:
+
+    Confirmed facts from the evidence batch: user, workstation, email, URL/domain, click timestamp and related IP
+    A risk assessment explaining why a reported click on a credential-harvesting portal is serious even without confirmed credential entry
+    A list of endpoint checks that should be performed if logs are available, such as browser history, downloaded files, process execution, PowerShell/cmd activity and file creation
+    A list of identity/account checks that should be performed, such as failed logons, successful logons from unusual sources, MFA prompts, password changes, inbox rules and group membership changes
+    A decision matrix with at least three possible outcomes: no compromise found, possible credential exposure, confirmed compromise
+    Recommended containment steps that are safe and realistic, such as password reset, MFA/session revocation, user interview and monitoring for suspicious logins
+
+Do not claim that Sysmon, Wazuh, Suricata or Windows Security logs were searched unless you clearly label them as recommended follow-up checks. This task is evidence-based and independent.
+
+**Expected Output Format:**
+
+<pre>
+## Click Investigation — Diane Marsh / WS-NURSE-04
+
+### Confirmed Facts
+
+### Key Unknowns
+
+### Endpoint Checks To Perform
+
+### Account Checks To Perform
+
+### Decision Matrix
+
+### Recommended Containment
+
+### Conclusion
+</pre>
+
+---
