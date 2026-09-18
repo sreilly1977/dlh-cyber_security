@@ -162,4 +162,3 @@ E7 is a clear HR benefits impersonation attack exploiting open enrollment pretex
 All four suspicious emails share identical PHPMailer 6.6.0 fingerprints, suggesting deployment from a single or tightly clustered infrastructure. Three of four (E2, E5, E7) use unencrypted relays from budget VPS-style IPs. Four of four employ urgency-based social engineering pretexts aligned with HC3's advisory patterns. This supports James Chen's hypothesis of a coordinated campaign rather than random spam.
 
 ================================================================================
-End of header analysis document
