@@ -578,3 +578,55 @@ Your report must include:
     evidence supporting the confidence level
 
 ---
+
+# [11. The IOC Extraction](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/11-ioc_extraction.md)
+
+## Goal: 
+
+Extract, categorize, and structure the indicators of compromise from the investigation into a shareable IOC report.
+
+## Context: 
+
+An IOC report allows other defenders to block, alert on, or investigate the same campaign. Not every indicator has the same quality. A lookalike phishing domain is usually a high-confidence IOC. A common hosting provider or registrar is not safe to block by itself. Your job is to separate actionable indicators from context-only information.
+
+## Instructions: 
+
+Produce 11-ioc_extraction.md.
+
+Your report must include:
+
+1. A structured IOC table with:
+
+    IOC type: domain, IP, URL, email address, file hash, tool, or infrastructure note
+    IOC value, defanged where appropriate
+    source email
+    context
+    confidence: HIGH, MEDIUM, or LOW
+    recommended action: block, alert, monitor, or context only
+
+2. At minimum, include IOCs from:
+
+    Email 2
+    Email 3
+    Email 5
+    Email 7
+    the Email 5 attachment metadata or embedded PDF URL
+    the HC3 alert patterns from Email 8
+
+3. Categorize IOCs by attack phase:
+
+    Delivery
+    Credential harvesting
+    Attachment or lure artifact
+    Infrastructure
+    Context-only indicators
+
+4. Explain IOC quality:
+
+    which IOCs are high-confidence and safe to block
+    which IOCs should only be monitored
+    which indicators should not be used alone because they could create false positives
+
+5. Provide a short HC3-ready summary containing the most important domains, IPs, sender addresses, and URLs.
+
+---
