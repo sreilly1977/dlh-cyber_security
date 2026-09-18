@@ -90,7 +90,7 @@ The following facts are established directly by the email evidence batch and the
 6. Role-targeted delivery is evident: clinical staff (E2), generic M365 user (E3), Accounts Payable (E5), billing/HR (E7), consistent with the campaign pattern described in the HC3 advisory received 2026-04-16 (E8).
 7. Recipients Linda Patterson and Angela Rivera did not report engaging with their lures; their click status is simply unknown, not confirmed safe.
 
-The following remain UNKNOWN and require logs or interviews: whether Diane Marsh entered credentials after clicking, whether a session was created for the attacker, whether any other staff clicked E2/E3/E5/E7 beyond the reports received (Sarah Park's concern), whether the E5 portal logged in from MedDefense networks, and whether any EHR access followed the click.
+The following remain UNKNOWN and require logs or interviews: whether Diane Marsh entered credentials after clicking, whether a session was created for the attacker, whether any other staff clicked E2/E3/E5/E7 beyond the reports received (Sarah Park's concern about additional clicks), whether the E5 portal logged in from MedDefense networks, and whether any EHR access followed the click.
 
 ---
 
@@ -115,13 +115,14 @@ The following queries define what a SOC analyst should search for, per telemetry
 - Search for any traffic to the E5 payment portal from Accounts Payable VLAN/subnets, and any access to meddefense-benefits[.]org/enroll from billing networks.
 - Search for requests from egress IPs other than expected MedDefense ranges hitting the same harvesting token (token=a8f3e2d1 is attacker-side unique — its presence in any outbound request string identifies the victim session even across NAT).
 
-**Endpoint logs (Sysmon-class, AV, or local host artifacts on WS-NURSE-04):**
+**Endpoint artifacts on WS-NURSE-04 (Windows-native, no special tooling required):**
 
-- Retrieve browser history and cache for WS-NURSE-04 covering 2026-04-14 14:00–16:00 CDT: confirm the visited URL, whether a form was autofilled or typed, and whether credentials appear in form-history artifacts.
-- Process creation events around 15:02:33 CDT — distinguish browser navigation from any download or script execution (Stage 2 deployment per HC3 advisory). No malware delivery is proven by the batch, so endpoint review is the confirming step for the "possible Stage 2" concern.
-- Check for scheduled tasks, persistence registry keys, or unexpected child processes of the browser in the 36-hour post-click window.
-- Review credential manager, cookie stores, and cached session tokens for meddefense-portal.com artifacts.
-- Pull AV/EDR detections for WS-NURSE-04 over the same window as a completeness check.
+- Browser history files for Diane Marsh's account covering 2026-04-14 14:00–16:00 CDT: confirm the visited URL, whether a form was autofilled or typed, and whether credentials appear in form-history artifacts. Common locations: %USERPROFILE%\AppData\Local\Google\Chrome\User Data\Default\History or equivalent for Edge/Firefox.
+- Windows event log (System/Application) around 15:02:33 CDT — check for browser process start times correlating with the click event, and any unexpected child processes spawned by the browser in the subsequent hours.
+- Credential Manager review (control panel or run rundll.exe keymgr.dll,KRShowKeyMgr) — inspect saved credentials for any meddefense-portal.com entries added after the click.
+- Prefetch or ShimCache artifacts (C:\Windows\Prefetch) — verify whether any unexpected executables ran after the click, indicating potential Stage 2 payload execution as warned in the HC3 advisory.
+- Temporary folder review (C:\Users\dmarsh\AppData\Local\Temp) — search for newly-created files around the click timestamp that could indicate downloaded payloads or dropped scripts.
+- Scheduled Tasks or startup registry keys created post-click (schtasks /query /fo CSV, reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run) — persistence mechanisms commonly appear here if a payload executed.
 
 **Authentication logs (domain controller, VPN, SSO/IdP, EHR application):**
 
