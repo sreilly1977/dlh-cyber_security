@@ -14,7 +14,7 @@ Supporting characters (e.g., James Chen, Marcus) and realistic artifacts (networ
 
 ## Total Exercise Count
 
-**291 exercises** across all **17 scenario modules**.
+**306 exercises** across all **18 scenario modules**.
 
 Those marked as advanced are not required to pass the course.
 
@@ -48,7 +48,7 @@ The curriculum follows a progressive learning path through twelve modules across
 | 11 | [`2x04_perimeter_defense`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x04_perimeter_defense) | Network perimeter security, IDS/IPS deployment, DMZ architecture, firewall rule optimization, traffic analysis, and boundary monitoring | 16 |
 | 12 | [`2x05_defensible_endpoint`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/2x05_defensible_endpoint) | Advanced endpoint hardening, application whitelisting, USB device control, sandboxing strategies, and endpoint isolation techniques | 12 |
 
-#### Part 3 — Detection & Response Operations (Modules 13-16)
+#### Part 3 — Detection & Response Operations (Modules 13-18)
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
@@ -57,6 +57,7 @@ The curriculum follows a progressive learning path through twelve modules across
 | 15 | [`3x02_the_alert_factory`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x02_the_alert_factory) | Detection engineering with Sigma rules: detection matrix mapping, rule authoring across signature/correlation types, Sigma rule execution, correlation primitives, false-positive baseline measurement, rule tuning, attack coverage mapping, rule quality scoring and prioritization, alert generation, and detection catalog assembly | 17 |
 | 16 | [`3x03_triage_shift`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x03_triage_shift) | SOC triage operations: alert queue assessment, triaging true positives, false positives, benign, and ambiguous auth/process/network alerts with IOC context joins, cross-alert correlation, priority conflict resolution, FP tuning, incident assembly, shift metrics, and bounded shift handoff report writing | 15 |
 | 17 | [`3x04_cross_platform_detection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection) | Multi-platform and multi-interface detection evaluation: CLI vs Wazuh dashboard/export comparison, Sigma-to-native XML rule translation, cross-tool query language analysis (jq, Sigma, KQL, Lucene), workflow and tradeoff comparison, tool evaluation packaging, field name translation tables, and vendor brief assembly for stakeholder review | 16 |
+| 18 | [`3x05_the_24_hour_watch`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch) | SOC Tier 1 capstone simulation: 24-hour watch operations for MedDefense Health Systems detecting HC-RED7 cluster, including enriched event pipeline ingestion, behavioral baseline construction, Sigma-based detection engineering, multi-alert triage and correlation, deep-dive incident investigation (Incidents A, B, C), containment strategy, IOC packaging, detection tuning recommendations, and formal shift handoff documentation | 15 |
 
 ### Reference Materials
 
