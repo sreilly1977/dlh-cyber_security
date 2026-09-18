@@ -630,3 +630,53 @@ Your report must include:
 5. Provide a short HC3-ready summary containing the most important domains, IPs, sender addresses, and URLs.
 
 ---
+
+# [12. The Detection Recommendations](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/12-detection_recommendations.md)
+### advanced
+
+## Goal: 
+
+Convert investigation findings into practical detection recommendations that could be implemented later in SIEM, IDS, email gateway, DNS, or endpoint tools.
+
+## Context: 
+
+Earlier versions of this project required students to write Wazuh and Suricata rules. This project is now independent and offline-friendly, so you are not expected to deploy or test live rules. Instead, you will write detection logic in a vendor-neutral way. The goal is to show that you understand what should be detected and why.
+
+## Instructions: 
+
+Produce 12-detection_recommendations.md.
+
+Your report must include:
+
+1. At least five detection opportunities based on the campaign, such as:
+
+    DNS query to known phishing domains
+    inbound email from lookalike domains
+    sender domain failing SPF, DKIM, or DMARC
+    use of PHPMailer in suspicious external email headers
+    newly registered domain used in healthcare-themed email
+    URL containing target-specific parameters
+    suspicious attachment containing embedded payment or login URLs
+
+2. For each detection opportunity, document:
+
+    detection name
+    data source needed
+    example logic or pseudocode
+    expected match from the evidence batch
+    severity
+    false-positive considerations
+    recommended response action
+
+3. Include at least one detection idea for each of these categories:
+
+    Email gateway
+    DNS or web filtering
+    Endpoint or browser activity
+    Threat intelligence / IOC matching
+
+4. Explain which detections would have caught Diane’s Email 2 click earlier.
+
+5. Explain which detections are preventive, detective, and responsive.
+
+---
