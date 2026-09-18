@@ -205,3 +205,46 @@ Avoid hardcoded dramatic notes such as “CRITICAL NOTE”. Use clear analyst la
 </pre>
 
 ---
+
+# [3. The Social Engineering Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/3-social_engineering.md)
+
+## Goal: 
+
+Analyze the content of the suspicious emails and identify the psychological manipulation techniques used.
+
+## Context: 
+
+Header and authentication analysis explain how an email was sent. Content analysis explains how the sender tries to influence the recipient.
+
+A generic phishing email may rely on broad fear or urgency. A targeted phishing email may reference a person, department, workflow, invoice, benefits process or internal system.
+
+## Instructions: 
+
+Create a file named 3-social_engineering.md.
+
+Analyze E2, E3, E5 and E7.
+
+For each email, include:
+
+    Primary psychological lever: urgency, authority, fear, scarcity, financial pressure or impersonation
+    Pretext: the story the email uses
+    Requested action: click, login, verify, pay, download, open attachment or provide information
+    Targeting level: GENERIC, SEMI-TARGETED or TARGETED
+    Content red flags
+    What information the attacker likely needed to craft the lure
+
+**Expected Output Format:**
+
+<pre>
+## Email 5 — Invoice lure
+
+- Psychological lever:
+- Pretext:
+- Requested action:
+- Targeting level:
+- Content red flags:
+- Attacker knowledge required:
+- Conclusion:
+</pre>
+
+---
