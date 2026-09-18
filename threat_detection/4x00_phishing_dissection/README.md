@@ -484,3 +484,46 @@ Include:
 </pre>
 
 ---
+
+# [9. The Campaign Thread](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/9-campaign_thread.md)
+
+## Goal: 
+
+Demonstrate whether Emails 2, 5 and 7 are part of a coordinated phishing campaign by connecting shared infrastructure, timing and targeting patterns.
+
+## Context: 
+
+Three suspicious emails use different pretexts, different sender domains and different targets. A deeper campaign analysis asks whether they are connected by timing, infrastructure, tooling and targeting. Email 8 provides a healthcare-sector alert that should be compared against the observed MedDefense evidence.
+
+## Instructions:
+
+Create a file named 9-campaign_thread.md.
+
+Your report must include:
+
+    Shared indicators between E2, E5 and E7, such as lookalike MedDefense-related domains, PHPMailer, priority headers, urgency and targeted business process lures
+    A targeting map showing E2 targets clinical staff, E5 targets accounts payable/finance and E7 targets HR or benefits-related staff
+    A timing map showing E2 on April 14, E5 on April 16 and E7 on April 16 based on the evidence batch. Do not invent an April 15 delivery if the evidence shows April 16
+    A comparison with Email 8 and the HC3 pattern: lookalike domains, role-specific targeting, urgency and healthcare-sector phishing
+    An attribution assessment explaining what can be inferred and what cannot be proven. Avoid overclaiming a specific actor
+    A conclusion on whether the evidence supports a single coordinated campaign
+
+**Expected Output Format:**
+
+<pre>
+## Campaign Thread Analysis
+
+### Shared Indicators
+
+### Targeting Map
+
+### Timing Map
+
+### Comparison With HC3 Alert
+
+### Attribution Assessment
+
+### Conclusion
+</pre>
+
+---
