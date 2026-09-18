@@ -9,7 +9,9 @@
 **Date:** 18 September 2026
 
 ================================================================================
+
 MEDDEFENSE HEALTH SYSTEMS — INITIAL EMAIL TRIAGE
+
 ================================================================================
 
 | Email | From | Subject | SPF | DKIM | DMARC | Class | Priority | Evidence |
@@ -24,6 +26,7 @@ MEDDEFENSE HEALTH SYSTEMS — INITIAL EMAIL TRIAGE
 | E8 | HC3@hhs.gov | [HC3 ALERT — TLP:CLEAR] Active phishing campaign targeting regional healthcare | pass | pass | pass | LEGITIMATE | P3-MEDIUM | Official hhs.gov domain with valid DKIM/SPF, authenticated HHS Secure Mail Gateway, TLP:CLEAR marking, contextual threat intel from HC3 (not campaign itself) |
 
 ================================================================================
+
 ## Triage Summary
 
 - **SPAM:** 1 (E6 - pharmaceutical spam, obvious noise, already quarantined)
