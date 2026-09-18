@@ -248,3 +248,59 @@ For each email, include:
 </pre>
 
 ---
+
+# [4. The URL and Attachment Autopsy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/4-url_attachment_autopsy.md)
+
+## Goal: 
+
+Safely investigate URLs and attachment indicators found in the suspicious emails without opening suspicious links or files directly.
+
+## Context: 
+
+A suspicious URL is often the bridge between an email and a real compromise. Investigating it safely means extracting the URL, defanging it and documenting what the evidence tells you without directly visiting it.
+
+Some evidence may also appear inside attachment metadata. Do not open attachments on your workstation. Only document metadata and indicators visible in the raw email evidence.
+
+## Instructions: 
+
+Create a file named 4-url_attachment_autopsy.md.
+
+Analyze the suspicious emails E2, E3, E5 and E7.
+
+For each suspicious URL or attachment indicator:
+
+    Extract the original URL or attachment reference from the evidence
+    Defang the URL by replacing http with hxxp and . with [.]
+    Identify the domain or IP address
+    Identify the email where it appeared
+    Describe why the URL or attachment is suspicious
+    Document safe investigation commands that could be used, such as whois, dig, nslookup, curl -I, VirusTotal or urlscan.io lookups
+    Record findings from the email evidence itself, such as sending IP reuse, lookalike domains, suspicious file names, invoice pretexts or embedded PDF links
+
+Do not require live DNS, SIEM, Wazuh, Sysmon or Suricata data. If a live lookup does not work, document the method and use the evidence file for your conclusion.
+
+**Expected Output Format:**
+
+<pre>
+## Indicator 1
+
+- Source email:
+- Original value:
+- Defanged value:
+- Domain or IP:
+- Indicator type:
+- Evidence from email:
+- Safe investigation method:
+- Finding:
+- Risk rating:
+</pre>
+
+Your file must include the following suspicious domains or IP indicators:
+
+    meddefense-portal.com
+    outlook-protection.com
+    medequip-supplies.net
+    meddefense-benefits.org
+    203.0.113.228
+
+---
