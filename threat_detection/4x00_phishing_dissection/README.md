@@ -104,3 +104,62 @@ At the end of the file, include a short summary:
 </pre>
 
 ---
+
+# [1. The Header Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/1-header_analysis.md)
+
+## Goal: 
+
+Parse the SMTP header chain of the suspicious emails and identify the true origin and routing indicators for each message.
+
+## Context: 
+
+The From: field in an email can be misleading. The technical truth is usually found in headers such as Received:, Return-Path:, Authentication-Results:, Message-ID: and X-Mailer:.
+
+In this task, analyze the suspicious emails identified during triage: E2, E3, E5 and E7.
+
+## Instructions: 
+
+Create a file named 1-header_analysis.md.
+
+For each suspicious email E2, E3, E5 and E7, document:
+
+    The visible From: address
+    The Return-Path: address
+    The sending IP address from the external Received: hop
+    The mailer or sending software from X-Mailer
+    The Message-ID format
+    Any mismatch between the claimed sender and the sending infrastructure
+    Header anomalies that support suspicion
+
+Do not rely on live Wazuh, Sysmon, Suricata or endpoint telemetry. This task must be completed using the email evidence batch only.
+
+**Expected Output Format:**
+
+<pre>
+## Email 2 — meddefense-portal.com
+
+### Header Evidence
+
+- From:
+- Return-Path:
+- Sending IP:
+- X-Mailer:
+- Message-ID:
+
+### Received Chain Summary
+
+1.
+2.
+3.
+
+### Anomalies
+
+- [HIGH] ...
+- [MEDIUM] ...
+
+### Conclusion
+
+...
+</pre>
+
+---
