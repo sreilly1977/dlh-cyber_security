@@ -527,3 +527,54 @@ Your report must include:
 </pre>
 
 ---
+
+# [10. The Infrastructure Map](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/10-infrastructure_map.md)
+### advanced
+
+## Goal: 
+
+Map the attack infrastructure used by the suspicious emails and explain how domains, IPs, hosting providers, registration timing, and mailer fingerprints connect.
+
+## Context: 
+
+The suspicious emails use lookalike domains, external IP addresses, repeated mailer software, and role-based phishing lures. You do not need live DNS, certificate transparency access, or a SIEM to complete this task. Use the evidence batch, previous URL analysis, and the HC3 alert content to build an evidence-based infrastructure map.
+
+## Instructions: 
+
+Produce 10-infrastructure_map.md.
+
+Your report must include:
+
+1. A table of the suspicious campaign domains and infrastructure:
+
+    domain
+    source email
+    sender address
+    IP address observed in headers
+    registration date or inferred timing if provided by previous analysis
+    registrar or hosting provider if known from previous investigation notes
+    mailer software
+
+2. A relationship map or ASCII diagram showing how the following connect:
+
+    meddefense-portal[.]com
+    medequip-supplies[.]net
+    meddefense-benefits[.]org
+    outlook-protection[.]com
+    the related IP addresses
+    PHPMailer usage
+    campaign targeting patterns
+
+3. A pattern analysis explaining:
+
+    which domains appear connected to the same campaign
+    which domain may be separate or less directly connected
+    why shared timing, role targeting, urgency, and mailer software matter
+
+4. A final assessment:
+
+    disposable infrastructure, compromised infrastructure, or legitimate shared infrastructure abused by an attacker
+    confidence level for your assessment
+    evidence supporting the confidence level
+
+---
