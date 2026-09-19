@@ -537,3 +537,124 @@ consistent with automated command-and-control beaconing.
 ```
 
 ---
+
+# [3. The DNS Tunnel](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/3-dns_tunnel.sh)
+
+## Goal:
+
+Detect, analyze and decode a DNS tunneling channel used for data exfiltration from billing-srv-01, understanding how attackers use the DNS protocol to bypass network security controls.
+
+## Context: 
+
+DNS is the invisible highway. Almost every network allows it. Many monitoring systems treat DNS queries as background noise. Attackers exploit this trust by encoding data into DNS query labels and receiving commands in DNS response records.
+
+A query to a long encoded subdomain under data-sync.meddefense-portal.com can look like normal name resolution unless you notice the length, frequency, query type and encoding pattern.
+
+You will confirm or deny DNS tunneling using packet-level evidence only.
+
+## Instructions: 
+
+Write a script 3-dns_tunnel.sh that analyzes dns_exfil.pcap:
+
+1. Extract all DNS queries from billing-srv-01 (10.10.1.10)
+
+2. Separate the queries into two categories:
+
+    NORMAL: queries to expected domains such as meddefense.com, Microsoft, Ubuntu or other ordinary services
+    ANOMALOUS: queries to unfamiliar domains or queries with unusual length, type, rate or encoded-looking labels
+
+3. For anomalous queries:
+
+    extract the full query name
+    identify the base domain
+    calculate the subdomain label length
+    check if the subdomain appears encoded
+
+4. Calculate anomalous query rate:
+
+    queries per minute
+    total count
+    total time span
+
+5. Decode a sample of 5 subdomain labels if possible.
+
+    The PCAP may use base32 or base64-style encoding.
+    Your script should document which decoding approach was attempted.
+    If decoding fails, document the reason instead of inventing decoded data.
+
+6. Analyze DNS responses:
+
+    response type
+    TXT response size
+    possible command/control content if decodable
+
+7. Calculate approximate exfiltration volume:
+
+    number of queries x average encoded payload length
+    estimate raw payload size after encoding overhead
+
+8. Determine exfiltration rate in bytes per minute
+
+9. Compare tunnel DNS behavior against Task 0 baseline DNS behavior
+
+Your script must show the tshark commands or filters used.
+
+**Expected Output:**
+
+```bash
+$ ./3-dns_tunnel.sh dns_exfil.pcap
+
+=== DNS QUERY CLASSIFICATION ===
+Total DNS queries: 487
+Normal queries: 367
+Anomalous queries: 120
+
+=== ANOMALOUS QUERY ANALYSIS ===
+Base domain: data-sync.meddefense-portal[.]com
+
+Query pattern:
+  Type: TXT
+  Interval: 10-15 seconds between queries
+  Subdomain label length: 44-60 characters (avg 52)
+  Encoding: base32/base64-like high-entropy encoded labels
+
+Sample decoded queries:
+  Query 1: [encoded-label]
+    -> Decoded or attempted decoding result documented
+  Query 2: [encoded-label]
+    -> Decoded or attempted decoding result documented
+  Query 3: [encoded-label]
+    -> Decoded or attempted decoding result documented
+  Query 4: [encoded-label]
+    -> Decoded or attempted decoding result documented
+  Query 5: [encoded-label]
+    -> Decoded or attempted decoding result documented
+
+=== DNS RESPONSE ANALYSIS ===
+Response type: TXT records
+Average response size: 60-120 bytes
+Content: encoded command or control-style responses
+
+=== EXFILTRATION VOLUME ===
+Queries: 120 in 30 minutes (4/min)
+Average subdomain payload: 52 encoded bytes per query
+Estimated raw data exfiltrated: approximately 4-5 KB
+
+[*] This is low volume, but DNS tunneling often prioritizes
+    stealth and structured records over bulk transfer.
+
+=== DETECTION COMPARISON ===
+                    | Normal DNS        | Tunnel DNS
+--------------------|-------------------|--------------------
+Query type          | A, AAAA           | TXT
+Subdomain length    | short             | 44-60 chars
+Subdomain encoding  | human-readable    | encoded/high entropy
+Query rate          | variable          | regular
+Destination domain  | known             | campaign-related
+Time of activity    | business hours    | night activity
+
+=== CONCLUSION ===
+The DNS traffic from billing-srv-01 is consistent with DNS tunneling
+and likely data exfiltration through TXT queries.
+```
+

@@ -236,10 +236,14 @@
     }
   ],
   "dns_domains_observed": [
-    "1",
-    "15",
-    "16",
-    "28"
+    "ehr.meddefense.com",
+    "login.microsoftonline.com",
+    "meddefense.com",
+    "outlook.office365.com",
+    "pacs.meddefense.com",
+    "time.windows.com",
+    "windows.com",
+    "www.bing.com"
   ],
   "external_ips_contacted": [
     "13.107.42.14",

@@ -335,7 +335,7 @@ echo "Top external destination:   $(head -n 1 "$EXT_CONNS" | awk '{ print $2, "(
 echo "Normal packet volume range: $(awk -F'\t' 'NR == 1 { lo = hi = $2 } { if ($2 < lo) lo = $2; if ($2 > hi) hi = $2 } END { printf "%d-%d packets/min", lo, hi }' "$BIN_TSV")"
 
 # Baseline reference lists (used by later comparison tasks)
-awk -F'\t' '{ print $2 }' "$DNS_TSV" | sort -u > "$TMP/known_dns_domains.txt"
+awk -F'\t' '{ print $1 }' "$DNS_TSV" | sort -u > "$TMP/known_dns_domains.txt"
 awk '{ print $2 }' "$EXT_CONNS" | sort -u > "$TMP/known_external_ips.txt"
 
 # ---------------------------------------------------------------------------

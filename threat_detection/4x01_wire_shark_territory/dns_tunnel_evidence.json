@@ -1,0 +1,74 @@
+{
+  "source_host": "10.10.1.10",
+  "total_queries": 487,
+  "normal_queries": 367,
+  "anomalous_queries": 120,
+  "classification_criteria": [
+    "query type TXT to domain outside Task 0 known-good set",
+    "subdomain label >= 30 characters"
+  ],
+  "tunnel_base_domain": "data-sync.meddefense-portal.com",
+  "anomalous_query_count": 120,
+  "span_minutes": 24.74,
+  "rate_per_min": 4.85,
+  "avg_interval_s": 12.48,
+  "interval_stddev_s": 1.44,
+  "label_length_range": [
+    44,
+    60
+  ],
+  "avg_label_entropy_bits": 4.5,
+  "avg_interval_cv_pct": 11.52,
+  "sample_decodes": [
+    {
+      "query_name": "obqxi2lfnz2f64tfmnxxezb2jfcd2nbyheysy3tbnvst2u.data-sync.meddefense-portal.com",
+      "label": "obqxi2lfnz2f64tfmnxxezb2jfcd2nbyheysy3tbnvst2u",
+      "decoded_as": null,
+      "decoded_text": null,
+      "decode_attempts_log": [
+        "base32 failed: Incorrect padding",
+        "base64 failed: 'utf-8' codec can't decode byte 0xa1 in position 0: invalid start byte",
+        "base64-urlsafe failed: 'utf-8' codec can't decode byte 0xa1 in position 0: invalid start byte"
+      ]
+    },
+    {
+      "query_name": "onsxe5tfojpwg33omzuwootin5zxi3tbnvst2ytjnrwgs3thfvzxe5rnga.data-sync.meddefense-portal.com",
+      "label": "onsxe5tfojpwg33omzuwootin5zxi3tbnvst2ytjnrwgs3thfvzxe5rnga",
+      "decoded_as": "base32",
+      "decoded_text": "server_config:hostname=billing-srv-0",
+      "decode_attempts_log": []
+    },
+    {
+      "query_name": "mjqwg23vobpw2zlumfsgc5dbhjygc5dihuxxmylsf5wgsyr.data-sync.meddefense-portal.com",
+      "label": "mjqwg23vobpw2zlumfsgc5dbhjygc5dihuxxmylsf5wgsyr",
+      "decoded_as": "base32",
+      "decoded_text": "backup_metadata:path=/var/lib",
+      "decode_attempts_log": []
+    },
+    {
+      "query_name": "mzuw4ylomnuwc3c7ojswg33smq5gs3twhuzdamrwfuydgobug.data-sync.meddefense-portal.com",
+      "label": "mzuw4ylomnuwc3c7ojswg33smq5gs3twhuzdamrwfuydgobug",
+      "decoded_as": null,
+      "decoded_text": null,
+      "decode_attempts_log": [
+        "base32 failed: Incorrect padding",
+        "base64 failed: Invalid base64-encoded string: number of data characters (49) cannot be 1 more than a multiple of 4",
+        "base64-urlsafe failed: Invalid base64-encoded string: number of data characters (49) cannot be 1 more than a multiple of 4"
+      ]
+    },
+    {
+      "query_name": "obqxi2lfnz2f64tfmnxxezb2jfcd2nbyhezcy3tbnvst2usfirau.data-sync.meddefense-portal.com",
+      "label": "obqxi2lfnz2f64tfmnxxezb2jfcd2nbyhezcy3tbnvst2usfirau",
+      "decoded_as": "base32",
+      "decoded_text": "patient_record:ID=4892,name=REDA",
+      "decode_attempts_log": []
+    }
+  ],
+  "txt_responses": 133,
+  "estimated_exfil": {
+    "total_encoded_bytes": 6263,
+    "raw_if_base32": 3914,
+    "raw_if_base64": 4697,
+    "rate_bytes_per_min_base32": 158.2
+  }
+}
