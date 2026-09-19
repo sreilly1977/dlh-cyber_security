@@ -1,0 +1,597 @@
+{
+  "total_internal_connections": 47,
+  "cross_subnet_connections": 3,
+  "connections": [
+    {
+      "time": "16:30:12.445",
+      "src": "10.10.2.15",
+      "dst": "10.10.1.10",
+      "port": 3389,
+      "scope": "cross",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 130270,
+      "server_bytes": 135453,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:31:34.406",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:32:07.909",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:32:33.662",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:32:41.218",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:33:04.778",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:35:22.891",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 445,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 817,
+      "server_bytes": 563,
+      "nbss_frames": 6
+    },
+    {
+      "time": "16:35:37.048",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:35:57.075",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:36:01.334",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.30",
+      "port": 445,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 721,
+      "server_bytes": 356,
+      "nbss_frames": 4
+    },
+    {
+      "time": "16:36:06.376",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:36:20.948",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:36:45.112",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.31",
+      "port": 445,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 721,
+      "server_bytes": 356,
+      "nbss_frames": 4
+    },
+    {
+      "time": "16:37:55.822",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:38:07.556",
+      "src": "10.10.1.10",
+      "dst": "10.10.4.100",
+      "port": 445,
+      "scope": "cross",
+      "outcome": "ATTEMPT WITHOUT RESPONSE OBSERVED",
+      "client_bytes": 0,
+      "server_bytes": 0,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:38:08.112",
+      "src": "10.10.1.10",
+      "dst": "10.10.4.101",
+      "port": 445,
+      "scope": "cross",
+      "outcome": "ATTEMPT WITHOUT RESPONSE OBSERVED",
+      "client_bytes": 0,
+      "server_bytes": 0,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:38:11.313",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:38:22.728",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:39:27.515",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:40:12.628",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:40:33.778",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.60",
+      "port": 445,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 2227,
+      "server_bytes": 3064,
+      "nbss_frames": 52
+    },
+    {
+      "time": "16:41:02.504",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:41:09.174",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:41:11.082",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:42:16.247",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:42:20.497",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:42:28.880",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:42:53.155",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:43:32.011",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:44:07.974",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:46:28.472",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:47:07.847",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:47:17.554",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:48:36.507",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:49:34.479",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:49:35.273",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:49:53.093",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:52:38.591",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:52:50.214",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:54:05.204",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:54:06.017",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:54:28.511",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:54:47.453",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:55:59.452",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:56:31.086",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:56:49.931",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:57:42.229",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "port": 443,
+      "scope": "same-subnet",
+      "outcome": "COMPLETED (FIN teardown)",
+      "client_bytes": 414,
+      "server_bytes": 2924,
+      "nbss_frames": 0
+    }
+  ],
+  "origin_host": "10.10.2.15",
+  "blocked_connections": [],
+  "smb_sessions": [
+    {
+      "time": "16:35:22.891",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.20",
+      "outcome": "COMPLETED (FIN teardown)",
+      "nbss_frames": 6
+    },
+    {
+      "time": "16:36:01.334",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.30",
+      "outcome": "COMPLETED (FIN teardown)",
+      "nbss_frames": 4
+    },
+    {
+      "time": "16:36:45.112",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.31",
+      "outcome": "COMPLETED (FIN teardown)",
+      "nbss_frames": 4
+    },
+    {
+      "time": "16:38:07.556",
+      "src": "10.10.1.10",
+      "dst": "10.10.4.100",
+      "outcome": "ATTEMPT WITHOUT RESPONSE OBSERVED",
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:38:08.112",
+      "src": "10.10.1.10",
+      "dst": "10.10.4.101",
+      "outcome": "ATTEMPT WITHOUT RESPONSE OBSERVED",
+      "nbss_frames": 0
+    },
+    {
+      "time": "16:40:33.778",
+      "src": "10.10.1.10",
+      "dst": "10.10.1.60",
+      "outcome": "COMPLETED (FIN teardown)",
+      "nbss_frames": 52
+    }
+  ],
+  "attck_mapping": [
+    {
+      "technique": "T1078.002",
+      "name": "Valid Accounts: Domain Accounts",
+      "evidence": "internal pivot from phished workstation implies credential use (metadata-based; account names not dissectable in this capture)"
+    },
+    {
+      "technique": "T1021.001",
+      "name": "Remote Desktop Protocol",
+      "evidence": "RDP (3389) from clinical workstation to billing server"
+    },
+    {
+      "technique": "T1135",
+      "name": "Network Share Discovery",
+      "evidence": "SMB connections from billing server to multiple internal hosts (10.10.1.20, 10.10.1.30, 10.10.1.31, 10.10.1.60, 10.10.4.100, 10.10.4.101)"
+    },
+    {
+      "technique": "T1021.002",
+      "name": "SMB/Windows Admin Shares",
+      "evidence": "SMB sessions with bidirectional NBSS data observed"
+    }
+  ],
+  "capture_depth_limitations": [
+    "SMB payloads present only at NBSS layer; SMB2 command/status and account names not dissectable",
+    "RDP payload not dissected; NLA/account details not visible",
+    "outcomes inferred from TCP teardown flags and RST responder identity"
+  ],
+  "conclusion": "Lateral movement reconstructed from TCP-level evidence: RDP pivot from phished workstation to billing server, SMB spread to multiple internal hosts, gateway-enforced blocks on 10.10.4.x, and repeated internal TLS sessions to the legitimate portal host from the compromised server (metadata-consistent with credential validation)."
+}

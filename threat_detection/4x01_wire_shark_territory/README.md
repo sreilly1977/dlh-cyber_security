@@ -658,3 +658,146 @@ The DNS traffic from billing-srv-01 is consistent with DNS tunneling
 and likely data exfiltration through TXT queries.
 ```
 
+---
+
+# [4. The Lateral Trail](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/4-lateral_movement.sh)
+
+## Goal: 
+
+Trace the attacker's lateral movement through the MedDefense network, identifying credential-based pivots, systems accessed and systems that resisted access.
+
+## Context: 
+
+The attacker obtained credentials through phishing, established suspicious outbound communication and later reached internal systems. This PCAP captures the lateral movement that connected the phases.
+
+The previous version of this task referenced Module 2 segmentation rules. In this independent version, do not reference Module 2. Instead, analyze the packet evidence directly:
+
+    which connections succeeded
+    which connections failed
+    which systems were reached
+    which systems denied access
+    which traffic patterns were abnormal compared with the baseline
+
+## Instructions: Write a script 4-lateral_movement.sh that analyzes lateral_movement.pcap:
+
+1. Extract all cross-subnet traffic:
+
+    10.10.2.x to 10.10.1.x
+    10.10.1.x to other internal subnets
+    any server-to-server traffic relevant to the incident
+
+2. Identify authentication-related events:
+
+    Kerberos ticket requests if visible
+    NTLM authentication if visible
+    RDP/NLA handshakes
+    SMB session setup activity
+
+3. For each authentication-related event:
+
+    timestamp
+    source IP
+    destination IP
+    account name if visible
+    protocol
+    success or failure if visible
+
+4. Map the attacker's path:
+
+    starting system
+    first internal destination
+    subsequent systems accessed
+    systems that denied access
+    systems that returned TCP reset or refused connections
+
+5. Identify failed connections:
+
+    extract TCP RST responses
+    identify access denied patterns
+    explain what these failures mean from packet evidence only
+
+6. Identify SMB enumeration:
+
+    directory listing activity
+    shares accessed
+    files or entry counts if visible
+
+7. Compare lateral movement traffic against the baseline:
+
+    does WS-NURSE-04 normally talk to billing-srv-01 via RDP?
+    does billing-srv-01 normally enumerate other systems?
+    does the timing match normal activity?
+
+8. Map the observed lateral movement chain to MITRE ATT&CK techniques
+
+Your script must show the tshark commands or filters used.
+
+**Expected Output:**
+
+```bash
+$ ./4-lateral_movement.sh lateral_movement.pcap
+
+=== CROSS-SUBNET TRAFFIC ===
+Total cross-subnet connections: 34
+Unique source-destination pairs: 6
+Connections involving WS-NURSE-04 (10.10.2.15): 8
+
+=== AUTHENTICATION EVENTS ===
+Timestamp           | Source     | Dest       | Account | Proto    | Result
+--------------------|------------|------------|---------|----------|--------
+14:30:12.445        | 10.10.2.15 | 10.10.1.10 | dmarsh  | RDP/NLA  | SUCCESS
+14:35:22.891        | 10.10.1.10 | 10.10.1.20 | dmarsh  | SMB      | SUCCESS
+14:36:01.334        | 10.10.1.10 | 10.10.1.30 | dmarsh  | SMB      | ACCESS DENIED
+14:36:45.112        | 10.10.1.10 | 10.10.1.31 | dmarsh  | SMB      | ACCESS DENIED
+14:38:07.556        | 10.10.1.10 | 10.10.4.100| SMB     | SMB      | TCP RST / refused
+14:38:08.112        | 10.10.1.10 | 10.10.4.101| SMB     | SMB      | TCP RST / refused
+14:40:33.778        | 10.10.1.10 | 10.10.1.60 | dmarsh  | SMB      | SUCCESS
+14:42:15.002        | 10.10.1.10 | 10.10.1.60 | dmarsh  | SMB      | DIR LISTING
+
+=== ATTACK PATH RECONSTRUCTION ===
+
+Step 1: RDP from clinical workstation to billing server
+  WS-NURSE-04 (10.10.2.15) -> billing-srv-01 (10.10.1.10)
+  Account: dmarsh
+  ATT&CK: T1021.001 (Remote Desktop Protocol)
+  Finding: A clinical user account initiated RDP to a server system.
+
+Step 2: SMB enumeration from billing server
+  billing-srv-01 -> internal servers
+  Several SMB attempts succeeded, while others returned access denied.
+  ATT&CK: T1135 (Network Share Discovery)
+
+Step 3: Attempted access to restricted internal systems
+  billing-srv-01 -> 10.10.4.100: TCP RST / refused
+  billing-srv-01 -> 10.10.4.101: TCP RST / refused
+  Finding: Packet evidence shows access attempts were not completed.
+
+Step 4: NAS access
+  billing-srv-01 -> NAS-01 (10.10.1.60): SUCCESS
+  SMB share: \\NAS-01\billing_backups
+  Directory listing: 23 entries enumerated
+  ATT&CK: T1083 (File and Directory Discovery)
+
+=== ACCESS EFFECTIVENESS ===
+Succeeded:
+  Clinical workstation -> billing server via RDP
+  billing server -> NAS-01 SMB listing
+
+Denied or refused:
+  Attempts to protected internal systems
+  Attempts to selected server resources with insufficient access
+
+=== BASELINE COMPARISON ===
+Does WS-NURSE-04 normally RDP to billing-srv-01? NO
+Does billing-srv-01 normally enumerate other servers? NO
+Does billing-srv-01 normally access NAS-01 backups? Possibly yes, but timing is abnormal
+
+=== MITRE ATT&CK MAPPING ===
+T1078.002  Valid Accounts: Domain Accounts
+T1021.001  Remote Desktop Protocol
+T1135      Network Share Discovery
+T1021.002  SMB/Windows Admin Shares
+T1083      File and Directory Discovery
+```
+
+---
