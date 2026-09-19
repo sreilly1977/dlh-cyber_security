@@ -1297,3 +1297,110 @@ separate packet facts from analytical inference.
 ```
 
 ---
+
+# [9. The Network IOC Extraction](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/9-network_iocs.sh)
+### advanced
+
+## Goal: 
+
+Extract all network-level indicators of compromise discovered during the PCAP analysis and structure them for threat intelligence sharing and detection system ingestion.
+
+## Instructions: 
+
+Write a script 9-network_iocs.sh that extracts and structures every network IOC found across all 6 PCAPs:
+
+1. For each IOC:
+
+    type
+    value
+    source PCAP
+    attack phase
+    confidence level
+    context description
+
+2. IOC types to extract:
+
+    IP addresses
+    domains
+    subdomains
+    DNS query patterns
+    TLS SNI values
+    TLS certificate subjects and hashes if available
+    JA3 or TLS fingerprint if available
+    beacon timing signatures
+    VPN source IP
+    suspicious account context
+
+3. Categorize by detection utility:
+
+    BLOCK: can be blocked with low risk
+    DETECT: should trigger alert but may need review
+    HUNT: useful for threat hunting queries
+    CONTEXT: analyst reference only
+
+4. Merge with 4x00 IOCs to produce a unified campaign IOC package
+
+5. Calculate:
+
+    total IOC count
+    new IOCs added by network analysis
+    intelligence value added by packet analysis vs email analysis alone
+
+6. Clearly mark IOCs that are high-confidence campaign-specific indicators vs low-confidence shared infrastructure indicators
+
+**Expected Output:**
+
+```bash
+$ ./9-network_iocs.sh
+
+================================================================
+   NETWORK IOC EXTRACTION
+================================================================
+
+=== NEW IOCs FROM 4x01 ===
+Type          | Value                              | Phase | Category
+--------------|------------------------------------|-------|---------
+IP            | 154.118.42.89                      | VPN   | DETECT
+domain        | data-sync.meddefense-portal.com    | Exfil | BLOCK
+cert_subject  | CN=meddefense-portal.com           | Cred  | DETECT
+ja3           | [ClientHello fingerprint if found] | C2    | HUNT
+beacon_sig    | 300s interval, ~501b payload       | C2    | HUNT
+dns_pattern   | TXT to long-label subdomains       | Exfil | DETECT
+vpn_user      | dmarsh                             | VPN   | CONTEXT
+
+=== COMBINED IOC PACKAGE (4x00 + 4x01) ===
+Source    | IOCs Added | Unique Types
+----------|------------|-------------------------------
+4x00      | 13         | domains, IPs, hashes, emails
+4x01      | 7          | IPs, certs, TLS, DNS patterns
+Combined  | 20         | full campaign profile
+
+=== DETECTION UTILITY ===
+BLOCK:
+  meddefense-portal.com
+  data-sync.meddefense-portal.com
+  91.234.99.107
+
+DETECT:
+  154.118.42.89
+  TXT query pattern to campaign domain
+  TLS SNI for phishing domain
+
+HUNT:
+  300-second beacon interval
+  JA3/TLS fingerprint if extracted
+  repeated low-byte HTTPS sessions
+
+CONTEXT:
+  dmarsh account usage
+  VPN timeline
+  decoded DNS sample content
+
+Intelligence value:
+  Email analysis identified delivery infrastructure.
+  Network analysis identified post-click behavior, beaconing,
+  VPN pivot and exfiltration channel.
+================================================================
+```
+
+---

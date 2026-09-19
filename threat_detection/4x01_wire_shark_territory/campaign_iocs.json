@@ -1,0 +1,417 @@
+{
+  "sources": {
+    "4x00": "/home/steve/projects/dlh/threat_detection/4x00_phishing_dissection/11-ioc_extraction.md",
+    "4x01": "Tasks 0-6 JSON artifacts (this repository)"
+  },
+  "package_4x00": [
+    {
+      "num": 1,
+      "type": "domain",
+      "value": "meddefense-portal[.]com",
+      "source": "E2",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "lookalike domain; mail + phishing page co-located"
+    },
+    {
+      "num": 2,
+      "type": "url",
+      "value": "hxxps://meddefense-portal[.]com/verify/staff?id=dmarsh&token=a8f3e2d1",
+      "source": "E2",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "per-victim harvesting URL; confirmed click"
+    },
+    {
+      "num": 3,
+      "type": "ip",
+      "value": "91[.]234[.]99[.]107",
+      "source": "E2",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "sending mail server for meddefense-portal[.]com"
+    },
+    {
+      "num": 4,
+      "type": "email",
+      "value": "noreply@meddefense-portal[.]com",
+      "source": "E2",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK/alert",
+      "context": "sender address; Reply-To no-reply@ also observed"
+    },
+    {
+      "num": 5,
+      "type": "domain",
+      "value": "outlook-protection[.]com",
+      "source": "E3",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "Microsoft brand impersonation; attacker-set SPF/DKIM/DMARC pass"
+    },
+    {
+      "num": 6,
+      "type": "url",
+      "value": "hxxps://outlook-protection[.]com/verify",
+      "source": "E3",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "M365 credential harvesting URL"
+    },
+    {
+      "num": 7,
+      "type": "ip",
+      "value": "51[.]38[.]42[.]17",
+      "source": "E3",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "sending mail server for outlook-protection[.]com"
+    },
+    {
+      "num": 8,
+      "type": "email",
+      "value": "security@outlook-protection[.]com",
+      "source": "E3",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK/alert",
+      "context": "sender in unusual-sign-in lure"
+    },
+    {
+      "num": 9,
+      "type": "domain",
+      "value": "medequip-supplies[.]net",
+      "source": "E5",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "vendor fraud lookalike; mail + payment + login portals co-located"
+    },
+    {
+      "num": 10,
+      "type": "url",
+      "value": "hxxps://medequip-supplies[.]net/invoices/pay?id=INV-2026-04891",
+      "source": "E5",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "fraudulent payment portal; identical in email body and embedded PDF link"
+    },
+    {
+      "num": 11,
+      "type": "url",
+      "value": "hxxps://medequip-supplies[.]net/portal/login",
+      "source": "E5",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "secondary harvesting path (invoice-retrieval fallback)"
+    },
+    {
+      "num": 12,
+      "type": "ip",
+      "value": "185[.]176[.]43[.]22",
+      "source": "E5",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "sending mail server for medequip-supplies[.]net"
+    },
+    {
+      "num": 13,
+      "type": "email",
+      "value": "invoices@medequip-supplies[.]net",
+      "source": "E5",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK/alert",
+      "context": "invoice-lure sender; Reply-To billing@ also observed"
+    },
+    {
+      "num": 14,
+      "type": "file_hash",
+      "value": "2f4a6c8e0b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f",
+      "source": "E5",
+      "category": "MONITOR",
+      "confidence": "MEDIUM (unverified \u2014 in-object label, not locally recomputed)",
+      "action": "monitor/search after verification",
+      "context": "SHA-256 of INV-2026-04891.pdf attachment"
+    },
+    {
+      "num": 15,
+      "type": "filename",
+      "value": "INV-2026-04891[.]pdf",
+      "source": "E5",
+      "category": "MONITOR",
+      "confidence": "HIGH",
+      "action": "alert/block filename pattern at gateway",
+      "context": "fabricated invoice attachment; created 1s before send"
+    },
+    {
+      "num": 16,
+      "type": "tool",
+      "value": "wkhtmltopdf 0.12.6",
+      "source": "E5",
+      "category": "CONTEXT",
+      "confidence": "MEDIUM",
+      "action": "hunt in inbound attachment metadata",
+      "context": "PDF producer string proving scripted generation"
+    },
+    {
+      "num": 17,
+      "type": "domain",
+      "value": "meddefense-benefits[.]org",
+      "source": "E7",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "HR benefits lookalike (.org + hyphen variant)"
+    },
+    {
+      "num": 18,
+      "type": "url",
+      "value": "hxxps://meddefense-benefits[.]org/enroll",
+      "source": "E7",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "benefits enrollment harvesting URL"
+    },
+    {
+      "num": 19,
+      "type": "ip",
+      "value": "164[.]90[.]218[.]73",
+      "source": "E7",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK",
+      "context": "sending mail server for meddefense-benefits[.]org"
+    },
+    {
+      "num": 20,
+      "type": "email",
+      "value": "hr-notifications@meddefense-benefits[.]org",
+      "source": "E7",
+      "category": "BLOCK",
+      "confidence": "HIGH",
+      "action": "BLOCK/alert",
+      "context": "sender address; Reply-To no-reply@ also observed"
+    },
+    {
+      "num": 21,
+      "type": "infra_note",
+      "value": "shared tooling pattern (see 4x00 report IOC 21)",
+      "source": "campaign",
+      "category": "CONTEXT",
+      "confidence": "LOW",
+      "action": "context only",
+      "context": "shared tooling across lookalike domains \u2014 see 4x00 report"
+    },
+    {
+      "num": 22,
+      "type": "infra_note",
+      "value": "mail/web co-location pattern",
+      "source": "campaign",
+      "category": "CONTEXT",
+      "confidence": "LOW",
+      "action": "context only",
+      "context": "all four campaign domains co-locate mail server and web portal"
+    },
+    {
+      "num": 23,
+      "type": "infra_note",
+      "value": "budget VPS hosting tier",
+      "source": "campaign",
+      "category": "CONTEXT",
+      "confidence": "LOW",
+      "action": "context only",
+      "context": "hosting tier consistent with disposable infrastructure"
+    },
+    {
+      "num": 24,
+      "type": "infra_note",
+      "value": "newly-registered domains (<30d) with keywords portal/benefits/supplies/login",
+      "source": "E8",
+      "category": "MONITOR",
+      "confidence": "MEDIUM (registration ages inferred, not WHOIS-confirmed)",
+      "action": "feed newly-registered-domain detection",
+      "context": "HC3-observed campaign pattern matching all four MedDefense domains"
+    },
+    {
+      "num": 25,
+      "type": "infra_note",
+      "value": "role-targeted delivery with urgency deadlines",
+      "source": "E2,E3,E5,E7,E8",
+      "category": "CONTEXT",
+      "confidence": "MEDIUM",
+      "action": "monitor/context",
+      "context": "clinical/AP/HR targeting with 24h/48h/7d/midnight deadlines"
+    },
+    {
+      "num": 26,
+      "type": "email",
+      "value": "HC3@hhs[.]gov",
+      "source": "E8",
+      "category": "WHITELIST",
+      "confidence": "HIGH",
+      "action": "DO NOT BLOCK \u2014 legitimate sector alert sender",
+      "context": "verification baseline for future advisories"
+    },
+    {
+      "num": 27,
+      "type": "victim_identity",
+      "value": "internal-only (dmarsh@dmarsh-internal, see 4x00)",
+      "source": "E2",
+      "category": "EXCLUDED",
+      "confidence": "N/A",
+      "action": "excluded from all external sharing",
+      "context": "victim identifier; internal case data only"
+    }
+  ],
+  "new_network_iocs": [
+    {
+      "type": "ip",
+      "value": "154[.]118[.]42[.]89",
+      "source_pcap": "full_timeline.pcap",
+      "attack_phase": "4-VPNPivot",
+      "category": "DETECT",
+      "confidence": "HIGH (session); MEDIUM (shared-infrastructure risk)",
+      "context": "inbound external session to VPN endpoint (SNI vpn.meddefense.com); NG, AS37340 Spectranet dynamic LTE \u2014 geo-screen at the authentication gate rather than blind-block"
+    },
+    {
+      "type": "tls_sni",
+      "value": "vpn[.]meddefense[.]com",
+      "source_pcap": "full_timeline.pcap",
+      "attack_phase": "4-VPNPivot",
+      "category": "DETECT",
+      "confidence": "MEDIUM",
+      "context": "legitimate internal SNI; alert on EXTERNAL-source sessions to it, never block the domain itself"
+    },
+    {
+      "type": "asn",
+      "value": "AS37340 (Spectranet-INET-LTE_DYN_ALLOC)",
+      "source_pcap": "full_timeline.pcap",
+      "attack_phase": "4-VPNPivot",
+      "category": "CONTEXT",
+      "confidence": "MEDIUM (shared carrier space)",
+      "context": "dynamic LTE allocation \u2014 high false-positive rate if blocked wholesale; use for scoring"
+    },
+    {
+      "type": "subdomain",
+      "value": "data-sync[.]meddefense-portal[.]com",
+      "source_pcap": "dns_exfil.pcap",
+      "attack_phase": "7-Exfiltration",
+      "category": "BLOCK",
+      "confidence": "HIGH (campaign-specific)",
+      "context": "dedicated exfil subdomain of the phishing domain \u2014 attacker-controlled, no legitimate use"
+    },
+    {
+      "type": "dns_pattern",
+      "value": "TXT queries, left-most labels 44-60 chars, entropy 4.5 bits/char",
+      "source_pcap": "dns_exfil.pcap",
+      "attack_phase": "7-Exfiltration",
+      "category": "DETECT",
+      "confidence": "HIGH (behavioral)",
+      "context": "long encoded labels to a single base domain \u2014 resolver-level alert independent of domain"
+    },
+    {
+      "type": "rate_signature",
+      "value": "4.85 TXT queries/min vs 0.2336/min baseline (~20.8x)",
+      "source_pcap": "dns_exfil.pcap",
+      "attack_phase": "7-Exfiltration",
+      "category": "HUNT",
+      "confidence": "HIGH (vs Task 0 baseline)",
+      "context": "rate multiplier against the clinical baseline \u2014 host-relative, survives domain rotation"
+    },
+    {
+      "type": "beacon_signature",
+      "value": "24 sessions, 299.8s avg interval, CV 1.81%",
+      "source_pcap": "c2_beaconing.pcap",
+      "attack_phase": "3-C2Beaconing",
+      "category": "HUNT",
+      "confidence": "HIGH (behavioral, campaign-specific)",
+      "context": "interval-regularity signature \u2014 survives infrastructure rotation better than any IP/domain value"
+    },
+    {
+      "type": "flow_signature",
+      "value": "cross-subnet RDP 10.10.2.15 -> 10.10.1.10:3389, 265723 B exchanged, clean FIN",
+      "source_pcap": "lateral_movement.pcap",
+      "attack_phase": "5-LateralMovement",
+      "category": "HUNT",
+      "confidence": "HIGH (incident-specific)",
+      "context": "clinical-to-server RDP violates expected role topology \u2014 internal alert candidate (DET-004)"
+    },
+    {
+      "type": "host_context",
+      "value": "10.10.1.10 (billing-srv-01) \u2014 exfil source; SMB origin to 4 server-subnet peers; blocked at 10.10.4.x",
+      "source_pcap": "lateral_movement.pcap + dns_exfil.pcap",
+      "attack_phase": "5/6/7",
+      "category": "CONTEXT",
+      "confidence": "HIGH (incident-specific)",
+      "context": "compromised-asset attribution for scoping and remediation \u2014 not a blockable network indicator"
+    },
+    {
+      "type": "ja3_fingerprint",
+      "value": "NOT CAPTURED (ClientHello not fully dissected in any artifact)",
+      "source_pcap": "N/A",
+      "attack_phase": "N/A",
+      "category": "CONTEXT",
+      "confidence": "N/A",
+      "context": "documented absence \u2014 re-dissect c2_beaconing.pcap with -o tls.keylog_file or extract via Zeek ssl.log if needed"
+    },
+    {
+      "type": "cert_subject",
+      "value": "NOT CAPTURED (below TLS dissection depth in phishing_click.pcap)",
+      "source_pcap": "N/A",
+      "attack_phase": "N/A",
+      "category": "CONTEXT",
+      "confidence": "N/A",
+      "context": "documented absence \u2014 certificate metadata requires handshake dissection beyond the artifact's scope"
+    },
+    {
+      "type": "account_context",
+      "value": "dmarsh \u2014 per-victim token attribution (4x00), harvest-session then VPN-timing correlation (4x01)",
+      "source_pcap": "kill_chain_evidence.json",
+      "attack_phase": "1-4",
+      "category": "CONTEXT",
+      "confidence": "HIGH (correlated), attribution chain partly INFERENCE",
+      "context": "account context for scoping; credential use itself encrypted and unproven (Task 8 verdict: STRONG INFERENCE)"
+    }
+  ],
+  "enrichments": [
+    {
+      "value": "91[.]234[.]99[.]107",
+      "network_layer_evidence": "network layer confirms dual-role infrastructure: credential harvest (Phase 2) AND C2 beacon destination (Phase 3) \u2014 strengthens the existing 4x00 BLOCK from 'sending mail server' to 'full attacker platform'"
+    },
+    {
+      "value": "meddefense-portal[.]com",
+      "network_layer_evidence": "packet layer confirms active HTTPS credential-harvest operation on the domain (47.2s session, TLS record consistent with form submission) \u2014 upgrades 4x00 delivery-side indicator to confirmed post-click behavior"
+    }
+  ],
+  "counts": {
+    "total_4x00": 27,
+    "new_from_network": 12,
+    "enriched_existing": 2,
+    "combined_total": 39
+  },
+  "confidence_grading": {
+    "campaign_specific_high_confidence": [
+      "meddefense-portal[.]com and family (4 domains)",
+      "data-sync[.]meddefense-portal[.]com exfil subdomain",
+      "beacon/DNS/rate behavioral signatures"
+    ],
+    "shared_infrastructure_low_confidence": [
+      "AS37340 carrier space",
+      "budget VPS hosting tier",
+      "wkhtmltopdf producer string"
+    ]
+  },
+  "intelligence_value": "Email analysis identified delivery infrastructure (27 IOCs); network analysis added 12 post-click behavioral and session IOCs and enriched 2 existing values with packet-layer confirmation. Behavioral signatures are the network layer's unique contribution \u2014 they survive infrastructure rotation where atomic email-era IOCs decay."
+}
