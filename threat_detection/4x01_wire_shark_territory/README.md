@@ -1494,3 +1494,152 @@ The generated HTML should contain:
 </pre>
 
 ---
+
+# [11. The Network Forensics Report](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/11-network_forensics_report.md)
+
+## Goal: 
+
+Produce a professional Network Forensics Investigation Report that synthesizes every finding from the PCAP analysis into a single document suitable for incident response leadership.
+
+## Context: 
+
+This is the deliverable. Every script, every analysis, every finding from T0-T10 converges here. The report must be complete enough that another analyst can understand the entire incident without access to the PCAPs, and precise enough that every claim is traceable to a specific packet timestamp.
+
+## Instructions: 
+
+Produce 11-network_forensics_report.md containing:
+
+1. Executive Summary
+
+    5 sentences maximum
+    non-technical
+    answers:
+        what happened
+        when it happened
+        how it happened
+        what was likely lost
+        what was protected or not reached
+
+2. Investigation Scope
+
+    what PCAPs were analyzed
+    what time period they cover
+    what tools were used
+    what evidence sources were not used
+
+3. Methodology
+
+    baseline establishment
+    known-IOC search
+    DNS analysis
+    TLS metadata analysis
+    timing analysis
+    behavioral analysis
+    cross-PCAP correlation
+
+4. Findings by Attack Phase
+
+    for each kill chain phase:
+        narrative description
+        evidence citation with PCAP name and timestamp
+        MITRE ATT&CK mapping
+        confidence level
+        what the packet evidence proves
+
+5. Network-Level IOC Table
+
+    all combined IOCs from 4x00 and 4x01
+    type
+    value
+    source
+    confidence
+    detection utility
+
+6. Impact Assessment
+
+    data likely exfiltrated
+    systems involved
+    systems protected or not reached
+    credential exposure
+    regulatory/business concerns
+
+7. Detection Gap Analysis
+
+    what packet evidence revealed
+    what could have detected the activity earlier
+    behavioral detection gaps
+    DNS tunneling detection gap
+    VPN anomaly detection gap
+    lateral movement detection gap
+
+8. Detection Rules Recommended
+
+    catalog of recommended detection logic from Task 7
+    rule name
+    data source required
+    attack phase detected
+    false positive considerations
+
+9. Recommendations
+
+    Immediate (next 24 hours):
+        isolate involved systems
+        reset involved credentials
+        block attacker infrastructure
+        preserve evidence
+    Short-term (next 7 days):
+        deploy behavioral detection logic
+        review VPN access
+        review DNS egress visibility
+        search for additional affected hosts
+    Medium-term (next 30 days):
+        enforce stronger email authentication policy
+        improve DNS anomaly detection
+        implement role-based RDP restrictions
+        conduct healthcare data exposure review
+
+10. Evidence Chain - PCAP file names - purpose of each capture - capture time window - hash values if available - storage location or evidence handling notes
+
+11. Continuity with 4x00 - how this investigation updates the 4x00 findings: - credential exposure moves from likely to strongly supported - network timeline is now documented - campaign infrastructure is linked to post-click activity - DNS exfiltration expands the impact assessment
+
+**Expected Output:**
+
+```bash
+$ ./11-network_forensics_report.sh
+
+Generating 11-network_forensics_report.md...
+Done.
+
+$ ls
+11-network_forensics_report.md
+```
+
+The generated Markdown report should contain:
+
+<pre>
+# Network Forensics Investigation Report
+
+## Executive Summary
+
+## Investigation Scope
+
+## Methodology
+
+## Findings by Attack Phase
+
+## Network-Level IOC Table
+
+## Impact Assessment
+
+## Detection Gap Analysis
+
+## Detection Rules Recommended
+
+## Recommendations
+
+## Evidence Chain
+
+## Continuity with 4x00
+</pre>
+
+---
