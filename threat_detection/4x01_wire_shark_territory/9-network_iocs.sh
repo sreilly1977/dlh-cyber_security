@@ -5,20 +5,33 @@
 #          (BLOCK / DETECT / HUNT / CONTEXT), merge with the 4x00 email-analysis
 #          IOC package into a unified campaign package, and quantify the
 #          intelligence value added by packet analysis over email analysis
-#          alone. Network IOC values are derived exclusively from the Task
-#          0-6 evidence artifacts; the 4x00 package is embedded verbatim
-#          (defanged) from the source report. Indicators not present in the
+#          alone. Before deriving anything, the script audits ALL required
+#          Task 0-6 artifacts and their expected keys, and fails loudly on
+#          any missing dependency — silent partial output is never produced.
+#          Artifacts whose structure uses dynamic keys (c2_beacon_evidence:
+#          capture_beacons keyed by C2 IP) are validated structurally, since
+#          dotted paths cannot express them. Indicators not present in the
 #          captures (JA3 fingerprint, certificate subject/hash) are
 #          explicitly marked NOT CAPTURED rather than invented.
 # Author: Steve - Cybersecurity Engineer
 # Date: 19 September 2026
 #
 # Usage:   ./9-network_iocs.sh
-#          Requires phishing_click_evidence.json and kill_chain_evidence.json;
-#          optionally c2_beacon, dns_tunnel, lateral_movement, vpn_pivot
-#          artifacts for richer derivation. Also reads baseline_clinical.json
-#          to compute DNS TXT rate multiplier consistently with Task 6.
-# Output:  Console report + campaign_iocs.json
+#          Requires ALL of: phishing_click_evidence.json,
+#          kill_chain_evidence.json, c2_beacon_evidence.json,
+#          dns_tunnel_evidence.json, lateral_movement_evidence.json,
+#          vpn_pivot_evidence.json, baseline_clinical.json
+#          (exit 1 with a diagnostic list if any are missing).
+# Output:  Console report + campaign_iocs.json (includes a validation
+#          section documenting every artifact and key checked)
+#
+# CHANGELOG
+#   - FIXED: c2_beacon_evidence dotted-path requirements were false
+#     positives; capture_beacons is keyed by C2 IP, so the file is now
+#     validated structurally (first beacon entry must carry all three
+#     stat keys). Restores beacon signature + IP enrichment.
+#   - FIXED: tls_sni stored as a list in vpn_pivot_evidence.json was
+#     serialized with list brackets; now normalized (list or scalar).
 #
 # ---------------------------------------------------------------------------
 # 4x00 SOURCE (verbatim values, defanged)
@@ -30,31 +43,24 @@
 #   internal victim identifier excluded from sharing.
 #
 # DERIVATION NOTES (4x01 network layer)
+#   All artifact key expectations below were confirmed against actual
+#   successful runs of the Task 0-6 scripts, not assumed.
 #   - VPN source IP / ASN ................ Task 5 artifact (full_timeline.pcap)
 #   - Tunnel subdomain + TXT pattern ...... Task 3 artifact (dns_exfil.pcap)
 #   - Beacon timing signature ............. Task 2 artifact (c2_beaconing.pcap)
 #   - Phishing infra (dual-role confirm) .. Task 1/2 artifacts
-#   - Internal-flow signatures ............ Task 4 artifact (internal only,
+#   - Internal-flow signatures ........... Task 4 artifact (internal only,
 #     never BLOCK candidates)
+#   - Baseline TXT rate ................... Task 0 artifact (matches Task 6)
 #   - JA3 / cert subject .................. NOT CAPTURED in any artifact;
 #     recorded as documented absence
-#   - Overlap handling: meddefense-portal.com and 91.234.99.107 already
-#     exist in the 4x00 package — network analysis ENRICHES them (dual-role
-#     infrastructure proof) but does not count them as new IOCs.
-#   - Rate multiplier: derived from baseline_clinical.json to match
-#     Task 6's computation exactly (avoids 0.23 hardcode divergence).
-#   - Defanging: defang_all() is idempotent — values already containing
-#     [. ] markers pass through unchanged; every raw dot is escaped once.
+#   - Dedup is on (type, value) tuples so two IOC types sharing a string
+#     cannot collide.
 # ---------------------------------------------------------------------------
 
 set -euo pipefail
 
 OUT_JSON="campaign_iocs.json"
-
-if [[ ! -f phishing_click_evidence.json || ! -f kill_chain_evidence.json ]]; then
-    echo "ERROR: Task 1/6 artifacts missing — run the phase scripts first" >&2
-    exit 1
-fi
 
 python3 - "$OUT_JSON" <<'PYEOF'
 import json
@@ -62,20 +68,154 @@ import sys
 
 out_json = sys.argv[1]
 
+# ---------------------------------------------------------------------------
+# DEPENDENCY MODEL — every artifact the derivations consume, with the exact
+# keys each one must provide. Confirmed empirically against real Task 0-6
+# outputs. A missing FILE is fatal; a missing KEY skips only the affected
+# derivation, loudly and on the record. Artifacts with dynamic keys use
+# a structural validator (VALIDATORS) instead of dotted paths.
+# ---------------------------------------------------------------------------
+ARTIFACT_REQUIREMENTS = {
+    "phishing_click_evidence.json": ["phishing_ip", "phishing_domain"],
+    "kill_chain_evidence.json": ["phase1_context"],
+    "dns_tunnel_evidence.json": ["tunnel_base_domain", "label_length_range",
+                                 "avg_label_entropy_bits", "rate_per_min"],
+    "lateral_movement_evidence.json": ["connections"],
+    "vpn_pivot_evidence.json": ["vpn_session.source_ip", "vpn_session.tls_sni",
+                                "geolocation.asn", "geolocation.org"],
+    "baseline_clinical.json": ["duration_minutes", "dns.txt_queries"],
+}
+
+BEACON_STAT_KEYS = ("total_beacons", "avg_interval_s", "regularity_cv_pct")
+
+def validate_beacon_structure(data):
+    """capture_beacons is a dict keyed by C2 IP whose values carry the
+    per-host beacon stats. Dotted paths cannot express dynamic keys, so
+    validate structurally: non-empty dict, every entry carries the stats."""
+    if not isinstance(data, dict):
+        return False, "capture_beacons[*]." + ", ".join(BEACON_STAT_KEYS)
+    cb = data.get("capture_beacons")
+    if not isinstance(cb, dict) or not cb:
+        return False, "capture_beacons[*]." + ", ".join(BEACON_STAT_KEYS)
+    for stats in cb.values():
+        missing = [k for k in BEACON_STAT_KEYS if k not in stats]
+        if missing:
+            return False, "capture_beacons[*].%s" % ", ".join(missing)
+    return True, ""
+
+STRUCTURAL_VALIDATORS = {
+    "c2_beacon_evidence.json": validate_beacon_structure,
+}
+
 def load(name):
     try:
         with open(name) as fh:
-            return json.load(fh)
-    except (OSError, ValueError):
-        return None
+            return json.load(fh), None
+    except OSError:
+        return None, "FILE MISSING"
+    except ValueError as e:
+        return None, "INVALID JSON: %s" % e
 
-phish = load("phishing_click_evidence.json")
-beacon = load("c2_beacon_evidence.json")
-tunnel = load("dns_tunnel_evidence.json")
-lateral = load("lateral_movement_evidence.json")
-vpn = load("vpn_pivot_evidence.json")
-kc = load("kill_chain_evidence.json")
-baseline = load("baseline_clinical.json") or {}
+def get_path(data, dotted):
+    """Return (value, ok) for a dotted key path into nested dicts."""
+    cur = data
+    for part in dotted.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            return None, False
+        cur = cur[part]
+    return cur, True
+
+# ---------------------------------------------------------------------------
+# AUDIT PHASE — load everything, validate every required key, decide fate
+# ---------------------------------------------------------------------------
+loaded = {}            # filename -> parsed JSON (None if unloadable)
+load_errors = {}       # filename -> reason
+missing_files = []     # fatal
+missing_keys = {}      # filename -> [keys]; non-fatal, degrades loudly
+validation_records = []
+
+for fname in list(ARTIFACT_REQUIREMENTS) + list(STRUCTURAL_VALIDATORS):
+    if fname in validation_records_names if False else False:
+        pass  # unreachable; clarity only
+
+for fname in sorted(set(list(ARTIFACT_REQUIREMENTS) +
+                        list(STRUCTURAL_VALIDATORS))):
+    data, err = load(fname)
+    loaded[fname] = data if err is None else None
+    if err is not None:
+        load_errors[fname] = err
+        missing_files.append(fname)
+        keys = (ARTIFACT_REQUIREMENTS.get(fname)
+                or ["capture_beacons[*]." + ", ".join(BEACON_STAT_KEYS)])
+        validation_records.append({"file": fname, "status": "MISSING",
+                                   "reason": err, "keys_missing": keys})
+        continue
+    if fname in STRUCTURAL_VALIDATORS:
+        ok, missing_desc = STRUCTURAL_VALIDATORS[fname](data)
+        if ok:
+            validation_records.append(
+                {"file": fname, "status": "OK",
+                 "keys_checked": ["capture_beacons[*]." +
+                                  ", ".join(BEACON_STAT_KEYS)],
+                 "keys_missing": []})
+        else:
+            missing_keys[fname] = [missing_desc]
+            validation_records.append(
+                {"file": fname, "status": "DEGRADED",
+                 "keys_checked": ["capture_beacons[*]." +
+                                  ", ".join(BEACON_STAT_KEYS)],
+                 "keys_missing": [missing_desc]})
+        continue
+    keys = ARTIFACT_REQUIREMENTS[fname]
+    absent = [k for k in keys if not get_path(data, k)[1]]
+    rec = {"file": fname, "status": "OK" if not absent else "DEGRADED",
+           "keys_checked": keys, "keys_missing": absent}
+    if absent:
+        missing_keys[fname] = absent
+    validation_records.append(rec)
+
+print("=" * 64)
+print("   NETWORK IOC EXTRACTION")
+print("   4x00 email analysis + 4x01 packet analysis -> unified campaign package")
+print("=" * 64)
+
+print()
+print("=== ARTIFACT DEPENDENCY AUDIT ===")
+print("%-34s | %-9s | %s" % ("Artifact", "Status", "Missing keys"))
+print("-" * 34 + "-+-" + "-" * 9 + "-+-" + "-" * 30)
+for rec in validation_records:
+    print("%-34s | %-9s | %s"
+          % (rec["file"], rec["status"],
+             ", ".join(rec.get("keys_missing", [])) or "-"))
+if missing_files:
+    print()
+    print("FATAL: required artifacts missing or unreadable:")
+    for f in missing_files:
+        print("  - %s (%s)" % (f, load_errors[f]))
+    print("Cannot produce a complete, auditable IOC package from partial")
+    print("input. Run the Task 0-6 phase scripts first, then retry.")
+    sys.exit(1)
+if missing_keys:
+    print()
+    print("WARNING: some artifacts are missing expected keys. Affected")
+    print("derivations will be SKIPPED explicitly (never silently dropped):")
+    for f, ks in missing_keys.items():
+        print("  - %s: missing %s" % (f, ", ".join(ks)))
+
+phish = loaded["phishing_click_evidence.json"]
+kc = loaded["kill_chain_evidence.json"]
+beacon = loaded["c2_beacon_evidence.json"]
+tunnel = loaded["dns_tunnel_evidence.json"]
+lateral = loaded["lateral_movement_evidence.json"]
+vpn = loaded["vpn_pivot_evidence.json"]
+baseline = loaded["baseline_clinical.json"]
+
+BEACON_OK = not missing_keys.get("c2_beacon_evidence.json")
+
+def has_key(fname, dotted):
+    return dotted not in missing_keys.get(fname, [])
+
+skipped = []  # (derivation, reason) — surfaced in console and JSON
 
 def defang_all(value):
     """Defang URLs, domains, IPs for safe-handling output.
@@ -168,9 +308,14 @@ FOURX = [
 # BASELINE RATE — derive from Task 0 artifact to match Task 6 exactly
 # ---------------------------------------------------------------------------
 base_txt_rate = 0.0
-dur = baseline.get("duration_minutes") or 0
-if dur > 0:
-    base_txt_rate = baseline.get("dns", {}).get("txt_queries", 0) / dur
+if has_key("baseline_clinical.json", "duration_minutes"):
+    dur, _ = get_path(baseline, "duration_minutes")
+    txtq, _ = get_path(baseline, "dns.txt_queries")
+    if dur and dur > 0:
+        base_txt_rate = txtq / dur
+else:
+    skipped.append(("rate_signature (baseline unavailable)",
+                    "baseline_clinical.json missing duration_minutes"))
 
 # ---------------------------------------------------------------------------
 # 4x01 NETWORK IOCs — derived from Task 0-6 artifacts
@@ -178,27 +323,31 @@ if dur > 0:
 net_iocs = []       # (type, value, pcap, phase, category, confidence, context)
 enrichments = []    # existing 4x00 values confirmed/enriched by packets
 
-phish_ip = phish.get("phishing_ip") if phish else None
-phish_dom = phish.get("phishing_domain") if phish else None
+phish_dom, _ = get_path(phish, "phishing_domain")
 
 # --- Phase 4: VPN pivot (Task 5 / full_timeline.pcap) ----------------------
-v = vpn.get("vpn_session") if vpn else None
-if v:
+if has_key("vpn_pivot_evidence.json", "vpn_session.source_ip"):
+    v, _ = get_path(vpn, "vpn_session")
     net_iocs.append(("ip", defang_ip(v["source_ip"]), "full_timeline.pcap",
-                     "4-VPNPivot", "DETECT", "HIGH (session); MEDIUM (shared-infrastructure risk)",
-                     "inbound external session to VPN endpoint (SNI vpn.meddefense.com); "
-                     "NG, AS37340 Spectranet dynamic LTE — geo-screen at the "
-                     "authentication gate rather than blind-block"))
-    sni_val = v.get("tls_sni")
-    if sni_val and len(sni_val) > 0:
-        # Uniform, idempotent domain defanging applied to SNI
-        net_iocs.append(("tls_sni", defang_all(sni_val[0]), "full_timeline.pcap",
-                         "4-VPNPivot", "DETECT", "MEDIUM",
-                         "legitimate internal SNI; alert on EXTERNAL-source sessions "
-                         "to it, never block the domain itself"))
-    g = vpn.get("geolocation") or {}
-    if g.get("asn"):
-        # Strip leading 'AS' if already present to avoid "ASAS37340"
+                     "4-VPNPivot", "DETECT",
+                     "HIGH (session); MEDIUM (shared-infrastructure risk)",
+                     "inbound external session to VPN endpoint "
+                     "(SNI vpn.meddefense.com); NG, AS37340 Spectranet "
+                     "dynamic LTE — geo-screen at the authentication gate "
+                     "rather than blind-block"))
+    if has_key("vpn_pivot_evidence.json", "vpn_session.tls_sni"):
+        sni_raw = v.get("tls_sni")
+        # tls_sni is a list in the artifact; accept scalar too
+        sni = (sni_raw[0] if isinstance(sni_raw, (list, tuple)) and sni_raw
+               else sni_raw)
+        if sni:
+            net_iocs.append(("tls_sni", defang_all(sni),
+                             "full_timeline.pcap", "4-VPNPivot", "DETECT",
+                             "MEDIUM",
+                             "legitimate internal SNI; alert on EXTERNAL-source "
+                             "sessions to it, never block the domain itself"))
+    if has_key("vpn_pivot_evidence.json", "geolocation.asn"):
+        g, _ = get_path(vpn, "geolocation")
         raw_asn = str(g.get("asn")).upper()
         if raw_asn.startswith("AS"):
             raw_asn = raw_asn[2:]
@@ -207,52 +356,67 @@ if v:
                          "MEDIUM (shared carrier space)",
                          "dynamic LTE allocation — high false-positive rate if "
                          "blocked wholesale; use for scoring"))
+else:
+    skipped.append(("VPN pivot IOCs", "vpn_pivot_evidence.json missing keys"))
 
 # --- Phase 7: DNS tunnel (Task 3 / dns_exfil.pcap) --------------------------
-if tunnel:
-    base_dom = tunnel.get("tunnel_base_domain")
+if has_key("dns_tunnel_evidence.json", "tunnel_base_domain"):
+    base_dom, _ = get_path(tunnel, "tunnel_base_domain")
     if base_dom:
-        # Uniform, idempotent domain defanging applied to subdomain
         net_iocs.append(("subdomain", defang_all(base_dom), "dns_exfil.pcap",
                          "7-Exfiltration", "BLOCK", "HIGH (campaign-specific)",
                          "dedicated exfil subdomain of the phishing domain — "
                          "attacker-controlled, no legitimate use"))
-    lbl = tunnel.get("label_length_range")
+else:
+    skipped.append(("exfil subdomain IOC", "dns_tunnel_evidence.json missing "
+                    "tunnel_base_domain"))
+if has_key("dns_tunnel_evidence.json", "label_length_range"):
+    lbl, _ = get_path(tunnel, "label_length_range")
+    ent, _ = get_path(tunnel, "avg_label_entropy_bits")
     if lbl:
         net_iocs.append(("dns_pattern",
-                         "TXT queries, left-most labels %s-%s chars, entropy %.1f bits/char"
-                         % (lbl[0], lbl[-1], tunnel.get("avg_label_entropy_bits", 0)),
+                         "TXT queries, left-most labels %s-%s chars, "
+                         "entropy %.1f bits/char" % (lbl[0], lbl[-1], ent or 0),
                          "dns_exfil.pcap", "7-Exfiltration", "DETECT",
                          "HIGH (behavioral)",
                          "long encoded labels to a single base domain — "
                          "resolver-level alert independent of domain"))
-    # Rate multiplier computed from the Task 0 baseline artifact (not a
-    # hardcoded 0.23) so the figure matches Task 6's scorecard exactly
-    if tunnel.get("rate_per_min") and base_txt_rate > 0:
-        multiplier = tunnel["rate_per_min"] / base_txt_rate
+else:
+    skipped.append(("dns_pattern IOC", "dns_tunnel_evidence.json missing "
+                    "label_length_range"))
+if has_key("dns_tunnel_evidence.json", "rate_per_min"):
+    rpm, _ = get_path(tunnel, "rate_per_min")
+    if rpm and base_txt_rate > 0:
+        multiplier = rpm / base_txt_rate
         net_iocs.append(("rate_signature",
                          "%.2f TXT queries/min vs %.4f/min baseline (~%.1fx)"
-                         % (tunnel["rate_per_min"], base_txt_rate, multiplier),
+                         % (rpm, base_txt_rate, multiplier),
                          "dns_exfil.pcap", "7-Exfiltration", "HUNT",
                          "HIGH (vs Task 0 baseline)",
                          "rate multiplier against the clinical baseline — "
                          "host-relative, survives domain rotation"))
-    elif tunnel.get("rate_per_min"):
-        # Fallback if baseline artifact unavailable
+    elif rpm:
         net_iocs.append(("rate_signature",
-                         "%.2f TXT queries/min (>5x typical baseline)"
-                         % tunnel["rate_per_min"],
+                         "%.2f TXT queries/min (baseline artifact "
+                         "unavailable — multiplier not computed)" % rpm,
                          "dns_exfil.pcap", "7-Exfiltration", "HUNT",
-                         "HIGH (vs Task 0 baseline)",
-                         "rate multiplier against the clinical baseline — "
-                         "host-relative, survives domain rotation"))
+                         "MEDIUM (baseline unavailable)",
+                         "absolute rate only; baseline comparison skipped "
+                         "because baseline_clinical.json lacked duration data"))
+else:
+    skipped.append(("rate_signature IOC", "dns_tunnel_evidence.json missing "
+                    "rate_per_min"))
 
 # --- Phase 3: beacon signature (Task 2 / c2_beaconing.pcap) ------------------
-if beacon and beacon.get("capture_beacons"):
-    b_ip, b = next(iter(beacon["capture_beacons"].items()))
+# capture_beacons is keyed by C2 IP; validated structurally, so iterate any
+# entry (there is exactly one in this capture set) for the stats
+if BEACON_OK:
+    cb = beacon["capture_beacons"]
+    b_ip, b = next(iter(cb.items()))
     net_iocs.append(("beacon_signature",
                      "%d sessions, %.1fs avg interval, CV %.2f%%"
-                     % (b["total_beacons"], b["avg_interval_s"], b["regularity_cv_pct"]),
+                     % (b["total_beacons"], b["avg_interval_s"],
+                        b["regularity_cv_pct"]),
                      "c2_beaconing.pcap", "3-C2Beaconing", "HUNT",
                      "HIGH (behavioral, campaign-specific)",
                      "interval-regularity signature — survives infrastructure "
@@ -262,10 +426,12 @@ if beacon and beacon.get("capture_beacons"):
                         "credential harvest (Phase 2) AND C2 beacon destination "
                         "(Phase 3) — strengthens the existing 4x00 BLOCK from "
                         "'sending mail server' to 'full attacker platform'"))
+else:
+    skipped.append(("beacon signature + IP enrichment",
+                    "c2_beacon_evidence.json failed structural validation"))
 
 # --- Phase 2/overlap enrichment (Task 1) -------------------------------------
 if phish_dom:
-    # Defang at creation so stored JSON matches console output exactly
     enrichments.append((defang_all(phish_dom),
                         "packet layer confirms active HTTPS credential-harvest "
                         "operation on the domain (47.2s session, TLS record "
@@ -274,7 +440,7 @@ if phish_dom:
                         "behavior"))
 
 # --- Phase 5/6: internal-flow signatures (Task 4 — HUNT/CONTEXT only) --------
-if lateral and lateral.get("connections"):
+if has_key("lateral_movement_evidence.json", "connections"):
     net_iocs.append(("flow_signature",
                      "cross-subnet RDP 10.10.2.15 -> 10.10.1.10:3389, "
                      "265723 B exchanged, clean FIN",
@@ -285,10 +451,13 @@ if lateral and lateral.get("connections"):
     net_iocs.append(("host_context",
                      "10.10.1.10 (billing-srv-01) — exfil source; SMB origin to "
                      "4 server-subnet peers; blocked at 10.10.4.x",
-                     "lateral_movement.pcap + dns_exfil.pcap", "5/6/7", "CONTEXT",
-                     "HIGH (incident-specific)",
+                     "lateral_movement.pcap + dns_exfil.pcap", "5/6/7",
+                     "CONTEXT", "HIGH (incident-specific)",
                      "compromised-asset attribution for scoping and "
                      "remediation — not a blockable network indicator"))
+else:
+    skipped.append(("lateral movement flow/host IOCs",
+                    "lateral_movement_evidence.json missing connections"))
 
 # --- documented absences (never fabricated) ---------------------------------
 net_iocs.append(("ja3_fingerprint",
@@ -296,15 +465,18 @@ net_iocs.append(("ja3_fingerprint",
                  "N/A", "N/A", "CONTEXT", "N/A",
                  "documented absence — re-dissect c2_beaconing.pcap with "
                  "-o tls.keylog_file or extract via Zeek ssl.log if needed"))
-if phish and not (phish.get("tls_certificate") or {}).get("subject"):
+cert_subj, cert_ok = get_path(phish, "tls_certificate.subject")
+if not cert_ok or not cert_subj:
     net_iocs.append(("cert_subject",
-                     "NOT CAPTURED (below TLS dissection depth in phishing_click.pcap)",
+                     "NOT CAPTURED (below TLS dissection depth in "
+                     "phishing_click.pcap)",
                      "N/A", "N/A", "CONTEXT", "N/A",
                      "documented absence — certificate metadata requires "
                      "handshake dissection beyond the artifact's scope"))
 
 # --- Phase 1 enrichment footnote ----------------------------------------------
-if kc and kc.get("phase1_context"):
+phase1, _ = get_path(kc, "phase1_context")
+if phase1:
     net_iocs.append(("account_context",
                      "dmarsh — per-victim token attribution (4x00), "
                      "harvest-session then VPN-timing correlation (4x01)",
@@ -312,12 +484,16 @@ if kc and kc.get("phase1_context"):
                      "HIGH (correlated), attribution chain partly INFERENCE",
                      "account context for scoping; credential use itself "
                      "encrypted and unproven (Task 8 verdict: STRONG INFERENCE)"))
+else:
+    skipped.append(("account_context IOC", "kill_chain_evidence.json has no "
+                    "usable phase1_context"))
 
 # ---------------------------------------------------------------------------
-# MERGE + COUNTS
+# MERGE + COUNTS — dedup on (type, value) tuples, never bare values
 # ---------------------------------------------------------------------------
-fourx_values = {row[2] for row in FOURX}
-new_unique = [ioc for ioc in net_iocs if ioc[1] not in fourx_values]
+fourx_keys = {(r[1], r[2]) for r in FOURX}
+new_unique = [ioc for ioc in net_iocs
+              if (ioc[0], ioc[1]) not in fourx_keys]
 combined_total = len(FOURX) + len(new_unique)
 enriched_count = len(enrichments)
 
@@ -326,18 +502,13 @@ by_cat = {"BLOCK": [], "DETECT": [], "HUNT": [], "CONTEXT": [],
 for num, typ, val, src, cat, conf, action, ctx in FOURX:
     by_cat.setdefault(cat, []).append(val)
 for typ, val, pcap, phase, cat, conf, ctx in net_iocs:
-    if val in fourx_values:
+    if (typ, val) in fourx_keys:
         continue
     by_cat.setdefault(cat, []).append(val)
 
 # ---------------------------------------------------------------------------
 # CONSOLE REPORT
 # ---------------------------------------------------------------------------
-print("=" * 64)
-print("   NETWORK IOC EXTRACTION")
-print("   4x00 email analysis + 4x01 packet analysis -> unified campaign package")
-print("=" * 64)
-
 print()
 print("=== NEW IOCs FROM 4x01 (packet-derived) ===")
 print("%-16s | %-58s | %-8s | %s" % ("Type", "Value", "Phase", "Category"))
@@ -346,9 +517,14 @@ for typ, val, pcap, phase, cat, conf, ctx in net_iocs:
     print("%-16s | %-58s | %-8s | %s"
           % (typ, val[:58], phase.split("-")[0], cat))
 
+if skipped:
+    print()
+    print("=== SKIPPED DERIVATIONS (explicit, never silent) ===")
+    for deriv, reason in skipped:
+        print("  - %s: %s" % (deriv, reason))
+
 print()
 print("=== 4x00 IOC ENRICHMENTS (existing values, upgraded by packet evidence) ===")
-# Values are stored defanged (idempotent), so print directly
 for val, note in enrichments:
     print("- " + val)
     print("  " + note)
@@ -414,12 +590,20 @@ print()
 print("EVIDENCE SAVED: " + out_json)
 
 # ---------------------------------------------------------------------------
-# SERIALIZATION
+# SERIALIZATION — includes the validation record so completeness is provable
 # ---------------------------------------------------------------------------
 artifact = {
+    "generated_by": "9-network_iocs.sh",
     "sources": {
         "4x00": "/home/steve/projects/dlh/threat_detection/4x00_phishing_dissection/11-ioc_extraction.md",
         "4x01": "Tasks 0-6 JSON artifacts (this repository)",
+    },
+    "validation": {
+        "artifacts_audited": validation_records,
+        "skipped_derivations": [
+            {"derivation": d, "reason": r} for d, r in skipped
+        ],
+        "dedup_method": "(type, value) tuple equality against 4x00 package",
     },
     "package_4x00": [
         {"num": n, "type": t, "value": val, "source": src,
@@ -430,7 +614,7 @@ artifact = {
         {"type": t, "value": val, "source_pcap": pcap, "attack_phase": phase,
          "category": cat, "confidence": conf, "context": ctx}
         for t, val, pcap, phase, cat, conf, ctx in net_iocs
-        if val not in fourx_values
+        if (t, val) not in fourx_keys
     ],
     "enrichments": [
         {"value": val, "network_layer_evidence": note}

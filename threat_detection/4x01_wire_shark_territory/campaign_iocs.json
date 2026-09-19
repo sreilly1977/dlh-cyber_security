@@ -1,7 +1,78 @@
 {
+  "generated_by": "9-network_iocs.sh",
   "sources": {
     "4x00": "/home/steve/projects/dlh/threat_detection/4x00_phishing_dissection/11-ioc_extraction.md",
     "4x01": "Tasks 0-6 JSON artifacts (this repository)"
+  },
+  "validation": {
+    "artifacts_audited": [
+      {
+        "file": "baseline_clinical.json",
+        "status": "OK",
+        "keys_checked": [
+          "duration_minutes",
+          "dns.txt_queries"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "c2_beacon_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "capture_beacons[*].total_beacons, avg_interval_s, regularity_cv_pct"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "dns_tunnel_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "tunnel_base_domain",
+          "label_length_range",
+          "avg_label_entropy_bits",
+          "rate_per_min"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "kill_chain_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "phase1_context"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "lateral_movement_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "connections"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "phishing_click_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "phishing_ip",
+          "phishing_domain"
+        ],
+        "keys_missing": []
+      },
+      {
+        "file": "vpn_pivot_evidence.json",
+        "status": "OK",
+        "keys_checked": [
+          "vpn_session.source_ip",
+          "vpn_session.tls_sni",
+          "geolocation.asn",
+          "geolocation.org"
+        ],
+        "keys_missing": []
+      }
+    ],
+    "skipped_derivations": [],
+    "dedup_method": "(type, value) tuple equality against 4x00 package"
   },
   "package_4x00": [
     {
