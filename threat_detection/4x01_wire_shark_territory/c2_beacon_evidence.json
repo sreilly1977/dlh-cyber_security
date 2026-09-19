@@ -1,0 +1,29 @@
+{
+  "capture_beacons": {
+    "91.234.99.107": {
+      "total_beacons": 24,
+      "first_beacon_epoch": 1776218412.0,
+      "last_beacon_epoch": 1776225308.269493,
+      "avg_interval_s": 299.84,
+      "interval_stddev_s": 5.42,
+      "regularity_cv_pct": 1.81,
+      "avg_session_duration_s": 2.57,
+      "avg_client_bytes": 593,
+      "avg_server_bytes": 1327,
+      "in_task0_baseline": false
+    }
+  },
+  "victim": "10.10.2.15",
+  "all_destinations": {
+    "91.234.99.107": {
+      "connections": 24
+    },
+    "13.107.42.14": {
+      "connections": 8
+    },
+    "204.79.197.200": {
+      "connections": 6
+    }
+  },
+  "detection_method": "behavioral: inter-session interval coefficient of variation < 10% across >= 5 connections; no content or signature used"
+}

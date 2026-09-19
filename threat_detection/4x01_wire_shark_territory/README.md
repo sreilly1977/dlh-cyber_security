@@ -434,3 +434,106 @@ Conclusion: PCAP confirms the workstation contacted the phishing infrastructure.
 ```
 
 ---
+
+# [2. The Beacon Hunter](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/2-beacon_hunter.sh)
+### advanced
+
+## Goal: 
+
+Identify and characterize the command-and-control beaconing pattern hidden in the post-click network traffic, demonstrating why automated C2 communication is invisible to signature-based detection but visible through behavioral analysis.
+
+## Context: 
+
+Signature-based detection looks for known patterns: byte sequences, known-bad domains, known protocol abuse or fixed signatures. C2 beaconing may use none of these. Each individual HTTPS connection can look like a normal encrypted request.
+
+The malicious pattern emerges when you analyze timing.
+
+A human browses irregularly. Malware often phones home on a clock.
+
+This is the core lesson of this task: some threats are invisible at the packet-content level and only visible at the session-pattern level.
+
+## Instructions: 
+
+Write a script 2-beacon_hunter.sh that analyzes c2_beaconing.pcap:
+
+1. Extract all outbound connections from 10.10.2.15 (WS-NURSE-04) to external IPs during the capture window
+
+2. For each unique destination IP:
+
+    count the number of connections
+    calculate the average interval between connections
+    calculate the standard deviation of the interval
+    calculate the average session duration
+    calculate average bytes transferred
+
+3. Identify connections with statistical regularity:
+
+    interval standard deviation < 10% of the mean indicates automated behavior
+
+4. For the identified beacon:
+
+    extract beacon interval
+    session duration
+    payload size
+    total number of beacons
+    start time
+    end time
+
+5. Compare the beacon traffic against the Task 0 baseline:
+
+    does this destination exist in the baseline?
+    does this timing pattern exist in the baseline?
+    does this occur during normal business activity?
+
+6. Explain why this is behavioral evidence rather than signature evidence
+
+Your script must show the tshark commands or filters used.
+
+**Expected Output:**
+
+```bash
+$ ./2-beacon_hunter.sh c2_beaconing.pcap
+
+=== OUTBOUND CONNECTIONS FROM 10.10.2.15 ===
+Total unique destination IPs: 12
+Total outbound connections: 67
+
+Dest IP          | Count | Avg Interval | StdDev  | Regularity
+-----------------|-------|--------------|---------|----------
+91.234.99.107    | 24    | 300.2 sec    | 4.1 sec | 1.4% [!!!]
+13.107.42.14     | 8     | 847.5 sec    | 412 sec | 48.6%
+204.79.197.200   | 6     | 1102 sec     | 689 sec | 62.5%
+
+=== C2 BEACON IDENTIFIED ===
+Destination: 91.234.99.107
+First beacon: 2026-04-15 02:00:12
+Last beacon:  2026-04-15 03:55:14
+Total beacons: 24
+Interval: 300.2 seconds (5 minutes, +/- 4.1 seconds jitter)
+Regularity: 1.4% coefficient of variation [HIGHLY AUTOMATED]
+
+Per-beacon statistics:
+  Session duration: 2.1 - 2.8 seconds (avg 2.4 sec)
+  Client payload: 478 - 523 bytes (avg 501 bytes)
+  Server payload: 187 - 214 bytes (avg 198 bytes)
+
+=== BEHAVIORAL COMPARISON ===
+                     | Baseline          | C2 Beacon
+---------------------|-------------------|------------------
+Interval regularity  | High variance     | 1.4% StdDev
+Session duration     | 0.5-180 seconds   | 2.1-2.8 seconds
+Payload size         | variable          | consistent
+DNS pre-query        | common            | absent or cached
+Time of activity     | business hours    | 02:00-04:00
+
+=== TOTAL DATA EXCHANGED ===
+Outbound (client -> C2): 12,024 bytes
+Inbound (C2 -> client):  4,752 bytes
+Total: 16,776 bytes (~16 KB)
+
+=== CONCLUSION ===
+The repeated HTTPS sessions to 91.234.99.107 show timing regularity
+consistent with automated command-and-control beaconing.
+```
+
+---
