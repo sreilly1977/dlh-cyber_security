@@ -888,3 +888,155 @@ metadata, timing and account context.
 ```
 
 ---
+
+# [6. The Kill Chain Reconstruction](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/6-kill_chain.sh)
+
+## Goal: 
+
+Build the complete attack timeline from initial phishing email through credential theft, VPN pivot, lateral movement and data exfiltration, connecting every PCAP finding into a single coherent narrative.
+
+## Context: 
+
+You have analyzed 5 PCAPs individually. Each revealed a piece of the puzzle. Now you assemble the full picture. This is the moment where packet analysis becomes incident reconstruction: a chronological, evidence-based story of what the attacker did, when they did it, how they did it and what they achieved.
+
+## Instructions: 
+
+Write a script 6-kill_chain.sh that:
+
+1. Builds a master timeline combining:
+
+    4x00 phishing context
+    phishing_click.pcap
+    c2_beaconing.pcap
+    dns_exfil.pcap
+    lateral_movement.pcap
+    full_timeline.pcap
+
+2. Maps each phase to MITRE ATT&CK tactics and techniques
+
+3. For each phase, cites:
+
+    PCAP name
+    packet timestamp
+    source/destination
+    relevant evidence
+
+4. Identifies the exact moment when each visibility or defense layer was tested:
+
+    email authentication/policy
+    user click
+    TLS encryption
+    beaconing visibility
+    VPN authentication
+    RDP access
+    SMB enumeration
+    DNS exfiltration
+
+5. Calculates the attacker's total dwell time:
+
+    from first known access-related activity
+    to last observed exfiltration activity
+
+6. Identifies the critical pivot points:
+
+    moments where intervention could have stopped the chain
+
+7. Assesses the total impact:
+
+    what systems were accessed
+    what data was likely exfiltrated
+    what systems resisted access
+    what remains unconfirmed
+
+8. Clearly separate confirmed packet evidence from analytical inference
+
+**Expected Output:**
+
+```bash
+$ ./6-kill_chain.sh
+
+================================================================
+   COMPLETE KILL CHAIN RECONSTRUCTION
+   Incident: Phishing Campaign -> Network Compromise -> DNS Exfiltration
+   Period: 2026-04-14 14:47 to 2026-04-15 22:45
+   Dwell time: approximately 31 hours, 58 minutes
+================================================================
+
+PHASE 1: INITIAL ACCESS (T1566.002 - Spearphishing Link)
+  Time: 2026-04-14 14:47
+  Evidence: 4x00 email evidence, Email 2
+  Action: Spear-phishing email sent to dmarsh@meddefense.com
+  Status: Context from 4x00, not packet evidence
+
+PHASE 2: CREDENTIAL HARVESTING SESSION (T1056.003 - Web Portal Capture)
+  Time: 2026-04-14 15:02:33 to 15:03:20
+  Evidence: phishing_click.pcap
+  Packet evidence:
+    DNS query: meddefense-portal.com -> 91.234.99.107
+    TLS SNI: meddefense-portal.com
+    Largest client TLS record: 487 bytes at 15:02:58
+  Assessment: Encrypted session metadata is consistent with form submission.
+
+PHASE 3: BEACONING (T1071.001 - Web Protocols)
+  Time: 2026-04-15 02:00 to 03:55
+  Evidence: c2_beaconing.pcap
+  Action: Repeated HTTPS sessions from 10.10.2.15 to 91.234.99.107
+  Pattern: 24 sessions, ~300-second interval, low jitter
+  Assessment: Highly automated communication pattern.
+
+PHASE 4: EXTERNAL ACCESS / VPN PIVOT (T1133 - External Remote Services)
+  Time: 2026-04-15 13:45:22
+  Evidence: full_timeline.pcap
+  Action: External VPN connection from 154.118.42.89 to 10.10.0.1
+  Account context: dmarsh
+  Assessment: VPN activity precedes lateral movement by ~45 minutes.
+
+PHASE 5: LATERAL MOVEMENT (T1021.001 - Remote Desktop Protocol)
+  Time: 2026-04-15 14:30:12
+  Evidence: lateral_movement.pcap
+  Action: RDP from 10.10.2.15 to 10.10.1.10 as dmarsh
+  Assessment: Clinical workstation account used to access billing server.
+
+PHASE 6: DISCOVERY (T1135, T1083)
+  Time: 2026-04-15 14:35-14:42
+  Evidence: lateral_movement.pcap
+  Action: SMB enumeration and NAS directory listing
+  Results:
+    Some systems accessible
+    Some systems returned access denied
+    Some connection attempts were refused or reset
+
+PHASE 7: EXFILTRATION (T1048.003 - Exfiltration Over Alternative Protocol)
+  Time: 2026-04-15 22:15 to 22:45
+  Evidence: dns_exfil.pcap
+  Action: DNS TXT queries with long encoded labels
+  Volume: approximately 120 anomalous queries
+  Assessment: Traffic is consistent with DNS tunneling and data exfiltration.
+
+=== VISIBILITY / DEFENSE SCORECARD ===
+HELD / RESISTED:
+  Access denied responses on selected internal systems
+  Refused or reset connections to restricted internal systems
+
+FAILED OR BYPASSED:
+  User reached phishing domain
+  Valid credentials appear to have enabled VPN access
+  RDP access from clinical workstation to server system succeeded
+  DNS TXT tunnel was present in packet evidence
+
+ABSENT OR UNCONFIRMED FROM PCAP ALONE:
+  Whether endpoint malware executed
+  Whether MFA was enabled or disabled
+  Whether alerts fired in any SIEM
+  Exact plaintext credentials or exfiltrated full data content
+
+=== IMPACT ASSESSMENT ===
+Data likely exfiltrated: structured records over DNS TXT tunnel
+Systems involved: WS-NURSE-04, VPN endpoint, billing-srv-01, NAS-01
+Systems resisted access: selected internal servers and restricted endpoints
+Blast radius: clinical workstation to billing/server resources, with DNS exfiltration path
+
+================================================================
+```
+
+---

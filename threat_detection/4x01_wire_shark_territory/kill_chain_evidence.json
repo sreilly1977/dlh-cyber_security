@@ -1,0 +1,229 @@
+{
+  "time_convention": "all times UTC (naive internally); PCAP artifacts carry +0200 local wall-clock (converted); 4x00 context anchored on packet epoch",
+  "master_timeline": [
+    {
+      "time": "2026-04-14 14:47:33",
+      "phase": 1,
+      "event": "phishing email E2 delivered to dmarsh@meddefense.com",
+      "evidence_class": "CONTEXT"
+    },
+    {
+      "time": "2026-04-14 15:02:33",
+      "phase": 2,
+      "event": "victim connected to meddefense-portal.com (91.234.99.107) from 10.10.2.15",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-14 15:03:20",
+      "phase": 2,
+      "event": "credential-harvest session closed (47.2s)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 02:00:12",
+      "phase": 3,
+      "event": "first C2 beacon (behavioral detection, CV 1.81%)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 03:55:08",
+      "phase": 3,
+      "event": "last observed C2 beacon (24 total, avg 299.8s interval)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 13:45:22",
+      "phase": 4,
+      "event": "inbound external TLS session from 154.118.42.89 to 10.10.0.1:443 (SNI: vpn.meddefense.com)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 14:30:12",
+      "phase": 5,
+      "event": "RDP pivot 10.10.2.15 -> 10.10.1.10 (cross-subnet, 265723 B exchanged)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 14:31:34",
+      "phase": 5,
+      "event": "first of 40 internal TLS sessions to 10.10.1.20 (legitimate portal host, credential-validation consistent)",
+      "evidence_class": "INFERENCE"
+    },
+    {
+      "time": "2026-04-15 14:33:46",
+      "phase": 4,
+      "event": "VPN session teardown (48.4 min duration)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 14:35:22",
+      "phase": 6,
+      "event": "SMB enumeration begins from 10.10.1.10 (6 SMB sessions)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 14:38:07",
+      "phase": 6,
+      "event": "SMB attempt to 10.10.4.100 received no response \u2014 segmentation held",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 14:38:08",
+      "phase": 6,
+      "event": "SMB attempt to 10.10.4.101 received no response \u2014 segmentation held",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 22:15:02",
+      "phase": 7,
+      "event": "DNS TXT tunnel queries from 10.10.1.10 begin (window anchor from dns_exfil.pcap tshark filter)",
+      "evidence_class": "PACKET"
+    },
+    {
+      "time": "2026-04-15 22:39:46",
+      "phase": 7,
+      "event": "last anomalous tunnel query (120 queries, 24.74 min span)",
+      "evidence_class": "PACKET"
+    }
+  ],
+  "dwell_time": {
+    "packet_anchored_seconds": 113833,
+    "context_extended_seconds": 114733,
+    "from": "2026-04-14 15:02:33",
+    "to": "2026-04-15 22:39:46"
+  },
+  "phase1_context": {
+    "source_file": "4x00_phishing_dissection/7-click_investigation.md",
+    "recipient": "dmarsh@meddefense.com",
+    "email_id": "E2",
+    "minutes_before_click": 15,
+    "url_params": "id=dmarsh, token=a8f3e2d1",
+    "status": "4x00 verdict: CONFIRMED CLICK \u2014 compromise status UNKNOWN from email evidence alone"
+  },
+  "attck_mapping": [
+    {
+      "phase": 1,
+      "technique": "T1566.002",
+      "name": "Spearphishing Link",
+      "class": "CONTEXT (4x00 email evidence)"
+    },
+    {
+      "phase": 2,
+      "technique": "T1566.002",
+      "name": "Spearphishing Link",
+      "class": "PACKET EVIDENCE (session observed)"
+    },
+    {
+      "phase": 2,
+      "technique": "T1056.003",
+      "name": "Input Capture: Web Portal Capture",
+      "class": "INFERENCE (submission metadata-consistent, unproven)"
+    },
+    {
+      "phase": 3,
+      "technique": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "class": "PACKET EVIDENCE (behavioral, CV 1.81%)"
+    },
+    {
+      "phase": 4,
+      "technique": "T1133",
+      "name": "External Remote Services",
+      "class": "PACKET EVIDENCE (SNI vpn.meddefense.com)"
+    },
+    {
+      "phase": 4,
+      "technique": "T1078.002",
+      "name": "Valid Accounts: Domain Accounts",
+      "class": "INFERENCE (credential use not dissectable)"
+    },
+    {
+      "phase": 5,
+      "technique": "T1021.001",
+      "name": "Remote Desktop Protocol",
+      "class": "PACKET EVIDENCE"
+    },
+    {
+      "phase": 6,
+      "technique": "T1135",
+      "name": "Network Share Discovery",
+      "class": "PACKET EVIDENCE"
+    },
+    {
+      "phase": 6,
+      "technique": "T1021.002",
+      "name": "SMB/Windows Admin Shares",
+      "class": "PACKET EVIDENCE"
+    },
+    {
+      "phase": 6,
+      "technique": "T1083",
+      "name": "File and Directory Discovery",
+      "class": "PARTIAL (NBSS sessions confirmed; directory detail not dissectable)"
+    },
+    {
+      "phase": 7,
+      "technique": "T1048.003",
+      "name": "Exfiltration Over Alternative Protocol: DNS",
+      "class": "PACKET EVIDENCE (decoded labels)"
+    }
+  ],
+  "pivot_points": [
+    {
+      "time": "2026-04-14 14:47:33",
+      "intervention": "Mail-gateway / email-authentication filtering of E2 (4x00 context: lure relied on lookalike domain)"
+    },
+    {
+      "time": "2026-04-14 15:02:33",
+      "intervention": "DNS filtering or sinkholing of meddefense-portal.com before the browser session"
+    },
+    {
+      "time": "2026-04-15 02:00:12",
+      "intervention": "Egress allow-listing / interval-regularity detection during the beacon window (CV 1.81%)"
+    },
+    {
+      "time": "2026-04-15 13:45:22",
+      "intervention": "VPN controls: source-IP geo/reputation screening (AS37340 dynamic block), MFA status unconfirmed"
+    },
+    {
+      "time": "2026-04-15 14:30:12",
+      "intervention": "Clinical-to-server VLAN segmentation for RDP/3389 \u2014 this crossing was NOT blocked"
+    },
+    {
+      "time": "2026-04-15 14:35:22",
+      "intervention": "Restricting SMB admin-share access and server-to-server spread"
+    },
+    {
+      "time": "2026-04-15 22:15:02",
+      "intervention": "DNS TXT rate-limiting / response monitoring at the resolver (baseline 0.23/min vs observed 4.85/min)"
+    }
+  ],
+  "impact": {
+    "systems_accessed": [
+      "10.10.2.15 (WS-NURSE-04)",
+      "10.10.1.20",
+      "10.10.1.30",
+      "10.10.1.31",
+      "10.10.1.60",
+      "10.10.1.10 (billing-srv-01)"
+    ],
+    "systems_resisted": [
+      "10.10.4.100",
+      "10.10.4.101"
+    ],
+    "data_classes_sample_decoded": [
+      "backup_metadata",
+      "patient_record",
+      "server_config"
+    ],
+    "estimated_raw_bytes_base32": 3914,
+    "unconfirmed": [
+      "credential submission content",
+      "VPN account used (encrypted)",
+      "MFA posture",
+      "endpoint execution",
+      "SIEM alerting",
+      "full exfiltrated content"
+    ]
+  }
+}
