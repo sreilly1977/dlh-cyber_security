@@ -1188,3 +1188,112 @@ Remaining gaps:
 ```
 
 ---
+
+# [8. The Evidence Cross-Check](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/8-evidence_crosscheck.sh)
+
+## Goal: 
+
+Correlate every PCAP finding with the expected investigation story to determine what packet evidence proves, what it suggests and what remains unconfirmed.
+
+## Context: 
+
+The PCAPs showed you what happened on the wire: connections, protocols, timing patterns and communication behavior. But packet evidence alone does not always tell the full story. Some conclusions are directly visible in traffic, while others require interpretation or supporting evidence.
+
+This task compares the investigation narrative against the actual packet evidence. For each attack phase, determine what is directly confirmed by the PCAPs, what can only be strongly inferred from timing or context, and what remains invisible from network traffic alone.
+
+This is one of the most important lessons in network forensics: a good analyst does not overclaim. Packet captures can reveal communication, behavior and patterns, but they do not always reveal user intent, endpoint activity or exact actions. Understanding the boundary between evidence and inference is what separates packet analysis from assumption.
+
+## Instructions: 
+
+Write a script 8-evidence_crosscheck.sh that:
+
+1. For each kill chain phase from Task 6, identify:
+
+    what is confirmed by PCAP
+    what is inferred from timing/context
+    what cannot be confirmed from packets alone
+
+2. Classify each finding as:
+
+    CONFIRMED
+    STRONG INFERENCE
+    UNCONFIRMED
+    NOT VISIBLE IN PCAP
+
+3. For each unconfirmed point, explain what additional evidence would be needed:
+
+    endpoint logs
+    VPN logs
+    authentication logs
+    mail gateway logs
+    user interview
+    server logs
+
+4. Calculate a packet visibility score:
+
+    phases with direct PCAP evidence / total phases
+
+5. Explain where packet evidence is strong and where packet evidence has limits
+
+6. Include a short final lesson on the difference between packet evidence and log evidence
+
+**Expected Output:**
+
+```bash
+$ ./8-evidence_crosscheck.sh
+
+================================================================
+   EVIDENCE CROSS-CHECK - PCAP VISIBILITY
+================================================================
+
+Phase | Attack Action         | PCAP Evidence? | Verdict
+------|-----------------------|----------------|------------------
+  1   | Phishing delivery     | No             | 4x00 CONTEXT
+  2   | Credential harvest    | Yes            | STRONG INFERENCE
+  3   | C2 beaconing          | Yes            | CONFIRMED
+  4   | VPN pivot             | Yes            | STRONG INFERENCE
+  5   | RDP lateral movement  | Yes            | CONFIRMED
+  6   | SMB discovery         | Yes            | CONFIRMED
+  7   | DNS exfiltration      | Yes            | CONFIRMED
+
+=== CONFIRMED FROM PCAP ===
+- DNS query for meddefense-portal.com
+- TLS connection to 91.234.99.107
+- Repeated 300-second HTTPS beaconing pattern
+- VPN connection from 154.118.42.89
+- RDP session from clinical host to billing server
+- SMB enumeration activity
+- DNS TXT tunneling pattern to data-sync.meddefense-portal.com
+
+=== STRONG INFERENCE ===
+- Credential submission through phishing page
+- Use of stolen dmarsh credentials for VPN access
+- Exfiltrated data content based on decoded DNS labels or tunnel structure
+
+=== CANNOT CONFIRM FROM PCAP ALONE ===
+- Exact password entered
+- Whether endpoint malware executed
+- Whether a SIEM alert fired
+- Whether the user intentionally approved login prompts
+- Whether all data records were successfully received by attacker
+
+=== ADDITIONAL EVIDENCE NEEDED ===
+- Endpoint process logs
+- VPN authentication logs
+- Domain controller logs
+- Web server logs
+- User interview
+- DNS resolver logs outside the capture window
+
+=== PACKET VISIBILITY SCORE ===
+Direct PCAP evidence exists for 6 of 7 phases.
+Packet visibility: 86%
+
+KEY LESSON:
+Packets show communication. They do not always show user intent,
+plaintext credentials or endpoint process state. Strong investigations
+separate packet facts from analytical inference.
+================================================================
+```
+
+---

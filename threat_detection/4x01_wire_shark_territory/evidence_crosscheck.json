@@ -1,0 +1,144 @@
+{
+  "input_artifact": "kill_chain_evidence.json",
+  "classification_rubric": {
+    "CONFIRMED": "directly visible in packet metadata",
+    "STRONG INFERENCE": "session packet-confirmed, attributed action requires interpretation",
+    "UNCONFIRMED": "no packet evidence; requires other sources",
+    "NOT VISIBLE IN PCAP": "categorically outside network telemetry"
+  },
+  "phase_table": [
+    {
+      "phase": 1,
+      "action": "Phishing delivery",
+      "pcap_evidence": false,
+      "verdict": "4x00 CONTEXT",
+      "justification": "No packet capture covers email delivery; Phase 1 exists only as email-analysis context from 4x00 (phase1_context.source_file)"
+    },
+    {
+      "phase": 2,
+      "action": "Credential harvest",
+      "pcap_evidence": true,
+      "verdict": "STRONG INFERENCE",
+      "justification": "TCP/TLS session to 91.234.99.107 is packet-confirmed, but the form submission is inferred: 482-byte client TLS record is metadata-consistent, contents encrypted (attck_mapping T1056.003: 'submission metadata-consistent, unproven')"
+    },
+    {
+      "phase": 3,
+      "action": "C2 beaconing",
+      "pcap_evidence": true,
+      "verdict": "CONFIRMED",
+      "justification": "24 sessions at 299.84s avg interval, CV 1.81% \u2014 the beaconing behavior itself IS the packet evidence (timing visible on the wire, no interpretation of content required)"
+    },
+    {
+      "phase": 4,
+      "action": "VPN pivot",
+      "pcap_evidence": true,
+      "verdict": "STRONG INFERENCE",
+      "justification": "Inbound TLS session from 154.118.42.89 to 10.10.0.1:443 with SNI vpn.meddefense.com is packet-confirmed; that harvested credentials authenticated it is inference \u2014 payloads encrypted (attck_mapping T1078.002: 'credential use not dissectable')"
+    },
+    {
+      "phase": 5,
+      "action": "RDP lateral movement",
+      "pcap_evidence": true,
+      "verdict": "CONFIRMED",
+      "justification": "RDP flow 10.10.2.15 -> 10.10.1.10 on 3389, 265723 B exchanged, cross-subnet \u2014 directly visible in flow metadata; only the account used remains below dissection depth"
+    },
+    {
+      "phase": 6,
+      "action": "SMB discovery",
+      "pcap_evidence": true,
+      "verdict": "CONFIRMED",
+      "justification": "SMB/NBSS sessions from 10.10.1.10 to four server-subnet hosts and blocked attempts to 10.10.4.x \u2014 flows and responses visible; directory detail not dissectable (attck_mapping T1083: PARTIAL)"
+    },
+    {
+      "phase": 7,
+      "action": "DNS exfiltration",
+      "pcap_evidence": true,
+      "verdict": "CONFIRMED",
+      "justification": "120 TXT queries to data-sync.meddefense-portal.com with 44-60 char base32 labels \u2014 query names and rates directly visible; decoded content classes are the inferred layer"
+    }
+  ],
+  "confirmed_from_pcap": [
+    "DNS query for meddefense-portal.com resolving to 91.234.99.107",
+    "TLS connection to 91.234.99.107 (session completed, 47.2s)",
+    "Repeated 300-second HTTPS beaconing pattern (24 sessions, CV 1.81%)",
+    "Inbound VPN connection from 154.118.42.89 (SNI vpn.meddefense.com)",
+    "RDP session from clinical host 10.10.2.15 to billing server 10.10.1.10",
+    "SMB enumeration activity from 10.10.1.10 to four server-subnet hosts",
+    "DNS TXT tunneling pattern to data-sync.meddefense-portal.com (120 queries, 4.85/min vs 0.23/min baseline)",
+    "Gateway-enforced segmentation on 10.10.4.x (RST, no SMB response)"
+  ],
+  "strong_inference": [
+    {
+      "finding": "Credential submission through the phishing page",
+      "basis": "session size/duration consistent with a small HTTPS POST; payload encrypted, submission itself not provable from packets"
+    },
+    {
+      "finding": "Use of harvested/stolen credentials for VPN access",
+      "basis": "timing follows the phishing click, but authentication payloads are encrypted; account attribution is metadata inference only"
+    },
+    {
+      "finding": "Exfiltrated data content (patient_record, backup_metadata, server_config)",
+      "basis": "derived from 3 of 5 sampled decoded base32 labels; full transfer completeness and attacker receipt not visible"
+    }
+  ],
+  "cannot_confirm_from_pcap": [
+    {
+      "finding": "Exact password entered on the phishing page",
+      "additional_evidence_needed": [
+        "mail gateway logs",
+        "phishing server seizure",
+        "browser history/artifacts on 10.10.2.15"
+      ]
+    },
+    {
+      "finding": "Whether endpoint malware executed on WS-NURSE-04",
+      "additional_evidence_needed": [
+        "endpoint process logs (Sysmon EID 1)",
+        "EDR telemetry",
+        "registry/persistence artifacts"
+      ]
+    },
+    {
+      "finding": "Which account authenticated the VPN session",
+      "additional_evidence_needed": [
+        "VPN authentication logs (concentrator)",
+        "RADIUS logs",
+        "domain controller security logs"
+      ]
+    },
+    {
+      "finding": "Which account ran the RDP session to billing-srv-01",
+      "additional_evidence_needed": [
+        "domain controller logs (4624 logon_type=10)",
+        "billing-srv-01 local security logs"
+      ]
+    },
+    {
+      "finding": "Whether a SIEM alert fired at any point",
+      "additional_evidence_needed": [
+        "SIEM alert/incident audit trail",
+        "SOC ticketing system"
+      ]
+    },
+    {
+      "finding": "Whether the user intentionally approved any login prompts",
+      "additional_evidence_needed": [
+        "user interview",
+        "MFA push-approval logs"
+      ]
+    },
+    {
+      "finding": "Whether all exfiltrated records were received by the attacker",
+      "additional_evidence_needed": [
+        "authoritative DNS server logs (outside capture window)",
+        "threat-actor infrastructure seizure"
+      ]
+    }
+  ],
+  "packet_visibility_score": {
+    "phases_with_packet_evidence": 6,
+    "total_phases": 7,
+    "percent": 86
+  },
+  "key_lesson": "Packets show communication. They do not always show user intent, plaintext credentials or endpoint process state. Strong investigations separate packet facts from analytical inference."
+}
