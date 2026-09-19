@@ -346,3 +346,91 @@ BASELINE SAVED: baseline_clinical.json
 ```
 
 ---
+
+# [1. The Click in the Wire](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/1-phishing_click.sh)
+
+## Goal: 
+
+Analyze the PCAP that captured the exact moment the nurse clicked the phishing link, correlating the network evidence with the email investigation findings from 4x00.
+
+## Context: 
+
+Your 4x00 investigation identified meddefense-portal[.]com and 91.234.99.107 as phishing infrastructure. Now you have the actual packets from the click window. The PCAP will tell you exactly what happened during the session: DNS resolution, TLS handshake, certificate details and encrypted data exchange metadata. You are not using SIEM alerts in this task. The PCAP is the evidence source. The 4x00 project may be used only as context for known IOCs.
+
+## Instructions: 
+
+Write a script 1-phishing_click.sh that analyzes phishing_click.pcap:
+
+    Extract the DNS query for meddefense-portal[.]com: query timestamp, response IP, TTL
+
+    Extract the TLS ClientHello: SNI value, supported cipher suites, TLS version offered
+
+    Extract the server certificate details: subject, issuer, validity dates, serial number where available
+
+    Calculate the data exchange: total bytes sent by the client, total bytes received, number of TCP segments in each direction
+
+    Identify the exact timestamps: connection start, data transfer start, data transfer end, connection close
+
+    Determine if the outbound data volume is consistent with credential submission. Do not claim password contents were visible unless packet contents actually prove it. Because HTTPS is encrypted, treat the conclusion as metadata-based.
+
+    Check for any DNS query to the real meddefense.com portal immediately after the phishing session
+
+    Explain how this PCAP confirms, updates or strengthens the 4x00 phishing investigation
+
+Your script must show the tshark commands or filters used.
+
+**Expected Output:**
+
+```bash
+$ ./1-phishing_click.sh phishing_click.pcap
+
+=== DNS RESOLUTION ===
+15:02:33.142  Query: meddefense-portal.com
+15:02:33.287  Response: 91.234.99.107
+TTL: 300
+Source: 10.10.2.15 -> 10.10.1.1
+
+=== TLS HANDSHAKE ===
+15:02:33.412  SYN -> 91.234.99.107:443
+15:02:33.587  SYN-ACK
+15:02:33.589  ClientHello
+  SNI: meddefense-portal.com
+  TLS version offered: 1.3
+  Cipher suites: TLS_AES_256_GCM_SHA384 (and others)
+
+15:02:33.743  ServerHello + Certificate
+  Subject: CN=meddefense-portal.com
+  Issuer: Lets Encrypt
+  Valid from: 2026-04-09
+  Valid until: 2026-07-08
+  Serial: 04:a3:f7:c9:12:8b:4e:...
+
+=== DATA EXCHANGE ===
+Duration: 47.2 seconds (15:02:33.412 to 15:03:20.614)
+Client -> Server: 1,203 bytes across 8 TCP segments
+Server -> Client: 12,847 bytes across 31 TCP segments
+Largest client TLS record: 487 bytes at 15:02:58.721
+
+[*] Analysis:
+    The content is encrypted, so the exact form fields are not visible.
+    However, a largest client record of ~487 bytes during the session is
+    consistent with a small HTTPS form submission such as credentials plus
+    token data.
+
+=== POST-CLICK BEHAVIOR ===
+15:03:22.108  DNS query: meddefense.com
+15:03:22.256  DNS response: 10.10.1.20
+15:03:22.389  HTTPS connection to 10.10.1.20:443
+
+[*] Possible interpretation:
+    The user queried the real portal shortly after the phishing session.
+    This may indicate she noticed something wrong, or the phishing site
+    redirected her to the legitimate portal after harvesting data.
+
+=== 4x00 CORRELATION ===
+IOC domain match: meddefense-portal.com
+IOC IP match: 91.234.99.107
+Conclusion: PCAP confirms the workstation contacted the phishing infrastructure.
+```
+
+---

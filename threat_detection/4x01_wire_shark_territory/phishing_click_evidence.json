@@ -1,0 +1,19 @@
+{
+  "capture": "phishing_click.pcap",
+  "victim_workstation": "10.10.2.15",
+  "phishing_domain": "meddefense-portal.com",
+  "phishing_ip": "91.234.99.107",
+  "dns_ttl": "300",
+  "connection_start": "2026-04-14T17:02:33.412000000+0200",
+  "connection_end": "2026-04-14T17:03:20.614000000+0200",
+  "session_duration_s": 47.2,
+  "client_bytes": 1298,
+  "client_segments": 9,
+  "server_bytes": 13971,
+  "server_segments": 32,
+  "largest_client_tls_record": {
+    "bytes": 482,
+    "time": "17:02:58.721000000"
+  },
+  "credential_submission_verdict": "metadata-consistent with a small HTTPS form submission; contents encrypted and unproven from packet data"
+}
