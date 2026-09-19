@@ -680,3 +680,69 @@ Your report must include:
 5. Explain which detections are preventive, detective, and responsive.
 
 ---
+
+# [13. The Investigation Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/13-phishing_investigation_report.md)
+
+# Goal: 
+
+Produce a professional phishing campaign investigation report suitable for review by a SOC lead and for sharing with HC3.
+
+# Context: 
+
+This is the final narrative report. It should synthesize the investigation into a clear, evidence-based document. A good report does not just list artifacts. It explains what happened, what evidence supports the conclusion, what the risk is, and what should happen next.
+
+# Instructions: 
+
+Produce 13-phishing_investigation_report.md.
+
+Your report must include:
+
+1. Executive Summary
+
+    maximum 5 sentences
+    non-technical
+    written for leadership
+
+2. Investigation Timeline
+
+    email collection window
+    relevant send dates
+    reported click timestamp for Diane Marsh
+    investigation scope
+
+3. Email-by-Email Analysis
+
+    verdict for all 8 emails
+    classification
+    confidence level
+    key evidence
+
+4. Campaign Analysis
+
+    explain why Emails 2, 5, and 7 are likely connected
+    explain how Email 8 supports the campaign hypothesis
+    explain how Email 3 should be interpreted
+
+5. Click Incident Assessment
+
+    summarize what is known about Diane Marsh’s click
+    state what can and cannot be concluded from the evidence batch alone
+    recommend safe next actions
+
+6. IOC Summary
+
+    important domains, IPs, URLs, sender addresses, and file hash indicators
+
+7. Detection and Control Gaps
+
+    what existing controls did not prevent
+    what should be improved
+    detection ideas from Task 12
+
+8. Recommendations
+
+    Immediate: next 24 hours
+    Short-term: next 7 days
+    Medium-term: next 30 days
+
+---
