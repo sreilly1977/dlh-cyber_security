@@ -1404,3 +1404,93 @@ Intelligence value:
 ```
 
 ---
+
+# [10. The Impact Assessment](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/10-impact_assessment.sh)
+### advanced
+
+## Goal: 
+
+Quantify the damage: exactly what data was exfiltrated, what systems were compromised and what the regulatory and business consequences are.
+
+## Instructions: 
+
+Write a script 10-impact_assessment.sh that produces a structured impact assessment in HTML.
+
+The script must generate:
+
+impact_assessment.html
+
+The HTML report must include:
+
+1. Data exfiltration quantification:
+
+    number of anomalous DNS tunnel queries
+    approximate data volume
+    data types suggested by decoded samples or query structure
+    exfiltration time window
+
+2. Systems involved:
+
+    every system the attacker contacted or accessed
+    level of access supported by packet evidence
+    systems involved in DNS exfiltration
+
+3. Systems protected or not reached:
+
+    systems that returned access denied
+    systems that refused or reset connections
+    systems where access is attempted but not completed
+
+4. Credential exposure:
+
+    which account appears involved
+    whether compromise is confirmed or strongly inferred
+    blast radius if the account remains valid
+
+5. Regulatory and business concern:
+
+    whether healthcare data exposure is likely
+    why the incident should be escalated for privacy/legal review
+    what remains unconfirmed and requires further evidence
+
+6. Recommended containment actions:
+
+    isolate involved systems
+    reset involved credentials
+    block campaign infrastructure
+    review VPN access
+    review DNS egress policy
+    preserve PCAP evidence
+
+7. Confidence levels:
+
+    confirmed by packet evidence
+    strong inference
+    needs additional validation
+
+**Expected Output:**
+
+```bash
+$ ./10-impact_assessment.sh
+
+Generating impact_assessment.html...
+Done.
+
+$ ls
+impact_assessment.html
+```
+
+The generated HTML should contain:
+
+<pre>
+<h1>Impact Assessment</h1>
+<h2>Data Exfiltration</h2>
+<h2>Systems Involved</h2>
+<h2>Systems Protected or Not Reached</h2>
+<h2>Credential Exposure</h2>
+<h2>Regulatory and Business Concern</h2>
+<h2>Containment Actions</h2>
+<h2>Confidence Levels</h2>
+</pre>
+
+---

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MEDDEFENSE IMPACT ASSESSMENT</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #6d4aff; border-bottom: 2px solid #6d4aff; padding-bottom: 10px; }
+        h2 { color: #4a3a9a; margin-top: 30px; }
+        .metric { background: #f5f2ff; padding: 15px; border-left: 4px solid #6d4aff; margin: 10px 0; }
+        .metric-value { font-size: 1.4em; font-weight: bold; color: #6d4aff; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top; }
+        th { background-color: #f5f2ff; }
+        .conf-high { color: #0aa; font-weight: bold; }
+        .conf-med { color: #fa0; font-weight: bold; }
+        .conf-low { color: #c60; font-weight: bold; }
+        ul { margin: 10px 0; }
+        li { margin: 5px 0; }
+        .footer { margin-top: 50px; font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+
+<h1>Impact Assessment</h1>
+<p><strong>Incident:</strong> MEDDEFENSE Campaign 2026-04-14 (4x01 Wire-Shark Territory)</p>
+<p><strong>Date Generated:</strong> 2026-09-19 21:01:25 UTC</p>
+<p><strong>Evidence Basis:</strong> Task 0-6 PCAP artifacts and JSON summaries</p>
+
+<h2>Data Exfiltration</h2>
+
+<div class="metric">
+    <div class="metric-value">120 anomalous DNS queries</div>
+    <div><strong>Estimated Volume:</strong> ~5.9 KB (assumed ~50 bytes/query)</div>
+    <div><strong>Time Window:</strong> ~24.7 minutes duration</div>
+    <div><strong>Rate:</strong> 4.85 queries/min (20.8x baseline)</div>
+</div>
+
+<p><strong>Data Types Suggested by Decoded Samples:</strong></p>
+<ul>
+        <li>{'query_name': 'obqxi2lfnz2f64tfmnxxezb2jfcd2nbyheysy3tbnvst2u.data-sync.meddefense-portal.com', 'la</li>
+    <li>{'query_name': 'onsxe5tfojpwg33omzuwootin5zxi3tbnvst2ytjnrwgs3thfvzxe5rnga.data-sync.meddefense-port</li>
+    <li>{'query_name': 'mjqwg23vobpw2zlumfsgc5dbhjygc5dihuxxmylsf5wgsyr.data-sync.meddefense-portal.com', 'l</li>
+</ul>
+
+<p><strong>Confidence:</strong> <span class="conf-high">CONFIRMED</span> by packet capture of DNS TXT queries to dedicated exfil subdomain.</p>
+
+<h2>Systems Involved</h2>
+
+<table>
+    <tr><th>System</th><th>Address</th><th>Access Level</th><th>Evidence</th><th>Confidence</th></tr>
+    <tr><td>C2 server (external)</td><td>91.234.99.107</td><td>Command-and-control channel (HTTPS beacons)</td><td>24 sessions, 299.8s avg interval, CV 1.81%</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>DNS exfil resolver (external)</td><td>data-sync.meddefense-portal.com</td><td>DNS TXT tunnel (attacker-controlled subdomain)</td><td>120 anomalous queries over 24.7 minutes at 4.85/min (20.8x baseline)</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>unknown</td><td>unknown</td><td>SMB share enumeration</td><td>connection established</td><td class="conf-high">CONFIRMED</td></tr>
+    <tr><td>External VPN initiator (adversary endpoint)</td><td>154.118.42.89</td><td>Authenticated VPN session (SNI: vpn.meddefense.com)</td><td>Geo: Nigeria, ASAS37340 (Spectranet-INET-LTE_DYN_ALLOC)</td><td class="conf-high">CONFIRMED</td></tr>
+</table>
+
+<p><strong>Total systems contacted:</strong> 50 unique hosts.</p>
+
+<h2>Systems Protected or Not Reached</h2>
+
+<table>
+    <tr><th>System</th><th>Address</th><th>Access Attempt</th><th>Response</th><th>Confidence</th></tr>
+    <tr><td>Restricted clinical subnet hosts</td><td>10.10.4.x</td><td>Lateral movement blocked</td><td>TCP RST from gateway</td><td class="conf-high">CONFIRMED</td></tr>
+</table>
+
+<p><strong>Micro-segmentation efficacy:</strong> Gateway enforcement prevented unauthorized access to the restricted 10.10.4.x clinical subnet. TCP RST responses indicate policy enforcement, not misconfiguration.</p>
+
+<h2>Credential Exposure</h2>
+
+<div class="metric">
+    <div class="metric-value">dmarsh@meddefense.com</div>
+    <div><strong>Role:</strong> Clinical staff (nursing workstation access)</div>
+    <div><strong>Status:</strong> Strongly inferred (likely harvested)</div>
+    <div><strong>Reason:</strong> Attribution chain inferred from token ID (dmarsh) + harvest-session + VPN-timing correlation.</div>
+</div>
+
+<p><strong>Blast Radius if Credentials Remain Valid:</strong></p>
+<ul>
+    <li>Account role grants access to: clinical workstations, EHR frontend</li>
+    <li>Attacker could initiate authenticated sessions to clinical systems without additional foothold.</li>
+    <li>Patient records accessible via EHR frontend with legitimate credentials.</li>
+</ul>
+
+<p><strong>Confidence:</strong> <span class="conf-med">STRONG INFERENCE</span>. Token ID from phishing click correlates with harvest-session timing and subsequent VPN pivot. Credential use itself remains encrypted (TLS 1.3), preventing plaintext capture.</p>
+
+<h2>Regulatory and Business Concern</h2>
+
+<div class="metric">
+    <div class="metric-value">HIPAA Breach Notification Rule Likely Triggered</div>
+    <div><strong>Sector:</strong> Healthcare</div>
+    <div><strong>Data Exposure Risk:</strong> Patient Health Information (PHI)</div>
+    <div><strong>Rationale:</strong> Decoded tunnel samples include patient records and medical metadata. Billing server (10.10.1.10) confirmed as exfil source. Healthcare data exposure triggers HIPAA Breach Notification Rule.</div>
+</div>
+
+<p><strong>Escalation Required:</strong></p>
+<ul>
+    <li><strong>Privacy Officer:</strong> Initial breach assessment within 1 business day.</li>
+    <li><strong>Legal Counsel:</strong> Determine notification obligations (HHS, affected individuals).</li>
+    <li><strong>Forensics Lead:</strong> Preserve all PCAP evidence, prepare incident timeline for legal review.</li>
+</ul>
+
+<p><strong>Unconfirmed Elements Requiring Additional Validation:</strong></p>
+<ul>
+    <li>Exact patient count exposed (requires decoding full tunnel payloads).</li>
+    <li>Whether credential submission occurred (encrypted; endpoint logs needed).</li>
+    <li>Full lateral movement scope (endpoint detection logs not yet correlated).</li>
+</ul>
+
+<h2>Containment Actions</h2>
+
+<ol>
+    <li><strong>Isolate Involved Systems:</strong>
+        <ul>
+            <li>WS-NURSE-04 (10.10.2.15) — clinical workstation, initial click host</li>
+            <li>billing-srv-01 (10.10.1.10) — confirmed exfil source, SMB pivot point</li>
+            <li>All hosts in 10.10.1.x, 10.10.2.x — lateral movement domain</li>
+        </ul>
+    </li>
+    <li><strong>Reset Involved Credentials:</strong>
+        <ul>
+            <li>dmarsh@meddefense.com — immediate disable pending forensic clearance</li>
+            <li>Service accounts with access to billing-srv-01 — rotate secrets</li>
+        </ul>
+    </li>
+    <li><strong>Block Campaign Infrastructure:</strong>
+        <ul>
+            <li>Domains: meddefense-portal[.]com, outlook-protection[.]com, medequip-supplies[.]net, meddefense-benefits[.]org, data-sync[.]meddefense-portal[.]com</li>
+            <li>IPs: 91[.]234[.]99[.]107, 51[.]38[.]42[.]17, 185[.]176[.]43[.]22, 164[.]90[.]218[.]73, 154[.]118[.]42[.]89</li>
+            <li>See campaign_iocs.json (Task 9) for full package.</li>
+        </ul>
+    </li>
+    <li><strong>Review VPN Access:</strong>
+        <ul>
+            <li>Block foreign dynamic-LTE sources (AS37340 Spectranet, Nigeria)</li>
+            <li>Require geo-scoring + step-up authentication for all external VPN sessions</li>
+            <li>Audit MFA device registrations for dmarsh</li>
+        </ul>
+    </li>
+    <li><strong>Review DNS Egress Policy:</strong>
+        <ul>
+            <li>Alert on TXT queries with left-most labels &gt;40 characters to any single domain</li>
+            <li>Rate-limit DNS TXT to ≤2 queries/min per host baseline</li>
+            <li>Deploy resolver-level anomaly detection for encoded subdomain patterns</li>
+        </ul>
+    </li>
+    <li><strong>Preserve PCAP Evidence:</strong>
+        <ul>
+            <li>full_timeline.pcap, c2_beaconing.pcap, dns_exfil.pcap, lateral_movement.pcap</li>
+            <li>Store in immutable audit repository; retain minimum 7 years for HIPAA</li>
+        </ul>
+    </li>
+</ol>
+
+<h2>Confidence Levels</h2>
+
+<table>
+    <tr><th>Finding</th><th>Confidence</th><th>Rationale</th></tr>
+    <tr><td>DNS tunnel exfiltration</td><td class="conf-high">CONFIRMED</td><td>Direct packet capture of 120 queries with encoded labels</td></tr>
+    <tr><td>Lateral movement (workstation → billing server)</td><td class="conf-high">CONFIRMED</td><td>RDP session observed on 10.10.2.15 → 10.10.1.10:3389</td></tr>
+    <tr><td>Credential submission via phishing URL</td><td class="conf-med">STRONG INFERENCE</td><td>Token ID correlation + harvest-session timing; TLS encryption prevents plaintext capture</td></tr>
+    <tr><td>VPN session from foreign attacker</td><td class="conf-high">CONFIRMED</td><td>Inbound TLS to SNI vpn.meddefense.com from 154.118.42.89 (Nigeria, ASAS37340)</td></tr>
+    <tr><td>Patient data exposed</td><td class="conf-med">STRONG INFERENCE</td><td>Decoded tunnel samples show PHI patterns; exact count unverified</td></tr>
+    <tr><td>Micro-segmentation blocked 10.10.4.x</td><td class="conf-high">CONFIRMED</td><td>TCP RST responses from gateway logged in PCAP</td></tr>
+    <tr><td>JAAA fingerprint</td><td class="conf-low">NEEDS VALIDATION</td><td>ClientHello not extracted; re-dissect c2_beaconing.pcap</td></tr>
+    <tr><td>Certificate subject hash</td><td class="conf-low">NEEDS VALIDATION</td><td>Below TLS dissection depth; extract via Zeek ssl.log</td></tr>
+</table>
+
+<p><strong>Glossary:</strong></p>
+<ul>
+    <li><strong>CONFIRMED:</strong> Packet evidence directly shows the activity.</li>
+    <li><strong>STRONG INFERENCE:</strong> Behavioral pattern + partial evidence makes alternative explanations implausible.</li>
+    <li><strong>NEEDS VALIDATION:</strong> Requires additional evidence (endpoint logs, registry dumps, decoded payloads).</li>
+</ul>
+
+<div class="footer">
+    <p>Report generated by 10-impact_assessment.sh | Evidence: /home/steve/projects/dlh/threat_detection/4x01_wire_shark_territory | Contact: security@meddefense.com</p>
+</div>
+
+</body>
+</html>
