@@ -71,3 +71,117 @@
 **Q: How do you translate investigation findings into new detection rules?**
 
 **A:** Convert validated IOCs and behavioral TTPs into SIEM rules, email gateway filters, IDS signatures, or YARA rules, then tune for false positives.
+
+---
+
+## Wire Shark Territory
+
+---
+
+### Network Traffic Analysis Fundamentals
+
+**Q: How do you establish a traffic baseline?**
+
+**A:** Collect normal network metrics over time to define expected behavior patterns.
+
+**Q: How do you identify deviations from a baseline?**
+
+**A:** Compare current traffic metrics against established baselines to spot anomalies.
+
+**Q: How do you interpret TCP session behavior?**
+
+**A:** Analyze handshake sequences, flag usage, and termination patterns for irregularities.
+
+**Q: How does legitimate DNS activity differ from malicious tooling?**
+
+**A:** Malicious DNS often shows unusual query volumes, random subdomains, or TXT record abuse.
+
+**Q: How can you analyze TLS traffic without decryption?**
+
+**A:** Examine certificate details, handshake patterns, packet sizes, and timing metadata.
+
+**Q: What suspicious timing patterns indicate compromise?**
+
+**A:** Regular intervals, off-hours activity, or consistent beaconing cadences suggest automation.
+
+**Q: How do you measure bytes transferred in sessions?**
+
+**A:** Calculate total payload size per flow using packet capture analysis tools.
+
+**Q: How is session duration measured?**
+
+**A:** Subtract the initial SYN timestamp from the final FIN/RST timestamp.
+
+**Q: How are connection intervals analyzed?**
+
+**A:** Measure time gaps between successive connections to the same destination.
+
+**Q: How are DNS query rates measured?**
+
+**A:** Count queries per second or minute against known normal thresholds.
+
+**Q: How is traffic distribution evaluated?**
+
+**A:** Map source-destination pairs and port usage to detect concentration anomalies.
+
+---
+
+### Attack Pattern Recognition
+
+**Q: What does C2 beaconing look like in PCAPs?**
+
+**A:** Periodic, uniform-sized packets sent at regular intervals to external IPs (unless they use jitter, randomized offsets, for evasion. See Cobalt Strike).
+
+**Q: Why is beaconing invisible to signature-based IDS?**
+
+**A:** It mimics legitimate traffic patterns and lacks known malicious signatures.
+
+**Q: How does DNS tunneling enable exfiltration?**
+
+**A:** Encoded data is hidden within DNS query labels or TXT response payloads.
+
+**Q: How do attackers encode data into DNS labels?**
+
+**A:** They base64 or hex-encode stolen data into subdomain strings.
+
+**Q: How does lateral movement appear on the wire?**
+
+**A:** Unexpected SMB, RDP, or WMI connections between internal hosts.
+
+**Q: How do authentication flows reveal pivots?**
+
+**A:** New credential usage from unfamiliar IPs or rapid sequential logins.
+
+**Q: How do you distinguish human browsing from malware?**
+
+**A:** Humans show variable timing and diverse headers; malware is rigid and repetitive.
+
+---
+
+### Forensic Methodology
+
+**Q: How do you investigate incidents from PCAP evidence?**
+
+**A:** Filter by suspicious IPs, reconstruct streams, and trace attack timelines.
+
+**Q: How do you correlate multiple PCAPs into a timeline?**
+
+**A:** Synchronize timestamps and merge events by source/destination IP and port.
+
+**Q: How do you extract network IOCs?**
+
+**A:** Identify malicious IPs, domains, hashes, and abnormal protocol behaviors.
+
+**Q: How do you reconstruct attacker activity chronologically?**
+
+**A:** Order events by packet timestamps to build a step-by-step attack narrative.
+
+**Q: How do you produce a professional forensics report?**
+
+**A:** Document methodology, evidence, IOCs, and conclusions with clear timestamps.
+
+**Q: How do you support conclusions with packet evidence?**
+
+**A:** Cite specific packet numbers, timestamps, and protocol fields as proof.
+
+---
