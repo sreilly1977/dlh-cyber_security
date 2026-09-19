@@ -224,3 +224,125 @@ PCAP Files
     Reconstruct the complete attack timeline
 
 ---
+
+# [0. The Baseline](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/0-baseline_analysis.sh)
+
+## Goal: 
+
+Establish what normal MedDefense clinical network traffic looks like, creating the reference point against which all anomalies will be measured.
+
+## Context: 
+
+Before you can identify what is wrong, you must understand what is normal. The baseline PCAP contains 30 minutes of clinical VLAN traffic from the morning of April 14, before the phishing click occurred. Every application, every protocol, every traffic pattern in this capture is legitimate. Your job is to document it so thoroughly that anything deviating from this baseline in the other PCAPs immediately stands out.
+
+This is how experienced network analysts work. They do not memorize every attack signature. They learn what normal looks like so deeply that anomalies become obvious.
+
+## Instructions: 
+
+Write a script 0-baseline_analysis.sh that processes normal_baseline_clinical.pcap and produces a comprehensive traffic profile:
+
+    Protocol distribution: percentage of traffic by protocol (TCP, UDP, ICMP, other)
+
+    Application layer breakdown: HTTP/HTTPS, DNS, Kerberos, LDAP, SMB, NTP, printing (port 9100), endpoint telemetry/agent traffic if present, and other observed services
+
+    Top 10 talkers: source IPs ranked by total bytes
+
+    Top 10 destinations: destination IPs ranked by total connections
+
+    DNS query profile: top 20 queried domains, average queries per minute, query types (A, AAAA, TXT, MX)
+
+    Connection duration distribution: short (<1s), medium (1-30s), long (>30s)
+
+    TLS analysis: SNI values observed, TLS versions in use, certificate issuers where available
+
+    Temporal pattern: traffic volume over time (per-minute bins) showing the natural rhythm of clinical operations
+
+    Baseline signatures that can be used later for comparison:
+
+    normal DNS rate
+    normal TXT query rate
+    normal external connection rhythm
+    normal packet volume range
+    known-good internal and external services
+
+Your script must show the tshark commands or filters used so that the analysis is reproducible.
+
+**Expected Output:**
+
+```bash
+$ ./0-baseline_analysis.sh normal_baseline_clinical.pcap
+
+=== PROTOCOL DISTRIBUTION ===
+TCP:  78.2%  (111,678 packets)
+UDP:  19.4%  (27,710 packets)
+ICMP:  1.1%  (1,571 packets)
+Other: 1.3%  (1,878 packets)
+
+=== APPLICATION BREAKDOWN ===
+HTTPS (443):        41.2%
+DNS (53):           18.8%
+Kerberos (88):       8.4%
+LDAP (389):          5.1%
+Agent traffic:       4.2%
+NTP (123):           2.1%
+Printing (9100):     1.8%
+SMB (445):           1.2%
+Other:              17.2%
+
+=== TOP 10 SOURCE IPS ===
+  1. 10.10.2.15  (WS-NURSE-04)     4.2 MB
+  2. 10.10.2.22  (WS-NURSE-07)     3.8 MB
+  3. 10.10.2.31  (WS-BILLING-01)   3.1 MB
+  [...]
+
+=== TOP 10 DESTINATION IPS ===
+  1. 52.96.10.45      321 connections
+  2. 13.107.42.14     287 connections
+  3. 10.10.1.20       221 connections
+  [...]
+
+=== DNS QUERY PROFILE ===
+Total queries: 520 (17.3/min average)
+Top domains:
+  1. meddefense.com             112 queries
+  2. login.microsoftonline.com   87 queries
+  3. outlook.office365.com       64 queries
+  4. windows.com                 31 queries
+  [...]
+Query types: A (82%), AAAA (14%), TXT (2%), MX (2%)
+TXT queries: low volume and only to expected legitimate domains
+
+=== CONNECTION DURATION DISTRIBUTION ===
+Short (<1s):       64%
+Medium (1-30s):    29%
+Long (>30s):        7%
+
+=== TLS ANALYSIS ===
+Observed SNI values:
+  login.microsoftonline.com
+  outlook.office365.com
+  windows.com
+  api.github.com
+Observed certificate issuers:
+  Microsoft Azure TLS Issuing CA
+  DigiCert
+  Lets Encrypt
+
+=== TEMPORAL PATTERN ===
+06:00-06:05:  Low traffic
+06:05-06:15:  Ramp-up
+06:15-06:30:  Steady state
+
+=== BASELINE SIGNATURES ===
+Normal DNS rate: low-to-moderate and variable
+Normal TXT query rate: very low
+Normal connection to external IPs: varied intervals, human/application-driven
+Normal packet volume: stable during business-hours baseline
+No traffic to 91.234.99.107
+No traffic to 154.118.42.89
+No TXT queries to data-sync.meddefense-portal.com
+
+BASELINE SAVED: baseline_clinical.json
+```
+
+---

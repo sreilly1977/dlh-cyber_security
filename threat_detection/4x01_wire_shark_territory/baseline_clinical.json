@@ -1,0 +1,251 @@
+{
+  "capture": "normal_baseline_clinical.pcap",
+  "duration_minutes": 29.97,
+  "dns": {
+    "total_queries": 520,
+    "queries_per_minute": 17.4,
+    "txt_queries": 7
+  },
+  "talkers_top_bytes": [
+    {
+      "ip": "10.10.20.5",
+      "bytes": 261720
+    },
+    {
+      "ip": "10.10.1.1",
+      "bytes": 58315
+    },
+    {
+      "ip": "151.101.1.140",
+      "bytes": 48407
+    },
+    {
+      "ip": "140.82.112.4",
+      "bytes": 45737
+    },
+    {
+      "ip": "204.79.197.200",
+      "bytes": 43840
+    },
+    {
+      "ip": "13.107.42.14",
+      "bytes": 41100
+    },
+    {
+      "ip": "10.10.2.41",
+      "bytes": 39897
+    },
+    {
+      "ip": "52.96.10.45",
+      "bytes": 38360
+    },
+    {
+      "ip": "10.10.2.22",
+      "bytes": 38088
+    },
+    {
+      "ip": "10.10.2.31",
+      "bytes": 36418
+    }
+  ],
+  "destination_connections_top": [
+    {
+      "ip": "151.101.1.140",
+      "connections": 18
+    },
+    {
+      "ip": "10.10.2.200",
+      "connections": 18
+    },
+    {
+      "ip": "140.82.112.4",
+      "connections": 17
+    },
+    {
+      "ip": "204.79.197.200",
+      "connections": 16
+    },
+    {
+      "ip": "13.107.42.14",
+      "connections": 15
+    },
+    {
+      "ip": "52.96.10.45",
+      "connections": 14
+    },
+    {
+      "ip": "10.10.1.60",
+      "connections": 12
+    }
+  ],
+  "stream_duration_buckets_pct": {
+    "short_under_1s": 75.0,
+    "medium_1_to_30s": 23.0,
+    "long_over_30s": 2.0
+  },
+  "per_minute_bins": [
+    {
+      "minute_offset": 0,
+      "packets": 102,
+      "bytes": 24769
+    },
+    {
+      "minute_offset": 1,
+      "packets": 54,
+      "bytes": 8663
+    },
+    {
+      "minute_offset": 2,
+      "packets": 90,
+      "bytes": 22432
+    },
+    {
+      "minute_offset": 3,
+      "packets": 72,
+      "bytes": 18215
+    },
+    {
+      "minute_offset": 4,
+      "packets": 54,
+      "bytes": 11360
+    },
+    {
+      "minute_offset": 5,
+      "packets": 168,
+      "bytes": 73290
+    },
+    {
+      "minute_offset": 6,
+      "packets": 117,
+      "bytes": 41611
+    },
+    {
+      "minute_offset": 7,
+      "packets": 124,
+      "bytes": 47572
+    },
+    {
+      "minute_offset": 8,
+      "packets": 104,
+      "bytes": 48976
+    },
+    {
+      "minute_offset": 9,
+      "packets": 102,
+      "bytes": 49007
+    },
+    {
+      "minute_offset": 10,
+      "packets": 110,
+      "bytes": 54160
+    },
+    {
+      "minute_offset": 11,
+      "packets": 95,
+      "bytes": 43379
+    },
+    {
+      "minute_offset": 12,
+      "packets": 96,
+      "bytes": 44218
+    },
+    {
+      "minute_offset": 13,
+      "packets": 122,
+      "bytes": 63529
+    },
+    {
+      "minute_offset": 14,
+      "packets": 107,
+      "bytes": 48155
+    },
+    {
+      "minute_offset": 15,
+      "packets": 80,
+      "bytes": 20551
+    },
+    {
+      "minute_offset": 16,
+      "packets": 58,
+      "bytes": 9386
+    },
+    {
+      "minute_offset": 17,
+      "packets": 108,
+      "bytes": 31709
+    },
+    {
+      "minute_offset": 18,
+      "packets": 82,
+      "bytes": 21707
+    },
+    {
+      "minute_offset": 19,
+      "packets": 91,
+      "bytes": 21812
+    },
+    {
+      "minute_offset": 20,
+      "packets": 102,
+      "bytes": 34600
+    },
+    {
+      "minute_offset": 21,
+      "packets": 65,
+      "bytes": 12196
+    },
+    {
+      "minute_offset": 22,
+      "packets": 106,
+      "bytes": 25581
+    },
+    {
+      "minute_offset": 23,
+      "packets": 119,
+      "bytes": 33718
+    },
+    {
+      "minute_offset": 24,
+      "packets": 70,
+      "bytes": 16868
+    },
+    {
+      "minute_offset": 25,
+      "packets": 93,
+      "bytes": 20225
+    },
+    {
+      "minute_offset": 26,
+      "packets": 86,
+      "bytes": 22680
+    },
+    {
+      "minute_offset": 27,
+      "packets": 97,
+      "bytes": 24393
+    },
+    {
+      "minute_offset": 28,
+      "packets": 85,
+      "bytes": 19331
+    },
+    {
+      "minute_offset": 29,
+      "packets": 83,
+      "bytes": 14240
+    }
+  ],
+  "dns_domains_observed": [
+    "1",
+    "15",
+    "16",
+    "28"
+  ],
+  "external_ips_contacted": [
+    "13.107.42.14",
+    "140.82.112.4",
+    "151.101.1.140",
+    "204.79.197.200",
+    "52.96.10.45"
+  ]
+}
