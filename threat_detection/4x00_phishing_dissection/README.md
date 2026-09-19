@@ -746,3 +746,56 @@ Your report must include:
     Medium-term: next 30 days
 
 ---
+
+# [14. The Threat Intelligence Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x00_phishing_dissection/14-threat_intel_enrichment_plan.md)
+### advanced
+
+## Goal: 
+
+Design an offline threat intelligence enrichment plan that explains how the extracted IOCs should be operationalized once defenders have access to security tools.
+
+## Context: 
+
+Earlier versions of this task required live SIEM enrichment and service restarts. That is not appropriate for this independent project. Instead, you will design a practical enrichment plan: where the IOCs should go, what should happen when they match, how to avoid false positives, and how to measure improvement.
+
+## Instructions: 
+
+Produce 14-threat_intel_enrichment_plan.md.
+
+Your report must include:
+
+1. A list of IOC destinations:
+
+    email gateway block or quarantine list
+    DNS filtering
+    web proxy filtering
+    EDR or endpoint watchlist
+    SIEM threat intelligence lookup
+    HC3 or ISAC submission
+
+2. For each IOC destination, explain:
+
+    which IOC types belong there
+    why that destination is appropriate
+    what alert or action should happen on a match
+    false-positive risk
+    owner or team responsible
+
+3. A prioritization plan:
+
+    what should be enriched immediately
+    what should be monitored only
+    what should remain context-only
+
+4. A validation plan:
+
+    how defenders would test that enrichment works
+    what historical events should be checked
+    what success looks like
+
+5. A feedback loop:
+
+    how future reports, new HC3 alerts, and new phishing emails should update the IOC list
+    how expired or low-quality indicators should be reviewed or removed
+
+---
