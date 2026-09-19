@@ -801,3 +801,90 @@ T1083      File and Directory Discovery
 ```
 
 ---
+
+# [5. The VPN Pivot](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/5-vpn_pivot.sh)
+
+## Goal: 
+
+Analyze the composite timeline PCAP to discover the VPN connection that enabled the attacker to enter the network using stolen credentials, completing the missing link between credential theft and lateral movement.
+
+## Context: 
+
+The phishing activity happened on April 14. The lateral movement started on April 15. What happened in between?
+
+The composite PCAP contains the answer: a VPN connection from an external IP address using the dmarsh credentials. This is the pivot point where the attacker transitioned from "I have credentials" to "I am inside the network."
+
+## Instructions: 
+
+Write a script 5-vpn_pivot.sh that analyzes full_timeline.pcap:
+
+1. Identify the VPN connection:
+
+    source IP
+    destination VPN endpoint
+    timestamp
+    protocol
+    authentication details if visible in packet metadata or simulated capture fields
+
+2. Geolocate the source IP using WHOIS or GeoIP lookup:
+
+    country
+    ASN
+    organization
+    whether the location appears expected or anomalous
+
+3. Correlate the VPN timestamp with the lateral movement timeline:
+
+    does the VPN connection occur before the first RDP session from Task 4?
+    how much time passes between VPN login and lateral movement?
+
+4. Determine the session duration:
+
+    connection start
+    connection close
+    approximate duration
+
+5. Identify assigned internal IP if visible
+
+6. Explain what the PCAP proves and what it cannot prove by itself
+
+Your script must show the tshark commands or filters used.
+
+**Expected Output:**
+
+```bash
+$ ./5-vpn_pivot.sh full_timeline.pcap
+
+=== VPN CONNECTION IDENTIFIED ===
+Timestamp: 2026-04-15 13:45:22
+Source: 154.118.42.89:49872
+Destination: 10.10.0.1:443
+Protocol: SSL-VPN style HTTPS session
+Authentication context: dmarsh observed in VPN-related metadata
+Session duration: ~75 minutes
+Assigned internal IP: 10.10.2.200
+
+=== GEOLOCATION ===
+IP: 154.118.42.89
+Country: Nigeria (Lagos)
+ASN: AS37148
+Organization: Spectranet Limited
+Assessment: External source is geographically unusual for MedDefense context
+
+=== TIMELINE CORRELATION ===
+VPN connection:       2026-04-15 13:45:22
+First RDP movement:   2026-04-15 14:30:12
+Gap: approximately 45 minutes
+
+=== PIVOT ASSESSMENT ===
+The VPN session occurs before the lateral movement and provides a plausible
+network path from external access to internal activity.
+
+=== LIMITATIONS ===
+The PCAP shows the VPN session and related metadata.
+If authentication contents are encrypted, password entry cannot be directly
+read from the packet payload. The credential-use conclusion is based on
+metadata, timing and account context.
+```
+
+---

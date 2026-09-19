@@ -1,0 +1,53 @@
+{
+  "vpn_session": {
+    "stream": 5,
+    "source_ip": "154.118.42.89",
+    "source_ip_defanged": "154[.]118[.]42[.]89",
+    "source_port": "49872",
+    "destination": "10.10.0.1",
+    "destination_port": 443,
+    "start": "2026-04-15 15:45:22",
+    "duration_minutes": 48.4,
+    "ended_by": "teardown frame (FIN/RST) observed",
+    "client_to_server_bytes": 40512,
+    "server_to_client_bytes": 50295,
+    "protocols_on_stream": [
+      "TCP",
+      "TLSv1.2",
+      "TLSv1.3"
+    ],
+    "tls_sni": [
+      "vpn.meddefense.com"
+    ],
+    "sni_vpn_indication": true,
+    "determination": "inbound external TLS session to gateway 10.10.0.1:443 with SNI 'vpn.meddefense.com' \u2014 identified as the VPN endpoint by packet metadata",
+    "authentication_context": "ClientHello SNI visible; authentication payloads encrypted \u2014 credentials not extractable from packets; any account attribution is metadata/timing inference only"
+  },
+  "assigned_internal_ip_inferred": null,
+  "assigned_ip_basis": "not determined",
+  "geolocation": {
+    "country": "NG",
+    "asn": "AS37340",
+    "org": "Spectranet-INET-LTE_DYN_ALLOC",
+    "assessment": "source IP absent from all baseline external peer sets \u2014 foreign to normal operations",
+    "tool_used": "whois",
+    "available": true
+  },
+  "timeline_correlation": {
+    "vpn_start": "2026-04-15 15:45:22",
+    "first_lateral_movement": "2026-04-15 16:30:12",
+    "gap_minutes": 44.8,
+    "ordering_assessment": "VPN-before-lateral CONFIRMED from artifacts"
+  },
+  "what_the_pcap_proves": [
+    "An external host initiated an inbound TLS session to the internal gateway \u2014 the entire baseline contains zero inbound-initiated external sessions, making this anomalous by definition",
+    "Session timing, duration, and bidirectional byte volumes measured directly from SYN-to-teardown framing",
+    "Temporal ordering relative to the phishing click (14 Apr) and the first lateral-movement RDP (15 Apr, Task 4 artifact)",
+    "The TLS ClientHello carried Server Name Indication (SNI) 'vpn.meddefense.com', naming the session destination as the VPN endpoint \u2014 visible as unencrypted handshake metadata before any authentication"
+  ],
+  "what_the_pcap_cannot_prove": [
+    "Which credentials or account authenticated the session \u2014 payloads are not dissectable; account attribution is inference, not packet proof",
+    "Relationship between this source IP and the phishing infrastructure (91.234.99.107) \u2014 a different IP does not establish a different operator, nor does it prove the same one"
+  ],
+  "limitations_note": "Credential-use and VPN-application conclusions are metadata and timing based. The defanged source IP is provided for safe manual verification; no lookup was performed against the subject IP itself."
+}
