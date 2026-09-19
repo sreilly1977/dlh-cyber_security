@@ -1040,3 +1040,151 @@ Blast radius: clinical workstation to billing/server resources, with DNS exfiltr
 ```
 
 ---
+
+# [7. The Detection Engineering](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory/7-detection_rules.sh)
+
+## Goal: 
+
+Create detection rules that would have caught each phase of the attack, transforming the forensic findings into operational defenses.
+
+## Context: 
+
+Every gap identified in the kill chain reconstruction is a detection rule waiting to be written. This task closes the loop: the investigation produces intelligence, the intelligence produces detection, the detection prevents repetition. This is the operational cycle of a mature SOC.
+
+## Instructions: 
+
+Write a script 7-detection_rules.sh that creates detection logic for each identified gap:
+
+1. C2 Beaconing Detection
+
+    Alert when a single internal host connects to the same external IP more than 10 times in 60 minutes with regular intervals
+    Include interval mean and standard deviation logic
+    Explain implementation options:
+        SIEM rule
+        Zeek script
+        Python scheduled analysis
+        NetFlow analytics
+
+2. DNS Query Length Anomaly
+
+    Alert on DNS queries where the left-most subdomain label exceeds 40 characters
+    Explain how encoded labels indicate possible tunneling
+
+3. VPN Geo-Anomaly
+
+    Alert when a VPN session originates from a country or ASN not expected for the organization
+    Explain what data source would be required to implement this
+
+4. Cross-Role RDP
+
+    Alert when a non-IT or clinical account initiates RDP to a server subnet
+    Explain how to detect this from packet metadata or authentication logs
+
+5. DNS Tunneling TXT Query Detection
+
+    Alert on high-frequency TXT record queries to a single domain with encoded labels
+
+6. TLS to Recently Observed Lookalike Domain
+
+    Alert on TLS SNI values matching domains first seen during a phishing campaign
+    Do not require live domain-age feed; describe the logic using an IOC list or first-seen table
+
+7. For each detection:
+
+    provide rule logic or pseudocode
+    provide a test scenario
+    identify the attack phase detected
+    identify expected false positives
+    identify required data source
+
+**Expected Output:**
+
+```bash
+$ ./7-detection_rules.sh
+
+================================================================
+   DETECTION ENGINEERING PLAN
+================================================================
+
+[*] Detection 1: C2 Beaconing
+    Type: Frequency-based behavioral detection
+    Logic:
+      If same src_ip -> same dst_ip > 10 times in 3600 seconds
+      AND interval_stddev < interval_mean * 0.15
+      THEN alert: Possible C2 beaconing
+
+    Data source:
+      PCAP-derived session logs, Zeek conn.log, NetFlow or proxy logs
+
+    Test scenario:
+      10.10.2.15 connects to 91.234.99.107 every 300 seconds
+      for 24 sessions.
+
+    Would detect:
+      Phase 3 beaconing in c2_beaconing.pcap
+
+    False positive considerations:
+      Software update clients, monitoring agents and backup tools may be regular.
+      Baseline comparison is required.
+
+[*] Detection 2: DNS Query Length Anomaly
+    Logic:
+      If left-most DNS label length > 40
+      AND query type is TXT
+      AND repeated queries target the same base domain
+      THEN alert: Possible DNS tunneling
+
+    Would detect:
+      Phase 7 DNS exfiltration in dns_exfil.pcap
+
+[*] Detection 3: VPN Geo-Anomaly
+    Logic:
+      If VPN source country or ASN is not expected
+      AND account has no history from that geography
+      THEN alert: Suspicious VPN login
+
+    Would detect:
+      Phase 4 VPN connection from 154.118.42.89
+
+[*] Detection 4: Cross-Role RDP
+    Logic:
+      If account role is clinical
+      AND destination is server subnet
+      AND protocol is RDP
+      THEN alert: Possible lateral movement
+
+    Would detect:
+      Phase 5 RDP to billing-srv-01
+
+[*] Detection 5: DNS Tunneling TXT Query Pattern
+    Logic:
+      Count TXT queries per source per base domain.
+      If count > 10 in 120 seconds and encoded labels are present,
+      alert as DNS tunneling.
+
+    Would detect:
+      Phase 7 DNS exfiltration.
+
+[*] Detection 6: TLS to Campaign Lookalike Domain
+    Logic:
+      If TLS SNI matches known phishing IOC or recently observed lookalike
+      domain, alert and enrich with campaign context.
+
+    Would detect:
+      Phase 2 phishing-click TLS session.
+
+=== DETECTION COVERAGE UPDATE ===
+Before packet analysis:
+  campaign visible only as email IOCs
+
+After packet analysis:
+  detections cover phishing click, beaconing, VPN pivot, lateral movement
+  and DNS exfiltration.
+
+Remaining gaps:
+  endpoint execution confirmation requires endpoint logs
+  exact credential content cannot be recovered from encrypted TLS
+================================================================
+```
+
+---

@@ -1,0 +1,136 @@
+{
+  "detections": [
+    {
+      "detection_id": "DET-001",
+      "name": "C2 Beaconing Detection",
+      "attack_phase": "Phase 3 \u2014 Command and Control Beaconing",
+      "real_evidence": "10.10.2.15 \u2192 91.234.99.107, 24 sessions, CV 1.81%, avg 299.84s",
+      "type": "Frequency-based behavioral detection",
+      "data_sources": [
+        "Zeek conn.log (src_ip, dst_ip, duration, start_time)",
+        "PCAP-derived session logs (tshark -T fields -e frame.time_epoch)",
+        "NetFlow/IPFIX records (source/dest IP, start time delta)",
+        "Proxy logs (if outbound HTTP/S traffic proxied)"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_c2_beaconing(events, window_seconds=3600, threshold_count=10):\n    grouped = group_by(events, keys=[\"src_ip\", \"dst_ip\"])\n\n    alerts = []\n    for pair, sessions in grouped.items():\n        if len(sessions) < threshold_count:\n            continue\n\n        recent = [s for s in sessions\n                  if s.timestamp >= now() - window_seconds]\n\n        if len(recent) < threshold_count:\n            continue\n\n        times = sorted([s.timestamp for s in recent])\n        intervals = [times[i+1] - times[i] for i in range(len(times)-1)]\n\n        if len(intervals) == 0:\n            continue\n\n        mean_interval = sum(intervals) / len(intervals)\n        variance = sum((x - mean_interval)**2 for x in intervals) / len(intervals)\n        stddev = sqrt(variance)\n        cv = (stddev / mean_interval) * 100 if mean_interval > 0 else float('inf')\n\n        if cv < 15 and mean_interval > 60:\n            alerts.append({\n                \"alert_type\": \"C2_BEACONING_SUSPECTED\",\n                \"src_ip\": pair.src_ip,\n                \"dst_ip\": pair.dst_ip,\n                \"session_count\": len(recent),\n                \"mean_interval_s\": mean_interval,\n                \"cv_percent\": cv,\n                \"severity\": \"HIGH\" if cv < 5 else \"MEDIUM\"\n            })\n\n    return alerts\n",
+      "siem_example": "\nindex=netflow\n| bucket _time span=1h\n| stats count, values(_time) as times by src_ip dst_ip\n| where count > 10\n| eval intervals = mvdiff(times)\n| eval mean = avg(intervals)\n| eval stddev = stdev(intervals)\n| eval cv = (stddev / mean) * 100\n| where cv < 15 AND mean > 60\n| table src_ip dst_ip count mean cv severity\n",
+      "test_scenario": "Internal host 10.10.2.15 initiates 24 TCP connections to 91.234.99.107, each spaced at ~300 seconds \u00b15 seconds jitter",
+      "would_detect": "Phase 3 beaconing in c2_beaconing.pcap",
+      "false_positives": [
+        "Software update clients (Windows Update, apt-get)",
+        "Monitoring agents (Nagios, Zabbix)",
+        "Backup synchronization tools (rsync, Duplicati)"
+      ],
+      "mitigation": "Baseline whitelist of known-good IPs/domains from Task 0 clinical profile"
+    },
+    {
+      "detection_id": "DET-002",
+      "name": "DNS Query Length Anomaly",
+      "attack_phase": "Phase 7 \u2014 DNS Exfiltration",
+      "real_evidence": "120 queries with 44-60 char labels, entropy 4.5 bits/char",
+      "type": "Feature-based anomaly (label length + entropy + TXT frequency)",
+      "data_sources": [
+        "DNS resolver logs (BIND, Unbound, Windows DNS Server)",
+        "Zeek dns.log (qname, qtype, responses)",
+        "tshark PCAP analysis (dns.qry.name, dns.txt, dns.flags.response)",
+        "Dedicated DNS security appliance logs"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_dns_anomaly(dns_queries, label_threshold=40,\n                            entropy_threshold=3.5):\n    alerts = []\n\n    for query in dns_queries:\n        if query.query_type != \"TXT\":\n            continue\n\n        qname_parts = query.qname.split(\".\")\n        leftmost_label = qname_parts[0]\n\n        label_len = len(leftmost_label)\n\n        if label_len <= label_threshold:\n            continue\n\n        freq = Counter(leftmost_label)\n        total = len(leftmost_label)\n        entropy = -sum((count/total) * log2(count/total)\n                       for count in freq.values())\n\n        if entropy < entropy_threshold:\n            continue\n\n        base_domain = \".\".join(qname_parts[-2:])\n        if base_domain in KNOWN_GOOD_DOMAINS:\n            continue\n\n        window_count = count_txt_queries(base_domain, window_minutes=30)\n\n        if window_count > 10:\n            alerts.append({\n                \"alert_type\": \"DNS_TUNNEL_ANOMALY\",\n                \"src_ip\": query.src_ip,\n                \"qname\": query.qname,\n                \"label_length\": label_len,\n                \"entropy\": entropy,\n                \"query_count_30min\": window_count,\n                \"severity\": \"CRITICAL\" if window_count > 50 else \"HIGH\"\n            })\n\n    return alerts\n",
+      "test_scenario": "Host 10.10.1.10 sends 120 DNS TXT queries over 25 minutes with labels 44-60 characters (base32-encoded data)",
+      "would_detect": "Phase 7 DNS exfiltration in dns_exfil.pcap",
+      "false_positives": [
+        "SPF/DKIM verification (TXT queries but short labels)",
+        "Domain validation tokens (typically <40 chars)",
+        "Legitimate CDN configuration queries"
+      ],
+      "mitigation": "Entropy filter (>3.5 bits/char excludes most administrative TXT), whitelist authoritative DNS zones"
+    },
+    {
+      "detection_id": "DET-003",
+      "name": "VPN Geo-Anomaly",
+      "attack_phase": "Phase 4 \u2014 External Access / VPN Pivot",
+      "real_evidence": "154.118.42.89 (Nigeria, AS37340 Spectranet) inbound to 10.10.0.1:443",
+      "type": "Geographic reputation anomaly (geo-ASN mismatch + dynamic block)",
+      "data_sources": [
+        "VPN concentrator authentication logs (Cisco AnyConnect, FortiGate, Palo Alto)",
+        "GeoIP lookup database (MaxMind GeoLite2, IP2Location)",
+        "Threat intelligence feeds (dynamic/mobile block lists)",
+        "TLS ClientHello metadata (SNI, JA3 fingerprint)"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_vpn_geo_anomaly(session, org_allowed_countries,\n                                org_allowed_asns):\n    src_ip = session.source_ip\n    geo = geoip_lookup(src_ip)\n    asn_info = asn_lookup(src_ip)\n\n    country_match = geo.country_code in org_allowed_countries\n    asn_match = asn_info.as_number in org_allowed_asns\n\n    is_dynamic = asn_info.allocation_type in [\"DYN\", \"MOBILE\", \"LTE\"]\n\n    login_history = get_account_login_history(session.account, days=30)\n    geo_history = {log.country_code for log in login_history}\n\n    if not country_match:\n        return {\n            \"alert_type\": \"VPN_GEO_ANOMALY\",\n            \"src_ip\": src_ip,\n            \"country\": geo.country,\n            \"asn\": asn_info.as_number,\n            \"allocation\": asn_info.allocation_type,\n            \"account\": session.account,\n            \"history_countries\": list(geo_history),\n            \"severity\": \"CRITICAL\" if is_dynamic else \"HIGH\"\n        }\n\n    if not asn_match and not country_match:\n        return {\n            \"alert_type\": \"VPN_NEW_ASN_DETECTED\",\n            \"src_ip\": src_ip,\n            \"asn\": asn_info.as_number,\n            \"severity\": \"MEDIUM\"\n        }\n\n    return None\n",
+      "test_scenario": "User dmarsh@meddefense.com authenticates to VPN from 154.118.42.89 (Nigeria, AS37340), organization baseline expects US/CA/EU only",
+      "would_detect": "Phase 4 VPN connection from 154.118.42.89",
+      "false_positives": [
+        "Legitimate remote workers traveling internationally",
+        "Contractor accounts with approved travel authorization",
+        "Mobile device users (if BYOD policy permits)"
+      ],
+      "mitigation": "Require pre-approved travel notification system integration, MFA push notification + secondary approval queue"
+    },
+    {
+      "detection_id": "DET-004",
+      "name": "Cross-Role RDP",
+      "attack_phase": "Phase 5 \u2014 Lateral Movement (RDP Pivot)",
+      "real_evidence": "10.10.2.15 (clinical subnet WS-NURSE-04) RDP to 10.10.1.10 (billing-srv-01)",
+      "type": "Role-based access control violation detection",
+      "data_sources": [
+        "Active Directory security logs (Event ID 4624 - successful logon)",
+        "Windows Event Forwarding (WEF) RDP-specific events (4624 logon_type=10)",
+        "Network flow logs (3389/tcp, src subnet, dst subnet mapping)",
+        "Identity-Aware Proxy or Privileged Access Management (PAM) logs"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_cross_role_rdp(rdp_event, role_mapping, subnet_roles):\n    src_ip = rdp_event.source_ip\n    dst_ip = rdp_event.dest_ip\n    account = rdp_event.account_name\n\n    src_asset_role = get_asset_role(src_ip, subnet_roles)\n    dst_asset_role = get_asset_role(dst_ip, subnet_roles)\n    user_roles = get_user_roles(account, role_mapping)\n\n    ALLOWED_TRANSITIONS = {\n        (\"IT\", \"server\"): True,\n        (\"IT\", \"admin\"): True,\n        (\"clinical\", \"clinical\"): True,\n        (\"clinical\", \"admin\"): False,\n        (\"server\", \"server\"): True,\n    }\n\n    transition_key = (max(user_roles), dst_asset_role)\n\n    if not ALLOWED_TRANSITIONS.get(transition_key, False):\n        if rdp_event.is_after_hours():\n            severity = \"CRITICAL\"\n        else:\n            severity = \"HIGH\"\n\n        return {\n            \"alert_type\": \"CROSS_ROLE_RDP_VIOLATION\",\n            \"src_ip\": src_ip,\n            \"dst_ip\": dst_ip,\n            \"account\": account,\n            \"src_role\": src_asset_role,\n            \"dst_role\": dst_asset_role,\n            \"user_roles\": list(user_roles),\n            \"session_duration_sec\": rdp_event.duration,\n            \"bytes_exchanged\": rdp_event.bytes_sent + rdp_event.bytes_recv,\n            \"severity\": severity,\n            \"after_hours\": rdp_event.is_after_hours()\n        }\n\n    return None\n",
+      "test_scenario": "Account dmarsh (functional role: clinical) initiates RDP session from 10.10.2.15 to 10.10.1.10 (server subnet), 265KB exchanged",
+      "would_detect": "Phase 5 RDP to billing-srv-01",
+      "false_positives": [
+        "IT admins managing clinical systems (need documented exceptions)",
+        "Emergency maintenance windows (require pre-registration)",
+        "Temporary contractors with approved cross-role access"
+      ],
+      "mitigation": "Integration with HR/AD role assignment, require PAM ticket for cross-role access, after-hours sessions trigger higher severity"
+    },
+    {
+      "detection_id": "DET-005",
+      "name": "DNS Tunneling TXT Query Pattern",
+      "attack_phase": "Phase 7 \u2014 DNS Exfiltration",
+      "real_evidence": "120 anomalous queries in 24.74 min (4.85/min), 20.8x baseline rate",
+      "type": "Frequency + encoding pattern detection",
+      "data_sources": [
+        "DNS query logs with TXT record type",
+        "Baseline TXT query rates per host (Task 0 baseline_clinical.json)",
+        "Encoded label detection (base32/base64 characteristics)"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_dns_tunnel_txt(dns_events, baseline_rates):\n    alerts = []\n\n    # Group TXT queries by source IP and base domain\n    grouped = group_by(dns_events, keys=[\"src_ip\", \"base_domain\"])\n\n    for key, queries in grouped.items():\n        src_ip, base_domain = key\n\n        # Get baseline rate for this host\n        baseline_rate = baseline_rates.get(src_ip, {}).get(\"txt_queries_per_min\", 0)\n\n        if baseline_rate == 0:\n            baseline_rate = 0.23  # Global default from Task 0\n\n        # Calculate current rate in sliding window\n        window_start = min(q.timestamp for q in queries)\n        window_end = max(q.timestamp for q in queries)\n        duration_mins = (window_end - window_start).total_seconds() / 60\n\n        query_rate = len(queries) / duration_mins if duration_mins > 0 else 0\n\n        # Check for encoded label patterns\n        has_encoded_labels = any(\n            is_base32_or_base64(query.leftmost_label)\n            for query in queries\n        )\n\n        if query_rate > baseline_rate * 5 and has_encoded_labels:\n            alerts.append({\n                \"alert_type\": \"DNS_TTUNNEL_HIGH_RATE\",\n                \"src_ip\": src_ip,\n                \"base_domain\": base_domain,\n                \"query_count\": len(queries),\n                \"query_rate_per_min\": query_rate,\n                \"baseline_rate_per_min\": baseline_rate,\n                \"multiplier\": query_rate / baseline_rate,\n                \"severity\": \"CRITICAL\" if query_rate / baseline_rate > 15 else \"HIGH\"\n            })\n\n    return alerts\n",
+      "test_scenario": "Host 10.10.1.10 sends 120 TXT queries over 25 minutes to data-sync.meddefense-portal.com at 4.85/min (baseline 0.23/min = 20.8x)",
+      "would_detect": "Phase 7 DNS exfiltration",
+      "false_positives": [
+        "Bulk mail server SPF checks",
+        "Email security gateway DKIM verifications",
+        "CDN failover DNS health checks"
+      ],
+      "mitigation": "Rate multiplier threshold tuned to baseline per host, require BOTH high rate AND encoded label presence"
+    },
+    {
+      "detection_id": "DET-006",
+      "name": "TLS to Recently Observed Lookalike Domain",
+      "attack_phase": "Phase 2 \u2014 Credential Harvesting Session",
+      "real_evidence": "Session to meddefense-portal.com (lookalike), TLS SNI visible, 47.2s duration",
+      "type": "IOC-based detection with lookalike domain tracking",
+      "data_sources": [
+        "TLS handshake metadata (SNI from ClientHello)",
+        "DNS query logs (domain first-seen timestamp)",
+        "Threat intelligence IOC feeds (phishing campaign domains)",
+        "Certificate transparency logs (new cert issuance monitoring)"
+      ],
+      "rule_logic_pseudocode": "\nfunction detect_tls_lookalike(sni_records, phishing_ioc_list, first_seen_db):\n    alerts = []\n\n    for record in sni_records:\n        sni = record.sni\n        src_ip = record.client_ip\n\n        # Check against known phishing campaign IOCs\n        if sni in phishing_ioc_list:\n            alerts.append({\n                \"alert_type\": \"TLS_PHSISHING_IOC_MATCH\",\n                \"sni\": sni,\n                \"src_ip\": src_ip,\n                \"match_type\": \"IOC_LIST\",\n                \"campaign\": find_campaign(sni, phishing_ioc_list),\n                \"severity\": \"CRITICAL\"\n            })\n            continue\n\n        # Check if domain was first-seen recently (within 7 days)\n        first_seen = first_seen_db.get(sni)\n        if first_seen and (now() - first_seen).days < 7:\n            # Additional heuristics\n            similarity_score = calculate_domain_similarity(sni, \"meddefense.com\")\n\n            if similarity_score > 0.85:\n                alerts.append({\n                    \"alert_type\": \"TLS_LOOKALIKE_DOMAIN\",\n                    \"sni\": sni,\n                    \"src_ip\": src_ip,\n                    \"first_seen_days\": (now() - first_seen).days,\n                    \"similarity_to_meddefense\": similarity_score,\n                    \"severity\": \"HIGH\"\n                })\n\n    return alerts\n",
+      "test_scenario": "Host 10.10.2.15 connects to meddefense-portal.com via HTTPS, SNI visible in TLS ClientHello, session 47.2s with 482-byte client record",
+      "would_detect": "Phase 2 phishing-click TLS session",
+      "false_positives": [
+        "Legitimate typosquatting domains with business justification",
+        "Newly acquired company domains",
+        "Third-party service providers with similar naming"
+      ],
+      "mitigation": "Maintain approved vendor domain registry, require business case for new domains under 7 days old, integrate with DMARC/BIMI verification"
+    }
+  ]
+}
