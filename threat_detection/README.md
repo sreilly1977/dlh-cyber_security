@@ -10,7 +10,7 @@ Supporting characters (e.g., James Chen, Marcus) and realistic artifacts (networ
 
 ## Total Exercise Count
 
-**20 exercises** across **2 scenario modules**.
+**26 exercises** across **2 scenario modules**.
 
 Those marked as advanced are not required to pass the course.
 
@@ -27,8 +27,8 @@ Key focus areas include:
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
-| 1 | [`4x00_phishing_dissection`](4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 12 |
-| 2 | [`4x01_wire_shark_territory`](4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 8 |
+| 1 | [`4x00_phishing_dissection`](4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
+| 2 | [`4x01_wire_shark_territory`](4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 11 |
 
 ### Additional Resources
 
