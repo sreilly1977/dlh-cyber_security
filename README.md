@@ -77,6 +77,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`3x04_cross_platform_detection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection) | Multi-platform and multi-interface detection evaluation: CLI vs Wazuh dashboard/export comparison, Sigma-to-native XML rule translation, cross-tool query language analysis (jq, Sigma, KQL, Lucene), workflow and tradeoff comparison, tool evaluation packaging, field name translation tables, and vendor brief assembly for stakeholder review | 16 |
 | [`3x05_the_24_hour_watch`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch) | SOC Tier 1 capstone simulation: 24-hour watch operations for MedDefense Health Systems detecting HC-RED7 cluster, including enriched event pipeline ingestion, behavioral baseline construction, Sigma-based detection engineering, multi-alert triage and correlation, deep-dive incident investigation (Incidents A, B, C), containment strategy, IOC packaging, detection tuning recommendations, and formal shift handoff documentation | 15 |
 
+See the [`blue_team/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/README.md) for the full curriculum map.
 ---
 
 ## `threat_detection/`
@@ -88,6 +89,8 @@ Applied threat detection operations through a scenario-driven case study centere
 |-----------|-------|-----------|
 | [`4x00_phishing_dissection`](4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
 | [`4x01_wire_shark_territory`](4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 11 |
+
+See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/README.md) for the full curriculum map.
 
 ---
 
