@@ -156,7 +156,8 @@ Work through the tracks based on your learning goals:
 1. **New learners:** Begin with [`common_core/cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/cybersecurity_basics), then proceed sequentially through each domain module
 2. **Security+ candidates:** Review [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) aligned with SY0-701 exam objectives, supplement with [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) for practical context
 3. **Blue team aspirants:** Follow [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) modules in order, document findings cumulatively
-4. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
+4. **Threat detectives and hunters:** Follow [`threat_detection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection) modules in order, document findings cumulatively
+5. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
 
 ### Cheat Sheets
 
