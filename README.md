@@ -171,7 +171,7 @@ Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tr
 - [TryHackMe](https://tryhackme.com) — Guided learning rooms
 - [HackTheBox](https://www.hackthebox.com) — Hands-on labs
 - [OverTheWire](https://overthewire.org) — Command line and security challenges
-- [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/?tab=defensive) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
+- [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
 
 ### [Open Source Infrastructure](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md)
 
@@ -192,11 +192,13 @@ Setup guides and configuration files available in the repository for:
 > **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
 > wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
-### Threat Intelligence Sources
+### Threat Intelligence Sources and Toolkits
 
 - [MISP - open-source threat intelligence](https://www.misp-project.org/)
-- [VirusTotal](https://www.virustotal.com/)
-- [AbuseIPDB](https://www.abuseipdb.com/)
+- [VirusTotal - URL, file and hash scanning](https://www.virustotal.com/)
+- [AbuseIPDB - IP reputation lookup](https://www.abuseipdb.com/)
+- [HybridAnalysis - online file and URL sandbox](https://hybrid-analysis.com/) 
+- [MXToolbox - online email analysis](https://mxtoolbox.com)
 
 ---
 
