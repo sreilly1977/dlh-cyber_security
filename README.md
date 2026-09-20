@@ -78,6 +78,7 @@ Applied defensive operations through a scenario-driven case study centered on Me
 | [`3x05_the_24_hour_watch`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch) | SOC Tier 1 capstone simulation: 24-hour watch operations for MedDefense Health Systems detecting HC-RED7 cluster, including enriched event pipeline ingestion, behavioral baseline construction, Sigma-based detection engineering, multi-alert triage and correlation, deep-dive incident investigation (Incidents A, B, C), containment strategy, IOC packaging, detection tuning recommendations, and formal shift handoff documentation | 15 |
 
 See the [`blue_team/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/blue_team/README.md) for the full curriculum map.
+
 ---
 
 ## `threat_detection/`
