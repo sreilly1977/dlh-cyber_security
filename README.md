@@ -16,6 +16,7 @@ A comprehensive cybersecurity study repository structured around two primary lea
 | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Applied defensive operations through a scenario-driven case study (MedDefense) |
 | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Foundational coursework covering all five Security+ domains |
 | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
+| [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Official publications from CIS, CISA, CompTIA, Crypt101, Gartner, HIPAA, KnowB4, Micorsoft, NIST CSF & Special Publications, NSA, and SANS |
 
 ---
 
@@ -60,14 +61,13 @@ Applied defensive operations through a scenario-driven case study centered on Me
 
 | Directory | Description |
 |-----------|-------------|
-| [`Crypt101/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Crypt101) | Foundational cryptography concepts, algorithms, and implementation guides |
-| [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/HIPAA) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
-| [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Knowbe4) | Security awareness training resources and social engineering red flags |
-| [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Microsoft) | Microsoft security methodologies (STRIDE Threat Model) |
-| [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_CSF) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, CSWP.29) |
-| [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_Special_Publications) | NIST SP 800-series reference documents (SP 800-12, 800-30, 800-53, 800-61) |
-| [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/SANS) | SANS Institute reading room materials and security research papers |
-| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Weekly learning objectives for the course (Weeks 10 & 11 ) |
+| [`Crypt101/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Crypt101) | Foundational cryptography concepts, algorithms, and implementation guides |
+| [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HIPAA) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
+| [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Knowbe4) | Security awareness training resources and social engineering red flags |
+| [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Microsoft) | Microsoft security methodologies (STRIDE Threat Model) |
+| [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_CSF) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, CSWP.29) |
+| [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_Special_Publications) | NIST SP 800-series reference documents (SP 800-12, 800-30, 800-53, 800-61) |
+| [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/SANS) | SANS Institute reading room materials and security research papers |
 
 ---
 

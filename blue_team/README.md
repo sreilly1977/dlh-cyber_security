@@ -59,41 +59,11 @@ The curriculum follows a progressive learning path through twelve modules across
 | 17 | [`3x04_cross_platform_detection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x04_cross_platform_detection) | Multi-platform and multi-interface detection evaluation: CLI vs Wazuh dashboard/export comparison, Sigma-to-native XML rule translation, cross-tool query language analysis (jq, Sigma, KQL, Lucene), workflow and tradeoff comparison, tool evaluation packaging, field name translation tables, and vendor brief assembly for stakeholder review | 16 |
 | 18 | [`3x05_the_24_hour_watch`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/3x05_the_24_hour_watch) | SOC Tier 1 capstone simulation: 24-hour watch operations for MedDefense Health Systems detecting HC-RED7 cluster, including enriched event pipeline ingestion, behavioral baseline construction, Sigma-based detection engineering, multi-alert triage and correlation, deep-dive incident investigation (Incidents A, B, C), containment strategy, IOC packaging, detection tuning recommendations, and formal shift handoff documentation | 15 |
 
-### Reference Materials
-
-| Directory | Description | Contents |
-|-----------|-------------|----------|
-| [`CIS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/CIS) | CIS Benchmarks for system hardening | CIS Microsoft Windows Server 2022 Benchmark v5.1.0, CIS Ubuntu Linux 22.04 LTS Benchmark v3.0.0 |
-| [`CISA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/CISA) | CISA cybersecurity advisories and guidance | NSA and CISA Red and Blue Teams — Top Ten Cybersecurity Misconfigurations |
-| [`Crypt101`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Crypt101) | Cryptography fundamentals reference | Crypto101 PDF |
-| [`Gartner`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Gartner) | Gartner security research and market analysis | Security trends and vendor assessments |
-| [`HIPAA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/HIPAA) | HIPAA and healthcare regulatory compliance | HIPAA Main guide, NIPP Sector-Specific Plan for Healthcare and Public Health |
-| [`Knowbe4`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Knowbe4) | Security awareness training resources | Social Engineering Red Flags reference |
-| [`Microsoft`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/Microsoft) | Microsoft security methodologies | STRIDE Threat Model guide |
-| [`NIST_CSF`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_CSF) | NIST Cybersecurity Framework | NIST CSF core functions and implementation tiers |
-| [`NIST_Special_Publications`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NIST_Special_Publications) | NIST special publications on security | SP 800-53, SP 800-61, SP 800-86 |
-| [`NSA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/NSA) | NSA cybersecurity guidance and advisories | NSA cyber recommendations and threat alerts |
-| [`SANS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/SANS) | SANS Institute reading room resources | Incident handling guides and security posters |
-
 ### Additional Resources
 
 | Directory | Description |
 |-----------|-------------|
-| [`challenges/Week_14_Hard_Challenge`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/challenges/Week_14_Hard_Challenge) | Advanced practical challenge module |
 | [`learning_objectives`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Module-specific learning objectives and competency mapping |
-
----
-
-## Alignment with Certifications & Frameworks
-
-This repository supports preparation for:
-
-- **CompTIA Security+ (SY0-701)** — Core security fundamentals and defensive operations
-- **CompTIA CySA+ (CS0-003)** — Threat detection, analysis, and response
-- **NIST Cybersecurity Framework (CSF 2.0)** — Implementation and alignment guidance
-- **HIPAA Security Rule** — Healthcare regulatory compliance fundamentals
-- **CIS Controls v8** — Prioritized security best practices
-- **MITRE ATT&CK Framework** — Adversary tactics, techniques, and procedures mapping
 
 ---
 
