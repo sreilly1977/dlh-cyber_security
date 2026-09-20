@@ -128,14 +128,14 @@ See the [`notes/README.md`](https://github.com/sreilly1977/dlh-cyber_security/bl
 
 This repository supports preparation for:
 
-| Certification | Domain Coverage | Resources |
-|---------------|-----------------|-----------|
-| [CompTIA Security+ (SY0-701)](https://www.comptia.org/certifications/security) | All 5 domains | `common_core/` + `blue_team/` exercises |
-| [CompTIA CySA+ (CS0-003)](https://www.comptia.org/certifications/cybersecurity-analyst) | Threat detection, analysis, response | `notes/` queries + `blue_team/` SOC modules |
-| [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework) | Identify, Protect, Detect, Respond, Recover | `blue_team/NIST_CSF/` references |
-| [CIS Controls v8](https://www.cisecurity.org/controls) | Prioritized security best practices | `blue_team/` exercise mappings |
-| [HIPAA Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/index.html) | Healthcare compliance fundamentals | `blue_team/HIPAA/` references |
-| [MITRE ATT&CK Framework](https://attack.mitre.org/) | Adversary TTPs mapping | `blue_team/1x01_know_your_enemy/` exercises |
+| Certification | Domain Coverage |
+| --- | --- |
+| [CompTIA Security+ (SY0-701)](https://www.comptia.org/certifications/security) | All 5 domains |
+| [CompTIA CySA+ (CS0-003)](https://www.comptia.org/certifications/cybersecurity-analyst) | Threat detection, analysis, response |
+| [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework) | Identify, Protect, Detect, Respond, Recover |
+| [CIS Controls v8](https://www.cisecurity.org/controls) | Prioritized security best practices |
+| [HIPAA Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/index.html) | Healthcare compliance fundamentals |
+| [MITRE ATT&CK Framework](https://attack.mitre.org/) | Adversary TTPs mapping |
 
 ---
 
