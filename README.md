@@ -21,6 +21,25 @@ A comprehensive cybersecurity study repository structured around two primary lea
 
 ---
 
+## `common_core/`
+
+Foundational coursework organized into sub-modules aligned with CompTIA Security+ (SY0-701) domains. Each sub-module builds theoretical knowledge with practical application examples.
+
+| Directory | Description | Security+ Domain |
+|-----------|-------------|------------------|
+| [`cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/cybersecurity_basics) | Foundational concepts, terminology, and core principles | Domain 1.0 |
+| [`network_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/network_security) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
+| [`linux_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/linux_security) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
+| [`scripting_cyber/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/scripting_cyber) | Python automation scripts for security tasks and analysis | Domain 4.0 |
+| [`security_policy_analysis/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/security_policy_analysis) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
+| [`threat-modeling-fundamentals/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/threat-modeling-fundamentals) | Methodologies for identifying and assessing threats | Domain 1.0 |
+| [`understanding_vulnerabilities/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/understanding_vulnerabilities) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
+| [`web_application_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/web_application_security) | Web app vulnerabilities, OWASP Top 10, and secure coding practices | Domain 2.0 |
+
+See the [`common_core/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/common_core/README.md) for the full curriculum map.
+
+---
+
 ## `blue_team/`
 
 Applied defensive operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
@@ -86,25 +105,6 @@ Applied threat detection operations through a scenario-driven case study centere
 
 ---
 
-## `common_core/`
-
-Foundational coursework organized into sub-modules aligned with CompTIA Security+ (SY0-701) domains. Each sub-module builds theoretical knowledge with practical application examples.
-
-| Directory | Description | Security+ Domain |
-|-----------|-------------|------------------|
-| [`cybersecurity_basics/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/cybersecurity_basics) | Foundational concepts, terminology, and core principles | Domain 1.0 |
-| [`network_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/network_security) | Network protocols, segmentation, firewalls, and monitoring | Domains 1.0, 2.0 |
-| [`linux_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/linux_security) | Linux system hardening, permissions, and secure administration | Domains 3.0, 4.0 |
-| [`scripting_cyber/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/scripting_cyber) | Python automation scripts for security tasks and analysis | Domain 4.0 |
-| [`security_policy_analysis/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/security_policy_analysis) | Policy frameworks, compliance requirements, and governance | Domain 5.0 |
-| [`threat-modeling-fundamentals/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/threat-modeling-fundamentals) | Methodologies for identifying and assessing threats | Domain 1.0 |
-| [`understanding_vulnerabilities/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/understanding_vulnerabilities) | CVE tracking, vulnerability scanning, and mitigation strategies | Domain 1.0 |
-| [`web_application_security/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core/web_application_security) | Web app vulnerabilities, OWASP Top 10, and secure coding practices | Domain 2.0 |
-
-See the [`common_core/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/common_core/README.md) for the full curriculum map.
-
----
-
 ## `notes/`
 
 Practical security operations references for SOC analysts and incident response teams. Includes detection query templates, architecture documentation, and presentation materials.
@@ -149,6 +149,8 @@ Work through the tracks based on your learning goals:
 |------|------------|----------|
 | Foundation First | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Security+ exam prep, new learners |
 | Applied Defense | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | SOC skills, hands-on practice |
+| Threat Detection | [`threat_detection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/) | SOC skills, hands-on practice |
+| Reference Libraries | [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Working professionals, standards, frameworks and security benchmarks | 
 | Quick References | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Working professionals, query lookups |
 
 ### Recommended Workflow
