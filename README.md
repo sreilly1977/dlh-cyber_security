@@ -196,8 +196,8 @@ Setup guides and configuration files available in the repository for:
 - [Linux AIDE - Advanced Intrusion Detection Environment](https://aide.github.io/)
 - [rkhunter - Linux Rootkit Hunter](https://rkhunter.sourceforge.net/)
 
-> **Note:** Remember to enable browser ad blockers when accessing public security resources, and configure local DNS exclusions for optimal log collection.
-> wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
+> **Note:** Remember to enable browser ad blockers for windows clients, and configure local DNS exclusions, for optimal log collection:
+> C:\wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
 ### Threat Intelligence Sources and Toolkits
 
