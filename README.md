@@ -197,7 +197,7 @@ Setup guides and configuration files available in the repository for:
 - [rkhunter - Linux Rootkit Hunter](https://rkhunter.sourceforge.net/)
 
 > **Note:** Remember to enable browser ad blockers for windows clients, and configure local DNS exclusions, for optimal log collection:
-> C:\wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
+> C:\ wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
 ### Threat Intelligence Sources and Toolkits
 
