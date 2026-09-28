@@ -1,0 +1,56 @@
+{
+  "name": "HEALTHBANE Campaign",
+  "versions": {
+    "attack": "15",
+    "navigator": "4.8.2",
+    "layer": "4.4"
+  },
+  "domain": "enterprise-attack",
+  "description": "ATT&CK technique mapping for HEALTHBANE. OBSERVED techniques scored 100 (red); INFERRED scored 50 (amber). 30 techniques total: 18 observed, 12 inferred. Source: Project 4x02 Intelligence-Driven Defense.",
+  "hideDisabled": false,
+  "techniques": [
+    { "techniqueID": "T1589.002", "tactic": "reconnaissance", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 4. Domain registration timing implies victim identity gathering.", "enabled": true },
+    { "techniqueID": "T1583.001", "tactic": "resource-development", "score": 100, "color": "#FF0000", "comment": "OBSERVED: 8 domains registered 2026-04-05 to 2026-04-10 (HC3 Section 3.1)", "enabled": true },
+    { "techniqueID": "T1585.002", "tactic": "resource-development", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Stage 2 emails sent from compromised accounts.", "enabled": true },
+    { "techniqueID": "T1587.001", "tactic": "resource-development", "score": 100, "color": "#FF0000", "comment": "OBSERVED: Custom macro dropper, svchost_update.exe, sync_healthdata.ps1 developed and deployed.", "enabled": true },
+    { "techniqueID": "T1608.005", "tactic": "resource-development", "score": 100, "color": "#FF0000", "comment": "OBSERVED: Researcher blog Section 2. Per-target branded landing pages in kit.", "enabled": true },
+    { "techniqueID": "T1584.001", "tactic": "resource-development", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Researcher Section 1. Kit directory listing exposure implies operator-controlled servers.", "enabled": true },
+    { "techniqueID": "T1566.002", "tactic": "initial-access", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Primary vector; dmarsh clicked E2 link (Internal 4x00 F5).", "enabled": true },
+    { "techniqueID": "T1566.001", "tactic": "initial-access", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Macro document sent from compromised internal accounts.", "enabled": true },
+    { "techniqueID": "T1566.003", "tactic": "initial-access", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Internal 4x00 F3. Outlook-protection.com variant passes auth; service-based delivery hypothesized.", "enabled": true },
+    { "techniqueID": "T1199", "tactic": "initial-access", "score": 50, "color": "#FFBF00", "comment": "INFERRED: HC3 Section 2. Exploiting trusted relationships via compromised internal accounts.", "enabled": true },
+    { "techniqueID": "T1204.001", "tactic": "execution", "score": 100, "color": "#FF0000", "comment": "OBSERVED: Internal 4x00 F5. dmarsh clicked link; 47-second HTTPS session logged.", "enabled": true },
+    { "techniqueID": "T1204.002", "tactic": "execution", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Macro document required user interaction.", "enabled": true },
+    { "techniqueID": "T1059.005", "tactic": "execution", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Sections 2/4. Macro pulls executable from C2.", "enabled": true },
+    { "techniqueID": "T1059.001", "tactic": "execution", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Sections 2/4. sync_healthdata.ps1 exfiltrator; deployed Stage 2, executes Stage 3.", "enabled": true },
+    { "techniqueID": "T1059", "tactic": "execution", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Parent technique for T1059.001, included for completeness.", "enabled": true },
+    { "techniqueID": "T1053.005", "tactic": "persistence", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Sections 2/5.3. Scheduled task HealthSync Update Service.", "enabled": true },
+    { "techniqueID": "T1547.001", "tactic": "persistence", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Sections 2/5.3. Registry Run key persistence.", "enabled": true },
+    { "techniqueID": "T1543.003", "tactic": "persistence", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Task name suggests possible service installation; only task confirmed.", "enabled": true },
+    { "techniqueID": "T1027", "tactic": "defense-evasion", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Base32 encoding may qualify as minimal obfuscation; weak evidence.", "enabled": true },
+    { "techniqueID": "T1056.003", "tactic": "credential-access", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Landing pages captured credentials via HTML form POST.", "enabled": true },
+    { "techniqueID": "T1056", "tactic": "credential-access", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Parent technique for T1056.003, included for completeness.", "enabled": true },
+    { "techniqueID": "T1552.001", "tactic": "credential-access", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Post-access credential harvesting plausible but unconfirmed.", "enabled": true },
+    { "techniqueID": "T1213", "tactic": "collection", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Patient/insurance data exfiltration implies collection method unknown.", "enabled": true },
+    { "techniqueID": "T1005", "tactic": "collection", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Local data collection necessary prior to exfiltration.", "enabled": true },
+    { "techniqueID": "T1071.004", "tactic": "command-and-control", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. DNS TXT tunneling to data-sync.healthbane-c2.net.", "enabled": true },
+    { "techniqueID": "T1071.001", "tactic": "command-and-control", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 4. HTTPS phishing LPs and C2 downloads.", "enabled": true },
+    { "techniqueID": "T1095", "tactic": "command-and-control", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Parent category for DNS channel; T1071.004 is specific.", "enabled": true },
+    { "techniqueID": "T1048.003", "tactic": "exfiltration", "score": 100, "color": "#FF0000", "comment": "OBSERVED: HC3 Section 2. Patient records encoded in base32 DNS TXT queries.", "enabled": true },
+    { "techniqueID": "T1041", "tactic": "exfiltration", "score": 100, "color": "#FF0000", "comment": "OBSERVED: Same DNS tunnel carries exfil and C2 responses.", "enabled": true },
+    { "techniqueID": "T1048", "tactic": "exfiltration", "score": 50, "color": "#FFBF00", "comment": "INFERRED: Parent category for T1048.003; alternatives not ruled out.", "enabled": true }
+  ],
+  "legendItems": [
+    { "label": "OBSERVED (Direct Evidence)", "color": "#FF0000" },
+    { "label": "INFERRED (Logical Necessity)", "color": "#FFBF00" }
+  ],
+  "metadata": [
+    { "name": "Campaign", "value": "HEALTHBANE" },
+    { "name": "Analyst", "value": "Steve - Cybersecurity Engineer" },
+    { "name": "Project", "value": "4x02 Intelligence-Driven Defense" },
+    { "name": "Date", "value": "2026-09-28" },
+    { "name": "Total Techniques", "value": "30" },
+    { "name": "Observed", "value": "18 (60%)" },
+    { "name": "Inferred", "value": "12 (40%)" }
+  ]
+}

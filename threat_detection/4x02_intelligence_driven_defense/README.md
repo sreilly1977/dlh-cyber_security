@@ -606,3 +606,68 @@ Stage 3: Data Exfiltration
     what collection would fill the gaps
 
 ---
+
+# [7. The ATT&CK Navigator](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/7-attack_navigator.md)
+
+## Goal: 
+
+Map the HEALTHBANE campaign to MITRE ATT&CK techniques, distinguishing OBSERVED techniques from INFERRED techniques, and export the mapping as an ATT&CK Navigator layer file.
+
+## Context: 
+
+ATT&CK mapping connects adversary behavior to defensive planning. But a mapping is only useful if it is honest about what is observed and what is inferred. Marking every plausible technique as observed creates false confidence. Marking only confirmed techniques may miss useful hunting hypotheses.
+
+The solution is a two-tier mapping: OBSERVED and INFERRED.
+
+Materials:
+
+    Use your findings from Tasks 0-6
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    meddefense_4x00_findings.txt
+
+## Instructions: 
+
+Produce 7-attack_navigator.md and healthbane_layer.json.
+
+Your Markdown file must:
+
+1. List every ATT&CK technique identified in the campaign
+
+2. Organize techniques by tactic
+
+3. For each technique, provide:
+
+    technique ID
+    technique name
+    OBSERVED or INFERRED classification
+    evidence or reasoning
+    source
+    attack phase
+
+Your ATT&CK Navigator JSON layer file must:
+
+1. Include OBSERVED techniques with score 100
+
+2. Include INFERRED techniques with score 50
+
+3. Include comments explaining evidence or inference
+
+4. Use red or high-priority styling for OBSERVED
+
+5. Use amber or medium-priority styling for INFERRED
+
+6. Be valid JSON
+
+Your summary must include:
+
+1. total techniques identified
+
+2. observed vs inferred ratio
+
+3. tactics with most coverage
+
+4. tactics with least coverage
+
+5. techniques that are most important for detection planning
+
+---
