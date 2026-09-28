@@ -976,3 +976,89 @@ FN: [calculated]
 Recommendation: DEPLOY / TUNE / MONITOR
 
 ---
+
+# [12. The Adversary Profile](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/)
+### advanced
+
+## Goal: 
+
+Produce a structured threat actor profile for the HEALTHBANE campaign operator, synthesizing intelligence from all sources into an assessment of capability, intent, infrastructure preferences and operational patterns.
+
+## Context: 
+
+The intelligence brief needs an adversary section. But profiling a threat actor requires discipline. You must separate what you know from what you infer and from what you do not know.
+
+This project includes conflicting attribution labels. Do not overclaim. The recommended working designation is HEALTHBANE campaign operator unless stronger attribution evidence is presented.
+
+Materials:
+
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    commercial_feed_extract.json
+    researcher_blog_analysis.txt
+    meddefense_4x00_findings.txt
+
+## Instructions: 
+
+Produce 12-adversary_profile.md containing:
+
+1. Identity and Attribution
+
+    names or designations used:
+        HEALTHBANE
+        VITALSCORE
+        APT-MEDAGENT
+    confidence in each claim
+    supporting evidence
+    caveats
+    final working designation recommendation
+
+2. Capability Assessment
+
+    technical sophistication
+    tooling quality
+    infrastructure management
+    resource level
+    whether the actor appears APT-level, mid-tier cybercrime or opportunistic
+
+3. Intent and Targeting
+
+    sector focus
+    geographic focus
+    likely objectives:
+        credentials
+        patient data
+        insurance data
+        malware delivery
+        financial gain
+    targeting methodology
+
+4. Operational Signature
+
+    infrastructure pattern
+    registrars and hosting
+    domain naming
+    TLS certificate usage
+    tooling such as PHPMailer and wkhtmltopdf
+    urgency-based social engineering
+    multi-department targeting
+
+5. Predictive Assessment
+
+    what will likely change:
+        domains
+        IPs
+        hashes
+    what will likely stay the same:
+        tooling
+        naming patterns
+        healthcare targeting
+        credential-harvesting playbook
+    what would indicate the actor has retooled
+
+6. Confidence and Unknowns
+
+    what is known
+    what is inferred
+    what remains unknown
+
+---
