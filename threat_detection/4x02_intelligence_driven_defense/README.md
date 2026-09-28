@@ -273,7 +273,7 @@ Produce 2-source_assessment.md containing:
 
 ---
 
-# 3. The OSINT Enrichment
+# [3. The OSINT Enrichment]((https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/3-osint_enrichment.md)
 ### advanced
 
 ## Goal: 
@@ -360,5 +360,66 @@ For each enrichment type, document:
 3. whether enrichment changes confidence level
 
 4. whether the indicator remains actionable
+
+---
+
+# [4. Infrastructure Archaeology](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/4-infra_archaeology.md)
+### advanced
+
+## Goal: 
+
+Extend the infrastructure map from 4x00 by incorporating indicators from all four intelligence sources, revealing the full scope of the HEALTHBANE campaign's operational infrastructure and identifying clusters that suggest shared ownership.
+
+## Context: 
+
+In 4x00, MedDefense mapped the infrastructure for three phishing domains. The HC3 advisory expands the campaign to Stage 2 and Stage 3. The researcher's blog identifies kit infrastructure and operational tooling. The commercial feed adds possible related infrastructure, but also includes noise.
+
+Your job is to extend the map, identify clusters and decide whether additional indicators belong to the same campaign or only share superficial similarities.
+
+Materials:
+
+    meddefense_4x00_findings.txt
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    researcher_blog_analysis.txt
+    commercial_feed_extract.json
+
+## Instructions: 
+
+Write 4-infra_archaeology.md that:
+
+1. Combines the 4x00 infrastructure map with indicators from all sources
+
+2. Groups infrastructure into clusters based on:
+
+    same registrar
+    registration window
+    hosting provider
+    ASN
+    certificate patterns
+    email-sending software
+    document-generation tooling
+    domain naming conventions
+
+3. Identifies pivot points:
+
+    domains that bridge Stage 1 and Stage 2/3
+    IPs shared across multiple sources
+    certificate or hosting overlaps
+    config references such as C2 endpoints
+
+4. Assesses commercial feed additions:
+
+    which belong to the same campaign
+    which are plausible but unconfirmed
+    which are likely noise
+    which should not be operationalized without more evidence
+
+5. Produces an updated ASCII infrastructure diagram showing:
+
+    Stage 1 credential-harvest infrastructure
+    Stage 2 malware-delivery infrastructure
+    Stage 3 DNS-exfiltration infrastructure
+    uncertain or low-confidence cluster
+    source attribution for each cluster
 
 ---
