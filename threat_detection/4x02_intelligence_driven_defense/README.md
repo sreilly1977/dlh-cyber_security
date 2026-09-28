@@ -746,3 +746,80 @@ $ echo "True negatives: clean invoice samples not detected"
 ```
 
 ---
+
+# [10. The Pattern Arsenal](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/10-yara_arsenal.yar)
+### advanced
+
+## Goal: 
+
+Write a set of YARA rules targeting multiple campaign artifacts: email header patterns, document metadata signatures and campaign-level variants.
+
+## Context: 
+
+The PDF rule in Task 9 detects one artifact type. A real detection arsenal covers multiple artifact types.
+
+The HEALTHBANE campaign used a consistent operational pattern:
+
+    PHPMailer sender tooling
+    high-priority phishing headers
+    healthcare-themed lookalike domains
+    wkhtmltopdf-generated documents
+    credential-harvesting paths
+    reusable lure structure
+
+YARA rules that detect these patterns can survive simple infrastructure rotation. Even when the attacker changes domains and IPs, operational patterns often remain.
+
+Materials:
+
+    healthbane_email_01.eml
+    healthbane_email_02.eml
+    healthbane_email_03.eml
+    benign_newsletter.eml
+    phishing_sample.pdf
+    healthbane_lure_02.pdf
+    clean_invoice.pdf
+    benign_invoice.pdf
+    samples_manifest.txt
+
+## Instructions: 
+
+Write a YARA rule file 10-yara_arsenal.yar containing at least three rules:
+
+1. HEALTHBANE_Email_Headers
+
+    Detects EML files containing characteristic email-header patterns:
+        PHPMailer or PHPMailer variant
+        high priority header
+        healthcare or benefits/invoice/portal keyword
+        lookalike sender domain pattern
+    Must handle minor variation such as PHPMailer-6.6.0 vs PHPMailer 6.6.0
+
+2. HEALTHBANE_Document_Metadata
+
+    Detects PDFs or documents with tooling and lure metadata:
+        wkhtmltopdf
+        embedded credential-harvesting paths
+        healthcare-themed lure text
+        campaign-style URL parameters
+
+3. HEALTHBANE_Campaign_Composite
+
+    Detects stronger campaign-level evidence when multiple pattern families appear together in a file
+    Example: document metadata + credential path, or email header + healthcare lure keyword
+    This does not need to import other rules. It can independently combine strings representing multiple campaign behaviors.
+
+For each rule:
+
+1. Include metadata
+
+2. Include comments
+
+3. Use logical conditions
+
+4. Avoid matching benign samples where possible
+
+5. Document expected true positives and true negatives
+
+Test all rules against the samples directory and document results.
+
+---
