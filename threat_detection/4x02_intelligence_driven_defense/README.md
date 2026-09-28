@@ -672,6 +672,69 @@ Your summary must include:
 
 ---
 
+# [8. The Detection Gap Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/8-detection_gaps.md)
+
+## Goal: 
+
+Compare the ATT&CK mapping from Task 7 against MedDefense's current documented detection capability, identifying detected, partially detected and undetected techniques.
+
+## Context: 
+
+An ATT&CK mapping tells you what the adversary does. A detection gap analysis tells you what you might miss.
+
+Examples of acceptable evidence:
+
+    4x00 documented IOC and email-focused detection rules
+    4x01 packet-based detection recommendations
+    local YARA rules from Tasks 9-10
+    indicator database actions from Task 5
+    documented telemetry that would be needed to close a gap
+
+The goal is to produce a realistic gap analysis without requiring live infrastructure.
+
+Materials:
+
+    Use 7-attack_navigator.md
+    Use healthbane_layer.json
+    Use meddefense_4x00_findings.txt
+    Use your 4x01 findings if available
+    Use local outputs from Tasks 5, 9 and 10 after they are created
+
+## Instructions: 
+
+Produce 8-detection_gaps.md that:
+
+1. Lists every technique from the Task 7 ATT&CK mapping
+
+2. For each technique, assesses detection capability:
+
+    DETECTED: A documented detection, YARA rule, IOC action or local analytic directly covers this technique
+    PARTIALLY DETECTED: telemetry or indicators exist, but the detection is incomplete, too narrow or requires analyst review
+    NOT DETECTED: no documented detection or reliable telemetry covers this technique
+
+3. For each technique, include:
+
+    ATT&CK ID
+    technique name
+    observed or inferred status
+    current detection status
+    evidence for that status
+    gap explanation
+    recommendation to close the gap
+
+4. Prioritize gaps:
+
+    Priority 1: OBSERVED and NOT DETECTED
+    Priority 2: INFERRED and NOT DETECTED
+    Priority 3: PARTIALLY DETECTED
+
+5. Produce a prioritized gap list with:
+
+    why the gap matters
+    detection idea
+    required data source
+    suggested owner or implementation path
+
 ---
 
 # [9. YARA Foundations](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/9-yara_phishing_pdf.yar)
