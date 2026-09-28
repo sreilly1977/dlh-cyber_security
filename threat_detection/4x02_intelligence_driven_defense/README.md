@@ -423,3 +423,109 @@ Write 4-infra_archaeology.md that:
     source attribution for each cluster
 
 ---
+
+# [5. The Indicator Database]()
+### advanced
+
+## Goal: 
+Produce a structured, deduplicated indicator database in JSON format containing every validated indicator from the investigation.
+
+## Context: 
+
+The final indicator database is the foundation for ATT&CK mapping, YARA rules, detection engineering and the intelligence brief. It must be structured, machine-readable and annotated with enough metadata to support automated ingestion into a detection system or threat intelligence platform.
+
+This project does not require ingesting the database into Wazuh or any live system. The deliverable is the local JSON database and validation summary.
+
+Materials:
+
+    Use outputs from Tasks 0-4
+    commercial_feed_extract.json
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    researcher_blog_analysis.txt
+    meddefense_4x00_findings.txt
+
+## Instructions: 
+
+Write a script 5-indicator_database.sh that produces indicator_database.json.
+
+The JSON must contain an array of indicator objects. Each object must include:
+
+1. type
+
+    domain
+    ip
+    hash
+    url
+    email
+
+2. value
+
+3. first_seen
+
+4. last_seen
+
+5. sources
+
+6. confidence
+
+    HIGH
+    MEDIUM
+    LOW
+
+7. category
+
+    ACTIONABLE
+    CONTEXTUAL
+
+8. cluster
+
+9. enrichment_summary
+
+10. attack_phase
+
+- Stage 1
+- Stage 2
+- Stage 3
+- Unknown
+
+11. recommended_action
+
+- BLOCK
+- ALERT
+- MONITOR
+- NONE
+
+The script must also print summary statistics:
+
+BY TYPE
+BY CONFIDENCE
+BY ATTACK PHASE
+BY RECOMMENDED ACTION
+Database validation
+
+**Expected Output:**
+
+```bash
+$ ./5-indicator_database.sh
+[*] Database written to: indicator_database.json
+[*] Total indicators: 47 (after deduplication and noise removal)
+
+BY TYPE:
+  Domains: 13  |  IPs: 11  |  Hashes: 9  |  URLs: 8  |  Emails: 6
+
+BY CONFIDENCE:
+  HIGH: 22  |  MEDIUM: 18  |  LOW: 7
+
+BY ATTACK PHASE:
+  Stage 1 (Credential Harvest): 28
+  Stage 2 (Malware Delivery):   11
+  Stage 3 (Data Exfiltration):   4
+  Unknown:                        4
+
+BY RECOMMENDED ACTION:
+  BLOCK: 19  |  ALERT: 15  |  MONITOR: 10  |  NONE: 3
+
+[*] Database validation: PASS
+```
+
+---
