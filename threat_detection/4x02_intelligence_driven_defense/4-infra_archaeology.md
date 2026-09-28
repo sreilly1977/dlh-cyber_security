@@ -633,7 +633,7 @@ Legend:
 |[HIGH]     |                         |[HIGH]    |                           |[MED]     |
 +---+-------+                         +----+-----+                           +----+-----+
     |                                      |                                    |
-    |  outlook-protection.com         | portal-secure-meddefense.com |  update-healthbane.net
+    |  outlook-protection.com         | portal-secure-meddefense.com  | update-healthbane.net
     | (Microsoft impersonation)       | (staged kit, not live)        | (Stage 2 secondary) |
     | Passes SPF/DKIM/DMARC           | Same kit as primary cluster   | HC3 MEDIUM conf     |
     | C2 exfil route per config.php   | Rotate when primaries burn    | Single partner obs  |

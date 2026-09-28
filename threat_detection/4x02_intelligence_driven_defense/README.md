@@ -273,7 +273,7 @@ Produce 2-source_assessment.md containing:
 
 ---
 
-# [3. The OSINT Enrichment]((https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/3-osint_enrichment.md)
+# [3. The OSINT Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/3-osint_enrichment.md)
 ### advanced
 
 ## Goal: 
@@ -527,5 +527,82 @@ BY RECOMMENDED ACTION:
 
 [*] Database validation: PASS
 ```
+
+---
+
+# [6. The Kill Chain Reconstruction](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/6-kill_chain.md)
+
+## Goal: 
+
+Reconstruct the full HEALTHBANE campaign across its attack phases using intelligence from all sources.
+
+## Context: 
+
+Intelligence from multiple sources describes different parts of the same campaign. HC3 describes all three stages but summarizes many details. The researcher's blog provides deep technical detail on Stage 1 and infrastructure. MedDefense's internal findings cover Stage 1 locally. The commercial feed contains many indicators but does not clearly map all of them to phases.
+
+Your job is to reconstruct the complete story: what happened, in what order, using what tools, against which targets and with what evidence quality.
+
+Materials:
+
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    researcher_blog_analysis.txt
+    meddefense_4x00_findings.txt
+    commercial_feed_extract.json
+
+## Instructions: 
+
+Produce 6-kill_chain.md containing:
+
+1. A timeline of the HEALTHBANE campaign:
+
+    earliest known activity
+    MedDefense Stage 1 event
+    HC3 reporting window
+    Stage 2 malware delivery window
+    Stage 3 exfiltration window
+    most recent reported event
+
+2. For each attack phase:
+
+Stage 1: Credential Harvesting
+
+    phishing operation
+    targeting pattern
+    infrastructure used
+    known victims
+    MedDefense evidence
+    success rate across reported victims if available
+
+Stage 2: Malware Delivery
+
+    transition from stolen credentials to follow-up emails
+    document type
+    malware or script artifacts
+    download infrastructure
+    persistence mechanisms
+    evidence source
+
+Stage 3: Data Exfiltration
+
+    data targeted
+    protocol or tool used
+    exfiltration infrastructure
+    evidence source
+    what is confirmed and what remains unclear
+
+3. Evidence quality assessment for each phase:
+
+    confirmed evidence
+    corroborated evidence
+    inferred evidence
+    unknowns
+
+4. A section addressing what is not known:
+
+    attribution gaps
+    missing victim telemetry
+    incomplete Stage 3 visibility
+    commercial-feed uncertainty
+    what collection would fill the gaps
 
 ---
