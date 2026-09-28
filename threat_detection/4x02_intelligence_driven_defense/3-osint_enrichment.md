@@ -613,42 +613,56 @@ Actionability:          REMAINS ACTIONABLE - with UNCERTAIN=YES flag
 
 ================================================================================
 
+Definition used (applied consistently to every hash below):
+
+  Weakly Sourced = YES  -> supported by a single reporting source, or by a
+                           single secondhand observation with no independent
+                           corroboration. Detectable but should not drive
+                           automated response without additional evidence.
+                           
+  Weakly Sourced = NO    -> corroborated by 2+ independent sources (e.g.,
+                           HC3 victim telemetry AND researcher kit artifact,
+                           or external feed AND our own first-party
+                           observation).
+
 --------------------------------------------------------------------------------
 
 4.1 SHA-256: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
 
 --------------------------------------------------------------------------------
 
-File Type:      Microsoft Word macro document (.docm)
+File Type:          Microsoft Word macro document (.docm)
 
-File Size:      Unknown (not provided in sources)
+File Size:          UNKNOWN (not provided in any source)
 
-First Seen:     2026-04-16 (per commercial feed metadata)
+First Seen:         2026-04-16 (commercial feed metadata)
 
-Detection Ratio: Simulated: 25-30 AV vendors (Stage 2 payload)
+Detection Ratio:    Estimated 25-30 AV vendors (simulated; not queried live)
 
-Behavioral Tags: Macro-enabled, persistence mechanism, scheduled-task
+Behavioral Tags:    malicious-document, macro, dropper, second-stage
 
-Campaign Specific?: YES (HEALTHBANE-specific invoice lure)
+Campaign Specific?: YES (HEALTHBANE Stage 2 invoice lure)
+
+Weakly Sourced?:    NO (HC3 Section 3.3 + commercial feed + researcher, three
+                    independent confirmations; corroborating sources include
+                    victim telemetry and attacker-side kit observation)
 
 Evidence Chain:
 
   - HC3 Section 3.3: HEALTHBANE_S2_invoice.docm, Stage 2, HIGH
   
-  - Commercial Feed: Tagged "malicious-document", confidence 96%
+  - Commercial Feed: tagged "malicious-document", confidence 96%, filename hint
   
-  - Researcher Section 5: Hash appears in related macro documents
+  - Researcher Section 5.3: observed in a related macro document
 
-Defensive Meaning:      BLOCK via EDR/AV (EDR quarantine priority)
+Defensive Meaning:      BLOCK via EDR/AV (quarantine priority)
 
-Confidence Boost:       YES (cross-three sources)
+Confidence Change:      Reinforced (three-way corroboration)
 
 Actionability:          REMAINS ACTIONABLE - PRIMARY EDR TARGET
 
-Note: This is the Stage 2 macro document that delivers the svchost_update.exe
-payload. The filename pattern HEALTHBANE_S2_invoice.docm suggests the operator
-uses sequential naming conventions (S2 = Stage 2) for tracking. Future variants
-may follow similar patterns.
+Note: Filename HEALTHBANE_S2_invoice.docm implies sequential stage naming
+(S2 = Stage 2). Watch for sibling naming conventions in future variants.
 
 --------------------------------------------------------------------------------
 
@@ -656,34 +670,36 @@ may follow similar patterns.
 
 --------------------------------------------------------------------------------
 
-File Type:      Windows executable (.exe)
+File Type:          Windows executable (.exe)
 
-File Size:      Unknown
+File Size:           UNKNOWN
 
-First Seen:     2026-04-16
+First Seen:         2026-04-16
 
-Detection Ratio: Simulated: 30-35 AV vendors (established RAT)
+Detection Ratio:    Estimated 30-35 AV vendors (simulated)
 
-Behavioral Tags: Persistence, scheduled task, registry run key, C2 beacon
+Behavioral Tags:    trojan, persistence, scheduled-task, registry-run-key
 
-Campaign Specific?: YES (svchost_update.exe named specifically in HC3)
+Campaign Specific?: YES (svchost_update.exe named specifically in HC3 Stage 2)
+
+Weakly Sourced?:    NO (HC3 Section 3.3 + commercial feed with two external
+                    source confirmations; established C2 payload)
 
 Evidence Chain:
 
   - HC3 Section 3.3: svchost_update.exe, Stage 2, HIGH
   
-  - Commercial Feed: Tagged "trojan", confidence 96%
+  - Commercial Feed: tagged "trojan", confidence 96%, source_count_external 2
 
 Defensive Meaning:      BLOCK via EDR/AV (quarantine priority)
 
-Confidence Boost:       YES
+Confidence Change:      Reinforced
 
 Actionability:          REMAINS ACTIONABLE - PRIMARY EDR TARGET
 
-Critical Detail: HC3 Section 2, Stage 2 describes persistence mechanisms:
-scheduled task "HealthSync Update Service" and Registry Run key. These
-behavioral signatures should supplement hash-blocking. If the executable
-rotates (new hash), the persistence artifacts remain detectable.
+Critical Detail: Persistence is a scheduled task named "HealthSync Update
+Service" plus a Registry Run key (HC3 Section 5.3/5.5). Behavioral detection
+on those artifacts survives hash rotation; hash blocking alone does not.
 
 --------------------------------------------------------------------------------
 
@@ -691,36 +707,37 @@ rotates (new hash), the persistence artifacts remain detectable.
 
 --------------------------------------------------------------------------------
 
-File Type:      PowerShell script (.ps1)
+File Type:          PowerShell script (.ps1)
 
-File Size:      Unknown
+File Size:           UNKNOWN
 
-First Seen:     2026-04-18
+First Seen:         2026-04-18
 
-Detection Ratio: Simulated: 15-25 AV vendors (script-based, lower detection)
+Detection Ratio:    Estimated 15-25 AV vendors (simulated; scripts detect poorly)
 
-Behavioral Tags: Exfiltration, base32 encoding, DNS tunneling
+Behavioral Tags:    powershell, exfil, dns-tunneling, base32-encoding
 
-Campaign Specific?: YES (sync_healthdata.ps1 uniquely named)
+Campaign Specific?: YES (sync_healthdata.ps1 uniquely named; Stage 3 tooling)
+
+Weakly Sourced?:    NO (HC3 Section 3.3 + commercial feed + researcher kit
+                    tools/ directory extraction; three independent sources)
 
 Evidence Chain:
 
   - HC3 Section 3.3: sync_healthdata.ps1, Stage 2, HIGH
   
-  - Commercial Feed: Tagged "powershell", confidence 90%
+  - Commercial Feed: tagged "powershell"/"exfil", confidence 90%
   
-  - Researcher Section 5: Extracted from kit's tools/ directory
+  - Researcher Section 5.3: extracted from the kit's tools/ directory
 
-Defensive Meaning:      BLOCK via EDR/AV + PowerShell logging (Script Block Logging)
+Defensive Meaning:      BLOCK via EDR/AV + enable PowerShell Script Block Logging
 
-Confidence Boost:       YES (three-way corroboration)
+Confidence Change:      Reinforced (three-way corroboration)
 
 Actionability:          REMAINS ACTIONABLE
 
-PowerShell Defense: Block the hash, but also enable Windows PowerShell Script
-Block Logging and monitor for base32-encoded data in subdomain queries to
-*.healthbane-c2.net. The script's behavior (DNS TXT tunneling) is more
-detectable than its hash alone.
+Note: Its BEHAVIOR (DNS TXT tunneling to *.healthbane-c2.net with 44-60
+character base32 subdomain labels) is more durable than the hash.
 
 --------------------------------------------------------------------------------
 
@@ -728,72 +745,85 @@ detectable than its hash alone.
 
 --------------------------------------------------------------------------------
 
-File Type:      Dropper variant (.exe, inferred)
+File Type:          Windows executable dropper (.exe, inferred from tags)
 
-File Size:      Unknown
+File Size:           UNKNOWN
 
-First Seen:     2026-04-16
+First Seen:         2026-04-16
 
-Detection Ratio: Simulated: 20-30 AV vendors
+Detection Ratio:    Estimated 20-30 AV vendors (simulated)
 
-Behavioral Tags: Dropper, stage-2 delivery
+Behavioral Tags:    dropper-variant, second-stage
 
-Campaign Specific?: PARTIAL (only one partner organization observed)
+Campaign Specific?: PARTIAL (observed at only one HC3 partner organization)
+
+Weakly Sourced?:    YES - THIS IS THE WEAKLY SOURCED HASH IN THE ACTIONABLE SET.
+                    Basis: HC3 lists it as a "dropper variant (one partner)"
+                    at MEDIUM confidence; commercial feed shows confidence 75
+                    with source_count_external 1. It rests on a single
+                    secondhand observation (one partner org) with no
+                    researcher-kit or first-party corroboration. No other
+                    independent source confirms this variant exists.
 
 Evidence Chain:
 
-  - HC3 Section 3.3: Dropper variant, one partner, MEDIUM confidence
+  - HC3 Section 3.3: dropper variant, ONE partner, MEDIUM
   
-  - Commercial Feed: Tagged "dropper-variant", confidence 75%
+  - Commercial Feed: tagged "dropper-variant", confidence 75, external count 1
 
-Note: This hash was observed at only one HC3-visible organization. It may be
-a regional variant or test deployment. Include in hunting queries but
-deprioritize for immediate blocking compared to the three primary hashes
-above.
+Defensive Meaning:      HUNT ONLY (include in hunting queries; do not prioritize
+                       for automated EDR blocking over the three primary hashes)
+                       
+Confidence Change:      NONE (remains MEDIUM)
 
-Defensive Meaning:      HUNT (monitor for appearance)
+Actionability:          REMAINS ACTIONABLE with UNCERTAIN=YES flag from Task 1
 
-Confidence Boost:       NONE (remains MEDIUM)
-
-Actionability:          REMAINS ACTIONABLE - UNCERTAIN=YES flag
+Handling rationale: Weak sourcing does NOT mean benign. It means the evidence
+base is a single observation. Retain the hash in hunt queries and revisit
+when the next HC3 advisory update (scheduled 2026-05-09) adds partner data.
 
 --------------------------------------------------------------------------------
 
 4.5 SHA-256: 2f4a6c8e0b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f
 
 --------------------------------------------------------------------------------
+File Type:          PDF document (.pdf)
 
-File Type:      PDF document (.pdf)
+File Size:           UNKNOWN
 
-File Size:      Unknown
+First Seen:         2026-04-14 (earliest campaign artifact)
 
-First Seen:     2026-04-14 (predates other Stage 2 artifacts)
+Detection Ratio:    Estimated 5-15 AV vendors (simulated; benign-format lure,
+                    low AV detection by design)
+                    
+Behavioral Tags:    lure-document, social-engineering, no embedded code
 
-Detection Ratio: Simulated: 5-15 AV vendors (low; benign-format lure)
-Behavioral Tags: Lure PDF, social engineering, no malicious code
 Campaign Specific?: YES (INV-2026-04891 invoice number unique to campaign)
+
+Weakly Sourced?:    NO (strongest-sourced hash in the set: HC3 + commercial
+                    feed + researcher kit templates/ + our own internal 4x00
+                    observation of the same attachment; four independent
+                    confirmations including first-party)
 
 Evidence Chain:
 
   - HC3 Section 3.3: INV-2026-04891.pdf, Stage 1, MEDIUM
   
-  - Commercial Feed: Tagged in URL context (link to PDF lure)
+  - Commercial Feed: URL-context association
   
-  - Researcher Section 5: Pulled from kit's templates/ directory
+  - Researcher Section 5.3: pulled from kit templates/ directory
   
-  - Internal 4x00: Invoice attachment referenced in findings
+  - Internal 4x00: invoice attachment in the E5 phishing email
 
-Critical Note: This is a BENIGN FORMAT lure (PDF with no embedded code). It
-functions through social engineering only. Blocking by hash is valuable,
-but YARA detection of the invoice number string pattern (INV-2026-XXXXX)
-survives hash rotation and provides higher resilience. See Task 12 (YARA
-development) for complementary detection logic.
+Defensive Meaning:      BLOCK by hash + YARA string hunt for the lure pattern
 
-Defensive Meaning:      BLOCK by hash + YARA string hunt
+Confidence Change:      Reinforced (four-way corroboration)
 
-Confidence Boost:       +1 (five-way corroboration including our own 4x00)
+Actionability:          REMAINS ACTIONABLE
 
-Actionability:          REMAINS ACTIONABLE - but use YARA for durability
+Note: MEDIUM nominal confidence despite four sources because a benign-format
+lure is trivially regenerated (new hash, same wording). The durable detection
+is the string/structure pattern, not the hash (addressed in YARA tasks).
 
 ================================================================================
 
