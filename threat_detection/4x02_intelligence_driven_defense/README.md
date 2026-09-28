@@ -424,7 +424,7 @@ Write 4-infra_archaeology.md that:
 
 ---
 
-# [5. The Indicator Database]()
+# [5. The Indicator Database](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/5-indicator_database.sh)
 ### advanced
 
 ## Goal: 
