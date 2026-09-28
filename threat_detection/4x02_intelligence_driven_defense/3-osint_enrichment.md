@@ -625,6 +625,17 @@ Definition used (applied consistently to every hash below):
                            or external feed AND our own first-party
                            observation).
 
+Notes on Unknown Values:
+
+- File size: Not provided in any of the four source documents
+
+- Detection ratio: Live VirusTotal queries were NOT performed per lab requirements;
+                  values are UNKNOWN and must be verified with live tools before
+                  operational deployment
+                  
+- First seen date: Only available where source metadata includes timestamps;
+                   otherwise marked UNKNOWN
+
 --------------------------------------------------------------------------------
 
 4.1 SHA-256: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
@@ -635,10 +646,11 @@ File Type:          Microsoft Word macro document (.docm)
 
 File Size:          UNKNOWN (not provided in any source)
 
-First Seen:         2026-04-16 (commercial feed metadata)
+First Seen:         2026-04-16 (commercial feed metadata timestamp)
 
-Detection Ratio:    Estimated 25-30 AV vendors (simulated; not queried live)
-
+Detection Ratio:    UNKNOWN (not available in provided sources; requires
+                    live VirusTotal query for operational deployment)
+                    
 Behavioral Tags:    malicious-document, macro, dropper, second-stage
 
 Campaign Specific?: YES (HEALTHBANE Stage 2 invoice lure)
@@ -672,12 +684,13 @@ Note: Filename HEALTHBANE_S2_invoice.docm implies sequential stage naming
 
 File Type:          Windows executable (.exe)
 
-File Size:           UNKNOWN
+File Size:           UNKNOWN (not provided in any source)
 
-First Seen:         2026-04-16
+First Seen:         2026-04-16 (commercial feed metadata timestamp)
 
-Detection Ratio:    Estimated 30-35 AV vendors (simulated)
-
+Detection Ratio:    UNKNOWN (not available in provided sources; requires
+                    live VirusTotal query for operational deployment)
+                    
 Behavioral Tags:    trojan, persistence, scheduled-task, registry-run-key
 
 Campaign Specific?: YES (svchost_update.exe named specifically in HC3 Stage 2)
@@ -705,19 +718,20 @@ on those artifacts survives hash rotation; hash blocking alone does not.
 
 4.3 SHA-256: c7d6e5f4a3b291827364554637281900a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 File Type:          PowerShell script (.ps1)
 
-File Size:           UNKNOWN
+File Size:           UNKNOWN (not provided in any source)
 
-First Seen:         2026-04-18
+First Seen:         2026-04-18 (commercial feed metadata timestamp)
 
-Detection Ratio:    Estimated 15-25 AV vendors (simulated; scripts detect poorly)
-
+Detection Ratio:    UNKNOWN (not available in provided sources; requires
+                    live VirusTotal query for operational deployment)
+                    
 Behavioral Tags:    powershell, exfil, dns-tunneling, base32-encoding
 
-Campaign Specific?: YES (sync_healthdata.ps1 uniquely named; Stage 3 tooling)
+Campaign Specific?: YES (sync_healthdata.ps1 uniquely named; exfiltration tool)
 
 Weakly Sourced?:    NO (HC3 Section 3.3 + commercial feed + researcher kit
                     tools/ directory extraction; three independent sources)
@@ -729,6 +743,14 @@ Evidence Chain:
   - Commercial Feed: tagged "powershell"/"exfil", confidence 90%
   
   - Researcher Section 5.3: extracted from the kit's tools/ directory
+
+Timeline Clarification: HC3 classifies this hash under Stage 2 (Malware
+Delivery) because the PowerShell script was deployed as part of Stage 2's
+follow-on activity. However, the script's BEHAVIORAL ROLE is Stage 3
+(Data Exfiltration via DNS Tunneling). HC3 Section 2 describes the script
+being deployed in Stage 2, then used in Stage 3 to exfiltrate records via
+base32-encoded DNS TXT queries. This explains why the same hash appears
+under "Stage 2" in HC3 Section 3.3 while performing Stage 3 functions.
 
 Defensive Meaning:      BLOCK via EDR/AV + enable PowerShell Script Block Logging
 
@@ -747,12 +769,13 @@ character base32 subdomain labels) is more durable than the hash.
 
 File Type:          Windows executable dropper (.exe, inferred from tags)
 
-File Size:           UNKNOWN
+File Size:           UNKNOWN (not provided in any source)
 
-First Seen:         2026-04-16
+First Seen:         2026-04-16 (commercial feed metadata timestamp)
 
-Detection Ratio:    Estimated 20-30 AV vendors (simulated)
-
+Detection Ratio:    UNKNOWN (not available in provided sources; requires
+                    live VirusTotal query for operational deployment)
+                    
 Behavioral Tags:    dropper-variant, second-stage
 
 Campaign Specific?: PARTIAL (observed at only one HC3 partner organization)
@@ -789,12 +812,13 @@ when the next HC3 advisory update (scheduled 2026-05-09) adds partner data.
 --------------------------------------------------------------------------------
 File Type:          PDF document (.pdf)
 
-File Size:           UNKNOWN
+File Size:           UNKNOWN (not provided in any source)
 
-First Seen:         2026-04-14 (earliest campaign artifact)
-
-Detection Ratio:    Estimated 5-15 AV vendors (simulated; benign-format lure,
-                    low AV detection by design)
+First Seen:         2026-04-14 (earliest campaign artifact; from internal 4x00
+                    investigation window, confirmed in HC3 Section 3.3)
+                    
+Detection Ratio:    UNKNOWN (not available in provided sources; requires
+                    live VirusTotal query for operational deployment)
                     
 Behavioral Tags:    lure-document, social-engineering, no embedded code
 
