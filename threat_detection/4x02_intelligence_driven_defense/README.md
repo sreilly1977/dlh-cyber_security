@@ -72,7 +72,7 @@ Your task is to produce a disciplined intelligence analysis that separates facts
 
 ---
 
-# [0. The Intelligence Intake]()
+# [0. The Intelligence Intake](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/0-intel_intake.md)
 
 ## Goal: 
 
@@ -147,5 +147,73 @@ Researcher blog:    14 indicators
 MedDefense 4x00:    11 indicators
 Total raw:          89 indicators
 Unique deduped:     64 indicators
+
+---
+
+# [1. Signal vs Noise](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/1-indicator_triage.sh)
+
+## Goal: 
+
+Triage the 64 unique indicators from the intake by categorizing each as ACTIONABLE, CONTEXTUAL or NOISE, with written justification.
+
+## Context: 
+
+Not every indicator in a threat feed belongs in your firewall. An attacker's C2 domain may be actionable. The registrar they used may be contextual. A shared-hosting IP or a broad cloud provider range may be noise if used for blocking. The analyst must triage indicators before operationalizing them, or risk flooding the SOC with false positives.
+
+The commercial feed intentionally includes noisy indicators. Your job is to separate defensible security actions from overbroad or weakly supported intelligence.
+
+Materials:
+
+    commercial_feed_extract.json
+    Use your 0-intel_intake.md output
+
+## Instructions: 
+
+Write 1-indicator_triage.sh that reads the consolidated indicator list from Task 0 and classifies each indicator.
+
+For each indicator, include:
+
+1. Indicator type
+
+2. Indicator value
+
+3. Source or sources
+
+4. Category:
+
+    ACTIONABLE
+    CONTEXTUAL
+    NOISE
+
+5. One-line justification
+
+6. Confidence level
+
+7. Uncertainty flag if the category assignment is not straightforward
+
+Pay special attention to:
+
+    IPs that belong to shared hosting
+    domains that are expired, sinkholed or only historically useful
+    hashes from the commercial feed that are not corroborated by other sources
+    broad infrastructure labels such as hosting provider or registrar
+    the commercial feed's attribution to VITALSCORE
+    indicators clustered by weak ML similarity only
+
+Produce summary statistics:
+
+1. Total indicators reviewed
+
+2. Count and percentage ACTIONABLE
+
+3. Count and percentage CONTEXTUAL
+
+4. Count and percentage NOISE
+
+5. Top reasons indicators were downgraded
+
+6. Top indicators that should be used for immediate detection
+
+**Expected output** should clearly show that not all 64 unique indicators are operationally safe to block.
 
 ---

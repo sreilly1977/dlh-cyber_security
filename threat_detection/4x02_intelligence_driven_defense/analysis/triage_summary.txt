@@ -1,0 +1,81 @@
+================================================================================
+  INDICATOR TRIAGE SUMMARY - HEALTHBANE CAMPAIGN
+  Project 4x02 - Signal vs Noise
+================================================================================
+
+Generated:   2026-09-28T12:25:28Z
+Analyst:     Steve - Cybersecurity Engineer
+
+TOTAL INDICATORS REVIEWED: 48
+
+Note on counts: The task briefing references 64 unique indicators. Deduplicating
+the four source files against the actual indicator values yields 48
+unique indicators (89 raw references). This script classifies based on the
+data itself, per project methodology.
+
+--------------------------------------------------------------------------------
+CATEGORY BREAKDOWN
+--------------------------------------------------------------------------------
+
+ACTIONABLE: 28 (58.3%)
+  Safe for perimeter blocking and EDR/AV blocklists.
+  Corroborated by HC3, researcher kit evidence, or direct 4x00 observation.
+
+CONTEXTUAL: 5 (10.4%)
+  Hunt/monitor/correlation value only. Not for blocking.
+  Includes pre-campaign domains, sinkholed infrastructure, kit archives,
+  and variants not observed at MedDefense.
+
+NOISE: 15 (31.2%)
+  Unsafe or worthless for blocking. Shared CDN/cloud IPs, ML-similarity
+  clusters without human review, and unrelated malware families.
+
+--------------------------------------------------------------------------------
+TOP REASONS INDICATORS WERE DOWNGRADED
+--------------------------------------------------------------------------------
+
+1. Shared CDN/cloud infrastructure (Cloudflare x2, Azure, OVH CDN,
+   Microsoft Outlook.com): 5 indicators
+   - Blocking these breaks legitimate traffic organization-wide.
+2. DigitalOcean/VPS shared hosting (159.89.112.45, 167.71.222.30): 2 indicators
+   - 159.89.112.45 hosts 200+ unrelated websites per Acme's own note.
+3. ML-similarity or keyword clustering without human review: 6 indicators
+   - Acme disclaimer states analyst review was SAMPLED, not exhaustive.
+4. Unrelated malware families tagged by automation: 2 indicators
+5. Sinkholed or pre-campaign infrastructure: 3 indicators
+   - rx-benefits-portal.com predates the HEALTHBANE window by 16 days;
+     healthcare-login.com was sinkholed 2026-04-18.
+
+--------------------------------------------------------------------------------
+TOP INDICATORS FOR IMMEDIATE DETECTION
+--------------------------------------------------------------------------------
+
+Perimeter (block now, HIGH confidence, multi-source):
+  Domains : meddefense-portal.com, medequip-supplies.net,
+            meddefense-benefits.org, outlook-protection.com,
+            healthbane-c2.net, data-sync.healthbane-c2.net
+  IPs     : 91.234.99.107, 185.176.43.22, 164.90.218.73,
+            51.38.42.17, 51.38.42.191
+  Senders : noreply@meddefense-portal.com, invoices@medequip-supplies.net,
+            hr-notifications@meddefense-benefits.org
+
+EDR/AV (hash blocklist):
+  a1b2c3d4... (HEALTHBANE_S2_invoice.docm)
+  b9c8a7d6... (svchost_update.exe)
+  c7d6e5f4... (sync_healthdata.ps1)
+
+Aggressive hunt (rotation candidates, act if seen):
+  portal-secure-meddefense.com (staged kit, not yet live)
+  update-healthbane.net (Stage 2 secondary C2)
+  ee112233... (update_service_v2.exe variant)
+
+--------------------------------------------------------------------------------
+UNCERTAINTY FLAGS
+--------------------------------------------------------------------------------
+10 indicators carry an uncertainty flag
+(category assignment or attribution not straightforward; see UNCERTAIN column
+in indicator_triage_results.tsv for which and why).
+
+================================================================================
+END OF SUMMARY
+================================================================================

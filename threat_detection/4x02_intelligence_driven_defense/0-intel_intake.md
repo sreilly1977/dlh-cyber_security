@@ -1,6 +1,9 @@
 ================================================================================
+
   HEALTHBANE INTELLIGENCE INTAKE SUMMARY
+  
   Project 4x02 - Intelligence-Driven Defense
+  
 ================================================================================
 
 Document ID:        MD-4x02-INTEL-INTAKE-001
@@ -10,7 +13,9 @@ Classification:     INTERNAL  (contains TLP:CLEAR material marked appropriately)
 Purpose:            Structured intake of four intelligence sources about HEALTHBANE
 
 ================================================================================
+
 SOURCE 1: HC3 SECTOR ADVISORY
+
 ================================================================================
 
 1. Source name:              HC3 Advisory HEALTHBANE
@@ -31,7 +36,9 @@ SOURCE 1: HC3 SECTOR ADVISORY
                              label used by commercial providers
 
 ================================================================================
+
 SOURCE 2: COMMERCIAL FEED (ACME)
+
 ================================================================================
 
 1. Source name:              Acme CTI Commercial Feed Extract
@@ -55,7 +62,9 @@ SOURCE 2: COMMERCIAL FEED (ACME)
                              some indicators are "LIKLEY NOISE" or "DO NOT BLOCK"
 
 ================================================================================
+
 SOURCE 3: RESEARCHER BLOG ANALYSIS
+
 ================================================================================
 
 1. Source name:              Marcus Weller Technical Analysis
@@ -76,7 +85,9 @@ SOURCE 3: RESEARCHER BLOG ANALYSIS
                              does not share kit source code publicly
 
 ================================================================================
+
 SOURCE 4: MEDEFENSE INTERNAL INVESTIGATION (4x00)
+
 ================================================================================
 
 1. Source name:              MedDefense Internal Investigation Summary
@@ -97,7 +108,9 @@ SOURCE 4: MEDEFENSE INTERNAL INVESTIGATION (4x00)
                              (no malware or exfiltration evidence at MedDefense)
 
 ================================================================================
+
 CONSOLIDATED INDICATOR COUNTS
+
 ================================================================================
 
 | Source                    | Raw Indicators | Deduped Unique |
@@ -116,7 +129,9 @@ Note: Actual deduplication will be performed programmatically against the full
 indicator value set; the above represents expected counts from lab documentation.
 
 ================================================================================
+
 CROSS-SOURCE OVERLAP ANALYSIS
+
 ================================================================================
 
 Indicators appearing in MULTIPLE SOURCES (high-confidence, corroborated):
@@ -181,7 +196,9 @@ From Internal (4x00) only:
                    hr-notifications@meddefense-benefits.org
 
 ================================================================================
+
 SOURCE CONFLICTS TO RESOLVE IN LATER TASKS
+
 ================================================================================
 
 1. Attribution labels:
@@ -234,7 +251,9 @@ SOURCE CONFLICTS TO RESOLVE IN LATER TASKS
    - Internal: Single-incident header analysis
 
 ================================================================================
+
 ANALYTICAL JUDGMENTS REQUIRED IN SUBSEQUENT TASKS
+
 ================================================================================
 
 1. Which attribution label should be applied to unified IOC database?
@@ -254,5 +273,7 @@ ANALYTICAL JUDGMENTS REQUIRED IN SUBSEQUENT TASKS
    source reliability × information credibility matrix (Admiralty/NATO style)
 
 ================================================================================
+
 END OF INTELLIGENCE INTAKE
+
 ================================================================================
