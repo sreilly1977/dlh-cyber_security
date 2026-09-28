@@ -1144,3 +1144,124 @@ Produce 13-intelligence_brief.md containing:
     who should be asked or what data should be reviewed
 
 ---
+
+# [14. Closing the Loop](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/14-closing_the_loop.sh)
+### advanced
+
+## Goal: 
+
+Operationalize the intelligence locally by producing deployable detection artifacts, updated IOC lists and unanswered intelligence questions.
+
+## Context: 
+
+An intelligence brief that sits on a shelf is not intelligence. The loop is closed only when intelligence changes defensive posture.
+
+You will create local artifacts that could be handed to a detection engineering team:
+
+    YARA rules
+    local detection-rule drafts
+    IOC list exports
+    before/after coverage summary
+    unanswered intelligence questions
+    recommended collection actions
+
+Materials:
+
+    Use indicator_database.json
+    Use 9-yara_phishing_pdf.yar
+    Use 10-yara_arsenal.yar
+    Use 8-detection_gaps.md
+    Use 13-intelligence_brief.md
+
+## Instructions: 
+
+Write a script 14-closing_the_loop.sh that produces a local operationalization package.
+
+The script must:
+
+1. Validate YARA rules load without syntax errors:
+
+    9-yara_phishing_pdf.yar
+    10-yara_arsenal.yar
+
+2. Create a local directory:
+
+operational_package/
+
+3. Copy or generate:
+
+    YARA rules into operational_package/yara/
+    high-confidence IOC list into operational_package/iocs/healthbane_high_confidence_iocs.txt
+    full IOC JSON into operational_package/iocs/indicator_database.json
+    detection rule drafts into operational_package/detections/
+    coverage summary into operational_package/coverage_summary.md
+    unanswered questions into operational_package/intel_gaps.md
+
+4. Create at least 2 local detection-rule drafts addressing Priority 1 gaps from Task 8. These may be:
+
+    Sigma-style YAML
+    Wazuh-style XML draft
+    pseudocode rule
+    YARA rule reference
+    DNS analytic pseudocode
+
+5. Produce a before/after comparison:
+
+    detection posture before 4x02:
+        4x00 IOC-focused rules
+        limited file-pattern detection
+    detection posture after 4x02:
+        validated indicator database
+        YARA rules
+        ATT&CK gap-driven detection recommendations
+        high-confidence IOC export
+
+6. Document 3-5 unanswered intelligence questions and propose specific collection actions.
+
+**Expected Output:**
+
+```bash
+$ ./14-closing_the_loop.sh
+
+================================================================
+   CLOSING THE LOOP - Intelligence Operationalization
+================================================================
+
+[*] YARA validation: 4 rules, 0 errors                    [OK]
+
+[*] Operational package created:
+    operational_package/yara/
+    operational_package/iocs/
+    operational_package/detections/
+    operational_package/coverage_summary.md
+    operational_package/intel_gaps.md
+
+[*] High-confidence IOC export created                    [OK]
+[*] Detection drafts created: 2                            [OK]
+
+=== BEFORE vs AFTER ===
+Before 4x02:
+  IOC-focused detection from 4x00
+  limited coverage for campaign variants
+
+After 4x02:
+  enriched indicator database
+  YARA coverage for PDF and email artifacts
+  ATT&CK-driven detection gap plan
+  local operational package ready for handoff
+
+=== UNANSWERED INTELLIGENCE QUESTIONS ===
+  1. Stage 3 exfiltration details across non-MedDefense victims
+     -> Collection action: request additional partner telemetry through HC3
+  2. Whether VITALSCORE maps exactly to HEALTHBANE
+     -> Collection action: request clarification from commercial provider
+  3. Stage 2 malware family classification
+     -> Collection action: sandbox Stage 2 samples from trusted source
+  4. Campaign resumption timeline
+     -> Collection action: monitor registrations matching domain patterns
+
+INTELLIGENCE LOOP STATUS: READY FOR DEFENSIVE HANDOFF
+================================================================
+```
+
+---

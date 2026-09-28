@@ -1,0 +1,66 @@
+# ============================================================================
+# HEALTHBANE High-Confidence IOC Export
+# ============================================================================
+# Source: indicator_database.json (vetted by Task 1 triage)
+# Filter: HIGH confidence only, ACTIONABLE category
+# Excludes: NOISE indicators (CDN/shared IPs, ML-cluster-only items)
+# Generated: 2026-09-28
+# For Use: Firewall rules, SIEM correlation, EDR blocklists
+# ============================================================================
+
+# DOMAINS (Stage 1 - Credential Harvesting)
+meddefense-portal.com
+medequip-supplies.net
+meddefense-benefits.org
+outlook-protection.com
+
+# DOMAINS (Stage 2/3 - C2/Exfil)
+healthbane-c2.net
+data-sync.healthbane-c2.net
+
+# DOMAINS (Rotation/Staged - Monitor Only)
+update-healthbane.net
+portal-secure-meddefense.com
+
+# IP ADDRESSES (Lure Tier - Hostinger/DigitalOcean/OVH)
+91.234.99.107
+185.176.43.22
+164.90.218.73
+51.38.42.17
+51.38.42.191
+45.77.218.9
+
+# FILE HASHES (SHA-256 - Stage 2 Payloads)
+a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+b9c8a7d6e5f4321098765432109876543210fedcba9876543210fedcba987654
+c7d6e5f4a3b291827364554637281900a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
+dd5efb6d1ab4c67890abcdef1234567890abcdef1234567890abcdef12345678
+2f4a6c8e0b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f
+
+# URLs (Credential Capture Endpoints)
+https://meddefense-portal.com/verify/staff
+https://medequip-supplies.net/invoices/pay
+https://meddefense-benefits.org/enroll
+https://healthbane-c2.net/update/svchost_update.exe
+https://outlook-protection.com/verify
+
+# EMAIL ADDRESSES (Sender Addresses)
+noreply@meddefense-portal.com
+invoices@medequip-supplies.net
+hr-notifications@meddefense-benefits.org
+
+# ============================================================================
+# USAGE NOTES
+# ============================================================================
+# 1. Domains: Block at mail gateway, DNS sinkhole, and proxy
+# 2. IPs: Block at perimeter firewall; consider geofencing AS47583 (Hostinger)
+# 3. Hashes: Add to EDR/AV blocklist; hunt historically on endpoints
+# 4. URLs: Add to web filter blocklist; detonate for analysis
+# 5. Emails: Alert on sender domain; verify SPF/DKIM/DMARC alignment
+#
+# Monitoring domains marked MEDIUM confidence:
+# - portal-secure-meddefense.com (staged rotation domain)
+# - rx-benefits-portal.com (prior campaign correlation)
+#
+# See indicator_database.json for full metadata and enrichment summaries.
+# ============================================================================

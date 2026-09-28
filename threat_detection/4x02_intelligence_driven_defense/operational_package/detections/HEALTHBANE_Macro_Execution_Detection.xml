@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+============================================================
+HEALTHBANE Macro Execution Detection - Wazuh Rule Draft
+============================================================
+Purpose: Detect Office macro execution via PowerShell Script Block Logging
+         and Word event telemetry, addressing Priority 1 gap (T1059.005).
+Author: Steve - Cybersecurity Engineer
+Date:  2026-09-28
+Reference: Task 8 Detection Gap Assessment - Priority 1, T1059.005
+============================================================
+-->
+<rule id="100083" level="14">
+    <if_sid>61601</if_sid>
+    <!-- Match on PowerShell Script Block Logging Event ID 4104 -->
+    <field name="win.system.eventID">^4104$</field>
+    <!-- Look for macro-related keywords in script content -->
+    <field name="data">(?i)(AutoOpen|AutoClose|Document_Open|Excel4Macro)</field>
+    <description>[HEALTHBANE] Office macro execution detected - potential Stage 2 payload</description>
+    <group>healthbane,malware,execution,persistence,</group>
+    <options>alert_with_email</options>
+</rule>
+
+<!-- Secondary rule: Word Process Spawning PowerShell -->
+<rule id="100084" level="12">
+    <if_sid>5716</if_sid>
+    <!-- Parent process: winword.exe -->
+    <field name="win.eventdata.parentImage">.*\\WINWORD.EXE$</field>
+    <!-- Child process: powershell.exe -->
+    <field name="win.eventdata.newProcessName">.*\\powershell.exe$</field>
+    <description>[HEALTHBANE] Word spawning PowerShell - likely macro downloader</description>
+    <group>healthbane,malware,execution,lateral_movement,</group>
+    <options>alert_with_email</options>
+</rule>
+
+<!-- Tertiary rule: Base64-encoded command detection -->
+<rule id="100085" level="13">
+    <if_sid>61601</if_sid>
+    <field name="win.system.eventID">^4104$</field>
+    <!-- Detect base64-encoded PowerShell invocations -->
+    <field name="data">(?i)(-Enc|-EncodedCommand)\s*[A-Za-z0-9+/]{64,}</field>
+    <description>[HEALTHBANE] Base64-encoded PowerShell command detected</description>
+    <group>healthbane,malware,execution,obfuscation,</group>
+    <options>alert_with_email</options>
+</rule>
+
+<!-- Note for SOC Integration:
+     These rules complement existing IOC-based detection (rules 100080-100082)
+     by adding behavioral detection for macro execution.
+
+     Prerequisites for effectiveness:
+     1. Enable PowerShell Script Block Logging via GPO (Line 31)
+     2. Enable Office Protected View and Macro Security policies
+     3. Deploy Sysmon for process creation events (Event ID 1)
+
+     Tuning guidance:
+     - False positives expected on legitimate VBA-heavy documents
+     - Whitelist known-good departments (e.g., Finance templates)
+     - Correlate with email origin: external macro docs = HIGH SEVERITY
+-->

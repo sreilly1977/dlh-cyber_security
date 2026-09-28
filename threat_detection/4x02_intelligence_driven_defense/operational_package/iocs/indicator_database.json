@@ -1,0 +1,475 @@
+{
+  "_metadata": {
+    "database_id": "MD-4x02-IOCDB-001",
+    "generated": "2026-09-28T14:57:42Z",
+    "analyst": "Steve - Cybersecurity Engineer",
+    "campaign": "HEALTHBANE",
+    "aliases": ["VITALSCORE (commercial cluster label)", "APT-MEDAGENT (researcher actor hypothesis, MEDIUM)"],
+    "note": "NOISE indicators (CDN/shared IPs, ML-cluster-only items) were excluded per Task 1 triage",
+    "source_files": ["HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt", "commercial_feed_extract.json", "researcher_blog_analysis.txt", "meddefense_4x00_findings.txt"]
+  },
+  "indicators": [
+    {
+      "type": "domain",
+      "value": "meddefense-portal.com",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Namecheap reg 2026-04-09; Hostinger 91.234.99.107; PHPMailer 6.6.0; clicked by dmarsh in 4x00"
+    }
+,
+    {
+      "type": "domain",
+      "value": "medequip-supplies.net",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Namecheap reg 2026-04-08; Hostinger 185.176.43.22; PHPMailer 6.6.0; observed in 4x00 E5"
+    }
+,
+    {
+      "type": "domain",
+      "value": "meddefense-benefits.org",
+      "first_seen": "2026-04-15",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Namecheap reg 2026-04-10; DigitalOcean 164.90.218.73; PHPMailer-6.6.0 custom build in 4x00 E7"
+    }
+,
+    {
+      "type": "domain",
+      "value": "outlook-protection.com",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "ms-impersonation",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "OVH 51.38.42.17; passes SPF/DKIM/DMARC via correct DNS; kit SMTP exfil route per researcher config.php"
+    }
+,
+    {
+      "type": "domain",
+      "value": "healthbane-c2.net",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "operator-c2",
+      "attack_phase": "Stage 2",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Njalla registrar; OVH 51.38.42.191; referenced in kit config.php EXFIL_ENDPOINT and OPS_CONTACT"
+    }
+,
+    {
+      "type": "domain",
+      "value": "data-sync.healthbane-c2.net",
+      "first_seen": "2026-04-23",
+      "last_seen": "2026-04-26",
+      "sources": "HC3",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "operator-c2",
+      "attack_phase": "Stage 3",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "DNS TXT exfil endpoint; base32 subdomain labels 44-60 chars at 10-15s intervals per HC3 packet captures"
+    }
+,
+    {
+      "type": "domain",
+      "value": "update-healthbane.net",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-24",
+      "sources": "HC3,Commercial",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "secondary-c2",
+      "attack_phase": "Stage 2",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Stage 2 secondary C2 per HC3 MEDIUM; no researcher corroboration; no resolution data in sources"
+    }
+,
+    {
+      "type": "domain",
+      "value": "portal-secure-meddefense.com",
+      "first_seen": "unknown",
+      "last_seen": "unknown",
+      "sources": "HC3,Researcher",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "rotation-staged",
+      "attack_phase": "Stage 1",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Staged kit confirmed by researcher (92.118.232.14 Hostinger); not yet live; expected rotation-in domain"
+    }
+,
+    {
+      "type": "domain",
+      "value": "rx-benefits-portal.com",
+      "first_seen": "2026-03-28",
+      "last_seen": "2026-04-10",
+      "sources": "Commercial",
+      "confidence": "LOW",
+      "category": "CONTEXTUAL",
+      "cluster": "prior-campaign",
+      "attack_phase": "Unknown",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Predates HEALTHBANE window by 16 days; same Namecheap+OVH pattern; possible earlier same-operator activity"
+    }
+,
+    {
+      "type": "domain",
+      "value": "healthcare-login.com",
+      "first_seen": "2026-03-30",
+      "last_seen": "2026-04-12",
+      "sources": "Commercial",
+      "confidence": "LOW",
+      "category": "CONTEXTUAL",
+      "cluster": "prior-campaign",
+      "attack_phase": "Unknown",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Sinkholed 2026-04-18; historical correlation only"
+    }
+,
+    {
+      "type": "domain",
+      "value": "verify-health-portal.net",
+      "first_seen": "2026-04-05",
+      "last_seen": "2026-04-24",
+      "sources": "Commercial",
+      "confidence": "LOW",
+      "category": "CONTEXTUAL",
+      "cluster": "naming-pattern",
+      "attack_phase": "Unknown",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Registered in campaign window with matching naming pattern; no observed phishing activity"
+    }
+,
+    {
+      "type": "ip",
+      "value": "91.234.99.107",
+      "first_seen": "2026-04-10",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "AS47583 Hostinger; kit-confirmed LP host; four-way corroboration"
+    }
+,
+    {
+      "type": "ip",
+      "value": "185.176.43.22",
+      "first_seen": "2026-04-10",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "AS47583 Hostinger; observed directly in 4x00 email 02 Received header"
+    }
+,
+    {
+      "type": "ip",
+      "value": "164.90.218.73",
+      "first_seen": "2026-04-11",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "AS14061 DigitalOcean; dedicated staging host, not shared; observed in 4x00 email 03"
+    }
+,
+    {
+      "type": "ip",
+      "value": "51.38.42.17",
+      "first_seen": "2026-04-08",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "ms-impersonation",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "AS16276 OVH; hosts outlook-protection.com; kit exfil route"
+    }
+,
+    {
+      "type": "ip",
+      "value": "51.38.42.191",
+      "first_seen": "2026-03-24",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "operator-c2",
+      "attack_phase": "Stage 3",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "AS16276 OVH; C2 and DNS-tunnel host from kit config.php and HC3; high-value containment target"
+    }
+,
+    {
+      "type": "ip",
+      "value": "45.77.218.9",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-24",
+      "sources": "HC3,Commercial",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "secondary-c2",
+      "attack_phase": "Stage 2",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "AS20473; Brazil geographic anomaly; single-partner observation at HC3 MEDIUM"
+    }
+,
+    {
+      "type": "hash",
+      "value": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "stage2-payloads",
+      "attack_phase": "Stage 2",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "docm macro dropper HEALTHBANE_S2_invoice.docm; file size unknown; detection ratio unknown offline"
+    }
+,
+    {
+      "type": "hash",
+      "value": "b9c8a7d6e5f4321098765432109876543210fedcba9876543210fedcba987654",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "stage2-payloads",
+      "attack_phase": "Stage 2",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "exe svchost_update.exe; persistence via scheduled task HealthSync Update Service and registry run key"
+    }
+,
+    {
+      "type": "hash",
+      "value": "c7d6e5f4a3b291827364554637281900a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+      "first_seen": "2026-04-18",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "stage2-payloads",
+      "attack_phase": "Stage 2",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "ps1 sync_healthdata.ps1; deployed Stage 2, performs Stage 3 DNS TXT tunneling; extracted from kit tools dir by researcher"
+    }
+,
+    {
+      "type": "hash",
+      "value": "dd5efb6d1ab4c67890abcdef1234567890abcdef1234567890abcdef12345678",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-23",
+      "sources": "HC3,Commercial",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "stage2-payloads",
+      "attack_phase": "Stage 2",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Dropper variant; weakly sourced (single partner, source_count_external 1); hunt-only"
+    }
+,
+    {
+      "type": "hash",
+      "value": "2f4a6c8e0b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f",
+      "first_seen": "2026-04-14",
+      "last_seen": "unknown",
+      "sources": "HC3,Commercial,Researcher,Internal",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "stage1-lure",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "PDF lure INV-2026-04891.pdf; benign format, no embedded code; four-way corroboration; YARA pattern more durable than hash"
+    }
+,
+    {
+      "type": "hash",
+      "value": "ee1122334455667788990011223344556677889900aabbccddeeff0011223344",
+      "first_seen": "2026-04-17",
+      "last_seen": "2026-04-24",
+      "sources": "Commercial",
+      "confidence": "MEDIUM",
+      "category": "CONTEXTUAL",
+      "cluster": "variant-watch",
+      "attack_phase": "Stage 2",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "update_service_v2.exe trojan variant; not observed at MedDefense or by HC3; commercial feed only"
+    }
+,
+    {
+      "type": "hash",
+      "value": "ffaabbccdd0011223344556677889900aabbccddeeff00112233445566778899",
+      "first_seen": "unknown",
+      "last_seen": "unknown",
+      "sources": "Researcher",
+      "confidence": "MEDIUM",
+      "category": "CONTEXTUAL",
+      "cluster": "kit-artifact",
+      "attack_phase": "Unknown",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "kit_v2_healthbane.zip phishing kit archive; provenance unclear (operator-signed vs vendor-shipped); researcher MEDIUM"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://meddefense-portal.com/verify/staff",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial,Researcher,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Credential capture endpoint; clicked by dmarsh 4x00; query pattern id=user and 8-hex token"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://medequip-supplies.net/invoices/pay",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Credential capture endpoint; invoice-number query pattern INV-YYYY-NNNNN"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://meddefense-benefits.org/enroll",
+      "first_seen": "2026-04-15",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Credential capture endpoint for benefits enrollment lure"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://healthbane-c2.net/update/svchost_update.exe",
+      "first_seen": "2026-04-16",
+      "last_seen": "2026-04-26",
+      "sources": "HC3,Commercial",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "operator-c2",
+      "attack_phase": "Stage 2",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Stage 2 payload download endpoint; links Stage 1 compromise to Stage 2 C2"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://outlook-protection.com/verify",
+      "first_seen": "2026-04-14",
+      "last_seen": "2026-04-26",
+      "sources": "Commercial",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "ms-impersonation",
+      "attack_phase": "Stage 1",
+      "recommended_action": "BLOCK",
+      "enrichment_summary": "Microsoft impersonation endpoint; must block regardless of email authentication passing"
+    }
+,
+    {
+      "type": "url",
+      "value": "https://healthbane-c2.net/api/ingest",
+      "first_seen": "unknown",
+      "last_seen": "unknown",
+      "sources": "Researcher",
+      "confidence": "MEDIUM",
+      "category": "ACTIONABLE",
+      "cluster": "operator-c2",
+      "attack_phase": "Stage 2",
+      "recommended_action": "MONITOR",
+      "enrichment_summary": "Credential ingest endpoint from kit config.php; single-source researcher observation"
+    }
+,
+    {
+      "type": "email",
+      "value": "noreply@meddefense-portal.com",
+      "first_seen": "2026-04-14",
+      "last_seen": "unknown",
+      "sources": "Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "ALERT",
+      "enrichment_summary": "Sender observed in 4x00 email 01; covered by domain block but retained for log correlation"
+    }
+,
+    {
+      "type": "email",
+      "value": "invoices@medequip-supplies.net",
+      "first_seen": "2026-04-14",
+      "last_seen": "unknown",
+      "sources": "Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "ALERT",
+      "enrichment_summary": "Sender observed in 4x00 email 02; covered by domain block but retained for log correlation"
+    }
+,
+    {
+      "type": "email",
+      "value": "hr-notifications@meddefense-benefits.org",
+      "first_seen": "2026-04-14",
+      "last_seen": "unknown",
+      "sources": "Commercial,Internal",
+      "confidence": "HIGH",
+      "category": "ACTIONABLE",
+      "cluster": "core-phishing-lp",
+      "attack_phase": "Stage 1",
+      "recommended_action": "ALERT",
+      "enrichment_summary": "Sender observed in 4x00 email 03; covered by domain block but retained for log correlation"
+    }
+
+  ]
+}

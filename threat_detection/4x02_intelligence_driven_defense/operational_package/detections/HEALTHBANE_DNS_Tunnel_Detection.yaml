@@ -1,0 +1,61 @@
+title: HEALTHBANE DNS TXT Tunneling Detection
+id: md-healthbane-dns-tunnel-001
+status: experimental
+description: Detects DNS TXT queries with base32-encoded subdomain labels exceeding 40 characters, consistent with HEALTHBANE Stage 3 exfiltration pattern.
+author: Steve - Cybersecurity Engineer
+date: 2026-09-28
+modified: 2026-09-28
+references:
+    - https://attack.mitre.org/techniques/T1071/004/
+    - https://attack.mitre.org/techniques/T1048/003/
+tags:
+    - attack.exfiltration
+    - attack.command_and_control
+    - attack.t1071.004
+    - attack.t1048.003
+level: high
+
+logsource:
+    category: dns
+    product: windows
+    service: dns-server
+    definition: DNS Server query logs (Windows Event ID 515, or equivalent Linux/unbound/Named logs)
+
+detection:
+    selection:
+        query_type: 'TXT'
+        subdomain_length_gt: 40
+        char_set_pattern: '^[A-Z2-7]+$'  # Base32 alphabet (uppercase)
+
+    filter_known_good:
+        - hostname|startswith:
+            - 'google.'
+            - 'microsoft.'
+            - 'amazonaws.'
+            - 'cloudflare.'
+            - 'okta.'
+
+    condition: selection and not filter_known_good
+
+falsepositives:
+    - Legitimate DNS-over-HTTPS services using long subdomains (rare for TXT)
+    - Internal TXT record queries with encoded data (monitor volume)
+
+falsepositives_notes:
+    - HEALTHBANE uses 44-60 character base32 labels at 10-15 second intervals
+    - Normal enterprise TXT usage is MX validation, SPF, DKIM, DMARC (short labels)
+
+action: alert
+priority: 1
+
+# SIEM Implementation Notes (Generic):
+# 1. Parse DNS query name to extract subdomain portion
+# 2. Measure subdomain length (exclude base domain suffix)
+# 3. Validate character set against base32 alphabet (A-Z, 2-7)
+# 4. Apply frequency threshold: >10 TXT queries/hour per host is anomalous
+# 5. Correlate with process creation on same endpoint for attribution
+
+# Expected Metrics:
+# - HEALTHBANE Stage 3: 10-15 queries/sec, 44-60 char subdomains
+# - Enterprise baseline: <1 TXT query/hour per host (except mail servers)
+# - Alert threshold: 20+ TXT queries/hour from non-mail-server endpoint
