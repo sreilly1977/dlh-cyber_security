@@ -217,3 +217,148 @@ Produce summary statistics:
 **Expected output** should clearly show that not all 64 unique indicators are operationally safe to block.
 
 ---
+
+# [2. The Source Credibility Matrix](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/2-source_assessment.md)
+
+## Goal: 
+
+Assess the reliability of each intelligence source and the credibility of its content using a structured methodology.
+
+## Context: 
+
+Intelligence analysts use structured frameworks to avoid bias. The Admiralty Code, also called the NATO system, rates sources from A to F and information from 1 to 6. This matters when sources contradict each other. When one source makes an extraordinary claim, such as threat actor attribution, your assessment determines how much confidence to assign.
+
+Materials:
+
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    commercial_feed_extract.json
+    researcher_blog_analysis.txt
+    meddefense_4x00_findings.txt
+
+## Instructions: 
+
+Produce 2-source_assessment.md containing:
+
+1. A brief explanation of the assessment methodology used:
+
+    Admiralty Code adapted for cyber intelligence
+    source reliability A-F
+    information credibility 1-6
+    confidence levels HIGH, MEDIUM, LOW
+
+2. For each of the 4 sources, assess:
+
+    source reliability
+    information credibility
+    timeliness
+    relevance to MedDefense
+    limitations
+    bias or visibility constraints
+
+3. A source comparison matrix showing all four sources side by side
+
+4. An analytical note addressing the key attribution conflict:
+
+    HC3 uses HEALTHBANE and does not endorse VITALSCORE
+    commercial feed uses VITALSCORE
+    researcher uses APT-MEDAGENT with medium confidence
+    MedDefense 4x00 avoids attribution
+
+5. A weighting recommendation:
+
+    which source should be prioritized for confirmed healthcare-sector facts
+    which source is useful for technical details
+    which source should be treated carefully because of noise or weak clustering
+    how conflicting claims should be handled
+
+---
+
+# 3. The OSINT Enrichment
+### advanced
+
+## Goal: 
+
+Enrich the actionable indicators from Task 1 using OSINT methods, adding context that transforms raw IOCs into intelligence-grade indicators.
+
+## Context: 
+
+A domain name by itself is an indicator. A domain name with registration date, registrar, hosting provider, certificate details, passive DNS history and reputation context is intelligence. Enrichment is how raw IOCs become defensible security actions.
+
+This lab does not require live external queries. If live tools are unavailable, document the command that would be used and use the simulated or provided evidence from the intelligence sources.
+
+Materials:
+
+    Use your actionable indicators from Task 1
+    HC3_Advisory_HEALTHBANE_TLP_CLEAR.txt
+    researcher_blog_analysis.txt
+    commercial_feed_extract.json
+
+## Instructions: 
+
+Write 3-osint_enrichment.md that enriches each actionable indicator.
+
+For each domain, document:
+
+1. WHOIS:
+
+    registration date
+    registrar
+    registrant if available
+
+2. DNS resolution:
+
+    current resolution
+    historical resolution if available
+
+3. Certificate transparency:
+
+    crt.sh query or documented equivalent
+    certificate subject
+    related certificates
+
+4. Reputation:
+
+    VirusTotal or equivalent result
+    detection ratio or community score if available
+
+5. Defensive meaning:
+
+    block
+    alert
+    hunt
+    monitor
+
+For each IP, document:
+
+    ASN
+    hosting provider
+    geolocation
+    reverse DNS
+    reputation
+    whether blocking is safe or risky
+
+For each hash, document:
+
+1. file type
+
+2. file size if available
+
+3. first seen date
+
+4. detection ratio if available
+
+5. behavioral tags
+
+6. whether the hash is campaign-specific or weakly sourced
+
+For each enrichment type, document:
+
+1. command or method used
+
+2. what the result means defensively
+
+3. whether enrichment changes confidence level
+
+4. whether the indicator remains actionable
+
+---
