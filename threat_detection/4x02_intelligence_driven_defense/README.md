@@ -977,7 +977,7 @@ Recommendation: DEPLOY / TUNE / MONITOR
 
 ---
 
-# [12. The Adversary Profile](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/)
+# [12. The Adversary Profile](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/12-adversary_profile.md)
 ### advanced
 
 ## Goal: 
@@ -1060,5 +1060,87 @@ Produce 12-adversary_profile.md containing:
     what is known
     what is inferred
     what remains unknown
+
+---
+
+# [13. The Intelligence Brief](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/13-intelligence_brief.md)
+
+## Goal: 
+
+Produce the final professional intelligence brief on the HEALTHBANE campaign, suitable for MedDefense leadership and healthcare-sector partners.
+
+## Context: 
+
+This is the deliverable James Chen asked for. It synthesizes every finding from Tasks 0-12 into a single document for two audiences:
+
+    MedDefense leadership, who need to understand risk and make decisions
+    Healthcare-sector partners, who need actionable intelligence
+
+The brief must be technically rigorous but accessible in its executive section.
+
+Materials:
+
+    Use all outputs from Tasks 0-12
+    Use all provided source files
+
+## Instructions: 
+
+Produce 13-intelligence_brief.md containing:
+
+1. Executive Summary
+
+    maximum 8 sentences
+    written for Dr. Morales and the board
+    explain:
+        what HEALTHBANE is
+        what happened to MedDefense
+        what happened at other organizations
+        current detection posture
+        top 3 recommended actions
+
+2. Adversary Profile
+
+    summary from Task 12
+
+3. Campaign Analysis
+
+    three-stage breakdown from Task 6
+    timeline
+    evidence confidence
+
+4. ATT&CK Mapping
+
+    observed vs inferred distinction
+    key techniques
+    detection relevance
+
+5. Detection Gap Assessment
+
+    prioritized gaps from Task 8
+    focus on observed-not-detected and inferred-not-detected items
+
+6. Indicator of Compromise Table
+
+    from Task 5
+    organized by attack phase
+    include confidence and recommended action
+
+7. YARA Rule Summary
+
+    rules developed
+    test results
+    deployment status
+
+8. Recommendations
+
+    Immediate (48 hours)
+    Short-term (2 weeks)
+    Medium-term (30 days)
+
+9. Intelligence Gaps and Collection Priorities
+
+    what remains unknown
+    what collection would answer it
+    who should be asked or what data should be reviewed
 
 ---
