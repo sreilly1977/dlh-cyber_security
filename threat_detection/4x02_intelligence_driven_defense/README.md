@@ -886,3 +886,93 @@ For each rule:
 Test all rules against the samples directory and document results.
 
 ---
+
+# [11. Testing the Arsenal](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x02_intelligence_driven_defense/11-yara_testing.sh)
+
+## Goal: 
+
+Systematically test all YARA rules from Tasks 9 and 10 against a controlled test set, measuring true positive rate, false positive rate and false negative rate.
+
+## Context: 
+
+A YARA rule that compiles is not automatically a production-ready rule. Detection rules must be tested against both malicious and benign samples to understand operational characteristics. A rule with high true positives but many false positives will flood analysts. A rule with no false positives but low true positives will miss variants.
+
+This task teaches rule validation and deployment decision-making.
+
+Materials:
+
+    samples_manifest.txt
+    Use all files in the provided sample corpus
+    Use your 9-yara_phishing_pdf.yar
+    Use your 10-yara_arsenal.yar
+
+## Instructions: 
+
+Write a script 11-yara_testing.sh that:
+
+1. Runs each YARA rule from Tasks 9 and 10 against every file in the samples directory
+
+2. Uses the manifest or task instructions to determine expected results:
+
+    phishing PDFs: true positives
+    healthbane emails: true positives
+    benign invoices/newsletter: true negatives
+    known variant samples: should be handled when possible
+
+3. Records for each rule:
+
+    true positives
+    true negatives
+    false positives
+    false negatives
+
+4. Calculates:
+
+    detection rate: TP / (TP + FN)
+    false positive rate: FP / (FP + TN)
+    precision: TP / (TP + FP)
+
+5. For each false negative:
+
+    explain why the rule missed
+    propose a modification
+
+6. For each false positive:
+
+    explain why the rule triggered
+    propose a safe tuning change
+
+7. Produces a deployment recommendation:
+
+    DEPLOY
+    TUNE
+    MONITOR
+
+**Expected Output:**
+
+```bash
+$ ./11-yara_testing.sh
+
+=== YARA TESTING SUMMARY ===
+Rule: HEALTHBANE_Phishing_PDF
+TP: 2 | TN: 2 | FP: 0 | FN: 0
+Detection rate: 100%
+False positive rate: 0%
+Precision: 100%
+Recommendation: DEPLOY
+
+Rule: HEALTHBANE_Email_Headers
+TP: 3 | TN: 1 | FP: 0 | FN: 0
+Detection rate: 100%
+False positive rate: 0%
+Precision: 100%
+Recommendation: DEPLOY
+
+Rule: HEALTHBANE_Campaign_Composite
+TP: [calculated]
+TN: [calculated]
+FP: [calculated]
+FN: [calculated]
+Recommendation: DEPLOY / TUNE / MONITOR
+
+---
