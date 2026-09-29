@@ -58,7 +58,7 @@
 
 ---
 
-## Indicator Triage and Enrichment
+### Indicator Triage and Enrichment
 
 **Q: What are the first steps in indicator triage?**
 
@@ -82,7 +82,7 @@
 
 ---
 
-## Infrastructure and Campaign Analysis
+### Infrastructure and Campaign Analysis
 
 **Q: What is infrastructure clustering?**
 
@@ -106,7 +106,7 @@
 
 ---
 
-## MITRE ATT&CK
+### MITRE ATT&CK
 
 **Q: What is MITRE ATT&CK?**
 
@@ -130,7 +130,7 @@
 
 ---
 
-## YARA Rule Development
+### YARA Rule Development
 
 **Q: What are the components of a YARA rule?**
 
@@ -151,5 +151,101 @@
 **Q: When is a rule ready to deploy?**
 
 **A:** When true positives are high, false positives negligible, and false negatives acceptable after tuning; otherwise monitor or keep tuning.
+
+---
+
+## Malware Awareness
+
+---
+
+### Malware Classification
+
+**Q: How to classify malware by type (dropper, downloader, RAT, infostealer, backdoor, exfiltration script)?**
+
+**A:** Classify by purpose and behavior — a dropper installs malware, a downloader fetches it, a RAT enables remote control, an infostealer harvests credentials, a backdoor maintains covert access, and an exfiltration script moves data out.
+
+**Q: How to distinguish between a delivery mechanism, a primary implant and a post-exploitation tool?**
+
+**A:** Delivery mechanisms arrive first (phishing attachment, dropper), the implant is the persistent core payload on the host, and post-exploitation tools (e.g., Mimikatz, Cobalt Strike) are run afterwards to escalate, move laterally or achieve objectives.
+
+**Q: Why does malware classification matter for detection engineering?**
+
+**A:** Knowing the malware type tells you what behaviors, artifacts and telemetry to expect, so you can build targeted detections instead of relying solely on signatures of known samples.
+
+**Q: How should classification be based on observed behavior and static evidence, not vendor labels alone?**
+
+**A:** Vendor names differ across engines and often just match family similarity, so classification should rest on what the binary actually does and contains (imports, strings, runtime actions), not marketing labels.
+
+---
+
+### Static Analysis
+
+**Q: How to extract useful intelligence from a file without executing it?**
+
+**A:** Static analysis: compute hashes, identify file type, examine metadata, parse structures (PE headers, macros), inspect strings, imports and resources, and optionally disassemble — all without running the sample.
+
+**Q: How to use hashes, file types, metadata and strings to establish identity and capability?**
+
+**A:** Hashes (MD5/SHA-256) uniquely identify the sample, file type reveals the execution environment, metadata shows authorship/tooling clues, and strings expose APIs, paths, C2 domains, commands and config data.
+
+**Q: How to analyze a VBA macro dump for auto-execution triggers, shell commands and encoded payloads?**
+
+**A:** Look for AutoOpen/Document_Open/Workbook_Open triggers, trace Shell/WScript.Run/CreateObject calls for command execution, and decode Base64/hex/str-reversed blobs to recover hidden payloads.
+
+**Q: How to read PE metadata, imports, strings and section entropy to infer capabilities?**
+
+**A:** Imports show capabilities (network APIs, process injection, registry writes), timestamps and compile details aid attribution, strings reveal indicators, and high section entropy (~7+) suggests packing or encryption.
+
+**Q: How to analyze PowerShell scripts by deobfuscating commands and identifying operational logic?**
+
+**A:** Decode Base64 (-enc), reverse Gzipped or concatenated strings, resolve nested variables and aliases (e.g., IEX), then map the reconstructed logic to actions like downloads, persistence or credential theft.
+
+---
+
+### Dynamic / Behavioral Analysis
+
+**Q: How to interpret sandbox reports?**
+
+**A:** Read them critically: prioritize the process tree, dropped files, network traffic and signature hits, but account for sandbox evasion, anti-analysis tricks and environment differences that can suppress true behavior.
+
+**Q: How to read process trees, command lines, registry modifications, file writes and network activity?**
+
+**A:** Follow the parent-child chain to see how execution started and spread, scrutinize command lines for encoded or suspicious arguments, flag persistence-related registry changes, unexpected dropped files, and anomalous domains/IPs/protocols.
+
+**Q: How to correlate static predictions with dynamic behavior?**
+
+**A:** Use static clues (suspicious imports, high entropy, embedded URLs) to form hypotheses, then confirm them against sandbox runtime actions — consistent findings raise confidence, contradictions prompt deeper analysis.
+
+**Q: How to distinguish observed behavior from inferred capability?**
+
+**A:** Observed behavior is what demonstrably happened in execution; inferred capability is what the code appears able to do (from imports/strings) but wasn't seen — label each accordingly and never report inference as confirmed fact.
+
+**Q: How to extract behavioral IOCs such as process chains, registry keys, mutexes, scheduled tasks and DNS patterns?**
+
+**A:** Mine sandbox logs and telemetry for exact parent→child process chains, written registry persistence keys (Run/RunOnce), mutex names used for single-instance checks, schtasks/at creations, and repeated or DGA-like DNS lookups.
+
+---
+
+### Campaign Integration
+
+**Q: How does malware analysis update a previous intelligence assessment?**
+
+**A:** New sample evidence can confirm, refine or overturn prior assessments — upgrading suspected TTPs to confirmed ones, linking samples to campaigns, and revising scope, attribution and risk statements with dated judgments.
+
+**Q: How do inferred ATT&CK techniques become observed when new evidence confirms them?**
+
+**A:** An analyst may predict "T1055 Process Injection" from static imports; once telemetry or sandbox captures it actually occurring, the technique's confidence shifts from inferred/possible to observed/confirmed.
+
+**Q: How do host-based IOCs complement infrastructure IOCs?**
+
+**A:** Host IOCs (mutexes, file paths, registry keys, process chains) prove compromise on endpoints, while infrastructure IOCs (C2 domains, IPs, TLS/JA3 fingerprints) expose the network side — together they enable broad pivoting and detection.
+
+**Q: How to produce a malware incident summary for SOC escalation and partner sharing?**
+
+**A:** Include a TL;DR verdict, sample hashes, classification, key behaviors with MITRE ATT&CK mappings, IOCs (host and network), timeline, and recommended detection/response actions — clearly separating observed facts from analyst inference.
+
+**Q: How to convert malware behavior into detection logic and YARA coverage?**
+
+**A:** Turn generic behaviors (registry persistence, suspicious process chains, odd DNS) into SIGMA/EDR analytics, and build YARA rules from distinctive static strings, byte patterns and import combinations unique to the family.
 
 ---
