@@ -64,7 +64,7 @@ Your job is to hunt the last 14 days of MedDefense SIEM data and answer the ques
 
 ---
 
-# [0. The Hunt Brief]()
+# [0. The Hunt Brief](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/0-hunt_brief.sh)
 
 ## Goal: 
 
@@ -161,6 +161,84 @@ DATA SOURCES:
   Reference: admin_schedule.txt, service_accounts.txt
 
 TIME WINDOW: 14 days
+
+================================================================
+```
+
+---
+
+# [1. Hypothesis Generation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/1-hunt_hypotheses.sh)
+### advanced
+
+## Goal: 
+
+Formulate five structured hunt hypotheses derived from the ATT&CK gap analysis, each specifying a technique to hunt, the data source to query, the expected observable pattern, and the criteria for a positive finding.
+
+## Context: 
+
+Hunting without hypotheses is log browsing. A hypothesis is a testable prediction:
+
+    IF the attacker used PsExec for lateral movement, THEN I should see PsExec execution events from non-admin workstations targeting server assets outside maintenance windows.
+
+This structure ensures every search has a defined success/failure criterion before the query starts.
+
+Materials:
+
+    Use reference/hc3_advisory_004.txt
+    Use reference/4x03_attack_mapping.json
+    Use baseline/robert_kim_activity.json
+
+## Instructions: 
+
+Write a script 1-hunt_hypotheses.sh that produces five hunt hypotheses.
+
+Each hypothesis must include:
+
+1. Hypothesis ID and ATT&CK technique
+
+2. Statement:
+
+    IF [adversary action], THEN [expected observable in SIEM data]
+
+3. Data source
+
+4. Search strategy using jq-style filter logic
+
+5. Positive finding criteria
+
+6. False positive exclusion
+
+7. Expected baseline rate
+
+Required hypotheses:
+
+    H1: PsExec lateral movement
+    H2: LSASS credential access
+    H3: WMI remote execution
+    H4: PowerShell Remoting
+    H5: Service account abuse
+
+**Expected Output:**
+
+```bash
+$ ./1-hunt_hypotheses.sh
+
+================================================================
+   HUNT HYPOTHESES - HEALTHBANE Stage 4
+================================================================
+
+HYPOTHESIS H1: Lateral Movement via PsExec
+  Technique: T1021.002 SMB/Windows Admin Shares
+  Statement: IF the attacker used PsExec for lateral movement, THEN
+             process creation events will show PsExec execution from a
+             non-admin workstation or outside maintenance windows.
+  Data Source: siem_export/wazuh_alerts_14d.json
+  Search: Image or CommandLine contains PsExec/psexec
+  Positive: PsExec from host other than WS-ADMIN-01, or off-hours activity
+  FP Exclusion: Robert Kim legitimate deployments from WS-ADMIN-01
+  Baseline Rate: Robert Kim maintenance only
+
+[H2 through H5 follow the same structure]
 
 ================================================================
 ```
