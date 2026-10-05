@@ -426,3 +426,90 @@ HYPOTHESIS COVERAGE MATRIX:
 ```
 
 ---
+
+# [4. Hunt: Lateral Movement (PsExec)](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/4-hunt_psexec.sh)
+
+## Goal: 
+
+Execute hypothesis H1 by searching for anomalous PsExec usage in the SIEM data, filtering against Robert Kim's baseline, and documenting all findings with specific evidence.
+
+## Context: 
+
+PsExec is a legitimate Sysinternals tool that attackers frequently abuse for lateral movement. It is not suspicious by name alone. It becomes suspicious when the source host, user, time or target does not match the administrative baseline.
+
+Materials:
+
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+    Use baseline/robert_kim_activity.json
+    Use reference/admin_schedule.txt
+
+## Instructions: 
+
+Write a script 4-hunt_psexec.sh that:
+
+1. Extracts all PsExec-related events:
+
+    Image contains PsExec
+    CommandLine contains PsExec or psexec
+
+2. Compares each event against Robert Kim's baseline:
+
+    source host
+    time of day
+    day of week
+    user account
+
+3. Classifies events as:
+
+    BASELINE
+    ANOMALOUS
+
+4. For each anomalous event, extracts:
+
+    timestamp
+    source host
+    user
+    command line
+    target host
+    PID if available
+    anomaly flags
+
+5. Produces a hunt finding with confidence assessment
+
+**Expected Output:**
+
+```bash
+$ ./4-hunt_psexec.sh
+
+================================================================
+   HUNT EXECUTION - H1: Lateral Movement via PsExec
+   Technique: T1021.002 SMB/Windows Admin Shares
+================================================================
+
+QUERY RESULTS:
+  Total PsExec events in 14 days: [count]
+  Baseline: [count]
+  ANOMALOUS: [count]
+
+ANOMALOUS EVENTS:
+  [A1] [timestamp]
+    Source: WS-RECV-03
+    User: MEDDEFENSE\svc_healthsync
+    Command: PsExec.exe \\SRV-HEALTH-DB -s cmd.exe
+    Target: SRV-HEALTH-DB
+    ANOMALY FLAGS:
+      [!] Source host is NOT WS-ADMIN-01
+      [!] Time is outside business hours
+      [!] User is a service account
+      [!] Target is a database server
+
+FINDING:
+  Status: POSITIVE - HIGH CONFIDENCE
+  Evidence: PsExec executions from non-admin workstation using service account
+  Recommendation: ESCALATE
+
+================================================================
+```
+
+---
