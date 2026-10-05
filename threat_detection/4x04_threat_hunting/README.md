@@ -329,3 +329,100 @@ ANOMALY DETECTION CRITERIA:
 ```
 
 ---
+
+# [3. Data Reconnaissance](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/3-data_recon.sh)
+
+## Goal: 
+
+Profile the full 14-day SIEM dataset: time range, event volume, top event types, top source hosts, alert severity distribution and data source availability, mapping which hunting hypotheses can be tested with the available data.
+
+## Context: 
+
+Before executing hunt queries, understand the data terrain. How many events exist? What time range is covered? Which event types are present? A hunt hypothesis fails if the dataset does not contain the required event type.
+
+This reconnaissance phase ensures that your hunt is testable and evidence-based.
+
+Materials:
+
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+
+## Instructions: 
+
+Write a script 3-data_recon.sh that profiles the complete SIEM export.
+
+Your reconnaissance must include:
+
+1. Dataset metadata:
+
+    total events
+    first event
+    last event
+    duration
+    format
+
+2. Event type distribution:
+
+    top 10 event types by count
+
+3. Source host distribution:
+
+    events per agent
+
+4. Severity distribution:
+
+    events by rule.level
+
+5. Hourly distribution:
+
+    24-hour histogram
+
+6. Hypothesis coverage matrix:
+
+    H1 PsExec
+    H2 LSASS
+    H3 WMI
+    H4 PSRemoting
+    H5 service accounts
+
+**Expected Output:**
+
+```bash
+$ ./3-data_recon.sh
+
+================================================================
+   DATA RECONNAISSANCE - MedDefense SIEM Export
+================================================================
+
+DATASET METADATA:
+  Total events:   [count]
+  Time range:     [first timestamp] to [last timestamp]
+  Duration:       14 days
+  Format:         JSON / JSON Lines
+
+TOP 10 EVENT TYPES:
+  61603  Sysmon: Process Create
+  61612  Sysmon: Registry Modify
+  61605  Sysmon: Network Connection
+  60106  Windows: Logon Success
+  61610  Sysmon: DNS Query
+  ...
+
+SOURCE HOST DISTRIBUTION:
+  WS-ADMIN-01:    [count]
+  WS-RECV-03:     [count]
+  SRV-HEALTH-DB:  [count]
+  SRV-INS-DB:     [count]
+  SRV-DC-01:      [count]
+
+HYPOTHESIS COVERAGE MATRIX:
+  H1 (PsExec):       [OK]
+  H2 (LSASS):        [OK]
+  H3 (WMI):          [OK]
+  H4 (PSRemoting):   [OK]
+  H5 (Svc Accounts): [OK]
+
+================================================================
+```
+
+---
