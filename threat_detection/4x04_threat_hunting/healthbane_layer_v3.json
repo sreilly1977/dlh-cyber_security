@@ -12,9 +12,233 @@
     {
       "techniqueID": "T1566.001",
       "tactic": "initial-access",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x00 phishing dissection. 3 emails confirmed (meddefense-portal, outlook-protection, meddefense-benefits). Diane Marsh click 2026-04-14.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1204.002",
+      "tactic": "execution",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 dropper analysis. HEALTHBANE_S2_invoice.docm requires user-enable-macros click.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "tactic": "execution",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 exfiltrator sync_healthdata.ps1 is PowerShell.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.005",
+      "tactic": "execution",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 dropper uses VBA macro (AutoOpen and Document_Open handlers).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1547.001",
+      "tactic": "persistence",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 RAT references HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\HealthSync in sandbox report.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.001",
+      "tactic": "command-and-control",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x01 + 4x03. HTTPS beaconing to healthbane-c2.net:443 every ~5 min.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.004",
+      "tactic": "command-and-control",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 exfiltrator constructs DNS TXT queries to data-sync.healthbane-c2.net for data exfil (Stage 3 at partner orgs).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1573.001",
+      "tactic": "command-and-control",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 RAT implements RC4-like stream cipher for C2 payload wrapping before TLS (defense in depth against proxy inspection).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1027",
+      "tactic": "defense-evasion",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 dropper base64+XOR-obfuscated VBA payload; exfiltrator script uses encoded command invocations.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1027.010",
+      "tactic": "defense-evasion",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 exfiltrator uses -EncodedCommand PowerShell invocation form.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1140",
+      "tactic": "defense-evasion",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 dropper decodes embedded payload at runtime (chr()+XOR chain).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1105",
+      "tactic": "command-and-control",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x03 dropper downloads svchost_update.exe from healthbane-c2.net/update/.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1583.001",
+      "tactic": "resource-development",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED (attacker-side) - 4x00 WHOIS analysis confirmed newly registered lookalike domains.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1566.002",
+      "tactic": "initial-access",
+      "score": 100,
+      "color": "#FF0000",
+      "comment": "OBSERVED (Stages 1-3, 4x02/4x03 evidence): OBSERVED - 4x00 classified 3 of 8 emails as spearphishing link.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1041",
+      "tactic": "exfiltration",
       "score": 50,
       "color": "#FFBF00",
-      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): OBSERVED - 4x00 phishing dissection. 3 emails confirmed (meddefense-portal, outlook-protection, meddefense-benefits). Diane Marsh click 2026-04-14.T1204.002",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): INFERRED - 4x03 exfiltrator has C2-upload code path. Not observed against MedDefense (Stage 3 did not execute here).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1048.003",
+      "tactic": "exfiltration",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): INFERRED - DNS exfiltration capability present in exfiltrator code. Not observed at MedDefense.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1005",
+      "tactic": "collection",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): INFERRED - exfiltrator targets database file patterns and SELECT query outputs. Not observed at MedDefense in 4x03.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1078",
+      "tactic": "defense-evasion",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): INFERRED - Valid Accounts usage likely (stolen phishing credentials used for follow-on). Not yet confirmed beyond dmarsh credentials in 4x00.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1053.005",
+      "tactic": "persistence",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): NOT COVERED - Scheduled Task persistence. Not described in Stages 1-3, not in 4x03 samples.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1074.001",
+      "tactic": "collection",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): NOT COVERED - Local Data Staging. Advisory mentions in Stage 3 at partner orgs but not in 4x03 samples observed at MedDefense.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1560.001",
+      "tactic": "collection",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): NOT COVERED - Archive via Utility. Not in captured samples.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070.001",
+      "tactic": "defense-evasion",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): NOT COVERED - Clear Windows Event Logs. No detection, no evidence.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1112",
+      "tactic": "defense-evasion",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): INFERRED - 4x03 sandbox shows Run-key registry write. Full scope of registry modification not mapped.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.002",
+      "tactic": "lateral-movement",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED (Stage 4): PsExec C:\\Users\\Public\\Downloads\\PsExec64.exe from WS-RECV-03 to SRV-HEALTH-DB, SRV-INS-DB, SRV-DC-01 (4x04 Tasks 4, 10)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1047",
+      "tactic": "execution",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED (Stage 4): wsmprovhost.exe follow-on on SRV-HEALTH-DB and SRV-INS-DB during off-hours sessions (4x04 Tasks 5, 10)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.001",
+      "tactic": "credential-access",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED (Stage 4): C:\\Windows\\Temp\\debug_tool.exe accessed lsass.exe with 0x1010 memory-read mask on WS-RECV-03 (4x04 Tasks 6, 10)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.006",
+      "tactic": "lateral-movement",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED (Stage 4): Enter-PSSession as svc_healthsync and Copy-Item of sync_healthdata.ps1 to C:\\Windows\\Temp on DB servers (4x04 Tasks 7, 10)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1078.002",
+      "tactic": "defense-evasion",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED (Stage 4): svc_healthsync workstation-source NTLM logons violating authorization matrix RULES 1-3 (4x04 Task 9)",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1550.002",
+      "tactic": "defense-evasion",
+      "score": 100,
+      "color": "#C00000",
+      "comment": "OBSERVED (Stage 4, hunt-confirmed; previously NOTCOVERED in 4x03 map): OBSERVED: NTLM authentication by service account from workstation, RULE 3 pass-the-hash indicator (4x04 Task 9); INFERRED: hash-level credential reuse mechanism",
       "enabled": true
     }
   ],

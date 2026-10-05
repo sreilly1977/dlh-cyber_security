@@ -2,8 +2,10 @@
 #
 # Name: 11-attack_mapping_v3.sh
 # Purpose: Produce version 3 of the HEALTHBANE ATT&CK mapping. Loads the
-#          4x03 attack mapping (reference/4x03_attack_mapping.json, 29
-#          techniques, 16 OBSERVED = 55%), incorporates the Stage 4
+#          4x03 attack mapping (reference/4x03_attack_mapping.json, a
+#          Navigator-format layer with 29 techniques whose status is
+#          encoded in the color legend: #c40000 OBSERVED, #ffcf00
+#          INFERRED, #8a8a8a NOT COVERED), incorporates the Stage 4
 #          techniques confirmed by the 4x04 hunt (PsExec/SMB T1021.002,
 #          WMI T1047, LSASS memory T1003.001, WinRM T1021.006, Domain
 #          Accounts T1078.002, Pass the Hash T1550.002), reclassifies
@@ -20,16 +22,11 @@
 # Author: Steve - Cybersecurity Engineer
 # Date: 05 October 2026
 #
-# Hunt evidence per technique (Tasks 4-10):
-#   T1021.002  PsExec from WS-RECV-03 to SRV-HEALTH-DB / SRV-INS-DB /
-#              SRV-DC-01, staged binary C:\Users\Public\Downloads\
-#   T1047      wsmprovhost.exe follow-on on DB targets, off-hours
-#   T1003.001  C:\Windows\Temp\debug_tool.exe -> lsass.exe, 0x1010 mask
-#   T1021.006  Enter-PSSession / Copy-Item as svc_healthsync
-#   T1078.002  svc_healthsync workstation-source NTLM logons
-#              (authorization matrix RULES 1-3 violated)
-#   T1550.002  NTLM by service account = RULE 3 pass-the-hash
-#              indicator (mechanism inferred, misuse observed)
+# Status decoding precedence:
+#   1. explicit status/state/classification field, if present
+#   2. color legend per the 4x03 layer (c40000/ffcf00/8a8a8a,
+#      case-insensitive)
+#   3. Navigator score (>=75 observed, else inferred)
 
 set -euo pipefail
 
@@ -41,12 +38,9 @@ if [[ ! -r "$MAPPING" ]]; then
   exit 1
 fi
 
-# --- Parse the 4x03 mapping (schema-tolerant) -----------------------------------
-# Accepts: top-level array of technique objects, or an object with a
-# .techniques array. ID from techniqueID/technique_id/id/tech_id.
-# Status from status/state/classification, or derived from Navigator
-# score (>=75 OBSERVED, <=50 INFERRED). Emits TSV:
-#   1 id  2 raw_status  3 tactic  4 comment  5 score
+# --- Parse the 4x03 mapping (Navigator layer, status from color) ----------------
+# Emits TSV: 1 id  2 statusexpr (status field | color | score)  3 tactic
+#            4 comment  5 score
 old_tsv=$(jq -r '
   (if type == "array" then .
    elif (.techniques | type) == "array" then .techniques
@@ -55,7 +49,9 @@ old_tsv=$(jq -r '
     then empty
     else
       [ (.techniqueID // .technique_id // .id // .tech_id),
-        (.status // .state // .classification // "SCOREDERIVED"),
+        ((.status // .state // .classification // "NOSTATUS")
+         + "|" + ((.color // "") | tostring)
+         + "|" + (((.score // 0) | tostring))),
         (.tactic // "-"),
         (.comment // .description // ""),
         ((.score // 0) | tostring) ]
@@ -65,29 +61,39 @@ old_tsv=$(jq -r '
 
 if [[ -z "$old_tsv" ]]; then
   echo "ERROR: no technique entries extracted from $MAPPING" >&2
-  echo "  Schema keys detected:" >&2
-  jq -r 'keys?' "$MAPPING" >&2 || true
-  echo "  Please check the file structure against the expected format." >&2
+  echo "  Top-level keys detected:" >&2
+  jq -r 'keys? // "n/a"' "$MAPPING" >&2 || true
   exit 1
 fi
 
-# Normalize status into OBSERVED / INFERRED / NOTCOVERED buckets
+# Status decode: explicit field first, then 4x03 color legend, then score
 norm_status() {
-  local s="$1" sc="$2"
-  case "$s" in
-    *NOT*COVER*|*NOTCOVER*) echo "NOTCOVERED" ;;
-    *OBSERV*)               echo "OBSERVED" ;;
-    *INFER*)                echo "INFERRED" ;;
-    *)
-      if [[ "${sc:-0}" =~ ^[0-9]+$ ]] && (( sc >= 75 )); then echo "OBSERVED"
-      else echo "INFERRED"; fi ;;
+  local expr="$1"
+  local status color score
+  status="${expr%%|*}"
+  color="${expr#*|}"; color="${color%%|*}"
+  score="${expr##*|}"
+
+  case "$(echo "$status" | tr '[:lower:]' '[:upper:]')" in
+    *NOT*COVER*|*NOTCOVER*) echo "NOTCOVERED"; return ;;
+    *OBSERV*)               echo "OBSERVED";   return ;;
+    *INFER*)                echo "INFERRED";   return ;;
   esac
+
+  case "$(echo "$color" | tr '[:lower:]' '[:upper:]')" in
+    *C40000*) echo "OBSERVED";   return ;;   # 4x03 legend: red = OBSERVED
+    *FFCF00*) echo "INFERRED";   return ;;   # amber = INFERRED
+    *8A8A8A*) echo "NOTCOVERED"; return ;;   # gray = NOT COVERED
+  esac
+
+  if [[ "$score" =~ ^[0-9]+$ ]] && (( score >= 75 )); then echo "OBSERVED"
+  else echo "INFERRED"; fi
 }
 
 declare -A old_status old_tactic old_comment
 declare -a old_order=()
-while IFS=$'\t' read -r oid oraw otac ocomm oscore; do
-  st=$(norm_status "$oraw" "$oscore")
+while IFS=$'\t' read -r oid oexpr otac ocomm oscore; do
+  st=$(norm_status "$oexpr")
   if [[ -z "${old_status[$oid]+x}" ]]; then
     old_status["$oid"]="$st"; old_tactic["$oid"]="$otac"
     old_comment["$oid"]="$ocomm"; old_order+=("$oid")
@@ -104,15 +110,22 @@ for oid in "${old_order[@]}"; do
   esac
 done
 
+if (( old_observed < 16 )); then
+  echo "WARNING: only ${old_observed} OBSERVED techniques parsed from" >&2
+  echo "         $MAPPING (expected 16 per the 4x03 documentation)." >&2
+  echo "         Colors seen: $(jq -r '.techniques[].color // "none"' "$MAPPING" | sort | uniq -c | tr '\n' ' ')" >&2
+  echo "         Continuing - verify the legend mapping." >&2
+fi
+
 # --- Hunt-discovered Stage 4 technique set --------------------------------------
 declare -a hunt_ids=(T1021.002 T1047 T1003.001 T1021.006 T1078.002 T1550.002)
 declare -A hunt_name hunt_tactic hunt_evidence hunt_hybrid
-hunt_name[T1021.002]="SMB/Admin Shares";        hunt_tactic[T1021.002]="lateral-movement"
-hunt_name[T1047]="WMI";                         hunt_tactic[T1047]="execution"
-hunt_name[T1003.001]="LSASS Memory";            hunt_tactic[T1003.001]="credential-access"
-hunt_name[T1021.006]="Windows Remote Mgmt";    hunt_tactic[T1021.006]="lateral-movement"
-hunt_name[T1078.002]="Domain Accounts";        hunt_tactic[T1078.002]="defense-evasion"
-hunt_name[T1550.002]="Pass the Hash";          hunt_tactic[T1550.002]="defense-evasion"
+hunt_name[T1021.002]="SMB/Admin Shares";     hunt_tactic[T1021.002]="lateral-movement"
+hunt_name[T1047]="WMI";                      hunt_tactic[T1047]="execution"
+hunt_name[T1003.001]="LSASS Memory";         hunt_tactic[T1003.001]="credential-access"
+hunt_name[T1021.006]="Windows Remote Mgmt"; hunt_tactic[T1021.006]="lateral-movement"
+hunt_name[T1078.002]="Domain Accounts";     hunt_tactic[T1078.002]="defense-evasion"
+hunt_name[T1550.002]="Pass the Hash";       hunt_tactic[T1550.002]="defense-evasion"
 
 hunt_evidence[T1021.002]="OBSERVED (Stage 4): PsExec C:\\Users\\Public\\Downloads\\PsExec64.exe from WS-RECV-03 to SRV-HEALTH-DB, SRV-INS-DB, SRV-DC-01 (4x04 Tasks 4, 10)"
 hunt_evidence[T1047]="OBSERVED (Stage 4): wsmprovhost.exe follow-on on SRV-HEALTH-DB and SRV-INS-DB during off-hours sessions (4x04 Tasks 5, 10)"
@@ -120,69 +133,77 @@ hunt_evidence[T1003.001]="OBSERVED (Stage 4): C:\\Windows\\Temp\\debug_tool.exe 
 hunt_evidence[T1021.006]="OBSERVED (Stage 4): Enter-PSSession as svc_healthsync and Copy-Item of sync_healthdata.ps1 to C:\\Windows\\Temp on DB servers (4x04 Tasks 7, 10)"
 hunt_evidence[T1078.002]="OBSERVED (Stage 4): svc_healthsync workstation-source NTLM logons violating authorization matrix RULES 1-3 (4x04 Task 9)"
 hunt_evidence[T1550.002]="OBSERVED: NTLM authentication by service account from workstation, RULE 3 pass-the-hash indicator (4x04 Task 9); INFERRED: hash-level credential reuse mechanism"
-
 hunt_hybrid[T1550.002]=1
 
-# --- Merge into the v3 layer technique list -------------------------------------
-# TSV: 1 id  2 tactic  3 score  4 color  5 comment
-merged_tsv=""
+# --- Merge into the v3 layer (temp file, one printf per entry) ------------------
+merge_file=$(mktemp)
+trap 'rm -f "$merge_file"' EXIT
+
+tier1_n=0; tier4_n=0; hunt_new=0; hunt_reclassified=0; hunt_emitted=0
+reclassified_list=""
 
 # Tier 1: previously observed (Stages 1-3) carry over unchanged
 for oid in "${old_order[@]}"; do
   if [[ "${old_status[$oid]}" == "OBSERVED" ]]; then
     comm="OBSERVED (Stages 1-3, 4x02/4x03 evidence)"
     [[ -n "${old_comment[$oid]}" ]] && comm="${comm}: ${old_comment[$oid]}"
-    merged_tsv+="$(printf '%s\t%s\t100\t#FF0000\t%s\n' "$oid" "${old_tactic[$oid]}" "$comm")"
+    printf '%s\t%s\t100\t#FF0000\t%s\n' "$oid" "${old_tactic[$oid]}" "$comm" >> "$merge_file"
+    tier1_n=$((tier1_n + 1))
   fi
 done
 
-# Tier 4: previously inferred techniques NOT confirmed by the hunt remain inferred
+# Tier 4: previously inferred/not covered, not confirmed by the hunt
 for oid in "${old_order[@]}"; do
   in_hunt=false
   for hid in "${hunt_ids[@]}"; do [[ "$hid" == "$oid" ]] && in_hunt=true; done
-  if [[ "${old_status[$oid]}" == "INFERRED" && "$in_hunt" == "false" ]]; then
+  if [[ "$in_hunt" == "false" && ( "${old_status[$oid]}" == "INFERRED" || "${old_status[$oid]}" == "NOTCOVERED" ) ]]; then
     comm="INFERRED (retained from 4x03 mapping, not yet observed)"
     [[ -n "${old_comment[$oid]}" ]] && comm="${comm}: ${old_comment[$oid]}"
-    merged_tsv+="$(printf '%s\t%s\t50\t#FFBF00\t%s\n' "$oid" "${old_tactic[$oid]}" "$comm")"
+    printf '%s\t%s\t50\t#FFBF00\t%s\n' "$oid" "${old_tactic[$oid]}" "$comm" >> "$merge_file"
+    tier4_n=$((tier4_n + 1))
   fi
 done
 
 # Hunt set: reclassified (present in old map) or newly observed (absent)
-hunt_new=0; hunt_reclassified=0; hunt_hybrid_n=0
-reclassified_list=""
 for hid in "${hunt_ids[@]}"; do
   if [[ -n "${old_status[$hid]+x}" && "${old_status[$hid]}" != "OBSERVED" ]]; then
-    # Previously inferred or not covered -> now observed in Stage 4
     hunt_reclassified=$((hunt_reclassified + 1))
     prev="${old_status[$hid]}"
-    comm="$(printf 'OBSERVED (Stage 4, hunt-confirmed; previously %s in 4x03 map)' "$prev"): ${hunt_evidence[$hid]#OBSERVED*: }"
-    comm="$(printf 'OBSERVED (Stage 4, hunt-confirmed; previously %s in 4x03 map): %s' "$prev" "${hunt_evidence[$hid]}")"
-    merged_tsv+="$(printf '%s\t%s\t100\t#C00000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "$comm")"
+    comm=$(printf 'OBSERVED (Stage 4, hunt-confirmed; previously %s in 4x03 map): %s' "$prev" "${hunt_evidence[$hid]}")
+    printf '%s\t%s\t100\t#C00000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "$comm" >> "$merge_file"
     reclassified_list+="${hid} (was ${prev})
 "
   elif [[ -z "${old_status[$hid]+x}" ]]; then
-    # Absent from the previous mapping entirely
     hunt_new=$((hunt_new + 1))
     if [[ -n "${hunt_hybrid[$hid]+x}" ]]; then
-      merged_tsv+="$(printf '%s\t%s\t75\t#FF8000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "${hunt_evidence[$hid]}")"
+      printf '%s\t%s\t75\t#FF8000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "${hunt_evidence[$hid]}" >> "$merge_file"
     else
-      merged_tsv+="$(printf '%s\t%s\t100\t#C00000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "${hunt_evidence[$hid]}")"
+      printf '%s\t%s\t100\t#C00000\t%s\n' "$hid" "${hunt_tactic[$hid]}" "${hunt_evidence[$hid]}" >> "$merge_file"
     fi
   fi
-  [[ -n "${hunt_hybrid[$hid]+x}" ]] && hunt_hybrid_n=1
+  hunt_emitted=$((hunt_emitted + 1))
 done
+
+total_entries=$(( tier1_n + tier4_n + hunt_emitted ))
 
 # --- Statistics -------------------------------------------------------------------
 new_observed=$(( old_observed + hunt_reclassified + hunt_new ))
 new_total=$(( old_total + hunt_new ))
 old_pct=$(awk -v o="$old_observed" -v t="$old_total" 'BEGIN {printf "%.0f", 100*o/t}')
 new_pct=$(awk -v o="$new_observed" -v t="$new_total" 'BEGIN {printf "%.0f", 100*o/t}')
-fully_observed=$(( new_observed - hunt_hybrid_n ))   # excluding the hybrid PtH entry
+hybrid_flag=1
+fully_observed=$(( new_observed - hybrid_flag ))
 
-# --- Console output ---------------------------------------------------------------
+# --- Console output -----------------------------------------------------------------
 echo "================================================================"
 echo "   ATT&CK MAPPING UPDATE - HEALTHBANE (Post-Hunt, v3)"
 echo "================================================================"
+echo
+echo "PARSER CHECK:"
+echo "  4x03 mapping parsed: ${old_total} techniques (${old_observed} observed,"
+echo "  ${old_inferred} inferred, ${old_notcovered} not covered)"
+echo "  Layer entries emitted: ${total_entries} (${tier1_n} tier-1, ${tier4_n}"
+echo "  tier-4, ${hunt_emitted} hunt)"
 echo
 echo "NEW TECHNIQUES FROM HUNT:"
 for hid in "${hunt_ids[@]}"; do
@@ -198,7 +219,6 @@ if [[ -n "$reclassified_list" ]]; then
 fi
 echo "MAPPING STATISTICS:"
 echo "  4x03 Mapping: ${old_observed} observed / ${old_total} total (${old_pct}%)"
-echo "    (${old_inferred} inferred, ${old_notcovered} not covered)"
 echo "  4x04 Update:  +${hunt_new} newly added, +${hunt_reclassified} reclassified"
 echo "                as observed from hunt evidence"
 echo "  Layer now:    ${new_observed} observed / ${new_total} total"
@@ -217,7 +237,7 @@ tech_json=$(jq -R -s '
   split("\n") | map(select(length > 0)) | map(split("\t")) |
   map({techniqueID: .[0], tactic: .[1], score: (.[2] | tonumber),
        color: .[3], comment: .[4], enabled: true})
-' <<< "$merged_tsv")
+' "$merge_file")
 
 jq -n --argjson techniques "$tech_json" '
 {
@@ -241,6 +261,14 @@ jq -n --argjson techniques "$tech_json" '
   ]
 }' > "$OUTPUT"
 
-echo "[*] Navigator layer saved: ${OUTPUT}"
+# --- Post-write validation gate ------------------------------------------------------
+layer_len=$(jq '.techniques | length' "$OUTPUT")
+if (( layer_len < 29 )); then
+  echo "ERROR: layer written with only ${layer_len} techniques (expected >= 29);" >&2
+  echo "       refusing to certify $OUTPUT - inspect the parse counts above." >&2
+  exit 1
+fi
+
+echo "[*] Navigator layer saved: ${OUTPUT} (${layer_len} techniques)"
 echo
 echo "================================================================"
