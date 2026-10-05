@@ -18,16 +18,6 @@
 #   window  = Mon-Fri 08:00-18:00 Central Time (CDT = UTC-5 in May 2026)
 #   targets = SRV-AV-01, SRV-BACKUP-01, SRV-DC-01, SRV-FILE-01,
 #             SRV-HEALTH-DB, SRV-INS-DB, SRV-PATCH-01
-# Notes:
-#   - hunt_meta.target_host populates on PsExec events in this dataset and
-#     is the primary target source; destinationHostname and command-line
-#     UNC tokens are fallbacks.
-#   - Some matched events (e.g. Sysmon network/DNS events) carry an image
-#     but no commandLine and often no user field; the account flag is only
-#     raised when a user value is present, not when the field is absent.
-#   - An additional advisory-derived flag: PsExec binary executed from a
-#     writable staging path (C:\Users\Public, C:\Windows\Temp,
-#     C:\ProgramData), per TTP 4.2 observed paths in HC3-ADV-004.
 
 set -euo pipefail
 
@@ -57,11 +47,11 @@ psexec_tsv=$(jq -r '
   | ($ed.image // "") as $img
   | ($ed.commandLine // "") as $cmd
   | select((($img + " " + $cmd) | test("(?i)psexec")))
-  | (first(
-      [.hunt_meta.target_host, $ed.destinationHostname,
-       ($cmd | split("\\\\")[1] // "" | split(" ")[0])]
-      | .[] | select(. != null and . != "")
-    ) // "-") as $target
+  | (($ed.targetHostname // "") as $hn
+     | if $hn != "" then $hn
+       elif .hunt_meta.target_host != null and .hunt_meta.target_host != ""
+       then .hunt_meta.target_host
+       else "-" end) as $target
   | [
       .timestamp,
       ($ct | strftime("%Y-%m-%d")),
@@ -102,22 +92,45 @@ fi
 baseline_cnt=0
 anomalous_cnt=0
 multisignal_cnt=0
-anomalous_output=""
+report_file=$(mktemp)
+
+trap 'rm -f "$report_file"' EXIT
 
 while IFS=$'\t' read -r ts cdate cday ctime cmins source user ruleid command target pid image; do
   flags=""
 
-  [[ "$source" != "$EXPECTED_SOURCE" ]] && flags+="source_not_admin_host;"
-  (( cmins < BUSINESS_START || cmins > BUSINESS_END )) && flags+="outside_business_hours;"
-  [[ "$cday" == "Saturday" || "$cday" == "Sunday" ]] && flags+="weekend_activity;"
-  if [[ "$user" != "-" && "$user" != "$EXPECTED_USER" ]]; then
-    flags+="unexpected_account;"
+  # Source host check
+  if [[ "$source" != "$EXPECTED_SOURCE" ]]; then
+    flags="${flags}source_not_admin_host;"
   fi
-  [[ ! "$target" =~ $targets_regex ]] && flags+="undocumented_target;"
-  if [[ "$command$image" == *[Uu]sers\\[Pp]ublic* || \
-        "$command$image" == *indows\\[Tt]emp* || \
-        "$command[image" == *rogramData* ]]; then
-    flags+="staging_path_binary;"
+
+  # Business hours check
+  mins_val=$((cmins))
+  if (( mins_val < BUSINESS_START || mins_val > BUSINESS_END )); then
+    flags="${flags}outside_business_hours;"
+  fi
+
+  # Weekend check
+  if [[ "$cday" == "Saturday" || "$cday" == "Sunday" ]]; then
+    flags="${flags}weekend_activity;"
+  fi
+
+  # User account check
+  if [[ "$user" != "-" && "$user" != "$EXPECTED_USER" ]]; then
+    flags="${flags}unexpected_account;"
+  fi
+
+  # Target host check
+  if [[ ! "$target" =~ $targets_regex ]]; then
+    flags="${flags}undocumented_target;"
+  fi
+
+  # Staging path check (advisory TTP 4.2 drop locations)
+  if [[ "$command$image" == *"[Uu]sers\\"* || \
+        "$command$image" == *"Windows\\"* ]] && \
+     [[ "$command$image" == *"[Pp]ublic"* || "$command$image" == *"[Tt]emp"* || \
+        "$command$image" == *"[Pp]rogramData"* ]]; then
+    flags="${flags}staging_path_binary;"
   fi
 
   if [[ -z "$flags" ]]; then
@@ -128,48 +141,53 @@ while IFS=$'\t' read -r ts cdate cday ctime cmins source user ruleid command tar
   anomalous_cnt=$((anomalous_cnt + 1))
 
   # Multi-signal: wrong source AND wrong account AND wrong timing together
-  if [[ "$flags" == *source_not_admin_host* && "$flags" == *unexpected_account* \
-     && ( "$flags" == *outside_business_hours* || "$flags" == *weekend_activity* ) ]]; then
+  if [[ "$flags" == *"source_not_admin_host"* && "$flags" == *"unexpected_account"* ]] && \
+     [[ "$flags" == *"outside_business_hours"* || "$flags" == *"weekend_activity"* ]]; then
     multisignal_cnt=$((multisignal_cnt + 1))
   fi
 
-  {
-    echo ""
-    echo "ANOMALOUS EVENT [A${anomalous_cnt}] (rule ${ruleid}):"
-    echo "  Timestamp: ${ts}  (${cday} ${ctime} CT)"
-    echo "  Source:   ${source}"
-    echo "  User:     ${user}"
-    echo "  Command:  ${command}"
-    echo "  Target:   ${target}"
-    echo "  PID:      ${pid}"
-    echo "  Image:    ${image}"
-    echo "  ANOMALY FLAGS:"
-    IFS=';' read -ra fl <<< "$flags"
-    for f in "${fl[@]}"; do
-      case "$f" in
-        source_not_admin_host)  echo "    [!] Source host is NOT ${EXPECTED_SOURCE}" ;;
-        outside_business_hours) echo "    [!] Time is outside business hours (Mon-Fri 08:00-18:00 CT)" ;;
-        weekend_activity)       echo "    [!] Weekend activity" ;;
-        unexpected_account)
-          if [[ "$user" == *svc_* ]]; then
-            echo "    [!] User is a SERVICE ACCOUNT (${user})"
-          else
-            echo "    [!] User is not ${EXPECTED_USER}"
-          fi ;;
-        undocumented_target)    echo "    [!] Target not in Robert Kim baseline target list" ;;
-        staging_path_binary)    echo "    [!] PsExec binary executed from a writable staging path (advisory TTP 4.2)" ;;
-      esac
-    done
-    if [[ "$target" == "SRV-HEALTH-DB" || "$target" == "SRV-INS-DB" ]]; then
-      echo "    [!] Target is a DATABASE server (Stage 4 priority target)"
-    fi
-  } >> /tmp/anomalous_report_$$
+  cat >> "$report_file" <<EOF
+
+ANOMALOUS EVENT [A${anomalous_cnt}] (rule ${ruleid}):
+  Timestamp: ${ts}  (${cday} ${ctime} CT)
+  Source:   ${source}
+  User:     ${user}
+  Command:  ${command}
+  Target:   ${target}
+  PID:      ${pid}
+  Image:    ${image}
+  ANOMALY FLAGS:
+EOF
+
+  IFS=';' read -ra fl <<< "$flags"
+  for f in "${fl[@]}"; do
+    case "$f" in
+      source_not_admin_host)
+        echo "    [!] Source host is NOT ${EXPECTED_SOURCE}" >> "$report_file" ;;
+      outside_business_hours)
+        echo "    [!] Time is outside business hours (Mon-Fri 08:00-18:00 CT)" >> "$report_file" ;;
+      weekend_activity)
+        echo "    [!] Weekend activity" >> "$report_file" ;;
+      unexpected_account)
+        if [[ "$user" == *svc_* ]]; then
+          echo "    [!] User is a SERVICE ACCOUNT (${user})" >> "$report_file"
+        else
+          echo "    [!] User is not ${EXPECTED_USER}" >> "$report_file"
+        fi ;;
+      undocumented_target)
+        echo "    [!] Target not in Robert Kim baseline target list" >> "$report_file" ;;
+      staging_path_binary)
+        echo "    [!] PsExec binary executed from a writable staging path (advisory TTP 4.2)" >> "$report_file" ;;
+    esac
+  done
+
+  if [[ "$target" == "SRV-HEALTH-DB" || "$target" == "SRV-INS-DB" ]]; then
+    echo "    [!] Target is a DATABASE server (Stage 4 priority target)" >> "$report_file"
+  fi
 done <<< "$psexec_tsv"
 
-cat /tmp/anomalous_report_$$ 2>/dev/null || true
-rm -f /tmp/anomalous_report_$$ 2>/dev/null || true
+cat "$report_file" 2>/dev/null || true
 
-# --- Finding and confidence assessment -------------------------------------------
 echo "================================================================"
 echo "QUERY RESULTS:"
 echo "  Total PsExec events in 14 days: ${total}"
