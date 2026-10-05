@@ -982,3 +982,71 @@ ASSESSMENT:
 ```
 
 ---
+
+# [11. ATT&CK Mapping: Stage 4](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/11-attack_mapping_v3.sh)
+### advanced
+
+## Goal: 
+
+Map all hunt findings to MITRE ATT&CK techniques and produce an updated Navigator layer showing the complete HEALTHBANE TTP profile including Stage 4 lateral movement.
+
+## Context: 
+
+Your 4x03 mapping covered 16 of 29 observed techniques, or 55%. The hunt revealed techniques that were completely absent from the previous mapping. This update shows the broader scope of HEALTHBANE: it was not only phishing, malware and exfiltration. It also used legitimate tools for lateral movement.
+
+## Instructions: 
+
+Write a script 11-attack_mapping_v3.sh that:
+
+1. Loads reference/4x03_attack_mapping.json
+
+2. Adds newly discovered techniques from hunt findings:
+
+    T1021.002 SMB/Admin Shares
+    T1047 WMI
+    T1003.001 LSASS Memory
+    T1021.006 Windows Remote Management
+    T1078.002 Domain Accounts
+    T1550.002 Pass the Hash or NTLM credential misuse if supported by evidence
+
+3. Reclassifies techniques that were previously inferred but now observed
+
+4. Generates healthbane_layer_v3.json
+
+5. Uses four tiers:
+
+    OBSERVED Stages 1-3
+    OBSERVED Stage 4
+    NEWLY OBSERVED from hunt
+    INFERRED
+
+6. Produces comparison statistics
+
+**Expected Output:**
+
+```bash
+$ ./11-attack_mapping_v3.sh
+
+================================================================
+   ATT&CK MAPPING UPDATE - HEALTHBANE (Post-Hunt, v3)
+================================================================
+
+NEW TECHNIQUES FROM HUNT:
+  T1021.002  SMB/Admin Shares       [OBSERVED]
+  T1047      WMI                    [OBSERVED]
+  T1003.001  LSASS Memory           [OBSERVED]
+  T1021.006  Windows Remote Mgmt    [OBSERVED]
+  T1078.002  Domain Accounts        [OBSERVED]
+  T1550.002  Pass the Hash          [OBSERVED/INFERRED]
+
+MAPPING STATISTICS:
+  4x03 Mapping: 16 observed / 29 total
+  4x04 Update:  expanded with Stage 4 techniques
+  Coverage:     55% -> approximately 80%
+
+[*] Navigator layer saved: healthbane_layer_v3.json
+
+================================================================
+```
+
+---

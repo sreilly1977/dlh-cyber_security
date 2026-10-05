@@ -1,0 +1,57 @@
+{
+  "name": "HEALTHBANE Campaign v3",
+  "versions": {
+    "attack": "15",
+    "navigator": "4.8.2",
+    "layer": "4.4"
+  },
+  "domain": "enterprise-attack",
+  "description": "ATT&CK technique mapping for HEALTHBANE, update 3 (post-hunt). Tiers: OBSERVED Stages 1-3 scored 100 (#FF0000); OBSERVED Stage 4 hunt-confirmed scored 100 (#C00000); NEWLY OBSERVED from 4x04 hunt scored 75 (#FF8000); INFERRED scored 50 (#FFBF00). Baselines: 4x02 healthbane_layer.json, 4x03 healthbane_layer_v2.json. Source: Project 4x04 Threat Hunting, Tasks 4-10.",
+  "hideDisabled": false,
+  "techniques": [
+    {
+      "techniqueID": "T1566.001",
+      "tactic": "initial-access",
+      "score": 50,
+      "color": "#FFBF00",
+      "comment": "INFERRED (retained from 4x03 mapping, not yet observed): OBSERVED - 4x00 phishing dissection. 3 emails confirmed (meddefense-portal, outlook-protection, meddefense-benefits). Diane Marsh click 2026-04-14.T1204.002",
+      "enabled": true
+    }
+  ],
+  "legendItems": [
+    {
+      "label": "OBSERVED Stages 1-3 (Direct Evidence)",
+      "color": "#FF0000"
+    },
+    {
+      "label": "OBSERVED Stage 4 (Hunt-Confirmed)",
+      "color": "#C00000"
+    },
+    {
+      "label": "NEWLY OBSERVED (4x04 Hunt)",
+      "color": "#FF8000"
+    },
+    {
+      "label": "INFERRED (Retained Hypothesis)",
+      "color": "#FFBF00"
+    }
+  ],
+  "metadata": [
+    {
+      "name": "Campaign",
+      "value": "HEALTHBANE"
+    },
+    {
+      "name": "Analyst",
+      "value": "Steve - Cybersecurity Engineer"
+    },
+    {
+      "name": "Project",
+      "value": "4x04 Threat Hunting"
+    },
+    {
+      "name": "Source",
+      "value": "Tasks 4-10 hunt findings vs 4x03_attack_mapping.json"
+    }
+  ]
+}
