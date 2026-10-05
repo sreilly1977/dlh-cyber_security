@@ -513,3 +513,85 @@ FINDING:
 ```
 
 ---
+
+# [5. Hunt: Lateral Movement (WMI)](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/5-hunt_wmi.sh)
+### advanced
+
+## Goal: 
+
+Execute hypothesis H3 by searching for anomalous WMI remote execution in the SIEM data, distinguishing attacker WMI abuse from legitimate inventory scans.
+
+## Context: 
+
+WMI is powerful and common. Legitimate administrators use it for inventory and configuration checks. Attackers use it for remote execution, enumeration and command staging. Context separates the two.
+
+Materials:
+
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+    Use baseline/robert_kim_activity.json
+
+## Instructions: 
+
+Write a script 5-hunt_wmi.sh that:
+
+1. Extracts all WMI-related events:
+
+    wmiprvse.exe
+    wmic.exe
+    Invoke-WmiMethod
+    WMI remote execution patterns
+
+2. Separates baseline Robert Kim inventory scans from anomalous events
+
+3. For anomalous events:
+
+    timestamp
+    source
+    target
+    user
+    process
+    command line
+    child process if available
+
+4. Documents false-positive analysis:
+
+    why each anomalous event is not legitimate WMI usage
+
+5. Correlates findings with PsExec events when possible
+
+**Expected Output:**
+
+```bash
+$ ./5-hunt_wmi.sh
+
+================================================================
+   HUNT EXECUTION - H3: Lateral Movement via WMI
+   Technique: T1047 Windows Management Instrumentation
+================================================================
+
+QUERY RESULTS:
+  Total WMI-related events: [count]
+  Baseline: [count]
+  ANOMALOUS: [count]
+
+ANOMALOUS EVENTS:
+  [A1] [timestamp] WS-RECV-03 -> SRV-HEALTH-DB
+       wmiprvse.exe spawned cmd.exe
+  [A2] [timestamp] WS-RECV-03 -> SRV-INS-DB
+       wmiprvse.exe spawned cmd.exe
+
+FALSE POSITIVE ANALYSIS:
+  Events originate from non-admin workstation
+  Events occur off-hours
+  Events use service account or non-baseline user
+  Robert Kims WMI baseline is from WS-ADMIN-01 during business hours
+
+FINDING:
+  Status: POSITIVE - HIGH CONFIDENCE
+  Pattern: PsExec establishes access, WMI enumerates the target
+
+================================================================
+```
+
+---
