@@ -831,3 +831,83 @@ STATISTICAL ANALYSIS:
 ```
 
 ---
+
+# [9. Hunt: Service Account Abuse](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/9-hunt_svcaccount.sh)
+
+## Goal: 
+
+Cross-reference service account authentication events against the authorized usage matrix, identifying interactive use of service accounts from workstation endpoints.
+
+## Context: 
+
+Service accounts are designed for automated processes on authorized hosts. svc_healthsync should only authenticate from its documented service host and context. If it authenticates from a workstation, that is highly suspicious.
+
+This is one of the most reliable indicators in the hunt because the deviation from normal is absolute.
+
+Materials:
+
+    Use reference/service_accounts.txt
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+
+## Instructions: 
+
+Write a script 9-hunt_svcaccount.sh that:
+
+1. Loads service account authorization matrix from reference/service_accounts.txt
+
+2. Extracts authentication events for service accounts:
+
+    svc_healthsync
+    svc_insurance
+    svc_backup
+    other listed service accounts if present
+
+3. Classifies each event:
+
+    AUTHORIZED
+    UNAUTHORIZED
+
+4. Checks:
+
+    wrong source host
+    workstation source
+    interactive logon type
+    NTLM use if available
+
+5. Correlates unauthorized usage with other hunt findings
+
+**Expected Output:**
+
+```bash
+$ ./9-hunt_svcaccount.sh
+
+================================================================
+   HUNT EXECUTION - H5: Service Account Abuse
+   Technique: T1078.002 Domain Accounts
+================================================================
+
+SERVICE ACCOUNT AUTHORIZATION MATRIX:
+  svc_healthsync: Authorized on SRV-HEALTH-DB only
+  svc_insurance:  Authorized on SRV-INS-DB only
+  svc_backup:     Authorized on SRV-BACKUP-01 only
+
+AUTHENTICATION AUDIT:
+
+  svc_healthsync:
+    Total auth events: [count]
+    Authorized: [count]
+    UNAUTHORIZED: [count]
+      [timestamp] WS-RECV-03
+      [timestamp] SRV-HEALTH-DB from WS-RECV-03
+      [timestamp] SRV-INS-DB from WS-RECV-03
+
+FINDING:
+  Status: POSITIVE - CRITICAL CONFIDENCE
+  svc_healthsync was used from a workstation and correlated with
+  lateral movement activity.
+
+================================================================
+```
+
+---
