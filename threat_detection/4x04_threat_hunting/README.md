@@ -670,3 +670,86 @@ FINDING:
 ```
 
 ---
+
+# [7. Hunt: PowerShell Remoting](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/7-hunt_psremoting.sh)
+### advanced
+
+## Goal: 
+
+Execute hypothesis H4 by searching for anomalous PowerShell Remoting sessions, distinguishing attacker remote access from Robert Kim's patch management sessions.
+
+## Context: 
+
+PowerShell Remoting enables remote shell and command execution. Robert Kim uses it legitimately during maintenance. The attacker uses it to stage files and move laterally. The tool is the same. The context is different.
+
+Materials:
+
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+    Use baseline/robert_kim_activity.json
+    Use reference/admin_schedule.txt
+
+## Instructions: 
+
+Write a script 7-hunt_psremoting.sh that:
+
+1. Extracts PowerShell Remoting events:
+
+    Enter-PSSession
+    Invoke-Command
+    New-PSSession
+    wsmprovhost.exe
+    Copy-Item to remote session
+
+2. Classifies events against baseline:
+
+    source host
+    time
+    user account
+    target host
+
+3. Documents anomalous events with full context
+
+4. Correlates with previous findings:
+
+    PsExec
+    WMI
+    credential access
+    exfiltrator staging possibility from 4x03
+
+**Expected Output:**
+
+```bash
+$ ./7-hunt_psremoting.sh
+
+================================================================
+   HUNT EXECUTION - H4: PowerShell Remoting
+   Technique: T1021.006 Windows Remote Management
+================================================================
+
+QUERY RESULTS:
+  Total PSRemoting events: [count]
+  Baseline: [count]
+  ANOMALOUS: [count]
+
+ANOMALOUS EVENTS:
+  [A1] [timestamp] WS-RECV-03 -> SRV-HEALTH-DB
+       Enter-PSSession -ComputerName SRV-HEALTH-DB
+       User: MEDDEFENSE\svc_healthsync
+  [A2] [timestamp] SRV-HEALTH-DB
+       Copy-Item invoked
+
+CROSS-REFERENCE WITH 4x03:
+  Copy-Item events transfer files to database servers.
+  The HEALTHBANE exfiltrator from 4x03 was staged on servers with
+  access to health records.
+
+FINDING:
+  Status: POSITIVE - HIGH CONFIDENCE
+  PSRemoting from non-admin host using service account is consistent
+  with attacker staging activity.
+
+================================================================
+```
+
+---
