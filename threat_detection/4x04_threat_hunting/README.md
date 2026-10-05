@@ -753,3 +753,81 @@ FINDING:
 ```
 
 ---
+
+# [8. Hunt: Temporal Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/8-hunt_temporal.sh)
+#### advanced
+
+## Goal: 
+
+Aggregate all suspicious findings from Tasks 4-7 by timestamp and produce a statistical analysis showing that the off-hours activity cluster is not consistent with legitimate operations.
+
+## Context: 
+
+Individual events can be ambiguous. Aggregated activity patterns are harder to explain away. When all anomalous administrative-tool activity occurs between 01:00 and 05:00 and baseline activity occurs during business hours, the pattern strongly supports threat activity.
+
+Materials:
+
+    Use outputs or logic from Tasks 4-7
+    Use baseline/robert_kim_activity.json
+
+## Instructions: 
+
+Write a script 8-hunt_temporal.sh that:
+
+1. Collects anomalous events from Tasks 4-7 into a single timeline
+
+2. Produces hour-of-day histogram:
+
+    baseline events
+    anomalous events
+
+3. Calculates statistical deviation or clearly explains probability reasoning
+
+4. Identifies activity clusters:
+
+    events grouped within 2-hour windows
+
+5. Documents each session:
+
+    timestamp range
+    duration
+    involved hosts
+    tools used
+    targets
+
+6. Explains why the activity is inconsistent with Robert Kim's documented baseline
+
+**Expected Output:**
+
+```bash
+$ ./8-hunt_temporal.sh
+
+================================================================
+   TEMPORAL ANALYSIS - Anomalous Activity Clusters
+================================================================
+
+HOUR-OF-DAY DISTRIBUTION:
+  Baseline:  business hours only
+  Anomalous: off-hours cluster
+
+ACTIVITY SESSIONS:
+  SESSION 1:
+    Credential dump on WS-RECV-03
+  SESSION 2:
+    PsExec -> WMI -> PSRemoting to SRV-HEALTH-DB
+  SESSION 3:
+    PsExec -> WMI -> PSRemoting to SRV-INS-DB
+  SESSION 4:
+    Credential refresh
+  SESSION 5:
+    PsExec and WMI activity against SRV-DC-01
+
+STATISTICAL ANALYSIS:
+  Baseline off-hours rate: 0
+  Anomalous off-hours events: [count]
+  CONCLUSION: Activity is NOT consistent with normal operations.
+
+================================================================
+```
+
+---
