@@ -595,3 +595,78 @@ FINDING:
 ```
 
 ---
+
+# [6. Hunt: Credential Access](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/6-hunt_credentials.sh)
+
+## Goal: 
+
+Execute hypothesis H2 by searching for credential dumping indicators and correlating LSASS memory access with subsequent authentication events.
+
+## Context: 
+
+Before the attacker could use a service account for lateral movement, they needed credentials. HC3 describes LSASS memory access as a Stage 4 credential access method. This hunt looks for the how behind the stolen credentials.
+
+Materials:
+
+    Use siem_export/wazuh_alerts_14d.json
+    Use siem_export/wazuh_raw_sysmon_14d.json
+    Use reference/service_accounts.txt
+
+## Instructions: 
+
+Write a script 6-hunt_credentials.sh that:
+
+1. Searches for LSASS access events:
+
+    target image contains lsass.exe
+    source process is unusual
+    access mask indicates memory read if available
+
+2. Separates legitimate/system LSASS access from anomalous access
+
+3. Searches for later authentication events using svc_healthsync
+
+4. Correlates:
+
+    LSASS access
+    service account use
+    PsExec/WMI/PSRemoting activity
+
+5. Documents the credential theft timeline
+
+**Expected Output:**
+
+```bash
+$ ./6-hunt_credentials.sh
+
+================================================================
+   HUNT EXECUTION - H2: Credential Access (LSASS)
+   Technique: T1003.001 LSASS Memory
+================================================================
+
+LSASS ACCESS EVENTS:
+  Total LSASS access events: [count]
+  System/legitimate: [count]
+  ANOMALOUS: [count]
+
+  [A1] [timestamp]
+    Host: WS-RECV-03
+    Source Process: C:\Windows\Temp\debug_tool.exe
+    Target: lsass.exe
+    Access Mask: 0x1010
+    -> Consistent with memory dumping
+
+CREDENTIAL USAGE CORRELATION:
+  svc_healthsync authentication from workstations:
+    [timestamp] WS-RECV-03 -> SRV-HEALTH-DB
+    [timestamp] WS-RECV-03 -> SRV-INS-DB
+
+FINDING:
+  Status: POSITIVE - HIGH CONFIDENCE
+  The attacker likely dumped credentials and later used svc_healthsync
+  for lateral movement.
+
+================================================================
+```
+
+---
