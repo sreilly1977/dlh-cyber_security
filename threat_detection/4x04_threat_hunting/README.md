@@ -911,3 +911,74 @@ FINDING:
 ```
 
 ---
+
+# [10. Evidence Correlation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/10-evidence_correlation.sh)
+
+## Goal: 
+
+Correlate all hunt findings from Tasks 4-9 into a unified attack timeline, reconstructing the HEALTHBANE Stage 4 lateral movement chain from credential theft to database server compromise.
+
+## Context: 
+
+Individual hunt findings are fragments. Correlation is the picture. When you lay out credential dumping, PsExec sessions, WMI reconnaissance, PSRemoting file staging and service account abuse on a single timeline, the attacker pattern becomes unmistakable.
+
+## Instructions: 
+
+Write a script 10-evidence_correlation.sh that:
+
+1. Merges anomalous findings from Tasks 4-9 into a chronological timeline
+
+2. Maps each event to a kill chain phase:
+
+    credential access
+    lateral movement
+    reconnaissance
+    staging
+
+3. Identifies attack progression:
+
+    pivot host
+    stolen account
+    reached targets
+
+4. Produces a unified narrative from workstation compromise through database server access
+
+5. Calculates dwell time
+
+6. Provides confidence assessment
+
+**Expected Output:**
+
+```bash
+$ ./10-evidence_correlation.sh
+
+================================================================
+   EVIDENCE CORRELATION - HEALTHBANE Stage 4 Reconstruction
+================================================================
+
+ATTACK TIMELINE:
+  [CREDENTIAL ACCESS]
+    WS-RECV-03: LSASS memory access
+  [LATERAL MOVEMENT]
+    WS-RECV-03 -> SRV-HEALTH-DB using svc_healthsync
+  [RECONNAISSANCE]
+    WMI enumeration on target server
+  [STAGING]
+    PSRemoting / Copy-Item activity
+  [EXPANSION]
+    Activity against SRV-INS-DB and SRV-DC-01
+
+ATTACK SUMMARY:
+  Pivot host:        WS-RECV-03
+  Credential used:   svc_healthsync
+  Targets:           SRV-HEALTH-DB, SRV-INS-DB, SRV-DC-01
+  Tools used:        PsExec, WMI, PSRemoting
+  Dwell time:        [calculated]
+
+ASSESSMENT:
+  HEALTHBANE Stage 4 was executed against MedDefense.
+
+================================================================
+```
+
+---
