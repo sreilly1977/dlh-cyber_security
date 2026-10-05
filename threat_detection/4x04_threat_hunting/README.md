@@ -1135,3 +1135,164 @@ SUMMARY:
 ```
 
 ---
+
+# [13. New Detection Rules](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/13-detection_rules.sh)
+
+## Goal: 
+
+Write detection-rule drafts that close the gaps identified in Task 12, translating hunt findings into automated detection for future attacks.
+
+## Context: 
+
+The hunt found what automated detection missed. Now you close the loop: every technique the hunt uncovered gets a rule or detection logic so future activity can alert automatically.
+
+This is the threat hunting cycle:
+
+    hunt -> find -> detect -> hunt again
+
+This project is self-contained, so you are producing local rule drafts and documentation. No live SIEM deployment is required.
+
+## Instructions: 
+
+Write a script 13-detection_rules.sh that creates:
+
+1. At least four Wazuh-style rule drafts:
+
+    PsExec anomalous source/time
+    LSASS access from non-system process
+    service account authentication from unauthorized host
+    WMI child process anomaly
+
+2. At least one network-level rule draft:
+
+    SMB lateral movement / PsExec service installation pattern
+
+3. For each rule:
+
+    behavior detected
+    hunt evidence that motivated it
+    expected false positive rate
+    baseline comparison logic
+
+4. Updated detection posture:
+
+    before hunt
+    after hunt
+    improved ATT&CK coverage
+
+**Expected Output:**
+
+```bash
+$ ./13-detection_rules.sh
+
+================================================================
+   DETECTION ENGINEERING - Hunt-Derived Rules
+================================================================
+
+=== WAZUH-STYLE RULE DRAFTS ===
+
+[Rule 100100] PsExec from Non-Admin Workstation
+  Behavior: PsExec execution from non-admin workstation
+  Evidence: Hunt Task 4
+  FP Rate: VERY LOW
+
+[Rule 100101] LSASS Memory Access from Non-System Process
+  Behavior: Suspicious LSASS access
+  Evidence: Hunt Task 6
+  FP Rate: LOW
+
+[Rule 100102] Service Account Interactive Logon from Workstation
+  Behavior: service account used from workstation
+  Evidence: Hunt Task 9
+  FP Rate: VERY LOW
+
+[Rule 100103] WMI Remote Child Process Anomaly
+  Behavior: wmiprvse.exe spawning cmd.exe or powershell.exe
+  Evidence: Hunt Task 5
+  FP Rate: MEDIUM
+
+=== NETWORK RULE DRAFTS ===
+
+[Rule 9000030] SMB Lateral Movement - PsExec Service Installation
+  Behavior: PsExec service installation pattern
+  Evidence: Hunt Task 4
+  FP Rate: LOW
+
+=== DETECTION POSTURE UPDATE ===
+  Before hunt: 55% observed coverage
+  After hunt: approximately 80% coverage
+
+================================================================
+```
+
+---
+
+# [14. Threat Hunting Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/14-hunting_report.md)
+
+## Goal: 
+
+Produce the comprehensive threat hunting report synthesizing all findings from T0-T13, suitable for both SOC technical review and Dr. Morales's board presentation.
+
+## Context: 
+
+This is the deliverable James Chen requested. It must answer two questions: "Did HEALTHBANE Stage 4 happen to us ?" and "What have we done to ensure we would detect it if it happens again ?" The report serves the technical team (who need the timeline, the IOCs, and the rules) and the executive board (who need to understand the threat in plain language and the organizational risk).
+
+## Instructions: 
+
+Produce 14-hunting_report.md containing:
+
+1. Executive Summary (for Dr. Morales and the board):
+
+    What was hunted and why
+
+    Key finding: evidence of Stage 4 lateral movement in the MedDefense environment
+
+    Impact assessment: which systems were reached and what data was potentially exposed
+
+    Remediation status: new detection rules deployed, coverage improved from 55% to 80%
+
+2. Hunt Methodology:
+
+    Hypothesis-driven approach (from HC3 advisory to ATT&CK gap analysis to targeted queries)
+
+    Data sources used
+
+    Baseline establishment (Robert Kim's legitimate activity)
+
+3. Findings per Hypothesis (H1 through H5):
+
+    Each with status, evidence summary, and confidence assessment
+
+4. Reconstructed Attack Timeline (from T10):
+
+    Complete chronology from credential theft to database server compromise
+
+5. ATT&CK Update (from T11):
+
+    Coverage improvement visualization (55% to 80%)
+
+    New techniques discovered
+
+6. Detection Improvements (from T13):
+
+    New rules deployed, coverage statistics, gap closure
+
+7. Remaining Gaps and Recommendations:
+
+    What is STILL unknown (the 20% uncovered)
+
+    Immediate actions: incident response for WS-RECV-03 (Module 5 bridge)
+
+    Short-term: service account rotation, privileged access review
+
+    Medium-term: implement full Sysmon deployment with behavioral analytics
+
+8. Lessons Learned:
+
+    Why 55% ATT&CK coverage created a false sense of security
+
+    Why reactive detection alone is insufficient against LOLBin attacks
+
+    Why proactive threat hunting must be a recurring operational discipline
+
+---
