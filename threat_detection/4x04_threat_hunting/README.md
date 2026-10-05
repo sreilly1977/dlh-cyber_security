@@ -1050,3 +1050,88 @@ MAPPING STATISTICS:
 ```
 
 ---
+
+# [12. Detection Gap Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/12-gap_analysis.sh)
+
+## Goal: 
+
+For each newly discovered technique from the hunt, analyze why existing detection rules missed it, identify the required data source, and specify what detection rule is needed.
+
+## Context: 
+
+The hunt proved Stage 4 happened without automated alerts. The gap analysis explains why. For each technique, the missed detection usually falls into one of three categories:
+
+    Data existed but no rule existed
+    Rule existed but was too specific
+    Data source was missing
+
+This classification determines the remediation.
+
+## Instructions: 
+
+Write a script 12-gap_analysis.sh that for each newly discovered technique:
+
+1. Documents the technique and hunt finding
+
+2. Explains why existing detection missed it:
+
+    missing rule
+    missing data
+    overly specific rule
+
+3. Identifies required data source:
+
+    Sysmon Event 1
+    Sysmon Event 10
+    Windows Event 4624
+    PowerShell logs
+
+4. Specifies detection logic:
+
+    fields to match
+    baseline comparison
+    allowlist logic
+
+5. Prioritizes by risk
+
+Required gaps:
+
+    PsExec lateral movement
+    LSASS access
+    WMI remote execution
+    PowerShell Remoting
+    service account misuse
+    NTLM / pass-the-hash-style activity if supported
+
+**Expected Output:**
+
+```bash
+$ ./12-gap_analysis.sh
+
+================================================================
+   DETECTION GAP ANALYSIS - Stage 4 Techniques
+================================================================
+
+GAP 1: T1021.002 PsExec Lateral Movement
+  Hunt Finding: PsExec from non-admin workstation
+  Why Missed: Missing rule
+  Data Source: Sysmon Event 1
+  Required Rule: alert on PsExec source != WS-ADMIN-01 or off-hours
+  Priority: P1
+
+GAP 2: T1003.001 LSASS Credential Access
+  Hunt Finding: non-system process accessing lsass.exe
+  Why Missed: Missing rule
+  Data Source: Sysmon Event 10
+  Required Rule: alert when TargetImage=lsass.exe and source is not allowlisted
+  Priority: P1
+
+SUMMARY:
+  The data was present.
+  The detection logic was missing.
+  Proactive hunting exposed the gap.
+
+================================================================
+```
+
+---
