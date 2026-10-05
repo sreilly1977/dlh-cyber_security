@@ -244,3 +244,88 @@ HYPOTHESIS H1: Lateral Movement via PsExec
 ```
 
 ---
+
+# [2. Know Your Baseline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/4x04_threat_hunting/2-baseline_profile.sh)
+
+## Goal: 
+
+Profile Robert Kim's legitimate administrative activity from the baseline dataset, establishing the normal pattern for PsExec, WMI, PowerShell Remoting and service account usage that will serve as the false positive filter for all subsequent hunts.
+
+## Context: 
+
+You cannot find anomalies without knowing what normal looks like. Robert Kim is the only IT administrator at MedDefense. Every PsExec, every WMI query, every PowerShell Remoting session in the environment should trace back to him during documented maintenance windows. Any deviation from this baseline is either undocumented administrative work or threat activity. Building this profile BEFORE hunting prevents the most common hunting mistake: flagging legitimate admin work as malicious.
+
+Materials:
+
+    Use baseline/robert_kim_activity.json
+    Use reference/admin_schedule.txt
+
+## Instructions: 
+
+Write a script 2-baseline_profile.sh that parses baseline/robert_kim_activity.json and produces a structured profile of legitimate administrative activity.
+
+Your profile must include:
+
+1. Total events by tool (PsExec, WMI, PSRemoting)
+
+2. Source host analysis: which hosts Robert Kim uses (should be ONLY WS-ADMIN-01)
+
+3. Time-of-day distribution: when does he work (should be 08:00-18:00)
+
+4. Day-of-week distribution: which days are maintenance days
+
+5. Target host analysis: which servers he connects to and how often
+
+6. User account analysis: which accounts he uses (should be his named account, not service accounts)
+
+7. Baseline summary:
+
+    normal source host
+    normal time window
+    normal account
+    normal tools
+    normal targets
+
+8. Anomaly detection criteria for later tasks
+
+**Expected Output:**
+
+```bash
+$ ./2-baseline_profile.sh
+
+================================================================
+   BASELINE PROFILE - Robert Kim (IT Administrator)
+   Source: baseline/robert_kim_activity.json
+================================================================
+
+TOOL USAGE SUMMARY:
+  PsExec events:          [count]
+  WMI events:             [count]
+  PSRemoting events:      [count]
+  Total admin events:     [count]
+
+SOURCE HOST:
+  WS-ADMIN-01: [count]
+  Other hosts: 0
+  -> BASELINE: All admin activity originates from WS-ADMIN-01
+
+TIME DISTRIBUTION:
+  08:00-18:00: [count]
+  18:00-08:00: 0
+  -> BASELINE: Zero admin activity outside business hours
+
+USER ACCOUNTS:
+  MEDDEFENSE\robert.kim: [count]
+  Service accounts: 0
+  -> BASELINE: Never uses service accounts interactively
+
+ANOMALY DETECTION CRITERIA:
+  [!] Admin tool from any host other than WS-ADMIN-01
+  [!] Admin tool usage outside business hours
+  [!] Service account used interactively from workstation
+  [!] WMI targeting unusual hosts
+
+================================================================
+```
+
+---
