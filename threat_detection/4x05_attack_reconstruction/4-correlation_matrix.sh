@@ -12,6 +12,7 @@
 #          explicit reasoning.
 # Author: Steve - Cybersecurity Engineer
 # Date: 06 October 2026
+#
 
 set -u
 
