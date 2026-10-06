@@ -799,3 +799,124 @@ STAGE 3 TECHNIQUES:
 ```
 
 ---
+
+# [7. Stage 4 Reconstruction](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/7-stage_4.sh)
+
+## Goal: 
+
+Reconstruct HEALTHBANE Stage 4 (lateral movement and data staging) using correlated evidence from the threat hunt, memory forensics, disk forensics and firewall session analysis.
+
+## Context: 
+
+Stage 4 is the stage your threat hunt discovered. It is also the stage that revealed the limitations of detection-only security. The attacker used PsExec, WMI and PowerShell Remoting -- tools indistinguishable from legitimate administration. Your 4x04 hunt found the behavioral anomalies. The IR evidence now fills in the details that hunting alone could not provide.
+
+The reconstruction of Stage 4 must answer the questions the hunt left open: exactly which hosts were compromised, exactly what credential was used and how it was obtained, exactly what the attacker accessed on the database server, and exactly how far the data staging progressed before the hunt interrupted it.
+
+## Instructions: 
+
+Write a script 7-stage_4.sh that reconstructs Stage 4:
+
+    Lateral Movement Chain:
+
+    Reconstruct the complete pivot chain: from WS-RECV-03 to each target host, with the tool used (PsExec/WMI/PSRemoting), the credential used, and the timestamp.
+
+    Cross-reference the 4x04 hunt findings with IR firewall sessions and memory connections to confirm the full path.
+
+    Identify any lateral movement steps that the hunt MISSED but the IR evidence reveals.
+
+    Credential Access:
+
+    Reconstruct how the attacker obtained the service account credential (svc_healthsync).
+
+    Cross-reference the credential dumping finding from 4x04 (T1003.001 LSASS access) with the IR memory evidence.
+
+    Determine whether additional credentials were compromised beyond what the hunt found.
+
+    Data Access and Staging:
+
+    Reconstruct exactly which systems the attacker accessed using the compromised credential.
+
+    Map data staging activity (from T2 disk analysis) to the lateral movement timeline.
+
+    Determine the sequence: did the attacker stage data directly on WS-RECV-03, or did they pull data from database servers to WS-RECV-03 first ?
+
+    Persistence and Operational Security:
+
+    Integrate the scheduled task finding (T1) into the Stage 4 timeline.
+
+    Document the anti-forensics activity (T2) and its relationship to the overall operation.
+
+    Assess the attacker's operational security: what did they do to avoid detection, and what ultimately exposed them ?
+
+    Containment Moment:
+
+    Reconstruct the exact point at which the 4x04 threat hunt interrupted the attacker's operation.
+
+    Determine what the attacker would likely have done next if the hunt had not triggered incident response.
+
+**Expected Output:**
+
+```bash
+$ ./7-stage_4.sh
+
+================================================================
+   ATTACK RECONSTRUCTION: Stage 4
+   Lateral Movement, Data Staging, and Containment
+================================================================
+
+LATERAL MOVEMENT CHAIN:
+  [Feb 04 01:23] Credential dump on WS-RECV-03
+    Tool: [credential access tool]
+    Target: LSASS process memory
+    Result: svc_healthsync credential obtained
+    Evidence: 4x04 (hunt H4), IR-MEM (loaded module), IR-DISK
+    Technique: T1003.001 LSASS Memory
+    Confidence: CONVERGED (3 sources)
+
+  [Feb 05 02:14] First lateral movement: WS-RECV-03 -> SRV-HEALTH-DB
+    Tool: PsExec
+    Credential: svc_healthsync
+    Evidence: 4x04 (hunt H1), IR-FW (session log)
+    Technique: T1021.002 SMB/Windows Admin Shares
+    Confidence: CONVERGED
+
+  [... full chain with all pivots ...]
+
+CREDENTIAL ASSESSMENT:
+  Credentials confirmed compromised:
+    [1] svc_healthsync (service account, database access)
+        Source: 4x04 hunt + IR memory
+    [2] [any additional credentials from IR evidence]
+
+DATA ACCESS AND STAGING:
+  [timestamp] Query execution on SRV-HEALTH-DB
+    Evidence: IR-DISK (query_results.csv, 8.4 MB)
+    Data type: [patient records / insurance data / ...]
+    Technique: T1005 Data from Local System
+
+  [timestamp] Data compression on WS-RECV-03
+    Evidence: IR-DISK (staging_export_001.zip, 14.2 MB)
+    Technique: T1560.001 Archive Collected Data
+
+  [timestamp] Second staging archive created
+    Evidence: IR-DISK (staging_export_002.zip, 11.8 MB)
+    Technique: T1074.001 Local Data Staging
+
+  STAGING FLOW: SRV-HEALTH-DB -> WS-RECV-03 -> staging archives
+  EXFILTRATION STATUS: [Assessment based on T3 firewall analysis]
+
+CONTAINMENT TIMELINE:
+  [Feb 12] 4x04 threat hunt detected anomalous PsExec activity
+  [date] Hunt report submitted, IR recommended
+  [date] IR team isolated WS-RECV-03
+  [date] Memory captured, disk imaged
+
+  IF NOT CONTAINED: Based on staging file sizes (34.4 MB total)
+  and firewall session patterns, the attacker was [N] sessions
+  from completing exfiltration of staged data. Estimated time
+  to complete: [hours].
+
+================================================================
+```
+
+---
