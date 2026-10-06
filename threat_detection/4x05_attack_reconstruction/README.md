@@ -1378,3 +1378,108 @@ REGULATORY ASSESSMENT:
 ```
 
 ---
+
+# [13. Defensive Posture Evaluation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/13-defense_evaluation.sh)
+### advanced
+
+## Goal: 
+
+Evaluate MedDefense's detection and defense posture at three points in time: before the module (pre-4x00), after the threat hunt (post-4x04), and after the reconstruction (post-4x05), assessing what worked, what failed, and why.
+
+## Context: 
+
+The board will ask: "How did this happen ? Were our defenses inadequate ?" The answer is nuanced. MedDefense's defenses CAUGHT the phishing at Stage 1. The detection improvements from 4x02 and 4x03 WOULD HAVE caught Stage 3 if it had been deployed. The hunt FOUND Stage 4. The reconstruction COMPLETED the picture. The defenses were not inadequate -- they were incomplete. And the reconstruction reveals exactly which completions matter most.
+
+## Instructions: 
+
+Write a script 13-defense_evaluation.sh that:
+
+    Evaluates detection posture at three snapshots:
+
+    Pre-Module (Week 10): What detection capabilities existed before Module 4 ? (Module 3 SIEM, Suricata rules, basic Wazuh alerts). What would they have caught ? What would they have missed ?
+
+    Post-Hunt (Week 16): What capabilities existed after 4x04 ? (4x00 email rules, 4x02 YARA rules, 4x03 behavioral indicators, 4x04 behavioral detection rules, 80% ATT&CK coverage). What did they catch ? What did they still miss ?
+
+    Post-Reconstruction (Week 17): What is known now ? What additional detection rules are needed based on the reconstruction findings (scheduled task creation, data staging indicators, secondary C2 patterns) ?
+
+    For each detection rule deployed throughout Module 4, assesses:
+
+    Would it have detected the HEALTHBANE attack at its relevant stage ? (YES/NO/PARTIAL)
+
+    If NO: why not ? (Rule logic gap, evidence type mismatch, timing)
+
+    What modification would make it effective ?
+
+    Identifies the structural defensive failures:
+
+    No scheduled task creation monitoring
+
+    No data staging detection
+
+    No secondary C2 channel detection
+
+    Insufficient baseline monitoring beyond Robert Kim's tools
+
+    [Others identified during reconstruction]
+
+    Produces a detection gap matrix: attack technique vs detection capability, showing which intersections are covered and which are not
+
+**Expected Output:**
+
+```bash
+$ ./13-defense_evaluation.sh
+
+================================================================
+   DEFENSIVE POSTURE EVALUATION
+================================================================
+
+DETECTION POSTURE EVOLUTION:
+  Snapshot         Coverage  Techniques Detected  Techniques Missed
+  Pre-Module       ~15%      Basic SIEM alerts    Almost everything
+  Post-Hunt (4x04) ~80%     Stages 1-3 + lateral  Persistence, staging
+  Post-Recon (4x05) ~96%    Full chain mapped     1 collection gap
+
+WHAT WORKED:
+  [*] 4x00 email detection rules: caught phishing campaign
+  [*] 4x02 YARA rules: would catch Stage 2 dropper on delivery
+  [*] 4x04 behavioral rules: detected Stage 4 lateral movement
+  [*] Proactive hunt: found activity no rule detected
+
+WHAT FAILED:
+  [*] No monitoring for scheduled task creation -> T1053.005 missed
+  [*] No detection for data staging -> T1074.001 missed
+  [*] No secondary C2 detection -> unknown IP undetected
+  [*] Log gap (T1070.001) went unnoticed until disk forensics
+  [*] 48h PCAP window insufficient for 14-day attack
+
+STRUCTURAL LESSONS:
+  [1] Detection rules catch known patterns. The attacker used
+      techniques outside the rule set.
+  [2] Proactive hunting is the only countermeasure for unknown
+      patterns, but it requires hypotheses and time.
+  [3] Forensic evidence (memory, disk) reveals artifacts that
+      detection and hunting cannot see in real-time.
+  [4] No single evidence type covers the full attack chain.
+      Layered collection is mandatory.
+
+DETECTION GAP MATRIX:
+  Technique        SIEM  YARA  Suricata  Hunt  Forensic  Status
+  T1566.001        YES   ---   ---       ---   ---       COVERED
+  T1071.001        ---   ---   PARTIAL   ---   ---       WEAK
+  T1053.005        NO    ---   ---       NO    YES       GAP
+  T1074.001        NO    ---   ---       NO    YES       GAP
+  T1070.001        NO    ---   ---       NO    YES       GAP
+  [...]
+
+NEW RULES RECOMMENDED:
+  [1] Sysmon EventID 1: Alert on schtasks.exe creating tasks
+      with encoded PowerShell in action field
+  [2] Sysmon EventID 11: Alert on file creation in staging
+      directories (C:\Users\Public\*) by non-standard processes
+  [3] Firewall: Alert on new external destinations from
+      previously-internal-only hosts
+
+================================================================
+```
+
+---
