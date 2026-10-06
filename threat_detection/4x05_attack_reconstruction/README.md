@@ -191,3 +191,92 @@ CRITICAL QUESTIONS FOR RECONSTRUCTION:
 ```
 
 ---
+
+# [1. Memory Artifact Analysis](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/1-memory_analysis.sh)
+
+## Goal: 
+
+Analyze the volatile memory forensics from WS-RECV-03 to identify active processes, network connections, loaded modules and persistence mechanisms that were invisible to SIEM-based detection.
+
+## Context: 
+
+Memory forensics captures the state of a system at a specific moment in time. Unlike disk evidence (which shows what was stored) or network evidence (which shows what was transmitted), memory evidence shows what was RUNNING. A process that deleted itself from disk is still visible in memory. A network connection that completed before the PCAP started is still visible in memory. A credential that was used and discarded is still visible in memory.
+
+The IR team captured WS-RECV-03's memory before shutting the system down. The memory artifacts file contains the extracted results: process list, network connections at time of capture, loaded DLLs, and registry hive extracts including scheduled task definitions. Your job is to analyze these artifacts for indicators relevant to the HEALTHBANE reconstruction.
+
+## Instructions: 
+
+Write a script 1-memory_analysis.sh that:
+
+    Parses ir_evidence/memory_artifacts.txt and extracts:
+
+    Running processes at capture time, identifying any process that matches known HEALTHBANE indicators (svchostupdate.exe, synchealthdata.ps1, or variants) or suspicious unsigned processes
+
+    Active network connections, identifying any connection to known HEALTHBANE C2 infrastructure (from the IOC database) or to the unidentified IP flagged by James Chen
+
+    Loaded modules or DLLs associated with credential access tools
+
+    Scheduled task definitions extracted from the registry hive
+
+    Cross-references each finding against reference/healthbane_ioc_master.json to determine whether the indicator is KNOWN (matches existing IOC), NEW (not in any previous investigation) or MODIFIED (variant of known IOC)
+
+    For each finding, outputs: the artifact, its source location in memory, the ATT&CK technique it maps to, and its status (KNOWN/NEW/MODIFIED)
+
+    Identifies the scheduled task persistence mechanism, documenting: task name, trigger schedule, action (what command it executes), creation timestamp, and the ATT&CK technique (T1053.005 Scheduled Task/Job)
+
+**Expected Output:**
+
+```bash
+$ ./1-memory_analysis.sh
+
+================================================================
+   MEMORY ARTIFACT ANALYSIS - WS-RECV-03
+   Source: ir_evidence/memory_artifacts.txt
+================================================================
+
+PROCESS ANALYSIS:
+  PID   Process Name          Status    ATT&CK
+  ---   ----                  ------    ------
+  [...]  svchost.exe          LEGITIMATE (Microsoft signed, standard path)
+  [...]  taskhostw.exe        LEGITIMATE (scheduled task host)
+  [...]  [suspicious_process] SUSPICIOUS  T1059.001 PowerShell
+         -> Command line contains encoded payload
+         -> NOT in previous IOC database: NEW indicator
+
+NETWORK CONNECTIONS (at capture):
+  Source           Dest              Port  Status   IOC Match
+  10.10.50.22      [C2_IP]           443   ESTAB    KNOWN (4x01)
+  10.10.50.22      [unknown_IP]      8443  ESTAB    NEW
+  10.10.50.22      10.10.30.10       445   ESTAB    KNOWN (4x04 lateral)
+
+  NEW FINDING: Connection to [unknown_IP]:8443 confirms secondary
+  C2 channel not observed in previous investigations.
+
+CREDENTIAL ACCESS INDICATORS:
+  [*] Module loaded: [credential_tool_indicator]
+      ATT&CK: T1003.001 LSASS Memory
+      Status: Confirms 4x04 hypothesis H4
+
+PERSISTENCE MECHANISM:
+  Scheduled Task: "HealthSync Update Service"
+    Trigger: Daily at 02:00
+    Action: powershell.exe -enc [encoded_command]
+    Created: 2024-02-06T01:47:33
+    ATT&CK: T1053.005 Scheduled Task/Job
+    Status: NEW - not detected by any previous investigation
+
+  CRITICAL: This scheduled task was created on Feb 06, two days
+  after the initial credential dump (Feb 04 from 4x04 hunt).
+  The attacker established persistence BEFORE deploying the
+  exfiltration tooling.
+
+SUMMARY:
+  Known indicators confirmed: [N]
+  New indicators discovered: [N]
+  ATT&CK techniques identified: T1059.001, T1003.001, T1053.005
+  Confidence: HIGH (primary volatile evidence)
+
+================================================================
+```
+
+---
