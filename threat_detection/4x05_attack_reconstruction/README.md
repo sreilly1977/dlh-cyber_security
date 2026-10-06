@@ -395,3 +395,107 @@ SUMMARY:
 ```
 
 ---
+
+# [3. Firewall Session Analysis](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/3-firewall_analysis.sh)
+
+## Goal: 
+
+Analyze 14 days of firewall session logs for WS-RECV-03 to map external communications, identify the unknown IP address, correlate network activity with the reconstructed timeline and determine whether data exfiltration occurred.
+
+## Context: 
+
+Firewall session logs record every connection that passes through the network boundary. Unlike PCAPs (which capture packet content), session logs capture metadata: who talked to whom, on what port, for how long, and how much data moved. This makes them ideal for answering the exfiltration question. If the attacker moved data out of the network, the bytes-transferred field will show it.
+
+The 4x01 network forensics had PCAP coverage for only 48 hours. These firewall logs cover 14 days. This is the first evidence source that spans the full attack window. It will either confirm or reshape the timeline you built from partial evidence.
+
+## Instructions: 
+
+Write a script 3-firewall_analysis.sh that:
+
+    Parses ir_evidence/firewall_sessions_ws_recv_03.json using jq and produces:
+
+    Total session count for the 14-day period
+
+    Breakdown by destination: internal (10.x.x.x) vs external, with session counts and total bytes for each
+
+    Top 10 external destinations by total bytes transferred, with port and protocol
+
+    Top 10 internal destinations by session count (identifying which internal servers WS-RECV-03 communicated with most)
+
+    Identifies the unknown IP address flagged by James Chen:
+
+    Session count, total bytes, port, protocol, time pattern
+
+    Determines whether this IP correlates with any known HEALTHBANE infrastructure (by comparing port, protocol and communication pattern against 4x01 findings)
+
+    Assesses whether this represents a secondary C2 channel, a staging server, or unrelated traffic
+
+    Performs temporal analysis:
+
+    Charts sessions per hour to identify off-hours activity clusters
+
+    Correlates off-hours external connections with the 4x04 lateral movement timeline
+
+    Identifies any large data transfers (bytes_out > threshold) and their timestamps
+
+    Answers the critical exfiltration question: does the bytes-transferred data show evidence of data leaving the network ? Cross-references transfer volumes against the staging file sizes from T2.
+
+**Expected Output:**
+
+```bash
+$ ./3-firewall_analysis.sh
+
+================================================================
+   FIREWALL SESSION ANALYSIS - WS-RECV-03
+   Source: ir_evidence/firewall_sessions_ws_recv_03.json
+   Period: 2024-02-01 to 2024-02-14
+================================================================
+
+SESSION OVERVIEW:
+  Total sessions: [N]
+  Internal destinations: [N] sessions ([bytes] total)
+  External destinations: [N] sessions ([bytes] total)
+
+TOP EXTERNAL DESTINATIONS (by bytes):
+  Rank  IP              Port  Proto  Sessions  Bytes Out  Bytes In
+  1     [C2_IP]         443   TCP    [N]       [bytes]    [bytes]
+  2     [unknown_IP]    8443  TCP    [N]       [bytes]    [bytes]
+  3     [legitimate]    80    TCP    [N]       [bytes]    [bytes]
+  [...]
+
+UNKNOWN IP INVESTIGATION:
+  IP: [unknown_IP]:8443
+  First seen: Feb 06 02:12
+  Last seen: Feb 12 01:33
+  Sessions: [N]
+  Pattern: [N]-minute intervals, off-hours only (01:00-04:00)
+  Bytes out: [total] | Bytes in: [total]
+
+  ASSESSMENT: Communication pattern (fixed interval, off-hours,
+  encrypted port) is consistent with secondary C2 channel.
+  First seen Feb 06 -- same day as scheduled task creation.
+  This IP does NOT appear in 4x01 PCAPs (collection window
+  ended before Feb 06). NOT in IOC database.
+  CONFIDENCE: PROBABLE secondary C2 infrastructure.
+  -> NEW IOC: [unknown_IP] (secondary C2, high confidence)
+
+TEMPORAL ANALYSIS:
+  Business hours (08:00-18:00): [N] sessions/day avg
+  Off-hours (18:00-08:00): [N] sessions/day avg
+  Off-hours EXTERNAL sessions cluster on: Feb 05, 08, 11, 12
+  -> Matches 4x04 lateral movement sessions exactly
+
+EXFILTRATION ASSESSMENT:
+  Largest single outbound transfer: [bytes] to [IP] on [date]
+  Total outbound to C2 infrastructure: [bytes]
+  Total outbound to unknown IP: [bytes]
+  Staging file sizes (from T2): ~34.4 MB total
+
+  FINDING: Total outbound bytes to suspicious destinations
+  ([total]) is [LESS/MORE] than staging file sizes.
+  [Assessment of whether exfiltration occurred or was interrupted]
+
+================================================================
+```
+
+---
