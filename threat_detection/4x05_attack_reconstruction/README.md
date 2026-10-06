@@ -92,7 +92,7 @@ Reference files:
 
 ---
 
-# [0. Evidence Inventory]()
+# [0. Evidence Inventory](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/0-evidence_index.sh)
 
 ## Goal: 
 
