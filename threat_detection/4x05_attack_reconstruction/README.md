@@ -280,3 +280,118 @@ SUMMARY:
 ```
 
 ---
+
+# [2. Disk Forensics Analysis](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/2-disk_analysis.sh)
+
+## Goal: 
+
+Analyze the disk forensics report from WS-RECV-03 to identify persistence artifacts, data staging evidence, recovered deleted files and anti-forensics indicators.
+
+## Context: 
+
+Disk forensics captures what was stored. Unlike memory (which shows the running state at one moment), disk evidence shows the history: files created, modified, deleted and partially overwritten. The IR team analyzed the disk image and produced a structured report. Your job is to extract the findings relevant to the HEALTHBANE reconstruction.
+
+The most significant finding flagged by James Chen is the recovered deleted files suggesting data staging. If the attacker was compressing and staging patient data before exfiltration, the impact assessment changes fundamentally. The difference between "attacker had access to the database server" and "attacker staged patient records for exfiltration" is the difference between a security incident and a reportable data breach.
+
+## Instructions: 
+
+Write a script 2-disk_analysis.sh that:
+
+    Parses ir_evidence/disk_forensics_report.txt and extracts:
+
+    Recovered deleted files: filenames, original paths, deletion timestamps, recoverable content indicators
+
+    Prefetch entries: programs executed on WS-RECV-03 with first and last execution timestamps (programs that SHOULD NOT be on a records department workstation are suspicious)
+
+    Scheduled task XML: full task definition confirming the memory findings from T1
+
+    Registry persistence keys: any Run/RunOnce entries or service registrations
+
+    NTFS $MFT timeline: file creation and modification events in key directories during the attack window (Feb 04-12)
+
+    Anti-forensics indicators: evidence of log deletion, timestamp manipulation or artifact removal
+
+    Cross-references the prefetch entries against the network topology to identify tools that a records department workstation should never have executed (e.g., PsExec, remote administration tools)
+
+    Analyzes the recovered deleted files to determine:
+
+    What data was being staged (file sizes, naming patterns, content indicators)
+
+    Whether the staging was completed or interrupted
+
+    The ATT&CK techniques involved (T1074.001 Local Data Staging, T1560.001 Archive Collected Data)
+
+    Checks for anti-forensics activity and maps it to ATT&CK (T1070.001 Clear Windows Event Logs if applicable)
+
+**Expected Output:**
+
+```bash
+$ ./2-disk_analysis.sh
+
+================================================================
+   DISK FORENSICS ANALYSIS - WS-RECV-03
+   Source: ir_evidence/disk_forensics_report.txt
+================================================================
+
+RECOVERED DELETED FILES:
+  File                      Orig Path            Deleted     Size
+  staging_export_001.zip    C:\Users\Public\Tmp\  Feb 10     14.2 MB
+  staging_export_002.zip    C:\Users\Public\Tmp\  Feb 11     11.8 MB
+  query_results.csv         C:\Users\Public\Tmp\  Feb 10     8.4 MB
+
+  ANALYSIS: Three files recovered from C:\Users\Public\Tmp\.
+  Naming pattern suggests structured data export. CSV file size
+  consistent with database query results. ZIP files created AFTER
+  CSV, suggesting compression for exfiltration staging.
+  ATT&CK: T1074.001 Local Data Staging, T1560.001 Archive via Utility
+  CRITICAL: Staging occurred Feb 10-11, hunt detected activity Feb 12.
+  The attacker was preparing to exfiltrate when the hunt interrupted.
+
+PREFETCH ANALYSIS:
+  Program              First Exec    Last Exec     Expected?
+  PSEXEC.EXE           Feb 05 02:13  Feb 12 01:44  NO (records WS)
+  POWERSHELL.EXE       Jan 15 09:00  Feb 12 02:01  PARTIAL (normal use
+                                                     but off-hours suspect)
+  [STAGING_TOOL]       Feb 09 23:41  Feb 11 01:15  NO (data collection)
+  CMD.EXE              Jan 02 10:00  Feb 12 01:55  YES (standard)
+
+SCHEDULED TASK (confirms memory analysis):
+  Task XML: HealthSync Update Service
+  Trigger: DailyTrigger, StartBoundary=02:00:00
+  Action: powershell.exe -ExecutionPolicy Bypass -enc [base64]
+  Registration: 2024-02-06T01:47:33
+  -> CONFIRMED: matches memory artifact from T1
+
+REGISTRY PERSISTENCE:
+  HKLM\...\Run: No suspicious entries found
+  HKCU\...\Run: No suspicious entries found
+  -> Attacker relied on scheduled task, not registry run keys
+
+ANTI-FORENSICS INDICATORS:
+  [*] Windows Security Event Log: gap from Feb 08 03:00 to 03:12
+      -> 12-minute gap consistent with selective event deletion
+      ATT&CK: T1070.001 Clear Windows Event Logs
+  [*] $MFT timestamps for C:\Users\Public\Tmp\: standard ordering
+      -> No timestamp manipulation detected
+
+NTFS TIMELINE (attack window Feb 04-12):
+  Feb 04 01:23  credential_tool created in C:\Windows\Temp\
+  Feb 06 01:47  Scheduled task XML written
+  Feb 08 02:55  [Evidence of lateral movement tool usage]
+  Feb 09 23:41  First staging tool execution
+  Feb 10 14:22  query_results.csv created
+  Feb 10 15:07  staging_export_001.zip created
+  Feb 11 01:08  staging_export_002.zip created
+  Feb 11 01:22  Deleted files: query_results.csv, staging zips
+  Feb 12 01:44  Last PsExec execution (detected by 4x04 hunt)
+
+SUMMARY:
+  New ATT&CK techniques: T1074.001, T1560.001, T1070.001
+  Evidence confirms data staging for exfiltration
+  Staging interrupted before confirmed data exfiltration
+  Anti-forensics: partial log deletion (12-min gap)
+
+================================================================
+```
+
+---
