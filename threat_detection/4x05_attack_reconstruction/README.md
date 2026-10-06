@@ -602,3 +602,200 @@ TECHNIQUE CORRELATION:
 ```
 
 ---
+
+# [5. Stage 1-2 Reconstruction](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/5-stages_1_2.sh)
+
+## Goal: 
+
+Reconstruct the HEALTHBANE Stages 1 and 2 (initial access through C2 establishment) using correlated evidence from the phishing investigation, network forensics, intelligence analysis, and incident response firewall data.
+
+## Context: 
+
+You are now building the attack narrative. Each stage of the reconstruction must be a chronological account supported by evidence citations. This is not a summary of your 4x00 or 4x01 findings. It is a reconstruction that integrates those findings with the new firewall evidence and with the broader intelligence context from 4x02.
+
+Stages 1 and 2 represent the attacker's initial foothold. Stage 1 is the phishing delivery that harvested credentials. Stage 2 is the establishment of persistent remote access through the C2 channel. Your reconstruction must trace the path from the first email to the first confirmed C2 beacon, citing evidence from each source that contributes to the timeline.
+
+## Instructions: 
+
+Write a script 5-stages_1_2.sh that reconstructs Stages 1-2 of the HEALTHBANE attack against MedDefense:
+
+    Stage 1 -- Initial Access (Phishing):
+
+    Reconstruct the phishing campaign timeline using 4x00 findings
+
+    Identify the specific email that resulted in credential compromise (Diane's click)
+
+    Cite the evidence: email headers, domain analysis, SPF/DKIM results
+
+    Map ATT&CK techniques with evidence citations: T1566.001 (Phishing: Spearphishing Link), T1078 (Valid Accounts -- credential harvesting)
+
+    Establish the temporal anchor: exact timestamp of credential exposure
+
+    Stage 2 -- C2 Establishment:
+
+    Reconstruct the C2 establishment timeline using 4x01 network findings AND new firewall session data
+
+    Correlate the C2 beaconing pattern (5-minute intervals from 4x01) with firewall session logs
+
+    Determine whether the secondary C2 IP (from T3 firewall analysis) was active during Stage 2 or only appeared later
+
+    Map ATT&CK techniques: T1071.001 (Application Layer Protocol: Web), T1573.001 (Encrypted Channel: Symmetric Cryptography), T1568 (Dynamic Resolution) if applicable
+
+    Cite specific timestamps from both network and firewall sources, noting and resolving any discrepancies
+
+    Confidence assessment:
+
+    For each reconstructed event, assign a confidence level (CONFIRMED/PROBABLE/POSSIBLE) based on the number and quality of supporting sources
+
+**Expected Output:**
+
+```bash
+$ ./5-stages_1_2.sh
+
+================================================================
+   ATTACK RECONSTRUCTION: Stages 1-2
+   Initial Access through C2 Establishment
+================================================================
+
+STAGE 1: INITIAL ACCESS (Phishing Campaign)
+  Timeline: Week 11 (campaign active: [date range])
+
+  [timestamp] Campaign emails delivered to MedDefense staff
+    Evidence: 4x00 email batch analysis (8 emails, 3 malicious)
+    Technique: T1566.001 Spearphishing Link
+    Confidence: CONFIRMED (primary email evidence)
+
+  [timestamp] Diane (WS-RECV-03) clicks credential harvesting link
+    Evidence: 4x00 investigation (URL analysis, domain registration)
+    Technique: T1566.001 -> credential input on lookalike portal
+    Confidence: CONFIRMED (user report + browser history)
+
+  [timestamp] Credentials submitted to attacker-controlled domain
+    Evidence: 4x00 (domain analysis), 4x01 (POST request in PCAP)
+    Technique: T1078 Valid Accounts (obtained via phishing)
+    Confidence: CONVERGED (2 independent sources)
+
+STAGE 2: C2 ESTABLISHMENT
+  Timeline: [date] (approximately [hours] after credential theft)
+
+  [timestamp] First C2 beacon from WS-RECV-03
+    Evidence: 4x01 (PCAP beacon analysis), IR-FW (session log)
+    Technique: T1071.001 Application Layer Protocol: Web
+    Confidence: CONVERGED (PCAP + firewall, [delta]s clock skew)
+
+  [timestamp] C2 channel established: HTTPS to [C2_IP]:443
+    Evidence: 4x01 (5-min beacon interval), IR-FW (session pattern)
+    Pattern: [interval] beacon, [bytes] per session
+    Confidence: CONFIRMED
+
+  [timestamp] Secondary C2 channel to [unknown_IP]:8443
+    Evidence: IR-FW only (first session: Feb 06 02:12)
+    Note: NOT visible in 4x01 PCAPs (collection ended before Feb 06)
+    Technique: T1071.001 (secondary channel)
+    Confidence: PROBABLE (single source, but pattern consistent)
+
+STAGE 1-2 SUMMARY:
+  Duration: [hours/days] from phishing to established C2
+  Techniques mapped: [list with IDs]
+  IOCs: [count] (converged: [N], single-source: [N])
+  Key finding: Secondary C2 at [unknown_IP] was NOT operational
+  during Stage 2. First appeared Feb 06, suggesting attacker
+  deployed backup infrastructure after establishing persistence.
+
+================================================================
+```
+
+---
+
+# [6. Stage 3 Reconstruction](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/6-stage_3.sh)
+### advanced
+
+## Goal: 
+
+Reconstruct HEALTHBANE Stage 3 (malware deployment and capability establishment) using correlated evidence from the malware analysis, network forensics, memory forensics and disk forensics.
+
+## Context: 
+
+Stage 3 is where the attacker transitioned from access to capability. Stolen credentials gave them entry. The C2 channel gave them control. But Stage 3 gave them the TOOLS to achieve their objective: the dropper delivered the RAT, the RAT provided persistent access beyond the initial credential, and the exfiltration script targeted the patient data.
+
+Your 4x03 malware analysis characterized these tools in isolation. The reconstruction must place them in chronological context: when was each tool deployed, from which host, through which delivery mechanism, and how do the deployment timestamps correlate with the C2 activity from Stage 2 and the lateral movement from Stage 4 ?
+
+## Instructions: 
+
+Write a script 6-stage_3.sh that reconstructs Stage 3:
+
+    Malware Deployment Timeline:
+
+    When was the dropper (HEALTHBANES2invoice.docm) delivered ? Correlate 4x03 analysis with 4x00 email evidence and 4x01 network timeline.
+
+    When did the RAT (svchost_update.exe) first establish persistence ? Cross-reference 4x03 behavioral indicators with IR memory and disk evidence.
+
+    When was the exfiltration script (sync_healthdata.ps1) deployed ? Cross-reference with disk forensics $MFT timeline and firewall session activity.
+
+    Capability Mapping:
+
+    For each malware component, document: delivery mechanism, persistence method, communication protocol, targeting and capability.
+
+    Cross-reference the malware behavioral IOCs from 4x03 against the IR evidence to confirm which capabilities were ACTUALLY USED against MedDefense (vs capabilities observed in sandbox but not deployed in this environment).
+
+    Stage 2 to Stage 3 Transition:
+
+    Identify the exact point where the attacker moved from C2-only access to deploying malware tools.
+
+    Document the time gap between C2 establishment and malware deployment (operational tempo indicator).
+
+    Technique mapping with evidence citations for each technique.
+
+**Expected Output:**
+
+```bash
+$ ./6-stage_3.sh
+
+================================================================
+   ATTACK RECONSTRUCTION: Stage 3
+   Malware Deployment and Capability Establishment
+================================================================
+
+DEPLOYMENT TIMELINE:
+  [timestamp] Dropper delivery (HEALTHBANE_S2_invoice.docm)
+    Delivery: [mechanism based on evidence]
+    Evidence: 4x03 (sample analysis), 4x00 (email with attachment)
+    Technique: T1204.002 User Execution: Malicious File
+    Confidence: CONFIRMED
+
+  [timestamp] RAT persistence established (svchost_update.exe)
+    Evidence: 4x03 (behavioral analysis), IR-MEM (process list),
+              IR-DISK (prefetch first execution)
+    Technique: T1547.001 Boot or Logon Autostart Execution
+    Confidence: CONVERGED (3 sources)
+
+  [timestamp] Exfiltration script staged (sync_healthdata.ps1)
+    Evidence: 4x03 (sample analysis), IR-DISK ($MFT timeline)
+    Technique: T1059.001 PowerShell
+    Confidence: CONVERGED
+
+CAPABILITY ASSESSMENT:
+  Component         Capability          Used at MedDefense?  Evidence
+  Dropper           Macro execution     YES                  4x03 + IR
+  RAT               C2 + persistence    YES                  IR-MEM + IR-DISK
+  RAT               Keylogging          UNCONFIRMED          4x03 sandbox only
+  Exfiltrator       DNS exfil           PROBABLE             4x01 + IR-FW
+  Exfiltrator       DB targeting        YES                  IR-DISK staging
+
+OPERATIONAL TEMPO:
+  C2 established -> Malware deployed: [N] hours
+  Malware deployed -> Lateral movement start: [N] hours
+  Assessment: Attacker operated on [fast/slow] tempo,
+  suggesting [automated/manual] campaign execution.
+
+STAGE 3 TECHNIQUES:
+  T1204.002  User Execution: Malicious File     CONFIRMED
+  T1547.001  Boot/Logon Autostart               CONFIRMED
+  T1059.001  PowerShell                          CONFIRMED
+  T1071.004  DNS (exfil channel)                 PROBABLE
+  T1027      Obfuscated Files                    CONFIRMED (4x03)
+
+================================================================
+```
+
+---
