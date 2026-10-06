@@ -499,3 +499,106 @@ EXFILTRATION ASSESSMENT:
 ```
 
 ---
+
+# [4. Cross-Evidence Correlation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/4-correlation_matrix.sh)
+
+## Goal: 
+
+Cross-reference findings from all evidence sources to build a correlation matrix identifying convergences, contradictions, and gaps across the full evidence landscape.
+
+## Context: 
+
+This is the analytical core of the reconstruction. Until now, you have analyzed each evidence source independently, just as you analyzed each investigation domain independently throughout Module 4. The correlation step is where synthesis happens. It is the moment where five partial pictures become one complete picture -- or where contradictions reveal that your picture is still incomplete.
+
+A correlation matrix maps findings to sources. A finding confirmed by three independent sources has HIGH confidence. A finding supported by one source and contradicted by another requires resolution. A finding present in one source and absent from all others could be real (the other sources lacked visibility) or false (the finding is an artifact of misinterpretation). Your job is to build this matrix and resolve every significant contradiction.
+
+## Instructions: 
+
+Write a script 4-correlation_matrix.sh that:
+
+    Reads the outputs of T0-T3 plus all previous_findings/ summaries
+
+    Builds an IOC correlation matrix:
+
+    For each unique IOC (IP addresses, domains, file hashes, process names, account names), list which sources contain it
+
+    Classify each IOC as: CONVERGED (2+ independent sources), SINGLE-SOURCE (one source only), or CONFLICTED (sources disagree)
+
+    Identify NEW IOCs from the IR evidence that were not in the 4x04 IOC database
+
+    Builds a timeline correlation matrix:
+
+    For each key event in the attack chain, list which sources provide evidence for it
+
+    Identify events with conflicting timestamps and document the resolution (clock skew, collection timing, timezone)
+
+    Flag events supported by only one source as LOWER CONFIDENCE
+
+    Builds a technique correlation matrix:
+
+    For each ATT&CK technique observed, list which sources provide evidence
+
+    Identify techniques that were INFERRED in 4x02 and can now be CONFIRMED or CORRECTED based on later evidence
+
+    Identifies critical contradictions and resolves them with documented reasoning
+
+**Expected Output:**
+
+```bash
+$ ./4-correlation_matrix.sh
+
+================================================================
+   CROSS-EVIDENCE CORRELATION MATRIX
+   Sources: 4x00 through 4x05-IR (11 evidence files)
+================================================================
+
+IOC CORRELATION:
+  IOC                    4x00  4x01  4x02  4x03  4x04  IR    Status
+  [phish_domain]         YES   ---   YES   ---   ---   ---   CONVERGED
+  [C2_IP]                ---   YES   YES   YES   ---   YES   CONVERGED
+  [unknown_IP]           ---   ---   ---   ---   ---   YES   SINGLE-SOURCE
+  svchost_update.exe     ---   ---   YES   YES   ---   YES   CONVERGED
+  svc_healthsync         ---   ---   ---   ---   YES   YES   CONVERGED
+  [staging_tool]         ---   ---   ---   ---   ---   YES   SINGLE-SOURCE
+  [...]
+
+  Summary: [N] CONVERGED, [N] SINGLE-SOURCE, [N] CONFLICTED
+  New IOCs from IR: [N]
+
+TIMELINE CORRELATION:
+  Event                  Sources              Confidence  Notes
+  Phishing delivery      4x00                 HIGH        Primary evidence
+  Credential theft       4x00,4x01            CONVERGED   Timestamps match
+  C2 establishment       4x01,IR-FW           CONVERGED   4s clock skew
+  Malware deployment     4x03,IR-MEM          CONVERGED   Process confirmed
+  Persistence install    IR-MEM,IR-DISK       CONVERGED   Feb 06 01:47
+  Lateral mvmt start     4x04,IR-FW           CONVERGED   Feb 05
+  Data staging           IR-DISK              SINGLE      Feb 10-11
+  [...]
+
+  CONTRADICTION RESOLVED:
+  -> 4x01 network timeline shows C2 beacon start at [time]
+  -> IR firewall shows first C2 session at [time - delta]
+  -> Resolution: Firewall records TCP SYN (connection start),
+     PCAP captured mid-session. [delta]s difference is consistent
+     with normal collection point variance. Firewall timestamp
+     adopted as authoritative for connection initiation.
+
+TECHNIQUE CORRELATION:
+  Technique              4x02    4x04    IR      Update
+  T1566.001 Phishing     CONF    ---     ---     No change
+  T1071.001 Web Proto    CONF    ---     CONF    Confidence +
+  T1021.002 PsExec       INFER   CONF    CONF    UPGRADED
+  T1053.005 Sched Task   ---     ---     CONF    NEW
+  T1074.001 Data Staging ---     ---     CONF    NEW
+  T1070.001 Log Clear    ---     ---     PROB    NEW
+  [...]
+
+  Techniques UPGRADED from INFERRED to CONFIRMED: [N]
+  Techniques newly identified from IR evidence: [N]
+  Techniques CORRECTED (4x02 inference was wrong): [N]
+
+================================================================
+```
+
+---
