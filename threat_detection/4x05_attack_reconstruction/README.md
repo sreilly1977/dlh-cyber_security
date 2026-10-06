@@ -1170,3 +1170,102 @@ Produce a file 10-navigator_update.json that:
     Is valid JSON that can be imported into the ATT&CK Navigator without errors
 
 ---
+
+# [11. Gap Analysis and Blind Spot Assessment](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/11-gap_analysis.sh)
+### advanced
+
+## Goal: 
+
+Analyze the remaining ATT&CK gaps and assess whether each represents a genuine absence of attacker activity, a collection limitation, or a detection blind spot that requires remediation.
+
+## Context: 
+
+At 96% coverage, only one or two techniques remain unmapped. But coverage percentage alone is misleading. A gap in the ATT&CK mapping could mean three very different things:
+
+    The attacker did not use that technique (genuine absence).
+
+    The attacker used it but no evidence was collected to prove it (collection gap).
+
+    The attacker used it and evidence exists but the analyst failed to recognize it (analytical gap).
+
+Distinguishing between these three requires reasoning about the adversary's likely behavior, the evidence collection architecture and your own analytical blind spots. This is the highest level of ATT&CK maturity: knowing what you do not know and why you do not know it.
+
+## Instructions: 
+
+Write a script 11-gap_analysis.sh that:
+
+    Lists every technique in the 29-technique threat model that is NOT in the final mapping
+
+    For each gap, assesses:
+
+    ABSENCE: The attacker likely did not use this technique. Evidence: [reason based on the reconstructed attack chain -- e.g., the technique is redundant with another they used, or it targets a capability they did not need]
+
+    COLLECTION GAP: The attacker may have used this technique but evidence was not collected. Reason: [which evidence source would have captured it, and why it was not available]
+
+    ANALYTICAL GAP: Evidence may exist but was not analyzed or recognized. Reason: [what additional analysis would be needed]
+
+    For each COLLECTION GAP, recommends the specific telemetry or collection improvement that would close it
+
+    Assesses the overall reconstruction confidence:
+
+    What percentage of the kill chain is CONFIRMED vs PROBABLE vs POSSIBLE ?
+
+    What is the single biggest remaining uncertainty ?
+
+    What additional evidence would be needed to resolve it ?
+
+    Documents the lessons learned about ATT&CK coverage limitations: why 80% coverage (pre-capstone) left significant blind spots, and why 96% is still not 100%
+
+**Expected Output:**
+
+```bash
+$ ./11-gap_analysis.sh
+
+================================================================
+   GAP ANALYSIS AND BLIND SPOT ASSESSMENT
+================================================================
+
+UNMAPPED TECHNIQUES:
+
+  T[xxxx] [technique name]
+    Assessment: COLLECTION GAP
+    Reasoning: [detailed reasoning about why evidence is absent]
+    Required telemetry: [specific data source that would confirm
+    or exclude this technique]
+    Recommendation: [specific collection improvement]
+
+RECONSTRUCTION CONFIDENCE SUMMARY:
+  Kill chain events: [N] total
+  CONFIRMED (2+ sources):  [N] ([pct]%)
+  PROBABLE (strong single): [N] ([pct]%)
+  POSSIBLE (inferred):      [N] ([pct]%)
+
+  Biggest remaining uncertainty: [description]
+  Evidence needed to resolve: [specific evidence]
+
+COVERAGE EVOLUTION LESSONS:
+  [*] At 40% (post-4x02): Intelligence identified the campaign
+      but could not confirm which techniques were used against us.
+      Blind spot: entire lateral movement phase invisible.
+
+  [*] At 55% (post-4x03): Malware analysis confirmed deployment
+      techniques but missed LOLBin activity entirely.
+      Blind spot: Stage 4 completely undetected.
+
+  [*] At 80% (post-4x04): Hunt found lateral movement but could
+      not determine persistence, data staging or exfiltration scope.
+      Blind spot: scheduled tasks, data staging, anti-forensics.
+
+  [*] At 96% (post-4x05): IR evidence closed most gaps. Remaining
+      gap is [description] -- a collection limitation, not an
+      analytical failure.
+
+  KEY LESSON: Each coverage increase revealed that the PREVIOUS
+  level had created a false sense of security. 80% coverage
+  sounds strong but left the most operationally critical
+  techniques (persistence, staging, exfiltration) in the gap.
+
+================================================================
+```
+
+---
