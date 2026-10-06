@@ -12,7 +12,11 @@
 #          explicit reasoning.
 # Author: Steve - Cybersecurity Engineer
 # Date: 06 October 2026
+# References:
 # 0-evidence_index.sh
+# 1-memory_analysis.sh
+# 2-disk_analysis.sh
+# 3-firewall_analysis.sh
 
 set -u
 
