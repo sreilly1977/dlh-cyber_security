@@ -1269,3 +1269,112 @@ COVERAGE EVOLUTION LESSONS:
 ```
 
 ---
+
+# [12. Data Exposure Assessment](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/12-data_exposure.sh)
+
+## Goal: 
+
+Determine exactly which data was at risk, whether any data left the network, and what the regulatory and operational implications are.
+
+## Context: 
+
+This is the question Dr. Morales must answer for the board: was patient data compromised ? The answer is not binary. There is a spectrum between "no data was accessed" and "all records were exfiltrated." Your reconstruction must place MedDefense precisely on that spectrum, with evidence.
+
+In healthcare, the difference between "data was accessed" and "data was exfiltrated" determines whether a HIPAA breach notification is required. The difference between "one record" and "500 records" determines the notification scope. These are not academic distinctions. They have legal, financial and reputational consequences. Your assessment must be defensible.
+
+## Instructions: 
+
+Write a script 12-data_exposure.sh that:
+
+    Maps compromised hosts to the asset inventory (reference/meddefense_asset_inventory.txt) to determine what data each host stores or has access to
+
+    For each compromised host, assesses:
+
+    Confirmed access: evidence that the attacker interacted with data on this host (e.g., query_results.csv creation timestamp matches attacker activity window)
+
+    Potential access: the attacker had credentials and network access to reach this host, but no direct evidence of data interaction
+
+    No access: the host was not in the attacker's lateral movement chain
+
+    Assesses exfiltration status:
+
+    Was data staged ? (YES -- from T2 disk analysis)
+
+    Was staged data transmitted outside the network ? (Based on T3 firewall analysis -- bytes-out comparison)
+
+    If transmitted, to which destination and how much ?
+
+    If NOT transmitted, what interrupted the exfiltration ?
+
+    Produces a data exposure summary categorized by data type:
+
+    Patient health records
+
+    Insurance and billing data
+
+    Employee records
+
+    Operational data
+
+    For each: confirmed exposed / potentially exposed / not exposed
+
+    Assesses regulatory implications:
+
+    Does the evidence meet the threshold for a reportable data breach ?
+
+    What is the estimated scope (number of records at risk) ?
+
+    What mitigating factors exist (encryption, access controls, interruption) ?
+
+**Expected Output:**
+
+```bash
+$ ./12-data_exposure.sh
+
+================================================================
+   DATA EXPOSURE ASSESSMENT
+================================================================
+
+COMPROMISED SYSTEM MAPPING:
+  Host            Role              Data Sensitivity  Access Level
+  WS-RECV-03      Records Dept WS   LOW (local)       CONFIRMED ACCESS
+  SRV-HEALTH-DB   Health Records    CRITICAL (PHI)    CONFIRMED ACCESS
+  SRV-INS-DB      Insurance DB      HIGH (PII+fin)    PROBABLE ACCESS
+  SRV-FILE-01     File Server       MEDIUM            PROBABLE ACCESS
+  SRV-DC-01       Domain Controller HIGH (auth)       POSSIBLE ACCESS
+
+EXFILTRATION STATUS:
+  Data staged on WS-RECV-03: YES (34.4 MB in 3 files)
+  Data transmitted externally: [ASSESSMENT based on firewall]
+  Exfiltration channel: [C2 IP / unknown IP / DNS tunnel]
+  Interruption: Hunt detection on [date], IR isolation on [date]
+
+  CONCLUSION: [Data staging confirmed, exfiltration
+  interrupted/partial/completed -- based on evidence]
+
+DATA EXPOSURE BY TYPE:
+  Patient health records (PHI):
+    Status: [CONFIRMED ACCESSED / STAGED / EXFILTRATED]
+    Evidence: IR-DISK query_results.csv, staging archives
+    Estimated scope: [N records based on file sizes]
+
+  Insurance/billing data:
+    Status: [PROBABLE ACCESS based on credential scope]
+    Evidence: [...]
+
+  Employee records:
+    Status: NOT EXPOSED (no evidence of HR system access)
+
+REGULATORY ASSESSMENT:
+  HIPAA breach notification threshold: [MET / NOT MET / UNCERTAIN]
+  Basis: [specific evidence supporting the determination]
+  Mitigating factors:
+    [*] Staging interrupted before confirmed full exfiltration
+    [*] [Encryption status of accessed data]
+    [*] [Response time from detection to containment]
+  Recommended action: [notify / investigate further / ...]
+
+================================================================
+```
+
+---
