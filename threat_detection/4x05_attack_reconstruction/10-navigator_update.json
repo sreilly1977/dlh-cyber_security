@@ -1,0 +1,305 @@
+{
+  "name": "HEALTHBANE vs MedDefense - Attack Reconstruction Final (4x05)",
+  "versions": {
+    "attack": "13",
+    "navigator": "4.9.1"
+  },
+  "domain": "enterprise-attack",
+  "description": "Final technique layer for the HEALTHBANE campaign against MedDefense Health Systems, 2026-04-14 to 2026-05-15 (containment). Coverage: 29/29 modeled techniques observed; 28/29 CONFIRMED (96.6%); T1078 PROBABLE (credentials harvested, use unverified - Task 0 Q7). Three beyond-model confirmations (T1105, T1140, T1583.001) are included but excluded from the modeled-coverage fraction. Colors indicate attack stage: Stage 1 Initial Access (red), Stage 2 C2/Infrastructure (blue), Stage 3 Malware Deployment (orange), Stage 4 Lateral Movement/Data Staging (purple), Cross-Stage (green), PROBABLE/unverified-use (grey). Greyed-out (disabled) entries are legacy 4x04 mappings not independently confirmed by the reconstruction - see per-technique comments. ERRATUM: T1105 was omitted from the Task 9 print inventory in error; evidence (4x01 PCAP download of svchost_update.exe, 4x03 hash match) confirms it and it is restored here. Per-technique comment format: Stage | Confidence | First identified | Evidence sources | Notes.",
+  "filters": {
+    "platforms": [
+      "Windows"
+    ]
+  },
+  "sorting": 0,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": false,
+    "showName": true,
+    "showAggregateScores": false,
+    "countUnscored": false
+  },
+  "hideDisabled": false,
+  "techniques": [
+    {
+      "techniqueID": "T1566.002",
+      "color": "#C62828",
+      "comment": "Stage 1 (Initial Access) | CONFIRMED | First: 4x00 | Sources: 4x00 mail headers (SPF hardfail, DKIM missing, DMARC fail), 4x01 PCAP | Credential-harvesting link to lookalike portal; dmarsh submission 2026-04-14T13:18:42Z.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1566.001",
+      "color": "#C62828",
+      "comment": "Stage 1 (Initial Access) | CONFIRMED | First: 4x01 | Sources: 4x01 mail flow, 4x03 sample S1 | Second vector: HEALTHBANE_S2_invoice.docm released from quarantine 2026-04-15T08:43:18Z.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1204.001",
+      "color": "#C62828",
+      "comment": "Stage 1 (Initial Access) | CONFIRMED | First: 4x00 | Sources: 4x00 user report + browser history, 4x01 PCAP POST | User execution of credential-harvesting link on WS-RECV-03.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1204.002",
+      "color": "#C62828",
+      "comment": "Stage 1/3 | CONFIRMED | First: 4x03 | Sources: 4x03 VBA macro chain, 4x01 delivery chain | User execution of malicious docm enabling macro.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1583.001",
+      "color": "#C62828",
+      "comment": "Pre-campaign infrastructure | CONFIRMED (intel-corroborated) | First: 4x02 | Sources: 4x02 advisory, 4x00 domain registration analysis | Attacker-registered lookalike domains supporting the spearphishing vectors. Beyond-model mapping: excluded from the 29-technique coverage fraction.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1078",
+      "color": "#757575",
+      "comment": "Stage 1 (Initial Access) | PROBABLE - DOWNGRADED 4x05 | First: 4x00 | Sources: 4x00, 4x01 | dmarsh credentials HARVESTED (portal POST 13:18:42Z) but USE unverified (Task 0 Q7 open). The docm-to-RAT chain required no credentials; lateral movement used PtH (T1550.002). Harvested-but-use-unverified.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1071.001",
+      "color": "#1565C0",
+      "comment": "Stage 2 (C2) | CONFIRMED - confidence raised | First: 4x01 | Sources: 4x01 PCAP TLS, IR-FW (3,958 sessions) | 5-minute HTTPS beacon cadence to 185.220.101.45:443; secondary channel 203.0.113.47:8443 from May 7.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1573.001",
+      "color": "#1565C0",
+      "comment": "Stage 2 (C2) | CONFIRMED | First: 4x01 | Sources: 4x01, 4x03 (RC4 configuration), IR evidence | RC4 symmetric encryption over TLS C2 channel.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1571",
+      "color": "#1565C0",
+      "comment": "Stage 2 (C2, late) | CONFIRMED | First: 4x05-IR | Sources: IR-FW first session 2026-05-07T06:48:11Z, IR-MEM live ESTABLISHED socket at capture | Secondary C2 203.0.113.47:8443; provisioned 38 seconds after scheduled-task registration.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1105",
+      "color": "#1565C0",
+      "comment": "Stage 2 (C2) | CONFIRMED | First: 4x01 | Sources: 4x01 PCAP HTTP GET (svchost_update.exe via update.healthbane-c2.net), 4x03 hash match | ERRATUM: omitted from the Task 9 print inventory in error; restored here on tasks 5-6 evidence. Beyond-model mapping.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1203",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED | First: 4x03 | Sources: 4x03 sample S1 behavioral analysis, 4x01 delivery chain | VBA macro exploitation for client execution by the dropper.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1027",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED | First: 4x03 | Sources: 4x03 sample analysis | XOR-0x37 + base64 layered obfuscation in the dropper payload.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1140",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED | First: 4x03 | Sources: 4x03 sandbox chain, 4x01 successful delivery | Decode-on-target (deobfuscate) evidenced by the working RAT drop; parallel mapping to T1027. Retained from 4x04 layer. Beyond-model mapping.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1027.010",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED | First: 4x05-IR | Sources: IR-MEM task action, IR-DSK task XML | Base64 EncodedCommand obfuscation in the scheduled task action chain.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1055",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED | First: 4x05-IR | Sources: IR-MEM (PID 3712 forged PPID, RWX region) | Process hollowing / PPID forgery on the RAT process.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1547.001",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED - dual persistence | First: 4x03 | Sources: 4x03 S2, IR-MEM K1, IR-DSK R1 | Run-key persistence at first execution, 2026-04-22T06:14:47Z.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1053.005",
+      "color": "#EF6C00",
+      "comment": "Stage 3 (Malware Deployment) | CONFIRMED - open hypothesis RESOLVED | First: 4x04 | Sources: IR-MEM K2, IR-DSK on-disk XML + schtasks prefetch (matched to the second), IR-FW timing | 'HealthSync Update Service' created 2026-05-07T06:47:33Z; automated the exfil waves.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1562.001",
+      "color": "#EF6C00",
+      "comment": "Stage 3/4 bridge | CONFIRMED | First: 4x05-IR | Sources: IR-MEM K5 (records03 SID), IR-DSK R3 | Defender exclusion on C:\\Windows\\Temp added 2026-05-04T23:11Z; analyst claim disputed and contradicted.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.001",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: 4x04 hunt H4, IR-MEM stale handles, IR-DSK prefetch/out.dat | LSASS dumps 2026-05-05 08:22Z and 2026-05-12 07:45Z; dump contents egress remains PROBABLE (Entry #008 open).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1550.002",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: 4x04, IR-DSK $MFT | svc_healthsync NTLM hash use; first pivot 2026-05-06T07:11Z.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.002",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: 4x04 hunt H1, IR-DSK PsExec64 prefetch + PSEXESVC residue, IR-FW SMB/445 sessions | Pivot to SRV-HEALTH-DB.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1047",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: IR-DSK (wmic prefetch x5), IR-FW sessions | Pivot to SRV-INS-DB. MISSED BY HUNT: no service-installation events; IR-only evidence (detection gap).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.006",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: IR-DSK (wsmprovhost prefetch), IR-FW sessions | Pivot to SRV-DC-01. MISSED BY HUNT: IR-only evidence (detection gap).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1072",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED | First: 4x05-IR | Sources: IR-DSK $MFT timeline | stage1.ps1 pushed to SRV-HEALTH-DB via admin-share Copy-Item, 2026-05-06T07:36Z.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1005",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: 4x03 SQL template, IR-DSK staging lifecycles D1-D3 | dbo.patients and related exports from the database servers.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1074.001",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - open hypothesis RESOLVED | First: 4x04 | Sources: IR-DSK $MFT lifecycles, IR-FW byte correlation | staging_export_001-003.zip staged on WS-RECV-03 (pull model).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1560.001",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - open hypothesis RESOLVED | First: 4x04 | Sources: IR-DSK archive create/read/delete patterns, IR-FW | Compression in the same windows as the exfil bursts.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1041",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - UPGRADED from inferred | First: 4x02 | Sources: IR-DSK $MFT + IR-FW, BYTE-EXACT matches | Three bursts (14,219,484 / 11,802,944 / 8,419,232 B; 34,441,660 B total) over the C2 channels.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070.001",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED - open hypothesis RESOLVED | First: 4x04 | Sources: IR-DSK evtx gap + recreated log, IR-MEM clear_logs:true, IR-FW | Security-log clear 2026-05-09 03:00-03:12 CDT.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1070.004",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED | First: 4x05-IR | Sources: IR-DSK D-series lifecycles | Self-deleting tooling (debug_tool, stage1, staging archives).",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.003",
+      "color": "#6A1B9A",
+      "comment": "Stage 4 (Lateral/Staging) | CONFIRMED | First: 4x02 | Sources: 4x02, IR-DSK (cmd.exe prefetch) | Corroborated command-line execution.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "color": "#2E7D32",
+      "comment": "CROSS-STAGE (Stages 2-4) | CONFIRMED | First: 4x02 | Sources: 4x02, 4x04, IR-MEM, IR-DSK | PowerShell across the campaign: scheduled-task chain (encoded), PS Remoting pivot, sync_healthdata.ps1 exfiltrator.",
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1112",
+      "comment": "NOT independently scored - SUBSUMED | Retained from the 4x04 layer for continuity | Registry modification is fully represented by T1547.001 (Run-key write) | Disabled to avoid double-counting.",
+      "enabled": false
+    },
+    {
+      "techniqueID": "T1059.005",
+      "comment": "NOT independently scored - SUBSUMED | Retained from the 4x04 layer for continuity | VBA execution is fully represented by T1203 (Exploit for Client Execution) | Disabled to avoid double-counting.",
+      "enabled": false
+    },
+    {
+      "techniqueID": "T1071.004",
+      "comment": "TESTED-ONLY | First: 4x01 | Sources: 4x01 T-150/T-151 DNS exfil TEST pings | Capability test observed; NOT used for bulk exfiltration (all waves over c2_post). Excluded from coverage count.",
+      "enabled": false
+    },
+    {
+      "techniqueID": "T1048.003",
+      "comment": "NOT OBSERVED at MedDefense | Retained from the 4x02 threat model (SMTP exfiltration considered possible) | No supporting evidence in any phase of the investigation.",
+      "enabled": false
+    },
+    {
+      "techniqueID": "T1078.002",
+      "comment": "NOT independently evidenced | Retained from the 4x04 layer | Credentialed (domain account) use is represented via T1550.002 (Pass-the-Hash); no password-authenticated use observed.",
+      "enabled": false
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ffffff",
+      "#6d4aff"
+    ],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {
+      "label": "Stage 1 - Initial Access (phishing)",
+      "color": "#C62828"
+    },
+    {
+      "label": "Stage 2 - C2 and Infrastructure",
+      "color": "#1565C0"
+    },
+    {
+      "label": "Stage 3 - Malware Deployment",
+      "color": "#EF6C00"
+    },
+    {
+      "label": "Stage 4 - Lateral Movement and Data Staging",
+      "color": "#6A1B9A"
+    },
+    {
+      "label": "Cross-Stage (used across multiple phases)",
+      "color": "#2E7D32"
+    },
+    {
+      "label": "PROBABLE - harvested, use unverified (T1078)",
+      "color": "#757575"
+    }
+  ],
+  "metadata": [
+    {
+      "name": "Case",
+      "value": "HEALTHBANE campaign vs MedDefense Health Systems"
+    },
+    {
+      "name": "Period",
+      "value": "2026-04-14 (credential submission) to 2026-05-15 (containment)"
+    },
+    {
+      "name": "Coverage",
+      "value": "29/29 modeled observed; 28/29 CONFIRMED (96.6%); T1078 PROBABLE; +3 beyond-model confirmations"
+    },
+    {
+      "name": "Baseline",
+      "value": "reference/attck_navigator_80pct.json (4x04 layer, 29 technique IDs parsed)"
+    },
+    {
+      "name": "Generated",
+      "value": "2026-10-06 by 4x05 attack reconstruction (tasks 0-9)"
+    },
+    {
+      "name": "Author",
+      "value": "Steve - Cybersecurity Engineer"
+    }
+  ],
+  "links": [],
+  "bundles": []
+}

@@ -1022,3 +1022,151 @@ SEQUENCING UNCERTAINTIES:
 ```
 
 ---
+
+# [9. Final ATT&CK Technique Identification](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/9-attack_techniques.sh)
+
+## Goal: 
+
+Enumerate every MITRE ATT&CK technique observed across all evidence sources, producing the definitive HEALTHBANE technique inventory with evidence citations and confidence levels.
+
+## Context: 
+
+Your ATT&CK mapping has evolved through the module. In 4x02, you mapped techniques from intelligence sources at 40% coverage. In 4x03, the malware analysis raised it to 55%. In 4x04, the threat hunt pushed it to 80%. The IR evidence introduces new techniques (scheduled task persistence, data staging, archive collection, log clearing) that were invisible before.
+
+This task produces the FINAL technique inventory. Not a copy of the 4x04 Navigator layer with a few additions, but a complete re-assessment where every technique is re-evaluated with the full evidence picture. Some techniques that were INFERRED in 4x02 can now be CONFIRMED. Some that were CONFIRMED might need re-classification if the IR evidence contradicts earlier assumptions.
+
+## Instructions: 
+
+Write a script 9-attack_techniques.sh that:
+
+    Reads reference/attck_navigator_80pct.json as the baseline
+
+    For each technique already in the mapping:
+
+    Re-assesses the confidence level using ALL evidence sources (not just the source that originally identified it)
+
+    Upgrades INFERRED techniques to CONFIRMED where IR evidence provides direct support
+
+    Documents any techniques that should be CORRECTED (4x02 inference was wrong) or DOWNGRADED (new evidence weakens the original assessment)
+
+    Adds NEW techniques identified through the IR evidence:
+
+    T1053.005 Scheduled Task/Job: Scheduled Task (from T1 memory analysis)
+
+    T1074.001 Staged Data: Local Data Staging (from T2 disk analysis)
+
+    T1560.001 Archive Collected Data: Archive via Utility (from T2 disk analysis)
+
+    T1070.001 Indicator Removal: Clear Windows Event Logs (from T2 disk analysis)
+
+    T1005 Data from Local System (from T7 data access reconstruction)
+
+    Any additional techniques identified during the reconstruction
+
+    Produces a complete technique inventory with:
+
+    Technique ID and name
+
+    Kill chain phase (tactic)
+
+    Evidence sources
+
+    Confidence level (CONFIRMED/PROBABLE/POSSIBLE)
+
+    The investigation that first identified it (4x00-4x05)
+
+    Whether it was UPGRADED, NEW, CORRECTED or UNCHANGED
+
+    Calculates the final coverage percentage
+
+**Expected Output:**
+
+```bash
+$ ./9-attack_techniques.sh
+
+================================================================
+   HEALTHBANE ATT&CK TECHNIQUE INVENTORY (FINAL)
+   Total techniques in threat model: 29
+================================================================
+
+  #   Technique           Tactic          Conf    First ID  Status
+  --  ---------           ------          ----    --------  ------
+  01  T1566.001           Init Access     CONF    4x00      UNCHANGED
+  02  T1078               Init Access     CONF    4x00      UNCHANGED
+  03  T1071.001           C2              CONF    4x01      UNCHANGED
+  04  T1573.001           C2              CONF    4x01      UNCHANGED
+  [... all 4x02 techniques ...]
+  [... all 4x03 techniques ...]
+  [... all 4x04 techniques ...]
+  [N]  T1053.005          Persistence     CONF    4x05-IR   NEW
+  [N+1] T1074.001         Collection      CONF    4x05-IR   NEW
+  [N+2] T1560.001         Exfiltration    CONF    4x05-IR   NEW
+  [N+3] T1070.001         Def Evasion     PROB    4x05-IR   NEW
+  [N+4] T1005             Collection      CONF    4x05-IR   NEW
+
+COVERAGE EVOLUTION:
+  Post-4x02 (intelligence):  ~40% (12/29 techniques)
+  Post-4x03 (malware):       ~55% (16/29 techniques)
+  Post-4x04 (hunting):       ~80% (23/29 techniques)
+  Post-4x05 (reconstruction): ~96% (28/29 techniques)
+
+UPGRADED TECHNIQUES (INFERRED -> CONFIRMED): [N]
+  [List with evidence that confirmed them]
+
+NEW TECHNIQUES (from IR evidence): [N]
+  [List with evidence source]
+
+REMAINING GAP: 1/29 techniques
+  T[xxxx] [technique name]
+  Assessment: [Cannot determine if used -- collection limitation
+  OR technique not employed by this attacker]
+
+================================================================
+```
+
+---
+
+# [10. ATT&CK Navigator Layer Update](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/10-navigator_update.json)
+### advanced
+
+## Goal: 
+
+Produce the definitive HEALTHBANE ATT&CK Navigator JSON layer with color-coded phases, confidence annotations and the final coverage percentage.
+
+## Context: 
+
+The Navigator layer is the visual representation of the technique inventory. It must be importable into the MITRE ATT&CK Navigator tool and must visually distinguish between attack phases (Stages 1-4), confidence levels and the investigation that identified each technique.
+
+This is the layer James Chen will include in the board presentation. It must be correct, complete and self-explanatory.
+
+## Instructions: 
+
+Produce a file 10-navigator_update.json that:
+
+    Contains a valid ATT&CK Navigator layer in JSON format
+
+    Uses a color scheme that distinguishes:
+
+    Stage 1 techniques (Initial Access)
+
+    Stage 2 techniques (C2 and infrastructure)
+
+    Stage 3 techniques (Malware deployment)
+
+    Stage 4 techniques (Lateral movement and data staging)
+
+    Cross-stage techniques (used across multiple phases)
+
+    Includes metadata comments for each technique:
+
+    Confidence level
+
+    Evidence sources
+
+    Investigation phase that identified it
+
+    Represents the final coverage: approximately 96% of the 29-technique threat model
+
+    Is valid JSON that can be imported into the ATT&CK Navigator without errors
+
+---
