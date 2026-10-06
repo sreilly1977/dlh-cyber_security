@@ -1594,3 +1594,105 @@ SUMMARY:
 ```
 
 ---
+
+# [15. Attack Reconstruction Report](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/15-reconstruction_report.md)
+
+## Goal: 
+
+Produce the definitive HEALTHBANE Attack Reconstruction Report: a complete, evidence-cited, professionally formatted document that reconstructs the full attack, assesses impact, evaluates defenses and presents the remediation plan.
+
+## Context: 
+
+This is the final deliverable. Everything you have built in T0 through T14 converges here. The report must serve two audiences simultaneously: the SOC team (who need technical detail, ATT&CK mappings and detection rule specifications) and the board (who need a clear narrative, impact assessment and remediation timeline).
+
+This is the document that James Chen hands to Dr. Morales. It is the document that Dr. Morales presents to the board. It is the document that the legal team uses to assess notification obligations. It is the document that the insurance carrier reviews. And it is the document that you, the analyst, would put in your portfolio to demonstrate professional competence.
+
+## Instructions: 
+
+Produce 15-reconstruction_report.md containing:
+
+    Executive Summary (for the board):
+
+    What happened: one-paragraph narrative of the complete HEALTHBANE attack
+
+    How far the attacker got: systems compromised, data at risk, exfiltration status
+
+    How it was stopped: the detection and hunting chain that led to containment
+
+    What happens next: headline remediation actions
+
+    Key metrics: dwell time, breakout time, ATT&CK coverage improvement
+
+    Methodology:
+
+    Evidence sources used (from T0 inventory)
+
+    Analytical approach (cross-evidence correlation, timeline reconstruction, confidence assessment framework)
+
+    Limitations and assumptions
+
+    Attack Reconstruction (from T5-T8):
+
+    Stage 1: Initial Access (phishing)
+
+    Stage 2: C2 Establishment
+
+    Stage 3: Malware Deployment
+
+    Stage 4: Lateral Movement and Data Staging
+
+    Each stage with evidence citations, ATT&CK mappings and confidence levels
+
+    Unified Timeline (from T8):
+
+    Complete chronological sequence
+
+    Temporal metrics
+
+    Identified gaps
+
+    ATT&CK Analysis (from T9-T11):
+
+    Final technique inventory
+
+    Coverage evolution (40% -> 55% -> 80% -> 96%)
+
+    Gap analysis and blind spot assessment
+
+    Impact Assessment (from T12):
+
+    Data exposure summary
+
+    Exfiltration determination
+
+    Regulatory implications
+
+    Defensive Posture Evaluation (from T13):
+
+    What worked, what failed, structural lessons
+
+    Remediation Plan (from T14):
+
+    Immediate, short-term and medium-term actions
+
+    Prioritization rationale
+
+    Conclusions:
+
+    What Module 4 demonstrated about the gap between detection and understanding
+
+    Why investigation in pieces creates blind spots that only reconstruction reveals
+
+    Why proactive hunting and forensic readiness are not optional enhancements but operational necessities
+
+    What remains unknown and what would be needed to resolve it
+
+    Appendices:
+
+        IOC summary table (all IOCs with source, type, status)
+
+        Evidence citation index
+
+        ATT&CK Navigator layer reference (T10)
+
+---
