@@ -105,3 +105,99 @@
 **A:** List uncovered ATT&CK techniques and residual risks, then prioritize hunts, rule creation, and tooling improvements to close them.
 
 ---
+
+## Attack Reconstruction
+
+---
+
+### Cross-Evidence Correlation
+
+**Q: How do you integrate findings from multiple investigation domains (email, network, endpoint, intelligence, SIEM)?**
+
+**A:** Normalize all findings into a common schema (time, actor, artifact, source) on a single master timeline, then correlate entities across domains to build one unified picture.
+
+**Q: How do you identify convergences and divergences across sources?**
+
+**A:** Convergences are findings independently confirmed by two or more sources; divergences are claims supported by only one source or contradicted by others, flagged for further scrutiny.
+
+**Q: How do you assess evidence reliability — which sources are authoritative for which claims?**
+
+**A:** Match each claim to its most authoritative source (endpoint telemetry for process activity, network for wire traffic, SIEM for aggregated alerts), recognizing they corroborate rather than override each other.
+
+**Q: Why may network timestamps not match SIEM timestamps for the same event?**
+
+**A:** Timezone offsets, NTP clock skew, log shipping delays, and differing collection points mean timestamps describe observation times, not true event times.
+
+**Q: How do you resolve apparent contradictions between evidence sources?**
+
+**A:** Check for collection gaps, timezone misconfiguration, clock drift, and evidence preservation limits before concluding a real contradiction exists.
+
+---
+
+### Attack Timeline Reconstruction
+
+**Q: How do you construct a chronological attack narrative from fragmented, multi-source evidence spanning days or weeks?**
+
+**A:** Pivot off artifacts (IOCs, accounts, hosts) to stitch events across sources, then order them onto a normalized UTC master timeline.
+
+**Q: How do you establish temporal anchors?**
+
+**A:** Identify high-confidence, precisely-timestamped events (e.g., logins, malware execution with embedded timestamps) as fixed points to order surrounding, less certain events.
+
+**Q: How do you distinguish confirmed sequence from inferred sequence?**
+
+**A:** Confirmed sequence has direct causal correlation (e.g., matching artifact/hash between events); inferred sequence relies on technique logic alone.
+
+**Q: How do you identify dwell time, breakout time, and operational tempo from reconstructed timelines?**
+
+**A:** Dwell time = initial compromise to detection; breakout time = initial access to lateral movement start; operational tempo = pacing/gaps between attacker actions.
+
+---
+
+### ATT&CK Mapping at Scale
+
+**Q: How do you map a multi-phase attack to MITRE ATT&CK with confidence annotations?**
+
+**A:** Assign each technique a tier — Confirmed (direct evidence), Probable (strong circumstantial evidence), or Possible (technique logic only) — and cite the supporting artifacts.
+
+**Q: How do you identify blind-spot gaps vs. collection-limitation gaps?**
+
+**A:** Blind spots lack coverage where evidence *should* exist; collection limitations lack evidence because the source wasn't capturing data during the window.
+
+**Q: Why can ATT&CK coverage percentages create a false sense of security?**
+
+**A:** Coverage percentage measures breadth of detections, not depth — attackers leverage the few uncovered techniques that matter, which reconstruction reveals.
+
+---
+
+### Impact Assessment
+
+**Q: How do you determine organizational impact of an attack?**
+
+**A:** Map compromised systems to the asset inventory and data classification scheme to determine what assets and data classifications were touched.
+
+**Q: How do you distinguish confirmed, potential, and prevented data exposure?**
+
+**A:** Confirmed = evidence of access/exfiltration; potential = access was possible but unproven; prevented = staging detected and blocked before exfiltration.
+
+**Q: How do you assess regulatory implications (HIPAA notification triggers)?**
+
+**A:** Tie notification decisions to evidence of actual PHI access/acquisition, not mere system compromise, using the exposure determinations above.
+
+---
+
+### Professional Reporting
+
+**Q: How do you produce a report serving both technical and executive audiences?**
+
+**A:** Use a layered structure — executive summary with impact and actions up front, technical appendices with full evidence behind it.
+
+**Q: How do you structure evidence citations?**
+
+**A:** Every claim references a unique finding ID tied to a specific source, timestamp, and raw artifact, forming an auditable evidence chain.
+
+**Q: How do you document unknowns, and why does that strengthen a report?**
+
+**A:** Explicitly list unknowns, their cause (collection gap vs. pending analysis), and impact on conclusions; intellectual honesty prevents overstatement and builds stakeholder trust.
+
+---
