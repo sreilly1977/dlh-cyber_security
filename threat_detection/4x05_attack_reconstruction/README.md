@@ -920,3 +920,105 @@ CONTAINMENT TIMELINE:
 ```
 
 ---
+
+# [8. Unified Timeline Assembly](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/8-unified_timeline.sh)
+
+## Goal: 
+
+Merge all stage reconstructions into a single, chronological, evidence-cited timeline of the complete HEALTHBANE attack against MedDefense, from first phishing email to containment.
+
+## Context: 
+
+The unified timeline is the spine of the reconstruction report. It transforms four separate stage narratives into one continuous story. Every event must appear exactly once, in chronological order, with its evidence sources, ATT&CK mapping and confidence level.
+
+This is also where remaining contradictions become visible. If Stage 2 C2 establishment overlaps with Stage 3 malware deployment in a way that is physically impossible (e.g., malware deployed before C2 was established), the timeline will expose it. If events from different sources appear out of sequence, the timeline forces resolution.
+
+## Instructions: 
+
+Write a script 8-unified_timeline.sh that:
+
+    Merges the outputs of T5 (Stages 1-2), T6 (Stage 3) and T7 (Stage 4) into a single chronological sequence.
+
+    For each event in the timeline, includes:
+
+    Timestamp (with timezone notation and clock skew adjustment if applicable)
+
+    Event description
+
+    Source host(s) and target host(s)
+
+    User/credential involved
+
+    ATT&CK technique ID
+
+    Evidence source(s) with convergence status
+
+    Confidence level
+
+    Calculates and documents key temporal metrics:
+
+    Total dwell time (first access to containment)
+
+    Breakout time (initial access to lateral movement)
+
+    Time to data staging
+
+    Time from detection (4x04 hunt) to containment (IR isolation)
+
+    Operational tempo (average time between attack phases)
+
+    Identifies and documents remaining timeline gaps: periods within the attack window where no evidence exists and the attacker's activity is unknown.
+
+    Flags any events that could NOT be sequenced with confidence and explains why.
+
+**Expected Output:**
+
+```bash
+$ ./8-unified_timeline.sh
+
+================================================================
+   UNIFIED ATTACK TIMELINE - HEALTHBANE vs MedDefense
+   Period: [first event] to [containment]
+================================================================
+
+CHRONOLOGICAL SEQUENCE:
+
+  #  Timestamp            Event                    ATT&CK     Conf   Sources
+  -- --------             -----                    ------     ----   -------
+  01 [date time]          Phishing emails sent     T1566.001  CONF   4x00
+  02 [date time]          Diane clicks link        T1566.001  CONF   4x00
+  03 [date time]          Credentials submitted    T1078      CONV   4x00,4x01
+  04 [date time]          First C2 beacon          T1071.001  CONV   4x01,IR-FW
+  05 [date time]          C2 channel stable        T1573.001  CONF   4x01
+  [...]
+  [N] [date time]         Last attacker activity   [tech]     [lvl]  [sources]
+  [N+1] [date time]       Hunt detection (4x04)    ---        CONF   4x04
+  [N+2] [date time]       IR isolation of host     ---        CONF   IR
+
+  Total events in timeline: [N]
+  Events with CONVERGED evidence: [N] ([pct]%)
+  Events with SINGLE-SOURCE evidence: [N] ([pct]%)
+
+TEMPORAL METRICS:
+  Total dwell time:           [N] days ([first] to [containment])
+  Breakout time:              [N] hours (initial access to lateral)
+  Time to persistence:        [N] hours (access to scheduled task)
+  Time to data staging:       [N] days (access to first staging file)
+  Detection to containment:   [N] days (hunt finding to IR isolation)
+  Operational tempo:          Activity clusters on [pattern] nights
+
+TIMELINE GAPS:
+  GAP 1: [date range] -- No evidence of attacker activity
+         Assessment: [dormant period / collection gap / ...]
+  GAP 2: [date range] -- Single source only (firewall)
+         Assessment: [...]
+
+SEQUENCING UNCERTAINTIES:
+  [*] Events [N] and [N+1] cannot be definitively ordered.
+      Reason: [single-source timestamps without cross-reference]
+      Impact on reconstruction: [minimal/significant]
+
+================================================================
+```
+
+---
