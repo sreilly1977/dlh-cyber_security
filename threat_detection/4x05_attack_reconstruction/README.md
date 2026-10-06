@@ -1483,3 +1483,114 @@ NEW RULES RECOMMENDED:
 ```
 
 ---
+
+# [14. Prioritized Remediation Plan](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction/14-remediation_plan.sh)
+### advanced
+
+## Goal: 
+
+Produce a prioritized remediation plan that addresses the vulnerabilities and detection gaps exposed by the reconstruction, ordered by urgency and impact.
+
+## Context: 
+
+A reconstruction without a remediation plan is a forensic exercise, not a security operation. The board does not want to know only what happened. They want to know what MedDefense is doing to ensure it does not happen again. The remediation plan must be prioritized: not everything can be fixed simultaneously, and not everything is equally urgent.
+
+The plan must distinguish between immediate actions (things that reduce risk RIGHT NOW), short-term improvements (things deployable within weeks) and medium-term enhancements (architectural changes requiring planning and investment). Each action must trace back to a specific finding in the reconstruction.
+
+## Instructions: 
+
+Write a script 14-remediation_plan.sh that:
+
+    Lists every vulnerability, detection gap and defensive weakness identified in the reconstruction (from T0 through T13)
+
+    For each item, documents:
+
+    The specific reconstruction finding that exposed it
+
+    The ATT&CK technique it relates to
+
+    The risk if left unaddressed (what could an attacker exploit)
+
+    Prioritizes remediation into three tiers:
+
+    IMMEDIATE (within 48 hours):
+
+    Credential rotation for ALL compromised accounts
+
+    Verification that WS-RECV-03 isolation is complete
+
+    Review of ALL other workstations for scheduled task indicators
+
+    Verification that no data left the network (from T12 exfiltration assessment)
+
+    SHORT-TERM (within 2 weeks):
+
+    Deploy detection rules for newly identified techniques (T1053.005, T1074.001, T1070.001)
+
+    Implement scheduled task creation monitoring across all endpoints
+
+    Deploy data staging detection (file creation monitoring in staging directories)
+
+    Add secondary C2 IP to blocklists and deploy detection for the communication pattern
+
+    MEDIUM-TERM (within 3 months):
+
+    Implement full Sysmon deployment with behavioral analytics
+
+    Establish recurring threat hunting cadence (weekly micro-hunts, monthly full hunts)
+
+    Review and harden service account permissions (principle of least privilege)
+
+    Implement network segmentation improvements to limit lateral movement paths
+
+    Deploy memory forensics readiness (crash dump configuration, memory capture tools on high-value hosts)
+
+    For each remediation action, estimates effort (hours/days) and assigns a responsible team (SOC, IT, Network, Management)
+
+**Expected Output:**
+
+```bash
+$ ./14-remediation_plan.sh
+
+================================================================
+   PRIORITIZED REMEDIATION PLAN
+   Based on HEALTHBANE Attack Reconstruction
+================================================================
+
+IMMEDIATE ACTIONS (within 48 hours):
+  Priority  Action                        Finding   Effort  Owner
+  IM-1      Rotate svc_healthsync creds   T7,T1     2h     IT
+  IM-2      Verify WS-RECV-03 isolation   T7        1h     IR Team
+  IM-3      Scan all WS for sched tasks   T1,T2     4h     SOC
+  IM-4      Confirm no data exfiltration  T12       2h     SOC
+  IM-5      Block [unknown_IP] at FW      T3        1h     Network
+
+SHORT-TERM (within 2 weeks):
+  Priority  Action                        Finding   Effort  Owner
+  ST-1      Deploy T1053.005 detection    T1,T11    8h     SOC
+  ST-2      Deploy data staging alerts    T2,T11    8h     SOC
+  ST-3      Deploy secondary C2 pattern   T3        4h     SOC
+  ST-4      Review service account perms  T7        16h    IT
+  ST-5      Extended PCAP collection      T11       8h     Network
+
+MEDIUM-TERM (within 3 months):
+  Priority  Action                        Finding   Effort  Owner
+  MT-1      Full Sysmon deployment        T13       40h    IT+SOC
+  MT-2      Recurring hunt program        T13       Ongoing SOC
+  MT-3      Network segmentation review   T7        80h    Network
+  MT-4      Memory forensics readiness    T1        16h    IR Team
+  MT-5      Privileged access management  T7        120h   IT+Mgmt
+
+SUMMARY:
+  Immediate: [N] actions, ~[N]h total effort
+  Short-term: [N] actions, ~[N]h total effort
+  Medium-term: [N] actions, ~[N]h total effort
+  Total remediation items: [N]
+
+  Each action traces to a specific reconstruction finding.
+  No action exists without evidence-based justification.
+
+================================================================
+```
+
+---
