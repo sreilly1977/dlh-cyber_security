@@ -10,50 +10,39 @@ Supporting characters (e.g., James Chen, Marcus) and realistic artifacts (networ
 
 ## Total Exercise Count
 
-**26 exercises** across **2 scenario modules**.
-
-Those marked as advanced are not required to pass the course.
-
-## Overview
-
-This module focuses on identifying, analyzing, and responding to active threats in real-world scenarios. Unlike the defensive posture of the Blue Team modules, this track emphasizes offensive threat simulation, forensic investigation, and the construction of detection logic from enriched event data.
-
-Key focus areas include:
-- **Phishing Dissection**: Deep-dive analysis of malicious emails, header authentication, attachment sandboxing, and IOC extraction.
-- **Network Traffic Analysis**: Packet-level inspection using Wireshark to identify command-and-control (C2) communications, data exfiltration, and protocol anomalies.
-- **Detection Engineering**: Building signatures, anomaly baselines, and correlation rules from raw telemetry.
+The curriculum includes 88 hands-on exercises across six core modules.
 
 ## Modules
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
-| 1 | [`4x00_phishing_dissection`](4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
-| 2 | [`4x01_wire_shark_territory`](4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 11 |
+| 1 | [`4x00_phishing_dissection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
+| 2 | [`4x01_wire_shark_territory`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 12 |
+| 3 | [`4x02_intelligence_driven_defense`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x02_intelligence_driven_defense) | Threat intelligence integration: IOCs, TLP handling, feed aggregation, and mapping intelligence to defensive controls | 15 |
+| 4 | [`4x03_malware_awareness`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x03_malware_awareness) | Malware fundamentals: static/dynamic analysis, PE headers, packers, sandbox execution, and behavioral indicators | 15 |
+| 5 | [`4x04_threat_hunting`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x04_threat_hunting) | Proactive hunting: hypothesis-driven searches, log correlation, anomaly detection, and artifact triage | 15 |
+| 6 | [`4x05_attack_reconstruction`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction) | Post-incident reconstruction: kill chain mapping, attacker TTP synthesis, and forensic timeline assembly | 16 |
 
-### Additional Resources
+## Learning Objectives
 
-| Directory | Description |
-|-----------|-------------|
-| [`learning_objectives`](learning_objectives) | Module-specific learning objectives and competency mapping aligned with CompTIA Security+ and industry detection standards |
+See the [`learning_objectives`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/learning_objectives) directory for module-specific competency mapping aligned with CompTIA Security+ and industry detection standards.
 
 ## Usage
 
 Each module directory contains its own `README.md` with detailed exercise instructions. Work through modules sequentially, as later exercises often reference findings, artifacts, or detection rules developed in earlier ones.
 
-- **Safety First**: Never navigate directly to suspicious URLs or open attachments on your production workstation. Use defanged URLs, sandbox environments, and command-line tools for all investigations.
-- **Documentation**: Every conclusion must be supported by specific evidence from email headers, authentication results, or OSINT findings.
-- **Lab Environment**: Perform investigations in an isolated local lab environment. No centralized SIEM or preconfigured infrastructure is required.
-
 ### Getting Started
 
-Begin with [`4x00_phishing_dissection`](4x00_phishing_dissection) — no prior modules are required.
-
-[`4x00_phishing_dissection`]
+Begin with [`4x00_phishing_dissection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x00_phishing_dissection) — no prior modules are required.
 
 ## Related Directories
 
 | Directory | Description |
 |-----------|-------------|
-| [`blue_team`](../blue_team) | Defensive operations, vulnerability management, and security architecture planning |
+| [`blue_team`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Defensive operations, vulnerability management, and security architecture planning |
 
----
+## Footer
+
+### Project Context
+
+This repository supports your ongoing studies for the **CompTIA Security+** certification and real-world incident response workflows. All investigations are designed for local lab environments—never execute suspicious payloads or visit active malicious URLs on production systems.

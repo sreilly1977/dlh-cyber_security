@@ -88,8 +88,12 @@ Applied threat detection operations through a scenario-driven case study centere
 ### Part 4 — Cybersecurity threat detection and analysis (Modules 19-20)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
-| [`4x00_phishing_dissection`](4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
-| [`4x01_wire_shark_territory`](4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 11 |
+| [`4x00_phishing_dissection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
+| [`4x01_wire_shark_territory`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x01_wire_shark_territory) | Network traffic analysis: packet capture filtering, protocol decoding, C2 traffic identification, data exfiltration patterns, and timeline reconstruction | 12 |
+| [`4x02_intelligence_driven_defense`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x02_intelligence_driven_defense) | Threat intelligence integration: IOCs, TLP handling, feed aggregation, and mapping intelligence to defensive controls | 15 |
+| [`4x03_malware_awareness`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x03_malware_awareness) | Malware fundamentals: static/dynamic analysis, PE headers, packers, sandbox execution, and behavioral indicators | 15 |
+| [`4x04_threat_hunting`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x04_threat_hunting) | Proactive hunting: hypothesis-driven searches, log correlation, anomaly detection, and artifact triage | 15 |
+| [`4x05_attack_reconstruction`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x05_attack_reconstruction) | Post-incident reconstruction: kill chain mapping, attacker TTP synthesis, and forensic timeline assembly | 16 |
 
 See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/threat_detection/README.md) for the full curriculum map.
 
