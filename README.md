@@ -85,7 +85,7 @@ See the [`blue_team/README.md`](https://github.com/sreilly1977/dlh-cyber_securit
 
 Applied threat detection operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
 
-### Part 4 — Cybersecurity threat detection and analysis (Modules 19-20)
+### Part 4 — Cybersecurity threat detection and analysis (Modules 19-25)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`4x00_phishing_dissection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
