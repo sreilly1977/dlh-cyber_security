@@ -169,6 +169,8 @@ Work through the tracks based on your learning goals:
 4. **Threat detectives and hunters:** Follow [`threat_detection`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection) modules in order, document findings cumulatively
 5. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
 
+---
+
 ### Cheat Sheets
 
 Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) directory:
