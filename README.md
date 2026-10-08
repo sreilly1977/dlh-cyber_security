@@ -211,6 +211,7 @@ Setup guides and configuration files available in the repository for:
 - [HybridAnalysis - online file and URL sandbox](https://hybrid-analysis.com/) 
 - [MXToolbox - online email analysis](https://mxtoolbox.com)
 - [CyberChef - online toolbox](https://gchq.github.io/CyberChef/)
+- [CyberRange Luxembourg - Virtual live attack simulation](https://www.cyber-range.lu/)
 
 ---
 
