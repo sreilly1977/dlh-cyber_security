@@ -205,13 +205,12 @@ Setup guides and configuration files available in the repository for:
 
 ### Threat Intelligence Sources and Toolkits
 
-- [MISP - open-source threat intelligence](https://www.misp-project.org/)
+- [MISP - Luxembourg open-source threat intelligence](https://www.misp-project.org/)
 - [VirusTotal - URL, file and hash scanning](https://www.virustotal.com/)
 - [AbuseIPDB - IP reputation lookup](https://www.abuseipdb.com/)
 - [HybridAnalysis - online file and URL sandbox](https://hybrid-analysis.com/) 
 - [MXToolbox - online email analysis](https://mxtoolbox.com)
 - [CyberChef - online toolbox](https://gchq.github.io/CyberChef/)
-- [MISP - Luxembourg Threat Intel Sharing](https://www.misp-project.org/))
 
 ---
 
