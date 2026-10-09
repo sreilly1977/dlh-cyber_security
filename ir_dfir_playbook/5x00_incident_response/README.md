@@ -191,3 +191,92 @@ escalation:
 ```
 
 ---
+
+# [3. Design the Playbook Template](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/playbook_template.yaml)
+
+## Goal: 
+
+Build the reusable skeleton every MedDefense playbook will follow.
+
+## Context: 
+
+Standardize before you scale. When every playbook answers the same questions in the same order, a tired analyst knows exactly where to look.
+
+## Instructions: 
+
+Produce playbook_template.yaml with the sections listed below. Use angle-bracket placeholders for content to be filled in per scenario.
+
+Required sections:
+
+    playbook_id
+
+    title
+
+    owner_role
+
+    applies_to with triggers and indicators
+
+    severity_mapping with initial and escalate_if
+
+    immediate_actions (first 15 minutes)
+
+    evidence_preservation (what must be captured before any containment action)
+
+    containment_actions (each with a trade_off field)
+
+    eradication_actions
+
+    recovery_validation
+
+    communication_plan (each entry links audience and template file)
+
+    escalation_triggers
+
+    post_incident_tasks
+
+The template itself is not populated. It is the skeleton the next three tasks will use.
+
+**Expected output**
+
+```yaml
+playbook_id: <PB-XXX>
+title: <short descriptive title>
+owner_role: <which IR role executes this playbook>
+applies_to:
+  triggers:
+    - <detection rule ID or alert condition>
+  indicators:
+    - <IOC type or observable pattern>
+severity_mapping:
+  initial: <SEV1-4>
+  escalate_if:
+    - <condition that raises severity>
+immediate_actions:
+  - step: <first action>
+    owner: <role>
+    timebox_minutes: <number>
+evidence_preservation:
+  - artifact: <what to capture>
+    method: <how>
+    before_step: <containment action this must precede>
+containment_actions:
+  - step: <specific action>
+    owner: <role>
+    decision_point: <if applicable>
+    trade_off: <what this action preserves or sacrifices>
+eradication_actions:
+  - <specific removal or reset>
+recovery_validation:
+  - check: <how to confirm>
+    criterion: <what passes>
+communication_plan:
+  - audience: <role or stakeholder>
+    trigger: <when to communicate>
+    template: <template file name>
+escalation_triggers:
+  - <condition that raises severity or scope>
+post_incident_tasks:
+  - <handed to the post-incident review>
+```
+
+---
