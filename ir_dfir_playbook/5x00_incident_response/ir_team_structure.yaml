@@ -1,0 +1,106 @@
+# MedDefense Health Systems — IR Team Structure and Escalation Path
+# Companion to severity_matrix.md. Roles reference the same role names
+# used in the severity matrix (Decision Authority column).
+
+roles:
+  IR_Commander:
+    primary: James Chen, SOC Lead
+    backup: Robert Kim, Infrastructure Lead
+    responsibilities:
+      - Owns the incident through closure
+      - Runs the incident bridge and maintains the master timeline
+      - Authorizes containment actions within authority ceiling
+    authority_ceiling: SEV2
+
+  Technical_Lead:
+    primary: Sarah Park, IT Director
+    backup: Mike Torres, Network Engineer
+    responsibilities:
+      - Directs forensic investigation and evidence acquisition
+      - Coordinates containment and eradication across AD, cloud, endpoints
+      - Validates scope against initial assessment and reports deltas
+    authority_ceiling: SEV2
+
+  Communications_Lead:
+    primary: Marcus Webb, Communications Director
+    backup: Sarah Park, IT Director
+    responsibilities:
+      - Owns internal and external crisis communications
+      - Manages status updates to stakeholders at the cadence set by severity
+      - Prepares holding statements pending Legal review
+    authority_ceiling: SEV3
+
+  Legal_Liaison:
+    primary: Helena Reyes, General Counsel
+    backup: Dr. Patricia Morales, CISO
+    responsibilities:
+      - Determines HIPAA breach-reportability and regulatory clock
+      - Issues litigation hold and manages privilege posture
+      - Approves all external notifications before release
+    authority_ceiling: SEV3
+
+  Executive_Sponsor:
+    primary: Dr. Patricia Morales, CISO
+    backup: Sarah Park, IT Director
+    responsibilities:
+      - Owns SEV1 decisions and board notification
+      - Authorizes spend beyond operating budget (IR retainer activation, emergency procurement)
+      - Is the single escalation point for media or regulator contact at SEV1
+    authority_ceiling: SEV1
+
+  Scribe:
+    primary: Mike Torres, Network Engineer
+    backup: Marcus Webb, Communications Director
+    responsibilities:
+      - Logs all decisions, actions, and timestamps on the incident timeline
+      - Preserves evidence custody records from acquisition to handoff
+      - Produces the written record for post-incident review and audit defense
+    authority_ceiling: SEV4
+
+escalation:
+  SEV1:
+    on_detection:
+      - IR_Commander
+      - Technical_Lead
+      - Executive_Sponsor
+      - Legal_Liaison
+      - Communications_Lead
+      - Scribe
+    on_confirmation:
+      - Executive_Sponsor
+      - Legal_Liaison
+      - Communications_Lead
+    on_scope_expansion:
+      - Executive_Sponsor
+    time_threshold_minutes_to_escalate: 15
+
+  SEV2:
+    on_detection:
+      - IR_Commander
+      - Technical_Lead
+    on_confirmation:
+      - Communications_Lead
+      - Legal_Liaison
+    on_scope_expansion:
+      - Executive_Sponsor
+    time_threshold_minutes_to_escalate: 60
+
+  SEV3:
+    on_detection:
+      - IR_Commander
+      - Technical_Lead
+    on_confirmation:
+      - Legal_Liaison
+      - Scribe
+    on_scope_expansion:
+      - IR_Commander
+    time_threshold_minutes_to_escalate: 120
+
+  SEV4:
+    on_detection:
+      - IR_Commander
+    on_confirmation:
+      - Technical_Lead
+    on_scope_expansion:
+      - Legal_Liaison
+    time_threshold_minutes_to_escalate: 240

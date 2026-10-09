@@ -121,3 +121,73 @@ Severity is reviewed at every status update. It increases when new evidence rais
 </pre>
 
 ---
+
+# [2. Structure the IR Team and Escalation Path](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/ir_team_structure.yaml)
+
+## Goal: 
+
+Document who does what and who gets called when.
+
+## Context: 
+
+During an incident, no one should have to ask "who decides this?" The answer must be on the page.
+
+## Instructions: 
+
+Produce ir_team_structure.yaml with two top-level sections.
+
+Under roles, define each of the six roles below with: primary (named staff and title), backup (named staff and title), responsibilities (three bullet points maximum), and authority_ceiling (highest severity this role can own without escalating).
+
+    IR_Commander
+
+    Technical_Lead
+
+    Communications_Lead
+
+    Legal_Liaison
+
+    Executive_Sponsor
+
+    Scribe
+
+Under escalation, for each severity SEV1 through SEV4, define:
+
+    on_detection: roles notified when the incident is first declared
+
+    on_confirmation: roles notified when compromise is confirmed
+
+    on_scope_expansion: roles notified when scope grows beyond the initial assessment
+
+    time_threshold_minutes_to_escalate: how long an incident can remain without progress before it escalates one level
+
+**Expected output**
+
+```yaml
+roles:
+  IR_Commander:
+    primary: James Chen, SOC Lead
+    backup: Robert Kim, Infrastructure Lead
+    responsibilities:
+      - Owns the incident through closure
+      - Runs the incident bridge and timeline
+      - Authorizes containment actions within authority ceiling
+    authority_ceiling: SEV2
+  Technical_Lead:
+    ...
+
+escalation:
+  SEV2:
+    on_detection:
+      - IR_Commander
+      - Technical_Lead
+    on_confirmation:
+      - Communications_Lead
+      - Legal_Liaison
+    on_scope_expansion:
+      - Executive_Sponsor
+    time_threshold_minutes_to_escalate: 60
+  SEV1:
+    ...
+```
+
+---
