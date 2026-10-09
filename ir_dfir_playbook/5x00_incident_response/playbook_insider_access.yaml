@@ -1,0 +1,127 @@
+# MedDefense Health Systems — Playbook: Suspected Insider Data Access
+# Name: playbook_insider_access.yaml
+# Purpose: Investigate suspected misuse of legitimate clinical access without alerting
+#          the subject; preserve evidence, contain silently, and manage HR/Legal/HIPAA gates.
+# Author: Steve - Cybersecurity Engineer
+# Date: 09 October 2026
+
+playbook_id: PB-003
+title: Suspected Insider Misuse of Legitimate Access — Out-of-Scope Patient Record Access
+owner_role: SOC Analyst (lead evidence collection), IR_Commander for HR/Legal gates marked decision_point
+
+applies_to:
+  triggers:
+    - Epic audit log alert: user accessing patients with no care-team relationship (no treatment, payment, or operations linkage)
+    - Quarterly or ad hoc access review flags volume/pattern anomaly (e.g., 47 records over two weeks outside assigned care team)
+    - Report from a coworker, patient, or Privacy Officer regarding suspected snooping
+    - Break-the-glass access without corresponding clinical justification entered
+  indicators:
+    - Access pattern clustering by name, address, or ZIP (neighbors, celebrities, coworkers, family) rather than by unit or shift assignment
+    - Record access outside the user's shift hours or from a workstation inconsistent with normal duty location
+    - Volume spike relative to the user's own 90-day baseline and to peer-norm baselines for the same role
+    - Printing, downloading, or photographing behavior following record views (print spooler logs, bulk export, USB insertion, mobile device near screen)
+    - Email or messaging activity containing patient identifiers sent to personal or non-MedDefense addresses
+
+severity_mapping:
+  initial: SEV3
+  escalate_if:
+    - Confirmed ePHI exfiltration outside MedDefense (personal email, download to removable media) — Data Exposure moves toward confirmed_limited or confirmed_broad; SEV2
+    - Subject holds elevated access (systems administrator, Epic security administrator, or provider with broad override rights) — SEV2 given counter-forensics capability
+    - Access linked to identity theft or sale of patient data (financial motive indicators) — SEV2, Law enforcement referral assessment
+    - Multiple subjects implicated or an organized pattern across sites — SEV2 minimum
+  # SEV1 is not reachable in this playbook: insider snooping does not interrupt patient
+  # safety or service availability, and single-subject exposure rarely reaches broad scope.
+
+immediate_actions:
+  - step: Verify the audit flag is not a false positive: confirm the 47 records carry no care-team, scheduling, or covering-provider relationship to the subject in the EHR
+    owner: SOC Analyst with Privacy Office access
+    timebox_minutes: 30
+  - step: Establish the silent investigation workspace: case folder on access-restricted share visible only to the assigned investigator and IR_Commander; standard-issue ticket rewritten to a neutral title
+    owner: SOC Analyst
+    timebox_minutes: 15
+  - step: Brief IR_Commander and determine HR/Legal gate timing per the decision point below — HR and Legal are engaged before any interview or confrontation, and only through the channels defined there
+    owner: SOC Analyst
+    timebox_minutes: 15
+
+evidence_preservation:
+  - artifact: Epic audit trail export for the subject — every record access, view, print, and export event with patient MRN, timestamp, workstation ID, and encounter linkage, covering the flagged window plus 30 days prior
+    method: Audit log export to the restricted case folder; hash and record chain of custody
+    before_step: Any access scope change, user notification, or HR interview
+  - artifact: Workstation state and activity records for every workstation the subject used (incl. wst-ws-NN hosts at West Campus if applicable)
+    method: Wazuh EDR telemetry pull: process activity, USB device insertions, clipboard and file-transfer events; SIEM export of authentication events for the subject at those workstations
+    before_step: Reimaging, moving, or servicing any workstation the subject uses
+  - artifact: Email and messaging archives for the subject's MedDefense accounts, flagged window plus 30 days prior
+    method: Microsoft 365 unified audit log and mailbox export via compliance search to the case folder, under Legal hold instructions
+    before_step: Any mailbox action, retention-policy change visible to the user, or HR notification
+  - artifact: Print spooler and output management logs for the subject's badge and workstations
+    method: SIEM/print server log export; capture job names, volumes, and destinations
+    before_step: Print queue cleanup or device maintenance
+  - artifact: Badge access and physical location records correlated to workstation logons
+    method: Physical security system export to the case folder; corroborates the human behind the keyboard
+    before_step: Any facility or badge change affecting the subject
+
+containment_actions:
+  # Containment principle: reduce exposure with no visible change to the subject's daily
+  # experience. Account disable, forced logout, or credential reset are EXCLUDED here —
+  # they signal the investigation, tip the subject, and trigger evidence destruction.
+  - step: Role-based scope reduction — adjust the subject's role assignment so out-of-care-team patient lookup requires break-the-glass with documented justification, framed to the subject (if noticed) as a routine care-model or unit reassignment, not a restriction
+    owner: IT Director function with Epic security administrator
+    trade_off: Cuts the ongoing improper-access channel while preserving legitimate care delivery; sacrifices some response speed for covered emergencies (break-the-glass adds friction) and requires a plausible routine cover narrative maintained until the interview.
+  - step: Access review workflow — route the subject through the standing periodic access recertification with Privacy Office participation, narrowing entitlements under the normal governance process
+    owner: IT Director function
+    trade_off: Achieves durable entitlement reduction with zero investigative signal; sacrifices immediacy, since the standard review cycle is slower than targeted revocation.
+  - step: Compensating monitoring — increase audit-log alerting sensitivity on the subject's account (per-patient alerts on further out-of-scope access, print/export, USB events) with alerts routed only to the restricted case channel
+    owner: SOC Analyst
+    trade_off: Provides early warning if misuse continues and preserves the evidentiary trail; sacrifices nothing operationally, but every monitored alert must bypass normal SOC queues to avoid leaks through the shared ticketing system.
+  - step: Egress guardrail — apply mail-flow rule (silent, non-bouncing) holding outbound messages with detected PHI patterns from the subject to internal review, configured to be invisible to the sender
+    owner: Infrastructure Lead (Robert Kim's function)
+    trade_off: Blocks the highest-value exfiltration channel without notifying the subject; sacrifices message timeliness for the subject's legitimate correspondence until the investigation closes.
+
+eradication_actions:
+  - On confirmation of misuse: execute formal access suspension through HR-directed account action at the moment of interview, not before
+  - Recover downloaded or printed ePHI: coordinate return or attestation of destruction through Legal under the litigation hold
+  - Identify systemic cause: broken relationship-based access controls, ineffective break-the-glass justification review, or unmonitored printing; remediate the control gap
+  - Where the subject's credentials were used by another party (session hijack masquerading as insider), pivot to PB-001 handling and reclassify the incident as external compromise
+
+recovery_validation:
+  - check: Two-week post-containment audit review of the subject's access
+    criterion: Zero further out-of-care-team record accesses without documented justification
+  - check: Care-team workflows the subject supports
+    criterion: No clinical care interruptions caused by scope reduction; any break-the-glass uses carry valid justifications
+  - check: Egress guardrail and monitoring rule disposition at case closure
+    criterion: Special-case controls removed or transitioned to standard policy; documented to prevent unmanaged permanent surveillance
+  - check: Sanctions determination executed and recorded
+    criterion: HR sanction per MedDefense sanctions policy applied and documented in the case record, including the record of the evidence relied upon
+
+communication_plan:
+  - audience: IR_Commander
+    trigger: Every stage gate — flag validation, evidence set complete, containment staged, confirmation
+    template: insider_case_update.md
+  - audience: Legal_Liaison (General Counsel) and HR
+    trigger: BEFORE any interview, confrontation, or final classification of the audit flag — Legal issues litigation hold and privilege guidance at this point
+    template: legal_hr_gate_brief.md
+  - audience: CISO (Executive_Sponsor)
+    trigger: Only if escalated to SEV2 (confirmed exfiltration, elevated-access subject, or organized pattern)
+    template: insider_exec_brief.md
+  - audience: Privacy Officer
+    trigger: On confirmation that ePHI access exceeded authorization
+    template: privacy_assessment_referral.md
+  - audience: Affected patients
+    trigger: Only if the Legal determination concludes the event is reportable under the HIPAA Breach Notification Rule — never before, and coordinated exclusively by Legal and Communications
+    template: patient_breach_notification.md
+  # Explicitly excluded audiences until Legal authorizes: the subject, the subject's
+  # manager, the nursing unit, general SOC chat channels, and any shared ticket queues.
+
+escalation_triggers:
+  - Exfiltration of ePHI outside MedDefense control confirmed — SEV2, engage Legal_Liaison and Executive_Sponsor per ir_team_structure.yaml
+  - Subject attempts counter-forensic behavior (log tampering, mass deletion, credential change) — move to immediate HR/Legal conference and expedite the interview
+  - Additional subjects or cross-site pattern identified — SEV2; organize under a single case umbrella
+  - Evidence indicates external takeover of the subject's account rather than insider misuse — reclassify and pivot to playbook_credential_exposure.yaml (PB-001)
+
+post_incident_tasks:
+  - Complete the HIPAA breach risk assessment on the confirmed facts: which patients, what data elements, probability of compromise, and deliver to the General Counsel for the reportability determination
+  - Execute the HIPAA reporting pathway per the General Counsel's determination: individual notification to affected patients within 60 days of discovery if reportable; OCR notification contemporaneously with individual notices if 500 or more individuals in a state/jurisdiction are affected, or via the annual log submission to OCR if fewer than 500; state-law overlay assessed for Oregon OCIPA (ORS 646A.600) and Washington My Health My Data Act coverage for West Campus patients
+  - Document the sanctions action taken against the workforce member for the required HIPAA sanction record
+  - Tune Epic relationship-based access monitoring thresholds and break-the-glass justification review based on the discriminating indicators from this case
+  - Feed anonymized case pattern into workforce privacy training refresh
+  - Close the loop on the special-case controls: remove silent egress rules and heightened monitoring, or convert them to standard policy with privacy review

@@ -327,7 +327,7 @@ The radiology imaging server is slow. Nurses cannot pull X-rays for patients wai
 
 Populate playbook_clinical_degradation.yaml from your template.
 
-Must include:
+**Must include:**
 
     Triage criteria that separate incident from performance (specific indicators for each).
 
@@ -338,5 +338,34 @@ Must include:
     Clinical workflow fallback: the moment the on-call clinical lead activates downtime procedures.
 
     A decision point: investigate under downtime, or continue service with elevated monitoring and constrained access.
+
+---
+
+# [6. Suspected Insider Data Access](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/playbook_insider_access.yaml)
+### advanced
+
+## Goal: 
+
+Handle possible misuse of legitimate access without alerting the subject.
+
+## Context: 
+
+An audit flags that a nurse accessed 47 patient records across two weeks, for patients outside her assigned care team. It could be curiosity, identity theft, or a workflow reason you do not yet see. You cannot confront her. You still have to act.
+
+## Instructions: 
+
+Populate playbook_insider_access.yaml from your template.
+
+**Must include:**
+
+    Evidence preservation before any confrontation: access logs, workstation state, email and messaging archives.
+
+    HR and Legal involvement: who is pulled in at which severity, and who is explicitly not.
+
+    Silent investigation posture: specific actions to avoid that would alert the subject.
+
+    Access containment without visible change: role-based scope reduction, access review workflow, not account disable.
+
+    HIPAA reporting pathway if misuse is confirmed as a reportable event.
 
 ---
