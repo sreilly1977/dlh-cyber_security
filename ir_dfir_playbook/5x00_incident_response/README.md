@@ -280,3 +280,35 @@ post_incident_tasks:
 ```
 
 ---
+
+# [4. Populate Playbook: Credential Exposure](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/playbook_credential_exposure.yaml)
+
+## Goal: 
+
+Apply the template to a confirmed credential compromise.
+
+## Context: 
+
+A MedDefense user enters their credentials on a fake Microsoft login page. Within the hour, the attacker signs in from a foreign IP. The on-call analyst needs to act, in order, with the correct decision authority.
+
+## Instructions: 
+
+Populate playbook_credential_exposure.yaml from your template. Another analyst must be able to execute it without asking questions.
+
+Must include:
+
+    Concrete containment actions: Active Directory password reset, Azure AD session revocation, MFA device reset, VPN token revocation, Epic session termination.
+
+    Evidence preservation before any reset: authentication logs, Azure AD sign-in log export, affected mailbox export, recent data access audit export.
+
+    A HIPAA assessment trigger: was ePHI accessible from the compromised account during the exposure window?
+
+    A documented decision point: reset immediately and lose attacker session visibility, or monitor briefly and risk further compromise.
+
+Do not add new sections to the template. Only fill the ones already defined.
+
+**Expected output**
+
+    Full populated YAML. Every section from the template is filled with MedDefense-specific content.
+
+---
