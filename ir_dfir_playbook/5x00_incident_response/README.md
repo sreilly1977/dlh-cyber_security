@@ -312,3 +312,31 @@ Do not add new sections to the template. Only fill the ones already defined.
     Full populated YAML. Every section from the template is filled with MedDefense-specific content.
 
 ---
+
+# [5. Clinical Service Degradation](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/playbook_clinical_degradation.yaml)
+
+## Goal: 
+
+Handle a suspected incident on a patient-facing clinical system without damaging patient care.
+
+## Context: 
+
+The radiology imaging server is slow. Nurses cannot pull X-rays for patients waiting in the ER. It might be performance. It might be an incident. You cannot just unplug it.
+
+## Instructions: 
+
+Populate playbook_clinical_degradation.yaml from your template.
+
+Must include:
+
+    Triage criteria that separate incident from performance (specific indicators for each).
+
+    Partial containment options that avoid full outage: network segmentation, account restriction, service throttling.
+
+    Patient safety coordination: the clinical role contacted before any isolation action.
+
+    Clinical workflow fallback: the moment the on-call clinical lead activates downtime procedures.
+
+    A decision point: investigate under downtime, or continue service with elevated monitoring and constrained access.
+
+---

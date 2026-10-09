@@ -1,0 +1,121 @@
+# MedDefense Health Systems — Playbook: Clinical Service Degradation
+# Name: playbook_clinical_degradation.yaml
+# Purpose: Respond to suspected incidents on patient-facing clinical systems without
+#          degrading patient care; balances containment against clinical availability.
+# Author: Steve - Cybersecurity Engineer
+# Date: 09 October 2026
+
+playbook_id: PB-002
+title: Suspected Incident on Patient-Facing Clinical System — Radiology Imaging Server Degradation
+owner_role: SOC Analyst (on-call), IR_Commander for actions marked decision_point
+
+applies_to:
+  triggers:
+    - Helpdesk or nursing report: clinicians unable to retrieve X-ray images in the Main Hospital ED
+    - SIEM alert: abnormal outbound traffic volume from the radiology imaging server
+    - SIEM alert: authentication anomalies on the imaging server service account (logons from non-standard source, unusual hours)
+    - Wazuh EDR alert on the imaging server (process anomalies, mass file access, shadow-copy deletion, ransomware-behavior signatures)
+    - Vendor monitoring or PACS dashboard: image retrieval latency exceeding the site SLA
+  indicators:
+    - Image retrieval latency rising progressively or in step changes (pattern distinguishes resource exhaustion from encryption in progress)
+    - New or renamed files with sequential naming patterns; growing count of unreadable or corrupted DICOM objects (ransomware marker)
+    - Suspicious processes or unexpected network connections on the imaging server
+    - Disk I/O saturating, CPU normal (symptom of in-place encryption versus plain overload)
+    - Simultaneous slowness in unrelated clinical systems served by the same network segment (points to shared cause, not isolated fault)
+
+severity_mapping:
+  initial: SEV2
+  escalate_if:
+    - Confirmed malicious process on the imaging server (moves from "suspected" to confirmed compromise)
+    - ePHI on the imaging server confirmed accessed, altered, or encrypted by an unauthorized actor
+    - Degradation deepens to full loss of imaging retrieval in the ED (Service Availability: partial_outage toward full_outage; patient safety exposure while ED patients await diagnosis)
+    - Same indicators appearing on additional clinical systems (multi-site propagation)
+
+immediate_actions:
+  - step: Call the on-duty Radiology Lead at Main Hospital — confirm the symptom, scope (which modalities, how many patients waiting), and urgency of pending reads
+    owner: SOC Analyst
+    timebox_minutes: 5
+  - step: Pull imaging server performance counters (CPU, memory, disk I/O, network) and correlate with the SIEM window to establish whether the degradation curves match performance decay or malicious file activity
+    owner: Technical_Lead / on-call Infrastructure
+    timebox_minutes: 10
+  - step: Isolate in analysis only: collect process list, network connections, and file-change telemetry without touching the running service
+    owner: SOC Analyst
+    timebox_minutes: 10
+
+evidence_preservation:
+  - artifact: SIEM log export for the imaging server, prior 72 hours, covering authentication, process, and network events
+    method: SIEM export to the case folder on the write-once share
+    before_step: Network segmentation of the imaging server
+  - artifact: EDR telemetry snapshot (process tree, file modifications, registry writes) from the imaging server
+    method: Wazuh EDR data export; capture-before-action per standard evidence procedure
+    before_step: Any remediation action including reboot
+  - artifact: Vendor/system performance baselines for image retrieval latency versus the current period
+    method: Export from PACS monitoring or vendor dashboard; establishes the performance-vs-incident discriminator for the record
+    before_step: Declaring the event a pure performance issue and handing off to IT operations
+  - artifact: Hash-list of a sample of affected and unaffected DICOM objects
+    method: Hash sample files to the case folder; record counts of unreadable objects over time to evidence tampering versus corruption
+    before_step: Any attempt to repair the database or restore from backup
+
+containment_actions:
+  - step: Network segmentation — apply firewall/ACL rules restricting the imaging server to explicitly allow-listed source IPs (modality controllers, reading workstations), blocking all other ingress/egress including internet
+    owner: Network Engineer (Mike Torres' function)
+    decision_point: SEGMENT NOW VS CONTINUE WITH MONITORING — see documented decision below
+    trade_off: Preserves the core retrieval pathway for clinicians and blocks attacker lateral movement and C2; sacrifices broader connectivity the server may nominally use and risks breaking undiscovered integrations. Traffic breakage is reversible; pre-stage rollback rules.
+  - step: Account restriction — disable or rotate non-essential service and user accounts on the imaging server; enforce dedicated service-account use
+    owner: IT Director function
+    trade_off: Narrows attacker access paths and suspected credential abuse; sacrifices legitimate access for any clinician whose account is restricted, temporarily increasing imaging-retrieval friction.
+  - step: Service throttling — reduce background processing (nightly replication, batch export jobs, non-clinical integrations) to prioritize read path for imaging retrieval
+    owner: Infrastructure Lead (Robert Kim's function)
+    trade_off: Preserves the patient-facing retrieval path by giving it dedicated resources; sacrifices routine background jobs including backup replication windows, extending RPO exposure for the affected server.
+  - step: Read-only mode for image archive where supported — freeze deletion/modification permissions while preserving retrieval
+    owner: IT Director function with vendor coordination
+    trade_off: Protects the archive from alteration or destruction (anti-ransomware); sacrifices clinician annotation/contrast adjustment persistence on locally cached copies until reverted.
+
+eradication_actions:
+  - If a malicious process is confirmed: terminate it under EDR control only after evidence capture, and identify its persistence mechanism (scheduled task, service, autorun)
+  - Remove the persistence mechanism; rebuild the imaging server from known-good media rather than cleaning in place, migrating services per vendor procedure
+  - Rotate all credentials the imaging server holds (service accounts, integration keys, vendor support credentials)
+  - Restore any corrupted or encrypted DICOM objects from immutable backups (30-day on-prem retention) after integrity verification against preserved hashes
+  - Patch the exploited vulnerability if one was identified, and validate against vendor-supported versions
+
+recovery_validation:
+  - check: Image retrieval latency for ED clinicians over a sustained test window
+    criterion: Latency within the site SLA and confirmed acceptable by the Radiology Lead
+  - check: EDR and SIEM monitoring of the rebuilt/restored server, 72 hours post-eradication
+    criterion: No recurrence of malicious process, anomalous authentication, or outbound traffic patterns
+  - check: Restore-read test of sampled DICOM objects against hashes captured during evidence preservation
+    criterion: Bit-for-bit match or validated medical-image integrity equivalent
+  - check: Background job catch-up status (replication, batch exports)
+    criterion: Replication back on schedule; RPO exposure window closed and documented
+
+communication_plan:
+  - audience: Radiology Lead / ED Charge Nurse (Main Hospital)
+    trigger: Immediately on triage start, before any isolation action
+    template: clinserv_clinical_notification.md
+  - audience: IR_Commander
+    trigger: Every stage gate — triage result, containment decision, downtime activation, recovery
+    template: sev_status_update.md
+  - audience: IT Director and Infrastructure Lead
+    trigger: On any containment action that touches infrastructure (segmentation, throttling, read-only mode)
+    template: infra_containment_notice.md
+  - audience: Legal_Liaison (General Counsel)
+    trigger: On confirmation that ePHI was accessed, altered, or encrypted by an unauthorized actor
+    template: legal_notification_ephi.md
+  - audience: Clinical departments relying on imaging
+    trigger: On decision to run degraded mode or activate downtime procedures
+    template: clinserv_downtime_advisory.md
+
+escalation_triggers:
+  - Evidence of in-progress encryption of imaging data — escalate immediately toward SEV1; treat as active ransomware on patient-facing systems
+  - Confirmed compromise spreading beyond the radiology server to other clinical systems or sites — SEV1
+  - Radiology Lead declares imaging loss is actively impeding emergency patient care — patient safety impact high; SEV1
+  - Imaging retrieval unavailable longer than 4 hours from first report, colliding with board-committed RTO expectations — SEV1 review
+  - ePHI tampering or exfiltration confirmed — Legal_Liaison engaged, Data Exposure reclassified, HIPAA clock initiated
+
+post_incident_tasks:
+  - Complete the security-vs-performance root cause determination with documented evidence, so the incident/performance boundary used in triage is validated for future events
+  - Coordinate with the Radiology Lead on clinical impact assessment: number of patients affected and any care delays attributable to degradation
+  - Document the downtime procedure activation decision and duration for Joint Commission reaccreditation evidence
+  - Evaluate whether imaging server monitoring (latency baseline, process anomalies) should be tuned for earlier detection of the degradation-incident pattern
+  - Verify vendor patch and support posture for the imaging platform; log any unsupported components exposed by the incident
+  - Update this playbook with the discriminator indicators that proved decisive in this event
