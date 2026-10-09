@@ -369,3 +369,81 @@ Populate playbook_insider_access.yaml from your template.
     HIPAA reporting pathway if misuse is confirmed as a reportable event.
 
 ---
+
+# [7. Build the Communication Templates](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/comms_executive_update.md)
+### advanced
+
+## Goal: 
+
+Produce written artifacts the IR team fills in, not composes, during an incident.
+
+## Context: 
+
+No one writes a regulator notification from scratch at 3 AM. You open a template, fill in the blanks, and send. Writing happens calmly, in advance.
+
+## Instructions: 
+
+Produce four Markdown templates. Each uses bracketed placeholders such as [incident_id], [systems_affected], [data_types], [containment_status], [next_update_utc].
+
+[comms_executive_update.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/comms_executive_update.md). Audience: CISO and IT Director. Purpose: recurring 30-minute status during an active incident. Tone: dense, factual, no narrative.
+
+[comms_legal_notification.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/comms_legal_notification.md). Audience: General Counsel (Helena Reyes). Purpose: open a legal channel under privilege. Tone: factual, no speculation, no conclusions.
+
+[comms_regulator_notification.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/comms_regulator_notification.md). Audience: HHS OCR. Purpose: HIPAA breach notification draft aligned with 45 CFR 164.404 content requirements. Tone: compliance-driven, no narrative framing.
+
+[comms_patient_notification.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/comms_patient_notification.md). Audience: affected patients. Purpose: required notification letter. Tone: plain language, non-alarming, action-oriented.
+
+Each template must have three clearly marked zones: a header block (audience, classification, cadence), a body block (required fields as placeholders), and a footer block (next update or sign-off).
+
+**Expected output**
+
+Four Markdown files. Each is usable as-is when placeholders are filled.
+
+<pre>
+# Executive Status Update
+
+**Audience:** CISO, IT Director
+**Classification:** Internal, IR team only
+**Cadence:** Every 30 minutes during active incident
+
+## Incident identity
+
+- Incident ID: [incident_id]
+
+- Severity: [current_severity]
+
+- Detected at: [detection_time_utc]
+
+## Confirmed facts
+
+- [confirmed_fact_1]
+
+- [confirmed_fact_2]
+
+## Current containment status
+
+- [containment_state]
+
+## Systems affected
+
+- [systems_list]
+
+## Data exposure status
+
+- [data_exposure_state]
+
+## Actions in the next 30 minutes
+
+- [next_action_1]
+
+- [next_action_2]
+
+## Decisions needed from you
+
+- [decision_if_any]
+
+Next update: [next_update_utc]
+Owner: [ir_commander_name]
+</pre>
+
+---
