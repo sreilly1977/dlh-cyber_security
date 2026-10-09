@@ -1,0 +1,123 @@
+# Introduction
+
+> "Plans are nothing; planning is everything." 
+>
+> — Dwight D. Eisenhower
+
+An incident will happen. Not if. When. The only thing you control is whether your organization is ready to respond or has to improvise.
+
+In this project you build the incident response capability for a regional healthcare organization. You produce the severity model, the team structure, the playbooks an on-call analyst will follow at 3 AM, and the communication templates that will land on the CEO's phone and the regulator's desk. You ship the artifacts. Real ones. The kind that end up in the folder titled "IR" on a team's shared drive.
+
+## Why this matters
+
+Your first week on a SOC or IR team, someone hands you a wiki. Inside are playbooks, severity levels, contact trees, and communication templates. They exist because someone before you sat down and wrote them. Those documents are the only thing standing between a tired analyst and a bad decision at 2 AM. As you grow in this field, you will start writing them yourself. New threats, new regulations, new business units, new tooling: the playbooks have to keep up. The people who lead IR functions are the ones who can turn messy operational reality into a repeatable process that anyone on the team can follow under pressure.
+
+In regulated industries the stakes are higher. When a healthcare, finance, or utilities organization is breached, the first thing auditors and regulators ask for is the IR plan. If it does not exist, or reads like a theory paper, the fines arrive fast. The artifacts you build here are the kind that survive that scrutiny, and the kind that keep a real response from falling apart.
+
+## Context
+
+MedDefense Health Systems runs three hospital sites, employs 2,000 staff, and holds the clinical records of patients who cannot unshare their data. Detection capability has been improving. Response capability has not. When something breaks, people call people. Decisions happen in hallways. Almost nothing gets written down.
+
+Dr. Patricia Morales, Chief Information Security Officer, has authorized a formal incident response capability and funded it out of the operational risk budget. James Chen, SOC Lead, owns the delivery and has handed you the build. His brief: "Executive review is in three weeks. I do not want a theory paper. I want artifacts the on-call analyst opens at 2 AM and follows without calling me."
+
+You will work with:
+
+    Sarah Park, IT Director
+
+    Robert Kim, Infrastructure Lead
+
+    Mike Torres, Network Engineer
+
+    Helena Reyes, General Counsel
+
+    Marcus Webb, Communications Director
+
+What you ship in this project becomes the baseline IR capability for the organization. It is what the next real alert will be handled against.
+
+---
+
+# [1. Draft the Severity Matrix](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x00_incident_response/severity_matrix.md)
+
+## Goal: 
+
+Define a shared language for incident severity that the whole organization can agree with.
+
+## Context: 
+
+SEV1 must mean the same thing to a Tier 1 analyst, to the CISO, and to the General Counsel. A severity matrix lives on a wiki, a one-pager, a printed binder. Make it readable at a glance.
+
+## Instructions: 
+
+Produce severity_matrix.md with the following structure:
+
+    A short Purpose section (two sentences maximum).
+
+    A Severity Matrix table with one row per level (SEV1 through SEV4, SEV1 being the most severe) and one column per criterion: Patient Safety Impact, Data Exposure, Service Availability, Max Response Time, Decision Authority.
+
+    A Level Definitions section with one subsection per severity level. Each subsection lists two to three MedDefense-specific example triggers.
+
+    A short Escalation Rule section stating how a severity is raised or lowered during an active incident.
+
+Constraints:
+
+    Patient Safety Impact uses values: none, low, moderate, high.
+
+    Data Exposure uses values: none, suspected, confirmed_limited, confirmed_broad.
+
+    Service Availability uses values: none, degraded, partial_outage, full_outage.
+
+    Max Response Time is expressed in minutes.
+
+    Decision Authority is a named role, not a person.
+
+Note: Go check [this ressource](https://www.openstatus.dev/guides/incident-severity-matrix)
+
+**Expected output**
+
+<pre>
+# MedDefense Severity Matrix
+
+## Purpose
+
+Common severity language for all MedDefense incidents. Applied from first alert through closure.
+
+## Severity Matrix
+
+Level 	Patient Safety Impact 	Data Exposure 	Service Availability 	Max Response Time 	Decision Authority
+SEV1 	high 	confirmed_broad 	full_outage 	15 min 	CISO
+SEV2 	moderate 	confirmed_limited 	partial_outage 	30 min 	IR Commander
+SEV3 	low 	suspected 	degraded 	60 min 	SOC Lead
+SEV4 	none 	none 	none 	240 min 	SOC Analyst
+
+## Level Definitions
+
+### SEV1
+
+- Ransomware affecting clinical systems across multiple sites
+
+- Confirmed exfiltration of patient records at scale
+
+- Patient monitoring system offline during active care
+
+### SEV2
+
+- Confirmed compromise of a clinical-access account
+
+- Malware confirmed on a single workstation at a clinical site
+
+- Suspected exfiltration under investigation
+
+### SEV3
+
+...
+
+### SEV4
+
+...
+
+## Escalation Rule
+
+Severity is reviewed at every status update. It increases when new evidence raises patient safety, data exposure, or service availability to the next tier. It decreases only after confirmed containment and IR Commander approval.
+</pre>
+
+---
