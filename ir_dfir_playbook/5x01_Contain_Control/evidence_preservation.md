@@ -58,11 +58,21 @@ All destinations below are given as relative paths under /evidence/IR-2026-0414-
 
 ## 6. Proxy logs, dmarsh, 24h pre-alert
 
-- what: Proxy transaction log for MEDDEFENSE\dmarsh, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, source file proxy_24h_dmarsh.log, containing the 18:14Z phishing sequence and the 02:46:44Z-02:47:08Z CONNECT series to 185.220.101[.]47
+- what: HTTP/HTTPS request log for MEDDEFENSE\dmarsh, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, source file proxy_24h_dmarsh.log, containing the 18:14Z phishing sequence and the 02:46:44Z-02:47:08Z CONNECT series to 185.220.101[.]47
 - how: cp $LAB_MATERIALS/5x01/proxy_24h_dmarsh.log /evidence/IR-2026-0414-01/proxy_dns/proxy_24h_dmarsh.log
 - where: proxy_dns/proxy_24h_dmarsh.log
 - hash cmd: sha256sum /evidence/IR-2026-0414-01/proxy_dns/proxy_24h_dmarsh.log >> /evidence/IR-2026-0414-01/hashes.txt
 - ordering: The export is a 24h rolling window; the 18:14Z initial-access evidence ages out within hours regardless of containment state. Capture immediately after the host-local volatile sections, before any waiting.
+- verification: hash line present in hashes.txt
+
+## 6b. DNS logs, dmarsh, 24h pre-alert
+
+- what: DNS query log for MEDDEFENSE\dmarsh (source IP 10.42.118[.]31 / host WST-WS-031), 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, capturing all hostname resolutions including dns for ms0365-support.login-verification.click and 185.220.101.47
+- how: Query DNS server: query user=dmarsh OR client_ip=10.42.118.31 AND timestamp >= 2026-04-13T02:47:00Z AND timestamp < 2026-04-14T02:47:00Z; export to \\evidence\IR-2026-0414-01\proxy_dns\dns_24h_dmarsh.log
+- how: cp $LAB_MATERIALS/5x01/dns_24h_dmarsh.log /evidence/IR-2026-0414-01/proxy_dns/dns_24h_dmarsh.log
+- where: proxy_dns/dns_24h_dmarsh.log
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/proxy_dns/dns_24h_dmarsh.log >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Paired with proxy logs, same 24h rolling window constraint. DNS queries for the malicious domain must be captured before log rotation truncates them. Captured alongside Section 6 (proxy) in the same batch.
 - verification: hash line present in hashes.txt
 
 ## 7. Authentication events, dmarsh, 24h pre-alert
@@ -91,7 +101,6 @@ All destinations below are given as relative paths under /evidence/IR-2026-0414-
 - how: copy C:\Users\dmarsh\AppData\Local\Temp\update.exe \\\\evidence\\IR-2026-0414-01\\disk\\update.exe
 - where: disk/update.exe
 - hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/update.exe >> /evidence/IR-2026-0414-01/hashes.txt
-
 - ordering: Last host-local capture, after Sections 1-3. Disk files survive memory acquisition but are mutable: attacker cleanup, EDR quarantine, and any later rebuild destroy them. Captured before eradication begins.
 - verification: one hash line per captured artifact present in hashes.txt
 
@@ -106,7 +115,7 @@ All destinations below are given as relative paths under /evidence/IR-2026-0414-
 1. Section 1, memory: destroyed by reboot or process termination
 2. Sections 2-3, process table and sockets: modified by kill, quarantine, or isolation
 3. Sections 4-5, EDR telemetry and SIEM alert: retention and queue-mutation risk
-4. Section 6, proxy log: 24h rolling window actively aging out
+4. Section 6, proxy log + Section 6b, DNS log: 24h rolling window actively aging out
 5. Section 7, auth export: must freeze before any credential reset
 6. Section 8, disk artifacts: vulnerable to cleanup, quarantine, and rebuild
 7. Section 9, verification of the complete store
