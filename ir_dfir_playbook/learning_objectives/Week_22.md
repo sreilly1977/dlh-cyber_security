@@ -57,3 +57,67 @@
 **A:** Test IR designs through tabletop exercises and simulations, since paper reviews miss the friction that emerges during live execution.
 
 ---
+
+## Contain and Control
+
+---
+
+### Technical
+
+**Q: Perform initial triage on progressively revealed alert and log evidence**
+
+**A:** Correlate each new artifact against the emerging hypothesis, rank findings by threat and blast radius, and update the severity and scope continuously.
+
+**Q: Preserve volatile and non-volatile evidence before any containment action**
+
+**A:** Capture memory, active connections, running processes, and network state first; then disk images, logs, and configs, with documented chain of custody, before touching the live system.
+
+**Q: Select containment strategies against explicit operational trade-offs**
+
+**A:** Weigh isolation, segmentation, or full shutdown against business impact, evidentiary loss, and adversary visibility, recording the chosen option and its justification.
+
+**Q: Execute eradication steps with verification across Windows persistence surfaces**
+
+**A:** Remove malware, backdoors, rogue accounts, scheduled tasks, services, registry run keys, WMI subscriptions, and startup folders, then rescan and diff to confirm removal.
+
+**Q: Validate service recovery with proof instead of assumption**
+
+**A:** Monitor restored services, run functional and security tests, compare against clean baselines, and validate hardened configurations before declaring recovery.
+
+---
+
+### Conceptual
+
+**Q: Order of operations between evidence preservation and containment**
+
+**A:** Preserve first, contain second, because containment actions destroy volatile evidence that cannot be recovered once a host is isolated or powered off.
+
+**Q: Severity reassessment on scope change**
+
+**A:** Any expansion of scope, such as a second host or credentials, triggers immediate severity and priority reassessment with escalation to stakeholders.
+
+**Q: Eradication completeness across process, credential, and network persistence**
+
+**A:** Eradication is complete only when attacker access is removed at all three layers: malicious processes, compromised or backdoor credentials, and network footholds like VPNs, firewall rules, and C2 channels.
+
+**Q: Handoff quality as a measurable outcome, not a courtesy**
+
+**A:** A handoff succeeds when the receiving analyst can act independently, verified by timeline continuity, decision rationale, open items, and confirmation of comprehension.
+
+---
+
+### Transversal
+
+**Q: Maintain a timeline under pressure**
+
+**A:** Timestamp every event and decision in real time as they occur, rather than reconstructing afterwards.
+
+**Q: Justify every decision on the page at the moment it is taken**
+
+**A:** Record the action, rationale, alternatives rejected, and who authorized it, immediately, because retrospective justification erodes auditability.
+
+**Q: Separate what is known from what is assumed**
+
+**A:** Log observed facts with sources first, then explicitly label inferred or hypothesized items as unverified until confirmed by evidence.
+
+---
