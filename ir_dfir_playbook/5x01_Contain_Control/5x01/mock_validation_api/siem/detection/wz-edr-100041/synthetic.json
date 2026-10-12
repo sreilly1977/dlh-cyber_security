@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "data": {
+    "rule_id": "wz-edr-100041",
+    "synthetic_hit_at": "2026-04-14T14:22:10Z",
+    "synthetic_host": "SOC-TEST-001",
+    "synthetic_matched": true,
+    "mean_time_to_detect_seconds": 4
+  }
+}

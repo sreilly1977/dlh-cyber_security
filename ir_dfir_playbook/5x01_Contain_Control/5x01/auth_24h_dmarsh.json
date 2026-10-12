@@ -1,0 +1,131 @@
+{
+  "export_id": "authlog-dmarsh-20260414024730",
+  "exported_at": "2026-04-14T02:53:12Z",
+  "exported_by": "soc-evidence-collector v2.1",
+  "user_principal": "MEDDEFENSE\\dmarsh",
+  "user_upn": "dmarsh@meddefense.local",
+  "window_start": "2026-04-13T02:47:00Z",
+  "window_end": "2026-04-14T02:47:00Z",
+  "sources": ["ad_domain_controller_ms-dc01", "ad_domain_controller_ms-dc02", "azure_ad_signin_log"],
+  "events": [
+    {
+      "timestamp": "2026-04-13T03:10:22Z",
+      "source": "ad_dc01",
+      "event_type": "kerberos_as_req",
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "client_ip": "10.42.118.31",
+      "result": "success",
+      "encryption_type": "AES256_HMAC_SHA1",
+      "ticket_lifetime_hours": 10
+    },
+    {
+      "timestamp": "2026-04-13T03:10:23Z",
+      "source": "ad_dc01",
+      "event_type": "logon_interactive",
+      "event_id": 4624,
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "logon_type": 2,
+      "logon_id": "0x1c8a4f",
+      "result": "success"
+    },
+    {
+      "timestamp": "2026-04-13T03:10:41Z",
+      "source": "azure_ad",
+      "event_type": "signin",
+      "user": "dmarsh@meddefense.local",
+      "application": "Office 365 Exchange Online",
+      "client_app": "Browser",
+      "ip_address": "198.51.100.204",
+      "location": {"city": "Portland", "state": "OR", "country": "US"},
+      "result": "success",
+      "mfa": {"required": true, "satisfied": true, "method": "mobile_app_notification"},
+      "conditional_access": "compliant_device"
+    },
+    {
+      "timestamp": "2026-04-13T08:44:02Z",
+      "source": "ad_dc02",
+      "event_type": "kerberos_tgs_req",
+      "user": "MEDDEFENSE\\dmarsh",
+      "spn": "HTTP/lis.meddefense.local",
+      "source_host": "WST-WS-031",
+      "result": "success"
+    },
+    {
+      "timestamp": "2026-04-13T10:02:39Z",
+      "source": "ad_dc01",
+      "event_type": "kerberos_tgs_req",
+      "user": "MEDDEFENSE\\dmarsh",
+      "spn": "HTTP/epic.meddefense.local",
+      "source_host": "WST-WS-031",
+      "result": "success"
+    },
+    {
+      "timestamp": "2026-04-13T16:02:19Z",
+      "source": "ad_dc01",
+      "event_type": "logon_lockscreen_unlock",
+      "event_id": 4800,
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "logon_id": "0x1c8a4f"
+    },
+    {
+      "timestamp": "2026-04-13T18:14:41Z",
+      "source": "azure_ad",
+      "event_type": "signin",
+      "user": "dmarsh@meddefense.local",
+      "application": "Microsoft Office 365 Portal",
+      "client_app": "Browser",
+      "ip_address": "45.63.9.88",
+      "location": {"city": "Unknown", "state": "Unknown", "country": "RU"},
+      "result": "success",
+      "mfa": {"required": true, "satisfied": true, "method": "mobile_app_notification"},
+      "conditional_access": "compliant_device",
+      "risk_level_aggregated": "medium",
+      "risk_detail": "impossibleTravel",
+      "note": "Risk signal not promoted because device was marked compliant; see RISK-2026-04-13-112"
+    },
+    {
+      "timestamp": "2026-04-13T19:02:11Z",
+      "source": "ad_dc01",
+      "event_type": "logoff_interactive",
+      "event_id": 4634,
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "logon_id": "0x1c8a4f"
+    },
+    {
+      "timestamp": "2026-04-14T02:44:02Z",
+      "source": "ad_dc01",
+      "event_type": "kerberos_as_req",
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "client_ip": "10.42.118.31",
+      "result": "success",
+      "encryption_type": "AES256_HMAC_SHA1",
+      "ticket_lifetime_hours": 10,
+      "note": "Unusual hour for this user (typical start 03:00Z = 20:00 PT); follow-up recommended"
+    },
+    {
+      "timestamp": "2026-04-14T02:44:03Z",
+      "source": "ad_dc01",
+      "event_type": "logon_interactive",
+      "event_id": 4624,
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "logon_type": 2,
+      "logon_id": "0x3a71c2",
+      "result": "success"
+    },
+    {
+      "timestamp": "2026-04-14T02:46:41Z",
+      "source": "ad_dc01",
+      "event_type": "process_auth_request",
+      "user": "MEDDEFENSE\\dmarsh",
+      "workstation": "WST-WS-031",
+      "process": "powershell.exe",
+      "result": "success"
+    }
+  ]
+}

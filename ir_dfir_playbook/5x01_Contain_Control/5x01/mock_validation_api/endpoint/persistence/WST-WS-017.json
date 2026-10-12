@@ -1,0 +1,17 @@
+{
+  "status": "ok",
+  "data": {
+    "host": "WST-WS-017",
+    "queried_at": "2026-04-14T14:21:05Z",
+    "scheduled_tasks_with_guid_names": [],
+    "run_keys": {
+      "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run": [],
+      "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run": []
+    },
+    "temp_dropped_payloads": {
+      "C:\\Users\\dmarsh\\AppData\\Local\\Temp\\update.xml": "absent"
+    },
+    "amcache_entries_for_known_iocs": 0,
+    "user_assist_entries_for_msbuild_last_24h": 0
+  }
+}

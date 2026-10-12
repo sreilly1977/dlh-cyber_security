@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "data": {
+    "rule_id": "wz-edr-100041",
+    "rule_name": "Suspicious process tree: PowerShell -> MSBuild",
+    "enabled": true,
+    "last_tuned": "2026-04-14T13:40:00Z",
+    "severity": "high",
+    "platforms": ["WazuhEDR", "Splunk"],
+    "hits_last_24h": 0,
+    "note": "Rule active. Synthetic test hit available at /siem/detection/wz-edr-100041/synthetic"
+  }
+}

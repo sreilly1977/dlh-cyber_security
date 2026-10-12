@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "data": {
+    "host": "WST-WS-031",
+    "window_hours": 24,
+    "queried_at": "2026-04-14T14:20:00Z",
+    "process_trees_matching": {
+      "powershell_parent_msbuild_child": 0
+    },
+    "sample_trees_inspected": 1284,
+    "note": "Host has been rebuilt from clean baseline image on 2026-04-14T10:12Z. No PowerShell->MSBuild lineage observed since rebuild."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "alert_id": "A-20260414-9841",
+  "fired_at": "2026-04-14T02:47:11Z",
+  "detection_rule": {
+    "rule_id": "wz-edr-100041",
+    "rule_name": "Suspicious process tree: PowerShell -> MSBuild",
+    "severity_default": "high",
+    "mitre_attack": ["T1127.001", "T1059.001"],
+    "source_platform": "WazuhEDR"
+  },
+  "organization": "MedDefense Health Systems",
+  "site": "West Campus",
+  "host": {
+    "hostname": "WST-WS-031",
+    "fqdn": "wst-ws-031.meddefense.local",
+    "os": "Windows 10 Pro 22H2",
+    "asset_class": "clinical_workstation",
+    "asset_owner": "West Campus Laboratory",
+    "criticality": "high",
+    "domain_joined": true,
+    "last_boot": "2026-04-13T07:14:02Z"
+  },
+  "user": {
+    "principal": "MEDDEFENSE\\dmarsh",
+    "display_name": "Daniel Marsh",
+    "department": "Laboratory Services",
+    "role": "Laboratory Technician",
+    "upn": "dmarsh@meddefense.local",
+    "logon_session_id": "0x1c8a4f"
+  },
+  "process_tree": {
+    "parent": {
+      "image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "pid": 7812,
+      "cmdline": "powershell.exe -ep bypass -w hidden -enc JABzAD0AIgBoAHQAdABwAHMAOgAvAC8AbQBzADAAMwA2ADUALQBzAHUAcABwAG8AcgB0AFsAXQBsAG8AZwBpAG4ALQB2AGUAcgBpAGYAaQBjAGEAdABpAG8AbgBbAF0AYwBsAGkAYwBrAC8AYQB1AHQAaAAiADsA",
+      "sha256": "6f5902ac237024bdd0c176cb93063dc4e2a5e89d4aad51b3b3e4f7b72bce7e5e",
+      "signed": true,
+      "signer": "Microsoft Corporation",
+      "user": "MEDDEFENSE\\dmarsh",
+      "started_at": "2026-04-14T02:46:41Z"
+    },
+    "child": {
+      "image": "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\MSBuild.exe",
+      "pid": 8104,
+      "cmdline": "msbuild.exe C:\\Users\\dmarsh\\AppData\\Local\\Temp\\update.xml",
+      "sha256": "b2f5b7a7d2b0ec7cc8e4e5a03c6f72d4b1e53d1c4c4fcb9bba9c8a9aa9bba3f1",
+      "signed": true,
+      "signer": "Microsoft Corporation",
+      "user": "MEDDEFENSE\\dmarsh",
+      "started_at": "2026-04-14T02:46:57Z",
+      "working_directory": "C:\\Users\\dmarsh\\AppData\\Local\\Temp"
+    }
+  },
+  "network_connection": {
+    "timestamp": "2026-04-14T02:47:02Z",
+    "process_image": "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\MSBuild.exe",
+    "process_pid": 8104,
+    "protocol": "TCP",
+    "direction": "outbound",
+    "local_ip": "10.42.118.31",
+    "local_port": 54917,
+    "remote_ip": "185.220.101.47",
+    "remote_port": 443,
+    "state": "ESTABLISHED",
+    "bytes_sent": 4198,
+    "bytes_received": 11203
+  },
+  "enrichment": {
+    "remote_ip": "185.220.101.47",
+    "ip_reputation": {
+      "source": "internal_threat_intel",
+      "tags": ["tor_exit_relay", "anonymizer", "high_risk"],
+      "first_seen_as_tor_exit": "2024-11-08",
+      "last_seen_as_tor_exit": "2026-04-14",
+      "virustotal_malicious": 22,
+      "virustotal_total": 91,
+      "abuseipdb_confidence": 84
+    },
+    "geoip": {
+      "country": "DE",
+      "asn": "AS208294",
+      "org": "Foundation for Applied Privacy"
+    }
+  },
+  "supporting_indicators": [
+    {
+      "type": "proxy_event",
+      "timestamp": "2026-04-13T18:14:02Z",
+      "description": "User dmarsh visited ms0365-support[.]login-verification[.]click/auth (200 OK)",
+      "referenced_source": "proxy_24h_dmarsh.log"
+    }
+  ],
+  "siem_context": {
+    "siem": "MedDefense-SOC-Splunk",
+    "index": "edr_wazuh",
+    "correlated_events": 3,
+    "analyst_assigned": null,
+    "queue": "on_call_tier2"
+  },
+  "recommended_playbook": "PB-CRED-001 Credential Exposure"
+}

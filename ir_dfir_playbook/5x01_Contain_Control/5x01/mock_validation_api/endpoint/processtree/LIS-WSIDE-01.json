@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "data": {
+    "host": "LIS-WSIDE-01",
+    "window_hours": 24,
+    "queried_at": "2026-04-14T14:20:00Z",
+    "process_trees_matching": {
+      "powershell_parent_msbuild_child": 0
+    },
+    "sample_trees_inspected": 614,
+    "note": "No rebuild required. No attacker process lineage observed post-containment."
+  }
+}
