@@ -167,3 +167,79 @@ Hash algorithm: SHA-256
 </pre>
 
 ---
+
+# [3. Weigh Containment Options](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/containment_decision.md)
+
+## Goal: 
+
+Choose a containment path with its trade-offs on the page.
+
+## Context: 
+
+Wrong containment preserves the attacker or destroys your evidence. The reasoning lives next to the decision.
+
+## Instructions: 
+
+Create containment_decision.md. Present at least three distinct containment strategies for WST-WS-031. For each strategy, document: action, effect on the attacker, effect on evidence, effect on patient care, time to execute, reversibility.
+
+Then declare the chosen strategy with a rationale that references the trade-offs explicitly. The rationale is one paragraph, not one page.
+
+Minimum candidate strategies to evaluate:
+
+    Network isolation to a quarantine VLAN (block all outbound, allow forensic access from a jumpbox)
+
+    Host power-off (immediate, destructive to volatile state)
+
+    Selective process termination combined with a firewall egress block (fine-grained, observable)
+
+Also document:
+
+    The time window between evidence preservation (Task 2) and containment execution (Task 4)
+
+    The approving authority for the chosen strategy
+
+    A rollback plan if the chosen strategy causes unintended impact
+
+Append a DECISION entry to incident_timeline.md linking to this document.
+
+**Expected output**
+
+<pre>
+# Containment Decision: IR-YYYY-MMDD-01
+
+## Candidate strategies
+
+### A. Network isolation (quarantine VLAN)
+
+- action: move WST-WS-031 to VLAN 999, block all outbound, allow IR jumpbox access only
+- attacker effect: C2 severed; attacker on-host observation paused
+- evidence effect: volatile state preserved
+- patient care effect: one lab workstation unavailable; site has four spare workstations available
+- time to execute: ~5 min
+- reversibility: fully reversible
+
+### B. Host power-off
+...
+
+### C. Selective process kill + egress block
+...
+
+## Chosen: A
+
+Rationale: preserves volatile evidence for later forensic analysis, severs C2 immediately, remains fully reversible, and bounds the clinical impact because spare workstations are available in the lab. Option B destroys volatile evidence. Option C risks missed processes and does not address persistence.
+
+## Execution window
+
+- Evidence preservation end: 03:14Z
+- Containment execution start: 03:16Z
+
+## Approval
+
+- Action authorized by James Chen, IR Commander, at 03:10Z
+
+## Rollback plan
+
+- If lab operations are blocked and spare workstations are unavailable, revert VLAN assignment within five minutes and fall back to Option C.
+</pre>
+
+---
