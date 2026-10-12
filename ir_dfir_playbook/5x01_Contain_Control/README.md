@@ -378,3 +378,105 @@ items:
 ```
 
 ---
+
+# [7. Validate Recovery](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/recovery_validation.sh)
+### advanced
+
+## Goal: 
+
+Prove the environment is clean and services are restored.
+
+## Context: 
+
+Assumption is not validation. Recovery is measured, not declared.
+
+## Instructions: 
+
+Write recovery_validation.sh, a bash script that runs a set of validation checks against a provided mock endpoint, SIEM, and netflow API, plus the local evidence store. Each check prints PASS or FAIL with a short reason.
+
+    Use the mock validation API under mock_validation_api/. Start it with:
+
+cd mock_validation_api
+python3 -m http.server 8080 --bind 127.0.0.1
+
+Your recovery_validation.sh should query the mock endpoints documented in mock_validation_api/README.md.
+
+Required checks:
+
+    No process tree of powershell.exe parent with msbuild.exe child in the last 24 hours across WST-WS-031, WST-WS-017, LIS-WSIDE-01
+
+    No outbound connection to 185.220.101.47 or 91.234.99.107 in the last 24 hours
+
+    No persistence artifacts on affected hosts (scheduled tasks with GUID names, Run key entries, dropped payloads in AppData\Local\Temp)
+
+    Clinical service endpoints respond with HTTPS 200 on the provided health-check URLs for Epic and LIS
+
+    Detection rule wz-edr-100041 is active and returns the expected hit from a synthetic event injection
+
+    All artifact hashes in the evidence store re-match the values captured in Task 2
+
+The script exits 0 only if every check passes. Any FAIL exits non-zero and prints a one-line summary of the failed checks at the end.
+
+**Expected output**
+
+```bash
+$ ./recovery_validation.sh
+[PASS] process tree: no powershell->msbuild in last 24h across WST-WS-031, WST-WS-017, LIS-WSIDE-01
+[PASS] netflow: no outbound to 185.220.101.47 or 91.234.99.107 in last 24h
+[PASS] persistence: no scheduled tasks, Run keys, or dropped payloads found
+[PASS] service health: epic-api returns 200; lis-api returns 200
+[PASS] detection: wz-edr-100041 returned expected synthetic hit at 2026-04-14T14:22:10Z
+[PASS] evidence hashes: 14/14 artifacts match original SHA-256
+ALL CHECKS PASSED
+```
+
+---
+
+# [8. Package the Incident for Handoff](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/incident_handoff.md)
+### advanced
+
+## Goal: 
+
+Produce the single document a shift-relief analyst or a legal hold recipient can use as the authoritative record.
+
+## Context: 
+
+An incident is closed when someone else can own it with only the written record. The handoff package is that record.
+
+## Instructions: 
+
+Create incident_handoff.md. It must stand alone, no external memory, no verbal handoff required.
+
+    Uses all generated artifacts plus hashes from Task 2
+
+Required sections:
+
+    Incident identity: id, severity, declared and closed timestamps, IR Commander, Scribe.
+
+    Executive summary: 5 to 8 bullet points, no narrative.
+
+    Scope: affected users, accounts, hosts, and data categories.
+
+    Timeline: the full contents of incident_timeline.md, append-only, UTC.
+
+    Decisions: reference to containment_decision.md plus a one-line recap of each decision taken.
+
+    Evidence index: every preserved artifact with SHA-256 and storage path.
+
+    Eradication status: reference to eradication_checklist.yaml with counts of complete versus pending.
+
+    Recovery status: the output of recovery_validation.sh pasted in.
+
+    Outstanding items: any action not yet complete, with owner and deadline.
+
+    Regulatory posture: one paragraph stating whether HIPAA breach notification assessment is triggered and who owns it.
+
+    Communications log: timestamped record of every status update issued, with audience and template used.
+
+Length cap: 6 pages when rendered. Information density, not prose.
+
+**Expected output**
+
+A single complete incident_handoff.md for IR-YYYY-MMDD-01 with every section populated. Pastes from other task artifacts are allowed and expected.
+
+---
