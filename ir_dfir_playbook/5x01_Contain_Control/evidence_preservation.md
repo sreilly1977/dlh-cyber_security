@@ -80,45 +80,54 @@ Convention: each section below documents exactly one artifact. `where` is a rela
 - ordering: Captured in the same batch as Artifact 7, immediately after it. DNS logs share the same rolling-retention decay as proxy logs, and the DNS record for the phishing domain is the corroborating evidence that ties the domain in Artifact 7 to an actual resolution from WST-WS-031. Isolating the host stops new queries but does not recover entries already rotated out.
 - verification: hash line present in hashes.txt
 
-## Artifact 9. Authentication events, dmarsh, 24h pre-alert
+## Artifact 9. Active Directory authentication events, dmarsh, 24h pre-alert
 
-- what: Combined AD (ms-dc01, ms-dc02) and Azure AD authentication export for MEDDEFENSE\dmarsh, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, source file auth_24h_dmarsh.json, covering session 0x1c8a4f, the 18:14:41Z Azure AD impossibleTravel sign-in, and the 02:44:02Z unusual-hour logon (session 0x3a71c2)
-- how: cp $LAB_MATERIALS/5x01/auth_24h_dmarsh.json /evidence/IR-2026-0414-01/authentication/auth_24h_dmarsh.json
-- where: authentication/auth_24h_dmarsh.json
-- hash cmd: sha256sum /evidence/IR-2026-0414-01/authentication/auth_24h_dmarsh.json >> /evidence/IR-2026-0414-01/hashes.txt
-- ordering: Captured last of the log-store batch and before any credential action on dmarsh. This artifact is the trigger gate for credential rotation: rotating or disabling dmarsh creates new auth events, collapses the Azure AD risk signals for the compromised session, and means the scoping analysis of the 02:44:02Z logon would run against a mutated dataset instead of the frozen window ending 02:47:00Z.
+- what: On-premises AD security-event export for MEDDEFENSE\dmarsh from domain controllers ms-dc01 and ms-dc02, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, covering Kerberos AS-REQ/TGS-REQ activity (sessions 0x1c8a4f and 0x3a71c2, TGS tickets for lis.meddefense.local and epic.meddefense.local), interactive logons (Event ID 4624), lockscreen unlock (4800), and logoff (4634), source file auth_24h_dmarsh.json (AD source events)
+- how: cp $LAB_MATERIALS/5x01/auth_24h_dmarsh.json /evidence/IR-2026-0414-01/authentication/ad_auth_24h_dmarsh.json
+- where: authentication/ad_auth_24h_dmarsh.json
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/authentication/ad_auth_24h_dmarsh.json >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Captured before any credential action on dmarsh. AD events are committed immutably on the domain controllers, but the 24h query window and the interpretation of the 02:44:02Z unusual-hour logon (session 0x3a71c2) depend on a frozen baseline: a password reset or account disable generates new Kerberos failure events and logon anomalies that contaminate the pre-compromise timeline. Must also precede any device re-join or host rebuild, which generates a burst of machine-account Kerberos activity on the same domain controllers.
 - verification: hash line present in hashes.txt
 
-## Artifact 10. Temp directory inventory, WST-WS-031
+## Artifact 10. Azure AD authentication events, dmarsh, 24h pre-alert
+
+- what: Cloud sign-in export for dmarsh@meddefense.local from the Azure AD sign-in log, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, covering the 03:10:41Z O365 Exchange Online sign-in (Portland, OR, MFA satisfied), the 18:14:41Z O365 Portal sign-in from 45.63.9.88 (RU, risk_detail impossibleTravel, risk signal not promoted because device marked compliant, reference RISK-2026-04-13-112), and MFA method records, source file auth_24h_dmarsh.json (azure_ad source events)
+- how: cp $LAB_MATERIALS/5x01/auth_24h_dmarsh.json /evidence/IR-2026-0414-01/authentication/azuread_auth_24h_dmarsh.json
+- where: authentication/azuread_auth_24h_dmarsh.json
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/authentication/azuread_auth_24h_dmarsh.json >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Captured immediately after Artifact 9, and before any cloud-side containment action on the account: revoking Azure AD sessions, forcing MFA re-registration, or marking the device non-compliant changes the risk posture attached to the 18:14:41Z impossibleTravel sign-in and can suppress or overwrite the un-promoted risk signal RISK-2026-04-13-112 that establishes initial access timing. Cloud sign-in logs also have shorter default retention than on-premises AD, so it must not be deferred behind less time-sensitive artifacts.
+- verification: hash line present in hashes.txt
+
+## Artifact 11. Temp directory inventory, WST-WS-031
 
 - what: Recursive CSV inventory of C:\Users\dmarsh\AppData\Local\Temp with FullName, Length, CreationTime, LastWriteTime, LastAccessTime for every file present at capture time
 - how: powershell.exe -Command "Get-ChildItem -Recurse -File C:\Users\dmarsh\AppData\Local\Temp | Select-Object FullName,Length,CreationTime,LastWriteTime,LastAccessTime | Export-Csv -NoTypeInformation \\\\evidence\\IR-2026-0414-01\\\\disk\\\\wst-ws-031_temp_inventory.csv"
 - where: disk/wst-ws-031_temp_inventory.csv
 - hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/wst-ws-031_temp_inventory.csv >> /evidence/IR-2026-0414-01/hashes.txt
-- ordering: First host-local disk capture, taken after the volatile batch (Artifacts 1-4) and before file collection (Artifacts 11-12), because the copy operations of Artifacts 11-12 update LastAccessTime metadata and would falsify this inventory. Recorded before attacker cleanup or EDR quarantine can delete files.
+- ordering: First host-local disk capture, taken after the volatile batch (Artifacts 1-4) and before file collection (Artifacts 12-13), because the copy operations of Artifacts 12-13 update LastAccessTime metadata and would falsify this inventory. Recorded before attacker cleanup or EDR quarantine can delete files.
 - verification: hash line present in hashes.txt
 
-## Artifact 11. Dropped payload update.xml, WST-WS-031
+## Artifact 12. Dropped payload update.xml, WST-WS-031
 
 - what: The MSBuild project file executed by MSBuild.exe (PID 8104) per alert A-20260414-9841, source path C:\Users\dmarsh\AppData\Local\Temp\update.xml
 - how: copy C:\Users\dmarsh\AppData\Local\Temp\update.xml \\\\evidence\\IR-2026-0414-01\\disk\\update.xml
 - where: disk/update.xml
 - hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/update.xml >> /evidence/IR-2026-0414-01/hashes.txt
 - cross-check: certutil -hashfile C:\Users\dmarsh\AppData\Local\Temp\update.xml SHA256 computed on the host before copying; the value must equal the evidence-store hash, proving transfer integrity
-- ordering: Captured immediately after the inventory (Artifact 10) and before any containment. This file is the primary malicious-logic sample for the incident, and it is the first target of attacker cleanup: the running MSBuild.exe process can delete it, and EDR quarantine or a later rebuild removes it permanently. Killing PID 8104 or isolating the host before this copy forfeits the payload.
+- ordering: Captured immediately after the inventory (Artifact 11) and before any containment. This file is the primary malicious-logic sample for the incident, and it is the first target of attacker cleanup: the running MSBuild.exe process can delete it, and EDR quarantine or a later rebuild removes it permanently. Killing PID 8104 or isolating the host before this copy forfeits the payload.
 - verification: hash line present in hashes.txt
 
-## Artifact 12. Dropped payload update.exe, WST-WS-031
+## Artifact 13. Dropped payload update.exe, WST-WS-031
 
 - what: The executable stage delivered by update[.]zip (downloaded 2026-04-13T18:14:43Z per proxy_24h_dmarsh.log), expected at C:\Users\dmarsh\AppData\Local\Temp\update.exe; capture is attempted unconditionally as part of the runbook
 - how: copy C:\Users\dmarsh\AppData\Local\Temp\update.exe \\\\evidence\\IR-2026-0414-01\\disk\\update.exe
 - where: disk/update.exe
 - hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/update.exe >> /evidence/IR-2026-0414-01/hashes.txt
-- absence handling: if update.exe is not present at the source path, the copy fails, the failed attempt is appended to incident_timeline.md as an OBSERVATION entry (actor=Steve, source=wst-ws-031_temp_inventory.csv, certainty=confirmed, description=update.exe absent at capture time), and the absence is cross-checked against the Artifact 10 inventory. Absence is a finding, not an omission from the runbook
-- ordering: Final host-local capture, executed immediately after Artifact 11 in the same session. Same destruction profile as update.xml: attacker cleanup, EDR quarantine, or a rebuild destroy it, so it is copied before any containment or eradication step runs.
+- absence handling: if update.exe is not present at the source path, the copy fails, the failed attempt is appended to incident_timeline.md as an OBSERVATION entry (actor=Steve, source=wst-ws-031_temp_inventory.csv, certainty=confirmed, description=update.exe absent at capture time), and the absence is cross-checked against the Artifact 11 inventory. Absence is a finding, not an omission from the runbook
+- ordering: Final host-local capture, executed immediately after Artifact 12 in the same session. Same destruction profile as update.xml: attacker cleanup, EDR quarantine, or a rebuild destroy it, so it is copied before any containment or eradication step runs.
 - verification: hash line present in hashes.txt, or documented absence OBSERVATION in incident_timeline.md
 
-## Step 13. Verification of the complete evidence store
+## Step 14. Verification of the complete evidence store
 
 - Re-hash every artifact in the manifest and compare against the recorded capture-time values: while read -r expected relpath; do actual=$(sha256sum "/evidence/IR-2026-0414-01/$relpath" | awk '{print $1}'); [[ "$expected" == "$actual" ]] && echo "MATCH $relpath" || echo "MISMATCH $relpath expected=$expected actual=$actual"; done < /evidence/IR-2026-0414-01/hashes.txt
 - Every MISMATCH is appended to incident_timeline.md as an OBSERVATION entry with source=evidence_verification, certainty=confirmed, and halts reliance on the affected artifact pending re-acquisition
@@ -136,10 +145,11 @@ Convention: each section below documents exactly one artifact. `where` is a rela
 | 6 | 6, SIEM alert | queue assignment mutates record |
 | 7 | 7, proxy log | 24h rolling window expiry |
 | 8 | 8, DNS log | rolling retention expiry |
-| 9 | 9, auth export | credential reset mutates dataset |
-| 10 | 10, Temp inventory | copy operations alter timestamps |
-| 11 | 11, update.xml | attacker cleanup, quarantine, rebuild |
-| 12 | 12, update.exe | attacker cleanup, quarantine, rebuild |
-| 13 | 13, verification | n/a, terminal step |
+| 9 | 9, AD auth export | credential reset and re-join events contaminate timeline |
+| 10 | 10, Azure AD auth export | session revocation suppresses risk signal; short cloud retention |
+| 11 | 11, Temp inventory | copy operations alter timestamps |
+| 12 | 12, update.xml | attacker cleanup, quarantine, rebuild |
+| 13 | 13, update.exe | attacker cleanup, quarantine, rebuild |
+| 14 | 14, verification | n/a, terminal step |
 
-No containment action executes until Artifacts 1 through 12 are captured and hashed.
+No containment action executes until Artifacts 1 through 13 are captured and hashed.
