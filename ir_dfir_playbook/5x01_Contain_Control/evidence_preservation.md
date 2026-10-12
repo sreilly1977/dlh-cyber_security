@@ -4,95 +4,111 @@ Evidence store: /evidence/IR-2026-0414-01/
 
 Hash algorithm: SHA-256
 
-Command format: certutil -hashfile <artifact_path> SHA256 | find /v "Hash"
+Hash manifest: /evidence/IR-2026-0414-01/hashes.txt (format: <sha256>  <relative_path>)
+
+All destinations below are given as relative paths under /evidence/IR-2026-0414-01/. Where a host-local command writes to the evidence store, it targets the mapped share \\\\evidence\\IR-2026-0414-01\\ (same store, Windows UNC view of the same directory).
 
 ## 1. Volatile memory, WST-WS-031
 
-- what: Full physical memory dump capturing active processes, network sockets, encryption keys, and in-memory payloads
-- how: winpmem_3.3.rc3.exe -o \\evidence\IR-2026-0414-01\memory\wst-ws-031.mem --memdump
-- where: /evidence/IR-2026-0414-01/memory/wst-ws-031.mem
-- hash cmd: certutil -hashfile wst-ws-031.mem SHA256
-- ordering: MUST precede ANY containment action (process kill, network isolation, credential rotation). Power cycle or aggressive containment will destroy memory-resident artifacts including decrypted malware stages and injected code.
-- verification: Append `<hash_value>  memory/wst-ws-031.mem` to /evidence/IR-2026-0414-01/hashes.txt
+- what: Full physical memory dump of WST-WS-031
+- how: winpmem_3.3.rc3.exe -o \\\\evidence\\IR-2026-0414-01\\memory\\wst-ws-031.mem
+- where: memory/wst-ws-031.mem
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/memory/wst-ws-031.mem >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: MUST be the first acquisition. Memory state is destroyed by reboot, power-off, and process termination. Nothing in Sections 2 through 8 may run on the host before this completes, because every tool launch modifies memory.
+- verification: hash line present in hashes.txt
 
-## 2. Running process list with PIDs, command lines, parent PIDs
+## 2. Running process list, WST-WS-031
 
-- what: Complete snapshot of active processes including hidden/injected threads via EDR or native tools
-- how: Get-WmiObject Win32_Process | Select-Object ProcessId, ParentProcessId, ExecutablePath, CommandLine, CreationDate | ConvertTo-Json > \\evidence\IR-YYYY-MMDD-01\process_tree\wst-ws-031_processes.json
-- where: /evidence/IR-2026-0414-01/process_tree/wst-ws-031_processes.json
-- hash cmd: certutil -hashfile wst-ws-031_processes.json SHA256
-- ordering: Must precede process termination or host reboot. Kill actions modify this state immediately.
-- verification: Append to hashes.txt
+- what: Snapshot of all processes with ProcessId, ParentProcessId, ExecutablePath, CommandLine, CreationDate, confirming the PID 7812 -> PID 8104 lineage
+- how: powershell.exe -Command "Get-WmiObject Win32_Process | Select-Object ProcessId,ParentProcessId,ExecutablePath,CommandLine,CreationDate | ConvertTo-Json | Out-File -Encoding utf8 \\\\evidence\\IR-2026-0414-01\\\\process_tree\\\\wst-ws-031_processes.json"
+- where: process_tree/wst-ws-031_processes.json
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/process_tree/wst-ws-031_processes.json >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Must run after Section 1 and before any process termination, EDR quarantine action, or host isolation. Those actions alter the process table and destroy the parent-child relationship evidence.
+- verification: hash line present in hashes.txt
 
-## 3. Active network connections
+## 3. Active network connections, WST-WS-031
 
-- what: All established, listening, and TIME_WAIT TCP/UDP connections with owning PIDs and remote endpoints
-- how: netstat -ano | findstr /C:"ESTABLISHED" /C:"LISTENING" /C:"TIME_WAIT" > \\evidence\IR-YYYY-MMDD-01\network\wst-ws-031_connections.txt; Get-NetTCPConnection | Export-Csv -Path \\evidence\IR-YYYY-MMDD-01\network\wst-ws-031_network.csv
-- where: /evidence/IR-2026-0414-01/network/wst-ws-031_connections.txt and /evidence/IR-2026-0414-01/network/wst-ws-031_network.csv
-- hash cmd: certutil -hashfile wst-ws-031_connections.txt SHA256; certutil -hashfile wst-ws-031_network.csv SHA256
-- ordering: Must precede network isolation/firewall rule application. Containment will close active sockets.
-- verification: Append to hashes.txt
+- what: All TCP/UDP connections with owning PID and remote endpoint, including the ESTABLISHED session 10.42.118[.]31:54917 -> 185.220.101[.]47:443 held by MSBuild.exe (PID 8104)
+- how: netstat -ano > \\\\evidence\\IR-2026-0414-01\\network\\wst-ws-031_netstat.txt
+- how: powershell.exe -Command "Get-NetTCPConnection | Select-Object LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess | Export-Csv -NoTypeInformation \\\\evidence\\IR-2026-0414-01\\\\network\\\\wst-ws-031_tcpconn.csv"
+- where: network/wst-ws-031_netstat.txt
+- where: network/wst-ws-031_tcpconn.csv
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/network/wst-ws-031_netstat.txt >> /evidence/IR-2026-0414-01/hashes.txt
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/network/wst-ws-031_tcpconn.csv >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Must run after Section 1 and before network isolation of WST-WS-031, which closes the C2 socket. Executed in the same console session as Section 2; both are read-only queries that do not affect each other.
+- verification: both hash lines present in hashes.txt
 
-## 4. Full endpoint telemetry export for WST-WS-031 (24h pre-alert)
+## 4. Endpoint telemetry export, WST-WS-031, 24h pre-alert
 
-- what: Wazuh EDR JSONL export covering 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z including process execution, file creation/modification, and network connections
-- how: curl -s -X GET 'https://wazuh-api.meddefense.local/api/alerts?host=WST-WS-031&from=2026-04-13T02:47:00Z&to=2026-04-14T02:47:00Z' -H 'Authorization: Bearer $API_TOKEN' > \\evidence\IR-YYYY-MMDD-01\endpoint_telemetry\edr_wst_ws_031_24h.jsonl
-- where: /evidence/IR-2026-0414-01/endpoint_telemetry/edr_wst_ws_031_24h.jsonl
-- hash cmd: certutil -hashfile edr_wst_ws_031_24h.jsonl SHA256
-- ordering: Telemetry APIs may prune or aggregate after 24-48 hours. Capture early to ensure completeness. Independent of containment actions but time-sensitive.
-- verification: Append to hashes.txt
+- what: Wazuh EDR event stream for WST-WS-031 covering 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z (process creations, file creations, network connections), source file edr_wst_ws_031_24h.jsonl
+- how: cp $LAB_MATERIALS/5x01/edr_wst_ws_031_24h.jsonl /evidence/IR-2026-0414-01/endpoint_telemetry/edr_wst_ws_031_24h.jsonl
+- where: endpoint_telemetry/edr_wst_ws_031_24h.jsonl
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/endpoint_telemetry/edr_wst_ws_031_24h.jsonl >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Time-sensitive, not volatile-sensitive: SIEM index retention and rollover can drop the 24h window, and containment-generated event floods can push these events out of the hot window. Captured after host-local volatile sections (1-3) because it does not depend on the host remaining untouched.
+- verification: hash line present in hashes.txt
 
-## 5. SIEM alert record
+## 5. SIEM alert record, A-20260414-9841
 
-- what: Alert A-20260414-9841 JSON payload with full enrichment including MITRE ATT&CK mappings, threat intel tags, and correlated event count
-- how: curl -s -X GET 'https://spluk.meddefense.local/services/alerts/export?id=A-20260414-9841' -H 'Authorization: Bearer $SPLUNK_TOKEN' > \\evidence\IR-YYYY-MMDD-01\siem\alert_A-20260414-9841.json
-- where: /evidence/IR-2026-0414-01/siem/alert_A-20260414-9841.json
-- hash cmd: certutil -hashfile alert_A-20260414-9841.json SHA256
-- ordering: Alerts may be modified by downstream triage or suppression rules. Capture immediately upon declaration.
-- verification: Append to hashes.txt
+- what: Full JSON alert record for rule wz-edr-100041 (process tree, network connection, enrichment, SIEM context)
+- how: cp $LAB_MATERIALS/5x01/alert_A-20260414-9841.json /evidence/IR-2026-0414-01/siem/alert_A-20260414-9841.json
+- where: siem/alert_A-20260414-9841.json
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/siem/alert_A-20260414-9841.json >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: The alert record shows analyst_assigned: null; capture before any SOC queue action (assignment, annotation, severity override) mutates the record. Collected in the same batch as Section 4.
+- verification: hash line present in hashes.txt
 
-## 6. Proxy and DNS logs for dmarsh (24h pre-alert)
+## 6. Proxy logs, dmarsh, 24h pre-alert
 
-- what: HTTP/HTTPS request logs showing URL access patterns, referrers, status codes, byte counts, and DNS resolution events for user MEDDEFENSE\dmarsh
-- how: Export from proxy gateway: query user=dmarsh AND timestamp >= 2026-04-13T02:47:00Z AND timestamp < 2026-04-14T02:47:00Z; export proxy_24h_dmarsh.log to \\evidence\IR-YYYY-MMDD-01\proxy_dns\proxy_24h_dmarsh.log
-- where: /evidence/IR-2026-0414-01/proxy_dns/proxy_24h_dmarsh.log
-- hash cmd: certutil -hashfile proxy_24h_dmarsh.log SHA256
-- ordering: Proxy retention policies vary; capture before log rotation. Critical for establishing initial access vector (phishing domain visit, malware download).
-- verification: Append to hashes.txt
+- what: Proxy transaction log for MEDDEFENSE\dmarsh, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, source file proxy_24h_dmarsh.log, containing the 18:14Z phishing sequence and the 02:46:44Z-02:47:08Z CONNECT series to 185.220.101[.]47
+- how: cp $LAB_MATERIALS/5x01/proxy_24h_dmarsh.log /evidence/IR-2026-0414-01/proxy_dns/proxy_24h_dmarsh.log
+- where: proxy_dns/proxy_24h_dmarsh.log
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/proxy_dns/proxy_24h_dmarsh.log >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: The export is a 24h rolling window; the 18:14Z initial-access evidence ages out within hours regardless of containment state. Capture immediately after the host-local volatile sections, before any waiting.
+- verification: hash line present in hashes.txt
 
-## 7. Authentication events for dmarsh (24h pre-alert)
+## 7. Authentication events, dmarsh, 24h pre-alert
 
-- what: Kerberos ticket grants (TGT/TGS), interactive logons (Event ID 4624), Azure AD sign-ins including MFA method, risk level, and conditional access results for MEDDEFENSE\dmarsh
-- how: From AD DC01/DC02: Get-EventLog -LogName Security -InstanceId 4624,4634,4728,4729,4740 -ComputerName ms-dc01,ms-dc02 | Where-Object {$_.TimeGenerated -ge '2026-04-13T02:47:00Z' -and $_.TimeGenerated -lt '2026-04-14T02:47:00Z' -and $_.Message -match 'dmarsh'} | Export-Csv -Path \\evidence\IR-YYYY-MMDD-01\authentication\ad_auth_24h_dmarsh.csv; From Azure AD: auditlogs/?$filter=userPrincipalName eq 'dmarsh@meddefense.local' and activityDateTime ge 2026-04-13T02:47:00Z and activityDateTime lt 2026-04-14T02:47:00Z > \\evidence\IR-YYYY-MMDD-01\authentication\auth_24h_dmarsh.json
-- where: /evidence/IR-2026-0414-01/authentication/ad_auth_24h_dmarsh.csv and /evidence/IR-2026-0414-01/authentication/auth_24h_dmarsh.json
-- hash cmd: certutil -hashfile ad_auth_24h_dmarsh.csv SHA256; certutil -hashfile auth_24h_dmarsh.json SHA256
-- ordering: AD and Azure AD audit logs are immutable once committed but may expire per retention policy. Capture before credential rotation invalidates session tokens and obscures compromise timeline.
-- verification: Append to hashes.txt
+- what: AD (ms-dc01, ms-dc02) and Azure AD authentication events for MEDDEFENSE\dmarsh, 2026-04-13T02:47:00Z to 2026-04-14T02:47:00Z, source file auth_24h_dmarsh.json, covering sessions 0x1c8a4f and 0x3a71c2 and the Azure AD impossibleTravel sign-in at 18:14:41Z
+- how: cp $LAB_MATERIALS/5x01/auth_24h_dmarsh.json /evidence/IR-2026-0414-01/authentication/auth_24h_dmarsh.json
+- where: authentication/auth_24h_dmarsh.json
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/authentication/auth_24h_dmarsh.json >> /evidence/IR-2026-0414-01/hashes.txt
+- ordering: Must be captured before any credential reset or account disable on dmarsh. Those actions generate new authentication events and alter the context of the 02:44:02Z unusual-hour logon that must be interpreted against a frozen window.
+- verification: hash line present in hashes.txt
 
-## 8. Disk artifacts (post-volatile but pre-reboot)
+## 8. Disk artifacts, WST-WS-031, Temp directory
 
-- what: Suspicious file extracts including C:\Users\dmarsh\AppData\Local\Temp\update.xml and any dropped executables
-- how: Copy with hash preservation: robocopy /NFL /NDL /NJH /NJS /NP /W:5 /R:3 C:\Users\dmarsh\AppData\Local\Temp C:\evidence\IR-YYYY-MMDD-01\disk\tmp_extract /XF *.tmp | Select-String -Pattern "update.xml|update.exe"; Get-ChildItem -Recurse -File -Path C:\Users\dmarsh\AppData\Local\Temp | Where-Object {$_.LastWriteTime -ge '2026-04-13T18:00:00Z'} | Export-Csv -Path \\evidence\IR-YYYY-MMDD-01\disk\suspicious_files_inventory.csv
-- where: /evidence/IR-2026-0414-01/disk/tmp_extract/ and /evidence/IR-2026-0414-01/disk/suspicious_files_inventory.csv
-- hash cmd: For each extracted file: certutil -hashfile <file> SHA256
-- ordering: Files may be deleted by EDR cleanup or attacker post-exploitation scripts. Capture before remediation steps.
-- verification: Append to hashes.txt
+- what: Artifact 1, Temp directory inventory: full recursive listing of C:\Users\dmarsh\AppData\Local\Temp with FullName, Length, CreationTime, LastWriteTime, LastAccessTime
+- how: powershell.exe -Command "Get-ChildItem -Recurse -File C:\Users\dmarsh\AppData\Local\Temp | Select-Object FullName,Length,CreationTime,LastWriteTime,LastAccessTime | Export-Csv -NoTypeInformation \\\\evidence\\IR-2026-0414-01\\\\disk\\\\wst-ws-031_temp_inventory.csv"
+- where: disk/wst-ws-031_temp_inventory.csv
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/wst-ws-031_temp_inventory.csv >> /evidence/IR-2026-0414-01/hashes.txt
 
-## 9. Verification
+- what: Artifact 2, dropped payload update.xml, referenced in the alert process tree as C:\Users\dmarsh\AppData\Local\Temp\update.xml
+- how: copy C:\Users\dmarsh\AppData\Local\Temp\update.xml \\\\evidence\\IR-2026-0414-01\\disk\\update.xml
+- where: disk/update.xml
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/update.xml >> /evidence/IR-2026-0414-01/hashes.txt
+- cross-check: certutil -hashfile C:\Users\dmarsh\AppData\Local\Temp\update.xml SHA256 computed on the host before copying; value must equal the stored hash (transfer integrity check)
 
-- Execute verification script: ./evidence_verify.sh /evidence/IR-2026-0414-01/hashes.txt
-- Script re-computes SHA-256 for all artifacts listed in hashes.txt
-- Compare computed values against original captured hashes
-- Any mismatches logged as OBSERVATION entry in incident_timeline.md with source=evidence_verification, certainty=confirmed
-- On success, add final verification timestamp line to hashes.txt: # Verified: YYYY-MM-DDTHH:MM:SSZ by <analyst_name>
+- what: Artifact 3, dropped payload update.exe, the executable stage implied by the update.zip download; expected at C:\Users\dmarsh\AppData\Local\Temp\update.exe. If absent at capture time, record absence in the inventory (Artifact 1) and note in the incident timeline as an OBSERVATION; do not substitute or skip the hash step for files that do exist
+- how: copy C:\Users\dmarsh\AppData\Local\Temp\update.exe \\\\evidence\\IR-2026-0414-01\\disk\\update.exe
+- where: disk/update.exe
+- hash cmd: sha256sum /evidence/IR-2026-0414-01/disk/update.exe >> /evidence/IR-2026-0414-01/hashes.txt
 
-## Order Summary (Execution Sequence)
+- ordering: Last host-local capture, after Sections 1-3. Disk files survive memory acquisition but are mutable: attacker cleanup, EDR quarantine, and any later rebuild destroy them. Captured before eradication begins.
+- verification: one hash line per captured artifact present in hashes.txt
 
-1. Memory capture (Step 1) — destroys on power-off
-2. Process list + network connections (Steps 2-3) — changes on process kill/isolation
-3. Endpoint telemetry + SIEM alert (Steps 4-5) — time-sensitive API retention
-4. Proxy/DNS logs (Step 6) — retention-limited
-5. Authentication events (Step 7) — credential rotation impact
-6. Disk artifacts (Step 8) — deletion risk
+## 9. Verification (final step)
 
-Failure to follow this order risks irreversible loss of volatile forensic artifacts.
+- Re-hash the entire store and compare against the manifest: while read -r expected relpath; do actual=$(sha256sum "/evidence/IR-2026-0414-01/$relpath" | awk '{print $1}'); [[ "$expected" == "$actual" ]] && echo "MATCH $relpath" || echo "MISMATCH $relpath expected=$expected actual=$actual"; done < /evidence/IR-2026-0414-01/hashes.txt
+- Every mismatch is appended to incident_timeline.md as an OBSERVATION entry with source=evidence_verification, certainty=confirmed, and halts reliance on the affected artifact pending re-acquisition
+- On full match, append the closing line to hashes.txt: # Verified: YYYY-MM-DDTHH:MM:SSZ by Steve
+
+## Execution Order Summary
+
+1. Section 1, memory: destroyed by reboot or process termination
+2. Sections 2-3, process table and sockets: modified by kill, quarantine, or isolation
+3. Sections 4-5, EDR telemetry and SIEM alert: retention and queue-mutation risk
+4. Section 6, proxy log: 24h rolling window actively aging out
+5. Section 7, auth export: must freeze before any credential reset
+6. Section 8, disk artifacts: vulnerable to cleanup, quarantine, and rebuild
+7. Section 9, verification of the complete store
+
+No containment action executes until Sections 1 through 8 are complete and hashed.
