@@ -30,7 +30,7 @@ The account showing activity belongs to Daniel Marsh, a laboratory technician at
 
 ---
 
-# [1. Open the Incident Timeline]()
+# [1. Open the Incident Timeline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/incident_timeline.md)
 
 ## Goal: 
 
@@ -100,6 +100,70 @@ Rules:
 - 2026-04-14T02:51:04Z | DECISION | <your_name> | Incident declared at SEV2: confirmed beaconing from clinical workstation; data exposure not confirmed yet | source=alert A-20260414-9841 + playbook PB-CRED-001 | certainty=confirmed
 
 - ...
+</pre>
+
+---
+ 
+# [2. Preserve Evidence Before Containment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/evidence_preservation.md)
+
+## Goal: 
+
+Capture volatile and short-lived evidence before any action that could destroy it.
+
+## Context: 
+
+Once you isolate, reset, or kill, certain evidence is gone. The order of operations is the work.
+
+## Instructions: 
+
+Create evidence_preservation.md as a runbook another analyst can follow end to end.
+
+    Before writing the runbook, review evidence_store_init.sh, alert_A-20260414-9841.json, edr_wst_ws_031_24h.jsonl, proxy_24h_dmarsh.log, and auth_24h_dmarsh.json.
+
+For each artifact, specify: what is captured, how (exact command or tool invocation), where it lands (evidence store path), hash algorithm and hash command, and ordering rationale (why this must precede the next containment step).
+
+Cover at minimum:
+
+    Volatile memory of WST-WS-031 (acquisition with winpmem or equivalent)
+
+    Running process list with PIDs, command lines, parent PIDs
+
+    Active network connections at the time of capture
+
+    Full endpoint telemetry export for WST-WS-031 covering the 24 hours before the alert
+
+    SIEM alert record exported in JSON
+
+    Proxy and DNS logs for dmarsh for the 24 hours before the alert
+
+    Authentication events for dmarsh for the 24 hours before the alert (Active Directory + Azure AD)
+
+Every captured artifact carries a SHA-256 hash written to IR-YYYY-MMDD-01-hashes.txt. The runbook ends with a verification step that re-hashes the evidence store and compares against the original values.
+
+**Expected output**
+
+<pre>
+# Evidence Preservation Runbook: IR-YYYY-MMDD-01
+
+Evidence store: /evidence/IR-YYYY-MMDD-01/
+Hash algorithm: SHA-256
+
+## 1. Volatile memory, WST-WS-031
+
+- what: full physical memory dump
+- how: winpmem_3.3.rc3.exe -o \\evidence\IR-YYYY-MMDD-01\wst-ws-031.mem
+- hash cmd: certutil -hashfile wst-ws-031.mem SHA256
+- ordering: MUST precede any process kill or host isolation; memory state lost on power-off
+- verification: hash written to /evidence/IR-YYYY-MMDD-01/hashes.txt
+
+## 2. Process tree and network connections
+...
+
+## 8. Verification
+
+- All artifacts re-hashed from the evidence store
+- Hash values compared to original capture values
+- Mismatches logged to the incident timeline as OBSERVATION entries
 </pre>
 
 ---
