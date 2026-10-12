@@ -243,3 +243,47 @@ Rationale: preserves volatile evidence for later forensic analysis, severs C2 im
 </pre>
 
 ---
+
+# [4. Execute Containment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/containment_execution.md)
+
+## Goal: 
+
+Carry out the chosen containment and record what actually happened.
+
+## Context: 
+
+Intent is not execution. The record must match what the evidence will later show was done.
+
+## Instructions: 
+
+Create containment_execution.md. List every concrete step executed against WST-WS-031. Each step carries: timestamp (UTC), actor, command or console action, expected result, observed result, deviation notes (if any).
+
+Cover at minimum:
+
+    VLAN reassignment or equivalent network isolation action
+
+    Firewall egress rule blocking 185.220.101.47
+
+    Evidence that outbound C2 is severed (packet capture or netflow gap with timestamps)
+
+    Endpoint device containment flag set (if endpoint platform supports it)
+
+    Confirmation the host is reachable only from the IR jumpbox
+
+Append each step as an ACTION entry to incident_timeline.md.
+
+**Expected output**
+
+<pre>
+# Containment Execution: IR-YYYY-MMDD-01
+
+- 2026-04-14T03:16:04Z | <actor> | switchport VLAN reassign WST-WS-031 -> VLAN 999 | host reachable only from jumpbox | confirmed via ping from SOC jumpbox; timeout from user VLAN | no deviation
+
+- 2026-04-14T03:17:21Z | <actor> | firewall deny outbound ip 185.220.101.47 | no new netflow to 185.220.101.47 after 03:17 | netflow confirmed zero packets to 185.220.101.47 from 03:17:21Z onward | no deviation
+
+- 2026-04-14T03:19:02Z | <actor> | endpoint device containment flag SET on WST-WS-031 | only analyst tooling permitted outbound | confirmed in endpoint console | no deviation
+
+- 2026-04-14T03:22:04Z | <actor> | verify isolation | ping from user VLAN fails, ping from jumpbox succeeds | verified | no deviation
+</pre>
+
+---
