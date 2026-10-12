@@ -99,6 +99,16 @@ See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 ---
 
+## `ir_dfir_playbook/`
+
+### Part 5 - Cybersecurity incident response and digital forensics (modules 26-27)
+| Directory | Focus | Exercises |
+|-----------|-------|-----------|
+| [5x00_incident_response](5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
+| [5x01_Contain_Control](5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
+
+---
+
 ### Reference Libraries
 
 | Directory | Description |

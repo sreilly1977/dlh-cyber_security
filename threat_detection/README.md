@@ -40,9 +40,3 @@ Begin with [`4x00_phishing_dissection`](https://github.com/sreilly1977/dlh-cyber
 | Directory | Description |
 |-----------|-------------|
 | [`blue_team`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Defensive operations, vulnerability management, and security architecture planning |
-
-## Footer
-
-### Project Context
-
-This repository supports your ongoing studies for the **CompTIA Security+** certification and real-world incident response workflows. All investigations are designed for local lab environments—never execute suspicious payloads or visit active malicious URLs on production systems.
