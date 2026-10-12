@@ -287,3 +287,94 @@ Append each step as an ACTION entry to incident_timeline.md.
 </pre>
 
 ---
+
+# 5 Quiz 
+
+**No artefacts crated or output**
+
+--
+
+# [6. Plan Eradication with Verification](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control/eradication_checklist.yaml)
+
+## Goal: 
+
+List every eradication step paired with a verification that proves it was done.
+
+## Context: 
+
+Eradication is not a feeling. It is a list of specific items, each with a check that shows the item is gone.
+
+## Instructions: 
+
+Create eradication_checklist.yaml with an items array. Each item has: id, category, target_host, description, command_or_action, verification_command, expected_verification_result, status, executed_at, executed_by.
+
+Categories used:
+
+    malware_artifact: dropped files, scheduled tasks, registry persistence
+
+    process: running processes tied to the attacker
+
+    credential: compromised account password and active sessions
+
+    machine_account: rotated machine account passwords for compromised hosts
+
+    krbtgt: double-reset consideration with explicit rationale
+
+    network: egress blocks and internal segmentation rules
+
+Cover at minimum: the three affected hosts (WST-WS-031, WST-WS-017, LIS-WSIDE-01), the dmarsh account, the compromised Kerberos trust material, and both C2 IPs.
+
+**Expected output**
+
+```yaml
+items:
+  - id: ERAD-001
+    category: malware_artifact
+    target_host: WST-WS-031
+    description: 
+    command_or_action: remove X and X.exe
+    verification_command: Test-Path on both paths and endpoint live-response file listing
+    expected_verification_result: both paths return false and live-response returns no match
+    status: pending
+    executed_at: null
+    executed_by: null
+
+  - id: ERAD-002
+    category: malware_artifact
+    target_host: WST-WS-031
+    description: Remove scheduled task persistence (random GUID name)
+    command_or_action: schtasks /delete /tn <GUID> /f
+    verification_command: schtasks /query | findstr <GUID>
+    expected_verification_result: no matches
+    status: pending
+
+  - id: ERAD-006
+    category: credential
+    target_host: domain
+    description: Reset dmarsh AD password and revoke Azure AD sessions and refresh tokens
+    command_or_action: Set-ADAccountPassword + Revoke-AzureADUserAllRefreshToken
+    verification_command: check Azure AD sign-in logs for reuse of prior tokens
+    expected_verification_result: no successful sign-ins using prior tokens after reset
+    status: pending
+
+  - id: ERAD-010
+    category: krbtgt
+    target_host: domain
+    description: Double-reset of krbtgt following confirmed Pass-the-Ticket
+    command_or_action: Reset-ADAccountPassword -Identity krbtgt (twice, with full AD replication between resets)
+    rationale: Pass-the-Ticket was observed on dmarsh; krbtgt material must be invalidated domain-wide to kill all outstanding forged tickets
+    verification_command: audit TGT issuance timestamps and invalidate sessions older than reset
+    expected_verification_result: no valid TGTs issued before the reset timestamp
+    status: pending
+
+  - id: ERAD-012
+    category: network
+    target_host: perimeter
+    description: Egress deny for 185.220.101.47 and 91.234.99.107
+    command_or_action: firewall policy update
+    verification_command: netflow query for the last 24 hours toward both IPs
+    expected_verification_result: zero packets
+    status: pending
+```
+
+---
