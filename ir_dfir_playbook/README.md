@@ -16,15 +16,15 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
-| 1 | [5x00_incident_response](5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
-| 2 | [5x01_Contain_Control](5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
+| 1 | [5x00_incident_response](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
+| 2 | [5x01_Contain_Control](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
 
 ### Additional Resources
 
 | Directory | Description |
 |-----------|-------------|
-| [5x00_shared](5x00_shared) | Shared MedDefense organization profile: sites, technology footprint, regulatory posture, security organization, and canonical context facts used across all Module 5 projects |
-| [learning_objectives](learning_objectives) | Module-specific learning objectives and competency mapping covering the IR lifecycle, severity classification, evidence preservation, containment trade-offs, and HIPAA reporting pathways |
+| [5x00_shared](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_shared) | Shared MedDefense organization profile: sites, technology footprint, regulatory posture, security organization, and canonical context facts used across all Module 5 projects |
+| [learning_objectives](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/learning_objectives) | Module-specific learning objectives and competency mapping covering the IR lifecycle, severity classification, evidence preservation, containment trade-offs, and HIPAA reporting pathways |
 
 ## Working Through the Modules
 
@@ -46,7 +46,7 @@ Operational rules throughout:
 
 ### Getting Started
 
-Begin with [5x00_incident_response](5x00_incident_response) — no prior modules are required, though the content assumes familiarity with detection concepts from Module 4.
+Begin with [5x00_incident_response](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) — no prior modules are required, though the content assumes familiarity with detection concepts from Module 4.
 
 ## Related Directories
 
