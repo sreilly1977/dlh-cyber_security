@@ -1,7 +1,9 @@
 # Evidence Preservation Runbook: IR-2026-0414-01
 
 Evidence store: /evidence/IR-2026-0414-01/
+
 Hash algorithm: SHA-256
+
 Command format: certutil -hashfile <artifact_path> SHA256 | find /v "Hash"
 
 ## 1. Volatile memory, WST-WS-031
