@@ -102,6 +102,8 @@ See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 ## `ir_dfir_playbook/`
 
+Applied incident response and digital forensics through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
+
 ### Part 5 - Cybersecurity incident response and digital forensics (modules 26-27)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
