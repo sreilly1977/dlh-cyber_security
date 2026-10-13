@@ -15,6 +15,7 @@ A comprehensive cybersecurity study repository structured around two primary lea
 |-----------|-------------|
 | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Applied defensive operations through a scenario-driven case study (MedDefense) |
 | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Foundational coursework covering all five Security+ domains |
+| [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) | Incident response and digital forensics through a scenario-driven case study (MedDefense) |
 | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
 | [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Official publications from CIS, CISA, CompTIA, Crypt101, Gartner, HIPAA, KnowB4, Micorsoft, NIST CSF & Special Publications, NSA, and SANS |
 | [`threat_detection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/) | Threat detection and analysis through a scenario-driven case study (MedDefense) |
