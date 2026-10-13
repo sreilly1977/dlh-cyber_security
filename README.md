@@ -107,7 +107,7 @@ See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_
 | [5x00_incident_response](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
 | [5x01_Contain_Control](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
 
-See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/README.md) for the full curriculum map.
+See the [`ir_dfir_playbook/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/README.md) for the full curriculum map.
 
 ---
 
