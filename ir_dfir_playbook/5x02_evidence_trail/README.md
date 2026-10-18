@@ -82,17 +82,19 @@ Rules:
 ## Artifact Registry
 </pre>
 
-Artifact ID 	Name 	Format 	Acquired By 	Acquired At (UTC) 	Tool 	SHA-256 at Acquisition 	Storage Path 	Access Controls
-ART-001 	wst-ws-031.dd 	RAW 	<name> 	<timestamp> 	<tool> 	<hash_at_acquisition> 	/path/to/wst-ws-031.dd 	read-only, IR team only
-ART-002 	wst-ws-031.mem 	RAW 	<name> 	<timestamp> 	<tool> 	<hash_at_acquisition> 	/path/to/wst-ws-031.mem 	read-only, IR team only
-ART-003 	wst-ws-017.mem 	RAW 	<name> 	<timestamp> 	<tool> 	<hash_at_acquisition> 	/path/to/wst-ws-017.mem 	read-only, IR team only
+| Artifact ID | Name | Format | Acquired By | Acquired At (UTC) | Tool | SHA-256 at Acquisition | Storage Path | Access Controls |
+|---|---|---|---|---|---|---|---|---|
+| ART-001 | wst-ws-031.dd | RAW | Mike Torres | 2026-04-14T04:51Z (start) – 06:14Z (complete) | FTK Imager | **NOT COMPUTED AT ACQUISITION** — baseline to be established at first forensic access | `\\evidence\share\IR-2026-0414-01\wst-ws-031.dd` | read-only, IR team only |
+| ART-002 | wst-ws-031.mem | RAW | Mike Torres | 2026-04-14T03:02Z | WinPmem v3.3-rc3 | **NOT COMPUTED AT ACQUISITION** — baseline to be established at first forensic access | `\\evidence\share\IR-2026-0414-01\wst-ws-031.mem` | read-only, IR team only |
+| ART-003 | wst-ws-017.mem | RAW | Mike Torres | 2026-04-14T03:38Z | WinPmem v3.3-rc3 | **NOT COMPUTED AT ACQUISITION** — baseline to be established at first forensic access | `\\evidence\share\IR-2026-0414-01\wst-ws-017.mem` | read-only, IR team only |
 
 <pre>
 ## Access Log
 </pre>
 
-Timestamp (UTC) 	Actor 	Artifact ID 	Action 	Tool 	Hash Verified 	Notes
-<timestamp> 	<your_name> 	<ART-ID> 	<action> 	<tool> 	<yes/no> 	Baseline established; hash stored in <file>
-... 	... 	... 	... 	... 	... 	...
+| Timestamp (UTC) | Actor | Artifact ID | Action | Tool | Hash Verified | Notes |
+|---|---|---|---|---|---|---|
+| <timestamp> | <your_name> | <ART-ID> | <action> | <tool> | <yes/no> | Baseline established; hash stored in <file> |
+| ... | ... | ... | ... | ... | ... | ... |
 
 ---
