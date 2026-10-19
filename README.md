@@ -231,6 +231,7 @@ Setup guides and configuration files available in the repository for:
 - [MXToolbox - online email analysis](https://mxtoolbox.com)
 - [CyberChef - online toolbox](https://gchq.github.io/CyberChef/)
 - [CyberRange Luxembourg - Virtual live attack simulation](https://www.cyber-range.lu/)
+- [Open Threat Exchange  - Open-source threat intelligence](https://otx.alienvault.com)
 
 ---
 
