@@ -15,41 +15,47 @@
 # build activity against internal package mirrors (NuGet, Artifactory
 # proxy) is therefore also excluded, accepting reduced visibility into
 # internal-only C2 in exchange for a substantially lower alert rate.
-# Public NuGet/CDN destination exclusions are deliberately NOT
-# hardcoded as IP ranges, because CDN egress addresses rotate too
-# frequently for a static Sigma list; instead, the two named
-# falsepositive scenarios below document how those events should be
-# tuned at the SIEM layer (e.g., asset-tag exclusions for hosts in
-# the developer and build-agent OUs).
 #
 # Known limitation: the 172.16.-172.31. range cannot be expressed with
 # 'startswith' alone, so 172.17. through 172.31. are enumerated
 # explicitly to cover the full RFC 1918 block.
+#
+# CHANGE LOG (tuned 2026-10-19, see rule_validation_report.md):
+# - Added filter_nuget: DestinationHostname|endswith '.nuget.org',
+#   extending the condition with 'and not filter_nuget'. Validated
+#   against clean_sysmon.jsonl: 14/21 pre-tuning matches were MSBuild
+#   NuGet restore connections to api.nuget.org (168.62.42.37:443)
+#   from developer workstations WST-WS-042/WST-WS-051; post-tuning
+#   matches dropped to 0 with no loss on incident data (both C2
+#   events carry dst_hostname null, raw-IP). This version replaces
+#   the original as the production artifact.
 
 # Name: sigma_msbuild_network_connection.yml
 # Purpose: Detect MSBuild.exe initiating outbound network connections to
 #          public addresses, per IR-2026-0414-01 finding ART-002-M02
 #          (MSBuild.exe PID 8104 connected to Tor exit 185.220.101.47:443).
 # Author: Steve - Cybersecurity Engineer
-# Date: 19 October 2026
+# Date: 19 October 2026 (original); tuned 19 October 2026
 
 title: MSBuild Initiating Outbound Network Connection
 id: 9d4e2b7a-1c63-4f95-8a2d-6b3c7e91f4a8
 status: test
 description: >
   Detects MSBuild.exe initiating an outbound network connection to a
-  public destination. Trusted developer utilities such as MSBuild have
-  no routine reason to contact external hosts on general-purpose
-  workstations. Observed during IR-2026-0414-01, where MSBuild.exe
-  (PID 8104), injected with shellcode loaded from an inline-task XML,
-  established TCP connections to attacker infrastructure over port
-  443, including Tor exit node 185.220.101.47.
+  public destination, excluding known-good package registry hostnames.
+  Trusted developer utilities such as MSBuild have no routine reason
+  to contact external hosts on general-purpose workstations. Observed
+  during IR-2026-0414-01, where MSBuild.exe (PID 8104), injected with
+  shellcode loaded from an inline-task XML, established TCP
+  connections to attacker infrastructure over port 443, including Tor
+  exit node 185.220.101.47.
 references:
   - https://lolbas-project.github.io/lolbas/Binaries/Msbuild/
   - https://attack.mitre.org/techniques/T1071/001/
   - https://attack.mitre.org/techniques/T1090/003/
 author: Steve - Cybersecurity Engineer
 date: 2026-10-19
+modified: 2026-10-19
 tags:
   - attack.command_and_control
   - attack.t1071.001
@@ -85,14 +91,19 @@ detection:
     DestinationIp:
       - '127.0.0.1'
       - '::1'
-  condition: selection and not filter_rfc1918 and not filter_localhost
+  filter_nuget:
+    DestinationHostname|endswith:
+      - '.nuget.org'
+  condition: >-
+    selection and not filter_rfc1918 and not filter_localhost
+    and not filter_nuget
 falsepositives:
-  - NuGet package restore and package-manager operations during
-    solution builds on developer workstations, which contact
-    api.nuget.org and CDN endpoints; tune via host inventory or
-    DNS-based whitelist entries for the documented package sources
-    rather than disabling the rule.
   - Visual Studio / MSBuild telemetry and extension update checks
     (Visual Studio Marketplace, Microsoft CDN ranges) initiated by
-    msbuild.exe during interactive builds on engineering OUs.
+    msbuild.exe during interactive builds on engineering OUs; tune
+    reactively via host inventory or DNS-based whitelist entries
+    if observed in production.
+  - Custom internal build tooling invoking MSBuild against public
+    endpoints not yet allowlisted; review matched hostnames before
+    adding further DestinationHostname exclusions.
 level: medium

@@ -311,3 +311,79 @@ level: ...
 ```
 
 ---
+
+# [5. Validate Your Detection Rules Against Real and Clean Data](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/validate_rules.sh)
+
+## Goal: 
+
+Prove your rules fire on the attack, do not flood the queue on normal traffic, and tune any false positives before production.
+
+## Context: 
+
+A rule that was never tested is not a detection. It is a hypothesis. This task is where hypotheses become deployable rules.
+
+## Instructions: 
+
+Write validate_rules.sh. The script tests both Sigma rules from Tasks 3 and 4 against two provided log samples using sigma-cli or a compatible log matching tool.
+
+Provided samples:
+
+    incident_sysmon.jsonl: Sysmon process creation and network connection events from WST-WS-031 and WST-WS-017 during the incident window (02:40Z to 04:00Z on 2026-04-14)
+
+    clean_sysmon.jsonl: 30-day Sysmon baseline from a representative clinical workstation class at MedDefense (no known incidents; includes developers running legitimate builds via Visual Studio and MSBuild)
+
+For each rule and each sample, the script reports:
+
+    Number of events matched
+
+    Match rate as a percentage of total events in the sample
+
+    For the clean sample only: a list of matched events summarizing the false positive pattern (if any)
+
+After running the script, document your findings and any tuning decisions in rule_validation_report.md:
+
+    Did the rule fire on the incident data? (expected: yes)
+
+    What was the false positive rate on the clean baseline? (target: under 0.1 percent of total events)
+
+    If the false positive rate exceeded the target, document what you changed in the rule and why
+
+The tuned versions of the Sigma files replace the originals. Every change is noted in the report.
+
+**Expected output**
+
+```bash
+$ ./validate_rules.sh
+
+  [incident_sysmon.jsonl]
+  Total events: 4,812
+  Matches: 2
+  Match rate: 0.042%
+  Verdict: PASS (expected matches on PID 8104 at 02:46:58Z and PID 9201 at 03:27:13Z)
+
+  [clean_sysmon.jsonl]
+  Total events: 287,341
+  Matches: 0
+  False positive rate: 0.000%
+  Verdict: PASS
+
+  [incident_sysmon.jsonl]
+  Total events: 4,812
+  Matches: 2
+  Match rate: 0.042%
+  Verdict: PASS
+
+  [clean_sysmon.jsonl]
+  Total events: 287,341
+  Matches: 14
+  False positive rate: 0.005%
+  Verdict: REVIEW : 14 matches are MSBuild NuGet restore connections to api.nuget.org
+  Action: adding filter for DestinationHostname|endswith '.nuget.org'; re-running
+
+  [clean_sysmon.jsonl after tuning]
+  Matches: 0
+  False positive rate: 0.000%
+  Verdict: PASS
+```
+
+---
