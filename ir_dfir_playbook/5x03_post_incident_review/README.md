@@ -565,7 +565,7 @@ Length cap: 3 pages.
 </pre>
 
 | IOC | Type | First Seen | Last Seen | Reputation Tags | Associated Reports |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- |
 | 185.220.101.47 | IP | <YYYY-MM> | <YYYY-MM> | <tag>, <tag> | Listed in 14 threat intel feeds |
 | 91.234.99.107 | IP | <YYYY-MM> | <YYYY-MM> | <tag>, <tag>, <tag> | Associated with eCrime infrastructure |
 | ms0365-support[.]login-verification[.] | Domain | <YYYY-MM-DD> | <YYYY-MM> | <tag>, <tag> | Newly registered; typosquat pattern |
@@ -584,5 +584,60 @@ Length cap: 3 pages.
 ## Recommended Proactive Hunting
 ...
 </pre>
+
+---
+
+# [9. Update the IR Playbooks](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/playbook_updates.md)
+
+## Goal: 
+
+Close the gaps the real incident exposed in the procedures the team ran.
+
+## Context: 
+
+A playbook that has survived an actual incident and not been updated is less accurate than it was before the incident. Every gap discovered during response must come back into the playbook as a fix.
+
+## Instructions: 
+
+Create playbook_updates.md. For each change to an existing playbook, document the section changed, the original text (abbreviated), the replacement text, and the reason linked to a Gap ID or finding reference.
+
+    Use Task 2 gaps and forensic_findings_summary.md.
+
+Cover at minimum these four changes:
+
+    Credential exposure playbook: add VPN impossible-travel as a trigger condition: the existing playbook did not include foreign-IP VPN login as an independent trigger; it only covered direct credential compromise alerts.
+
+    Credential exposure playbook; add scope expansion checklist when lateral movement is detected: the playbook had no structured step for expanding containment to newly identified hosts when Pass-the-Ticket indicators surface.
+
+    Credential exposure playbook: add krbtgt double-reset as a mandatory step for confirmed Pass-the-Ticket: the original playbook said "reset compromised account password" but did not specify the krbtgt rotation required to invalidate forged Kerberos tickets.
+
+    Credential exposure playbook: add HIPAA four-factor assessment as a decision node when ePHI systems are in the blast radius: the original playbook had no branch for clinical system involvement.
+
+Format for each change:
+
+<pre>
+### Change PB-UPD-001
+
+**Playbook:** playbook_credential_exposure.yaml
+**Section:** applies_to.triggers
+**Gap closed:** GAP-002
+**Finding reference:** control_effectiveness.yaml phase 2
+
+**Before:**
+triggers:
+  - Alert: credential submitted to external domain
+
+**After:**
+triggers:
+  - Alert: credential submitted to external domain
+  - Alert: VPN authentication from country not seen for this account in 30 days
+  - Alert: impossible-travel detected on account (two logins from geographically inconsistent IPs within 2 hours)
+
+**Reason:** The incident entry point was a foreign-IP VPN login that matched no existing trigger; this gap allowed the intrusion to proceed for over eight hours without a playbook activation.
+</pre>
+
+**Expected output**
+
+A playbook_updates.md file with a change entry for each of the four required updates, following the format above.
 
 ---
