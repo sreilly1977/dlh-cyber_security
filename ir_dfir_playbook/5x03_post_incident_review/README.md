@@ -161,7 +161,7 @@ Constraints:
 </pre>
 
 | Gap ID | Phase | Gap Description | Control Category | Recommended Improvement | Priority | Linked Findings |
-|---|---|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|
 | GAP-001 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
 | GAP-002 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
 | GAP-003 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
