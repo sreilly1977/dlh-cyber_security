@@ -1,0 +1,61 @@
+# Name: sigma_powershell_msbuild_lolbin.yml
+# Purpose: Detect PowerShell or script host processes spawning trusted
+#          developer utilities (MSBuild, csc, vbc, jsc) as LOLBin proxy
+#          execution, per IR-2026-0414-01 findings ART-002-M01
+#          (powershell.exe PID 7812 spawning MSBuild.exe PID 8104).
+# Author: Steve - Cybersecurity Engineer
+# Date: 19 October 2026
+
+title: PowerShell Spawning Trusted Developer Utility (LOLBin Proxy Execution)
+id: 7c3f9a2e-5d41-4b18-9f6c-2e8a1d47b9c3
+status: test
+description: >
+  Detects Windows script host or PowerShell processes spawning trusted
+  developer utilities such as MSBuild.exe, csc.exe, vbc.exe, or jsc.exe.
+  These signed binaries can compile and execute inline C# code or XAML
+  task XML, allowing attackers to proxy execution without dropping a
+  traditional executable. Observed during IR-2026-0414-01 where
+  powershell.exe (PID 7812) spawned MSBuild.exe (PID 8104), which loaded
+  an inline-task XML shellcode loader (Trojan.MSIL.MSBuildLoader) from
+  the user's Temp directory and established C2.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Msbuild/
+  - https://attack.mitre.org/techniques/T1127/001/
+  - https://www.hhs.gov/sites/default/files/hc3-threat-brief-msbuild-healthcare.pdf
+  - https://github.com/SigmaHQ/sigma
+author: Steve - Cybersecurity Engineer
+date: 2026-10-19
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense_evasion
+  - attack.t1127.001
+  - attack.privilege_escalation
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\powershell_ise.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+  selection_child:
+    Image|endswith:
+      - '\MSBuild.exe'
+      - '\csc.exe'
+      - '\vbc.exe'
+      - '\jsc.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Software builds invoked by CI/CD or DevOps automation scripts, where
+    powershell.exe legitimately launches MSBuild.exe or csc.exe as part of
+    a build pipeline; excluded service accounts or dedicated build-agent
+    hosts should be reviewed before promotion to stable.
+  - Developer-run build scripts and IDE extensions that invoke the
+    compiler chain from PowerShell, particularly dotnet CLI wrappers on
+    developer workstations in engineering OUs.
+level: high

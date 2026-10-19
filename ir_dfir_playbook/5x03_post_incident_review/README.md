@@ -176,3 +176,72 @@ Constraints:
 </pre>
 
 ---
+
+# [3. Write the Sigma Rule: PowerShell LOLBin Proxy Execution](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/sigma_powershell_msbuild_lolbin.yml)
+
+## Goal: 
+
+Encode the initial execution technique as a detection rule that fires on the next attempt.
+
+## Context: 
+
+The attacker used msbuild.exe spawned by PowerShell to execute malicious inline C# without dropping a traditional executable. The detection did not exist before this incident.
+
+## Instructions: 
+
+Write a valid Sigma rule sigma_powershell_msbuild_lolbin.yml that detects msbuild.exe (or other trusted developer utilities) spawned by PowerShell or script host processes.
+
+Required rule fields:
+
+    title, id (UUID v4), status (test), description, references, author, date, tags
+
+    logsource.category: process_creation and logsource.product: windows
+
+    detection using ParentImage|endswith for PowerShell variants and Image|endswith for MSBuild and related LOLBins (reference the LOLBAS project for the full list)
+
+    falsepositives: at least two specific, realistic false positive scenarios
+
+    level: high
+
+Validate syntax with sigma-cli check or yamllint. Document the ATT&CK technique in the tags field.
+
+**Expected output**
+
+```yml
+title: PowerShell Spawning Trusted Developer Utility (LOLBin Proxy Execution)
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: test
+description: ...
+references:
+  - ...
+  - ...
+author: <your_name>
+date: <YYYY-MM-DD>
+tags:
+  - ...
+  - ...
+  - ...
+logsource:
+  category: ...
+  product:...
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+  selection_child:
+    Image|endswith:
+      - '\MSBuild.exe'
+      - '\csc.exe'
+      - '\vbc.exe'
+      - '\jsc.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - ...
+  - ...
+level: ...
+```
+
+---
