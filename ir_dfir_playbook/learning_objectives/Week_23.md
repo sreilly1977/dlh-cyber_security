@@ -65,3 +65,67 @@
 **A:** State only what the artifacts show, label each finding as confirmed, probable, or possible, and name the additional evidence that would raise or lower that confidence.
 
 ---
+
+## Lessons Learned
+
+---
+
+### Technical
+
+**Q: Why audit control effectiveness against an actual incident timeline?**
+
+**A:** It reveals whether controls fired, flagged, or failed when it mattered, exposing gaps invisible in paper-based assessments.
+
+**Q: Why write Sigma detection rules targeting observed TTPs?**
+
+**A:** They translate attacker behaviour seen in the incident into reusable, portable detections across SIEM platforms.
+
+**Q: Why test rules against positive and negative samples?**
+
+**A:** Measuring the false positive rate proves a rule is operationally viable rather than theoretically sound.
+
+**Q: Why enrich IOCs and TTPs with open-source threat intelligence?**
+
+**A:** It contextualises indicators within known campaigns, actor profiles, and tooling, improving triage and attribution.
+
+**Q: Why produce hardening specifications driven by specific findings?**
+
+**A:** Fixes anchored to real exploitation paths are prioritised correctly and defensible, unlike generic baseline checklists.
+
+---
+
+## Conceptual
+
+**Q: What is the gap between controls in place and controls that work?**
+
+**A:** It is the difference between deployed coverage and demonstrated performance under real attack conditions.
+
+**Q: How is detection engineering a lifecycle?**
+
+**A:** Rules are continuously written, tested, tuned, and deployed, so detection quality improves iteratively rather than in one-off releases.
+
+**Q: How is threat intelligence forward-looking rather than retrospective?**
+
+**A:** It projects likely adversary behaviour from current evidence to preempt repeat intrusions and emerging techniques.
+
+**Q: Why is a risk register a living document?**
+
+**A:** Operational evidence from incidents continuously recalibrates likelihood and impact ratings beyond annual review cycles.
+
+---
+
+## Transversal
+
+**Q: Why must every improvement have an owner, deadline, and validation method?**
+
+**A:** Unassigned, unmeasured actions stall, while validated ones convert lessons into verified security posture gains.
+
+**Q: Why bound conclusions to evidence and recommendations to findings?**
+
+**A:** It keeps post-incident analysis objective and prevents speculative fixes that divert resources from real weaknesses.
+
+**Q: Why write artifacts other engineers can execute without asking questions?**
+
+**A:** Self-contained documentation preserves institutional knowledge and ensures remediation survives staff turnover.
+
+---
