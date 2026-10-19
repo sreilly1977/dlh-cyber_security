@@ -641,3 +641,52 @@ triggers:
 A playbook_updates.md file with a change entry for each of the four required updates, following the format above.
 
 ---
+
+# [10. Build the Improvement Implementation Package](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/implementation_package.md)
+### advanced
+
+## Goal: 
+
+Assemble every improvement into a single executable package with owners, deadlines, and validation methods.
+
+## Context: 
+
+A list of improvements without owners is a list of wishes. This package is what James Chen hands to the team on Monday morning.
+
+## Instructions: 
+
+Create implementation_package.md with two sections.
+
+Section 1: Implementation table. One row per improvement. Columns: Improvement ID, Type (detection / hardening / playbook / risk), Title, Source (Gap ID or task reference), Owner Role, Target Deadline (days from today, not a calendar date), Success Criterion, Validation Method, Status.
+
+Improvements must include every significant output from Tasks 3 through 9. Do not invent improvements not supported by prior tasks.
+
+Section 2: Deployment sequence. List the improvements in recommended deployment order, with a one-line rationale for why each must precede the next. The sequence must account for dependencies (for example: harden before deploying detection to avoid hardening breaking the rule's log sources).
+
+Length cap: 2 pages.
+
+**Expected output**
+
+<pre>
+# Improvement Implementation Package: IR-2026-0414-01
+
+## Implementation Table
+</pre>
+
+| ID | Type | Title | Source | Owner Role | Deadline (days) | Success Criterion | Validation Method | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| IMP-001 | detection | Deploy sigmapowershellmsbuild_lolbin.yml | GAP-003 | SOC Lead | 7 | Rule active in SIEM; fires on synthetic test event | sigma-cli + synthetic Sysmon EID 1 event injection | pending |
+| IMP-002 | detection | Deploy sigmamsbuildnetwork_connection.yml | GAP-004 | SOC Lead | 7 | Rule active; FP rate below 0.1% on 7-day baseline | reviewvalidationreport.md + 7-day alert queue review | pending |
+| IMP-003 | hardening | Enable PowerShell Constrained Language Mode | GAP-003 | Infrastructure Lead | 14 | PSLockdownPolicy=4 verified on all clinical hosts | GPO compliance report; spot-check via PowerShell query | pending |
+| … | … | … | … | … | … | … | … | … |
+
+<pre>
+## Deployment Sequence
+
+1. **IMP-001 and IMP-002** (detection rules) - deploy first so new hardening does not change log sources before rules are baselined.
+2. **IMP-003** (PowerShell CLM) - deploy after detection rules confirm logging is working; CLM will change PowerShell event patterns.
+3. **IMP-004** (AppLocker for MSBuild) - deploy after CLM is confirmed stable; test on pilot group first.
+4. ...
+</pre>
+
+---
