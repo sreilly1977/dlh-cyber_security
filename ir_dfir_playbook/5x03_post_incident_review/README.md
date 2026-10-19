@@ -444,3 +444,55 @@ For each control, close with: the Gap IDs it addresses and a one-line validation
 </pre>
 
 ---
+
+# [7. Update the Risk Register](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/risk_register_updates.yaml)
+### advanced
+
+## Goal: 
+
+Revise the organizational risk register to reflect what the incident revealed about real likelihood and impact.
+
+## Context: 
+
+A risk that has actually occurred is no longer hypothetical. Its likelihood score changes, and its treatment urgency changes with it.
+
+## Instructions: 
+
+Create risk_register_updates.yaml with an entries array. Each entry represents either a new risk surfaced by the incident or an existing risk whose score must be revised.
+
+    Use incident findings from forensic_findings_summary.md.
+
+Each entry has: risk_id, category, title, description, trigger (what incident finding supports this entry), likelihood (1-5), impact (1-5), risk_score (likelihood × impact), current_treatment, updated_treatment, owner_role, review_date.
+
+Document at minimum four risk entries derived from the incident findings:
+
+    LOLBin proxy execution via trusted developer utilities
+
+    Credential theft enabling persistent external access
+
+    Lateral movement through Kerberos ticket reuse in a clinical network
+
+    PHI exposure through uncontrolled lateral access to clinical workstations
+
+**Expected output**
+
+```yaml
+entries:
+  - risk_id: RSK-2026-031
+    category: endpoint_execution
+    title: LOLBin proxy execution enabling C2 on clinical workstations
+    description: <description>
+    trigger: Incident IR-2026-0414-01; msbuild.exe C2 channel on WST-WS-031 and WST-WS-017 (ART-001-F01, ART-002-M01)
+    likelihood: ...
+    impact: ...
+    risk_score: ...
+    current_treatment: Endpoint detection (EDR) only; no application control
+    updated_treatment: Deploy AppLocker rule restricting MSBuild.exe (HRD-002); deploy Sigma rule sigma_powershell_msbuild_lolbin.yml (T3)
+    owner_role: <role>
+    review_date: <timestamp>
+
+  - risk_id: RSK-2026-032
+    ...
+```
+
+---

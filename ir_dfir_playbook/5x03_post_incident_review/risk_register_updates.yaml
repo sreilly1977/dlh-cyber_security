@@ -1,0 +1,260 @@
+# Name: risk_register_updates.yaml
+# Purpose: Revise the MedDefense risk register for IR-2026-0414-01, raising
+#          likelihood and impact scores where the incident proved a risk was
+#          realised, and adding new risks surfaced by the investigation.
+# Author: Steve - Cybersecurity Engineer
+# Date: 19 October 2026
+#
+# Scoring legend:
+#   likelihood: 1 (remote) .. 5 (realised in this incident, gap unmitigated)
+#   impact:     1 (negligible) .. 5 (PHI exposure, regulatory, or patient safety)
+#   risk_score: likelihood x impact
+#   entry_type: new (surfaced by this incident) | revised (existing risk rescored)
+#   previous_* fields appear only on revised entries, recording the prior score.
+
+entries:
+  - risk_id: RSK-2026-031
+    entry_type: new
+    category: endpoint_execution
+    title: LOLBin proxy execution enabling C2 on clinical workstations
+    description: >-
+      Signed Microsoft developer utilities can be abused to compile and
+      execute attacker-supplied inline task XML, giving code execution under
+      a trusted binary with no unsigned executable on disk. MedDefense has no
+      application control restricting these utilities, so the technique works
+      from any standard user context on the WST host class.
+    trigger: >-
+      Incident IR-2026-0414-01; powershell.exe (PID 7812) spawned MSBuild.exe
+      (PID 8104) at 2026-04-14T02:46:58Z and the chain replayed on WST-WS-017
+      at 03:27:13Z (ART-002-M01, ART-003-M01); inline-task XML loader dropped
+      to the user Temp directory at 02:46:51Z (ART-001-F01).
+    likelihood: 5
+    impact: 4
+    risk_score: 20
+    current_treatment: >-
+      EDR deployed but produced no alert on the parent-child chain; no
+      application control; no PowerShell Constrained Language Mode.
+    updated_treatment: >-
+      Deploy AppLocker or WDAC rule restricting MSBuild.exe to administrators
+      and named CI/CD service accounts (HRD-002, closes GAP-004 and GAP-006);
+      enforce PowerShell Constrained Language Mode (HRD-001, closes GAP-005);
+      deploy sigma_powershell_msbuild_lolbin.yml (Task 3) with correlation to
+      the network connection rule.
+    owner_role: Endpoint Platform Lead
+    review_date: 2026-11-16T00:00:00Z
+
+  - risk_id: RSK-2026-032
+    entry_type: revised
+    category: identity_access
+    title: Credential theft enabling persistent external access
+    description: >-
+      Phished workforce credentials are reused against remote access and
+      cloud services, and credential material harvested from endpoint memory
+      sustains access across hosts. MedDefense conditional access treated
+      device compliance as sufficient proof of trust, cancelling the platform
+      risk signals it had correctly computed.
+    trigger: >-
+      Credential submission to ms0365-support.login-verification.click at
+      2026-04-13T18:14:02Z, followed by an Office 365 session from 45.63.9.88
+      (RU) at 18:14:41Z; NTLM hash material for dmarsh recovered from lsass at
+      memory capture (ART-002-M04); Azure AD risk signals suppressed by the
+      conditional access compliant-device rule.
+    likelihood: 5
+    impact: 5
+    risk_score: 25
+    previous_likelihood: 3
+    previous_impact: 5
+    previous_risk_score: 15
+    current_treatment: >-
+      Conditional access with compliant-device grant; MFA enforced for
+      interactive cloud sign-ins only; no geographic restriction on VPN
+      authentication.
+    updated_treatment: >-
+      Restructure conditional access so medium-or-higher sign-in risk requires
+      interactive MFA regardless of device compliance, with an explicit
+      geography condition (HRD-003, closes GAP-002 and GAP-003); enable
+      Credential Guard and RunAsPPL to remove lsass hash extraction (HRD-004,
+      closes GAP-009 and GAP-010); migrate service accounts to gMSA with
+      AES-only Kerberos encryption to address T1558.003.
+    owner_role: Identity and Access Management Lead
+    review_date: 2026-11-16T00:00:00Z
+
+  - risk_id: RSK-2026-033
+    entry_type: new
+    category: lateral_movement
+    title: Lateral movement through Kerberos ticket reuse in a clinical network
+    description: >-
+      Credential material extracted from one workstation can be replayed to
+      authenticate to other hosts, including clinical systems, because
+      workstation VLANs and the clinical segment share a flat trust boundary
+      and no anomaly detection watches for cross-host ticket reuse.
+    trigger: >-
+      MSBuild.exe beaconing on WST-WS-017 launched via a Kerberos logon
+      originating from WST-WS-031 (ART-003-M01, T1550.003); cmd.exe on
+      LIS-WSIDE-01 staging PHI reports to \\WST-WS-017\C$ at
+      2026-04-14T03:43:30Z with logon_type 3.
+    likelihood: 4
+    impact: 5
+    risk_score: 20
+    current_treatment: >-
+      No network segmentation between workstation and clinical segments; no
+      jump host requirement for server access; no UEBA on cross-host
+      authentication.
+    updated_treatment: >-
+      Segment the LIS server and LIS-WSIDE-01 so SMB is permitted only from a
+      designated jump host (HRD-006, closes GAP-011); enforce AES-only
+      Kerberos encryption and tighten service ticket lifetimes; add
+      authentication-anomaly alerting for workstation-to-server logons outside
+      baseline.
+    owner_role: Network Security Architect
+    review_date: 2026-12-15T00:00:00Z
+
+  - risk_id: RSK-2026-034
+    entry_type: revised
+    category: data_protection
+    title: PHI exposure through uncontrolled lateral access to clinical workstations
+    description: >-
+      A single compromised standard user account can reach clinical report
+      repositories and read PHI in bulk without triggering an access-pattern
+      alert, and the organization cannot currently prove whether that data
+      left the network.
+    trigger: >-
+      14 PDF reads on LIS-WSIDE-01 by dmarsh from share LIS_REPORTS$ at
+      2026-04-14T03:43:30Z (AD-LOG-01, T1083 and T1005); staging copy command
+      targeting \\WST-WS-017\C$; open investigative item 3 records that
+      external transfer of the 14 PDFs is unconfirmed pending DLP log review.
+    likelihood: 4
+    impact: 5
+    risk_score: 20
+    previous_likelihood: 3
+    previous_impact: 5
+    previous_risk_score: 15
+    current_treatment: >-
+      Share permissions inherited from broad domain groups; no file access
+      auditing forwarded to the SIEM; DLP coverage on the clinical segment
+      unverified.
+    updated_treatment: >-
+      Tighten LIS_REPORTS$ ACLs to the LIS service account and authorised lab
+      personnel group, and enable object access auditing on the share
+      (HRD-006, closes GAP-012); complete the outstanding DLP log review to
+      settle breach-notification obligations; deploy file-access threshold
+      analytics for bulk PHI reads.
+    owner_role: HIPAA Privacy Officer
+    review_date: 2026-11-16T00:00:00Z
+
+  - risk_id: RSK-2026-035
+    entry_type: new
+    category: network_egress
+    title: Unmonitored command and control egress to known-bad infrastructure
+    description: >-
+      Workstations can establish direct outbound connections to raw IP
+      addresses that resolve to no hostname, including Tor exit nodes and
+      bulletproof-hosted C2, and remain connected for hours without an alert
+      or a block.
+    trigger: >-
+      ESTABLISHED TCP from MSBuild.exe PID 8104 to 185.220.101.47:443 (Tor
+      exit, DE) at memory capture (ART-002-M02) and beaconing from WST-WS-017
+      to 91.234.99.107:443 (UA, Cobalt Strike infrastructure cluster)
+      (ART-003-M01); both destinations carried prior public intelligence
+      flags.
+    likelihood: 5
+    impact: 4
+    risk_score: 20
+    current_treatment: >-
+      Egress flow volume monitoring used only retrospectively for scoping; no
+      feed-driven blocking; no deny-by-default handling for unresolved raw IP
+      destinations; no beaconing analytics.
+    updated_treatment: >-
+      Route WST-class egress through the secure web gateway with deny-by-default
+      handling for unresolved raw IP destinations, and subscribe to Tor exit
+      and AbuseIPDB confidence feeds (HRD-005, closes GAP-007); deploy
+      sigma_msbuild_network_connection.yml (Task 4) plus flow periodicity
+      analytics (closes GAP-008).
+    owner_role: Network Security Architect
+    review_date: 2026-11-16T00:00:00Z
+
+  - risk_id: RSK-2026-036
+    entry_type: new
+    category: persistence
+    title: Undetected persistence via registry Run key and scheduled task
+    description: >-
+      Attacker persistence mechanisms can be established on workstations
+      without generating telemetry or an alert, allowing re-entry after the
+      initial process is contained.
+    trigger: >-
+      Run key HKCU\...\Run\WindowsUpdateSvc written at 2026-04-14T02:46:55Z
+      pointing to update.exe (ART-001-R01) and scheduled task
+      {7B4F2D81-19E2-4A8C-9E67-A1F0DE2C7B3A} created to execute at logon
+      (ART-001-R02); no detection fired at write time.
+    likelihood: 4
+    impact: 3
+    risk_score: 12
+    current_treatment: >-
+      No Sysmon registry or scheduled task telemetry on the WST host class;
+      persistence artifacts reconstructed forensically after containment.
+    updated_treatment: >-
+      Deploy Sysmon configuration capturing Event IDs 11, 12/13, and 1 to the
+      WST host class, and load a Sigma rule alerting on Run key writes and
+      scheduled task creation resolving to user-writable paths (HRD-008,
+      closes GAP-013).
+    owner_role: Detection Engineering Lead
+    review_date: 2027-01-15T00:00:00Z
+
+  - risk_id: RSK-2026-037
+    entry_type: revised
+    category: initial_access
+    title: Phishing delivery to domains already listed on public blocklists
+    description: >-
+      Users can reach credential-harvesting domains that have been publicly
+      reported and listed for days, because MedDefense filtering does not
+      consume community blocklists in near real time.
+    trigger: >-
+      Domain ms0365-support.login-verification.click listed on Spamhaus DBL
+      and SURBL and tracked by URLhaus from 2026-04-07T14:18:00Z, six days
+      before the first visit at 2026-04-13T18:14:02Z; VirusTotal recorded 28
+      malicious verdicts and 72 malicious community votes at snapshot time.
+    likelihood: 5
+    impact: 4
+    risk_score: 20
+    previous_likelihood: 4
+    previous_impact: 4
+    previous_risk_score: 16
+    current_treatment: >-
+      Secure email gateway with static reputation only; no subscription to
+      Spamhaus DBL, SURBL, or URLhaus feeds; no brand-pattern blocking for
+      Microsoft-themed typosquats.
+    updated_treatment: >-
+      Subscribe recursive DNS and the secure web gateway to Spamhaus DBL,
+      SURBL, and URLhaus with a 60-minute refresh and block-on-list
+      enforcement, plus keyword-proximity blocking for corporate-brand
+      typosquats (HRD-007, closes GAP-001).
+    owner_role: Email and Web Security Lead
+    review_date: 2026-11-16T00:00:00Z
+
+  - risk_id: RSK-2026-038
+    entry_type: new
+    category: data_loss_prevention
+    title: Unverified PHI exfiltration due to DLP coverage blind spot
+    description: >-
+      The organization cannot currently determine whether PHI accessed during
+      an intrusion left the network, which delays and potentially invalidates
+      breach-notification decisions and leaves the exfiltration path
+      untreated.
+    trigger: >-
+      Open investigative item 3 in forensic_findings_summary.md: confirmation
+      of whether any of the 14 PDFs left the network requires DLP log review
+      outside the engagement; the forensic summary records data access as
+      confirmed and data transfer as unconfirmed.
+    likelihood: 3
+    impact: 5
+    risk_score: 15
+    current_treatment: >-
+      DLP coverage on the clinical segment unverified; no egress inspection
+      for PHI patterns from workstation or staging locations.
+    updated_treatment: >-
+      Complete the DLP log review to close the notification question; extend
+      DLP monitoring to the clinical segment and to staging paths such as
+      \\WST-WS-017\C$; pair with the egress enforcement in HRD-005 so staged
+      data cannot leave without inspection.
+    owner_role: Data Protection Officer
+    review_date: 2026-11-16T00:00:00Z
