@@ -1,0 +1,35 @@
+{
+  "snapshot_source": "VirusTotal API v3",
+  "snapshot_taken_at": "2026-04-14T08:12:04Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "185.220.101.47",
+  "data": {
+    "id": "185.220.101.47",
+    "type": "ip_address",
+    "attributes": {
+      "as_owner": "Foundation for Applied Privacy",
+      "asn": 208294,
+      "country": "DE",
+      "network": "185.220.101.0/24",
+      "regional_internet_registry": "RIPE NCC",
+      "reputation": -58,
+      "last_analysis_stats": {
+        "harmless": 52,
+        "malicious": 22,
+        "suspicious": 5,
+        "undetected": 12,
+        "timeout": 0
+      },
+      "last_analysis_date": 1744694400,
+      "last_modification_date": 1744694400,
+      "tags": ["tor", "tor-exit", "anonymizer"],
+      "first_submission_date": 1699387200,
+      "total_votes": {"harmless": 4, "malicious": 181}
+    }
+  },
+  "relationships": {
+    "communicating_files_total": 1842,
+    "downloaded_files_total": 204,
+    "resolutions_total": 0
+  }
+}

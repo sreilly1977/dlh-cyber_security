@@ -1,0 +1,21 @@
+{
+  "snapshot_source": "AbuseIPDB API v2",
+  "snapshot_taken_at": "2026-04-14T08:18:48Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "91.234.99.107",
+  "data": {
+    "ipAddress": "91.234.99.107",
+    "isPublic": true,
+    "ipVersion": 4,
+    "isWhitelisted": false,
+    "abuseConfidenceScore": 92,
+    "countryCode": "UA",
+    "usageType": "Data Center/Web Hosting/Transit",
+    "isp": "PE Dmytro Nedilskyi",
+    "domain": null,
+    "hostnames": [],
+    "totalReports": 1874,
+    "numDistinctUsers": 412,
+    "lastReportedAt": "2026-04-13T22:18:14Z"
+  }
+}

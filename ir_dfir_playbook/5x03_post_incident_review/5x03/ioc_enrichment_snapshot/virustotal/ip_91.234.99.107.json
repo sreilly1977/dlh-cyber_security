@@ -1,0 +1,35 @@
+{
+  "snapshot_source": "VirusTotal API v3",
+  "snapshot_taken_at": "2026-04-14T08:13:18Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "91.234.99.107",
+  "data": {
+    "id": "91.234.99.107",
+    "type": "ip_address",
+    "attributes": {
+      "as_owner": "PE Dmytro Nedilskyi",
+      "asn": 203727,
+      "country": "UA",
+      "network": "91.234.99.0/24",
+      "regional_internet_registry": "RIPE NCC",
+      "reputation": -42,
+      "last_analysis_stats": {
+        "harmless": 48,
+        "malicious": 18,
+        "suspicious": 8,
+        "undetected": 17,
+        "timeout": 0
+      },
+      "last_analysis_date": 1744694481,
+      "last_modification_date": 1744694481,
+      "tags": ["cobalt-strike", "bulletproof-hosting"],
+      "first_submission_date": 1720483200,
+      "total_votes": {"harmless": 2, "malicious": 94}
+    }
+  },
+  "relationships": {
+    "communicating_files_total": 402,
+    "downloaded_files_total": 14,
+    "resolutions_total": 2
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "snapshot_source": "AbuseIPDB API v2",
+  "snapshot_taken_at": "2026-04-14T08:18:22Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "185.220.101.47",
+  "data": {
+    "ipAddress": "185.220.101.47",
+    "isPublic": true,
+    "ipVersion": 4,
+    "isWhitelisted": false,
+    "abuseConfidenceScore": 84,
+    "countryCode": "DE",
+    "usageType": "Data Center/Web Hosting/Transit",
+    "isp": "Foundation for Applied Privacy",
+    "domain": "applied-privacy.net",
+    "hostnames": ["tor-exit-47.applied-privacy.net"],
+    "totalReports": 9412,
+    "numDistinctUsers": 1284,
+    "lastReportedAt": "2026-04-14T02:52:04Z"
+  }
+}

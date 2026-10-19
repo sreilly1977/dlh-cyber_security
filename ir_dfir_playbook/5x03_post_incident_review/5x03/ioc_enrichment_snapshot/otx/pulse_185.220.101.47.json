@@ -1,0 +1,33 @@
+{
+  "snapshot_source": "AlienVault OTX API v1",
+  "snapshot_taken_at": "2026-04-14T08:16:40Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "185.220.101.47",
+  "pulse_info": {
+    "count": 47,
+    "pulses": [
+      {
+        "id": "65fa2b1c4f9e02d9a7d1c3a4",
+        "name": "Tor Exit Relays — April 2026 snapshot",
+        "description": "Active Tor exit relay list from DanMeUk project",
+        "author_name": "AlienVault",
+        "created": "2026-04-02T00:00:00Z",
+        "modified": "2026-04-14T00:00:00Z",
+        "tags": ["tor", "anonymizer"],
+        "references": ["https://www.dan.me.uk/tornodes"]
+      },
+      {
+        "id": "65e04b8c9d3f0a1f2e4c7a19",
+        "name": "MSBuild loader campaign targeting healthcare",
+        "description": "Phishing -> PowerShell -> MSBuild -> beacon observed in US healthcare. Target: clinical workstations.",
+        "author_name": "HC3_ISAC",
+        "created": "2026-03-14T11:04:00Z",
+        "modified": "2026-04-10T09:28:00Z",
+        "tags": ["msbuild", "healthcare", "phishing", "lolbin"],
+        "references": ["https://www.hhs.gov/sites/default/files/hc3-threat-brief-msbuild-healthcare.pdf"]
+      }
+    ]
+  },
+  "reputation": -3,
+  "geo": {"country_code": "DE", "country_name": "Germany"}
+}

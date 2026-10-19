@@ -1,0 +1,100 @@
+# Name: control_effectiveness.yaml
+# Purpose: Post-incident control effectiveness audit for IR-2026-0414-01, mapping each incident
+#          phase against controls expected to act, what fired, what missed, and gap severity.
+# Author: Steve - Cybersecurity Engineer
+# Date: 19 October 2026
+
+- phase: Credential phishing and submission
+  att_ck_technique: T1566.002, T1078
+  controls_expected:
+    - Secure email gateway with URL detonation and link rewriting
+    - DNS or secure web gateway filtering consuming commercial and community blocklist feeds
+    - Endpoint browser and mail client native phishing protection
+    - User reporting workflow enabling early detection of suspicious mail
+  controls_fired: []
+  controls_missed:
+    - Email gateway URL filtering did not block the credential harvesting URL
+    - DNS/web filtering did not block a domain already listed on Spamhaus DBL and SURBL
+    - No browser warning intercepted the submission at 2026-04-13T18:14:41Z
+    - No user report surfaced the phishing message before credential submission
+  gap_severity: critical
+  gap_reason: Initial access succeeded against a domain that URLhaus had tracked since 2026-04-07, six days before the click.
+
+- phase: VPN access using stolen credentials from foreign IP
+  att_ck_technique: T1078, T1133
+  controls_expected:
+    - Risk-based conditional access enforcing on Azure AD risk signals
+    - Geographic restriction and impossible-travel detection on remote access
+    - Phishing-resistant MFA or token binding on VPN session establishment
+    - Session anomaly alerting on first-seen device, IP, and country combinations
+  controls_fired:
+    - Azure AD generated risk signals for the 2026-04-13T18:14:41Z session
+  controls_missed:
+    - Conditional access compliant device rule suppressed the Azure AD risk signals
+    - No geo-fence blocked the session originating from 45.63.9.88 (RU)
+    - No impossible-travel or first-seen-location challenge interrupted the login
+  gap_severity: critical
+  gap_reason: The platform correctly computed risk but the access policy was configured to prioritize device compliance over risk, so the stolen session was admitted without challenge.
+
+- phase: PowerShell to MSBuild LOLBin execution
+  att_ck_technique: T1059.001, T1127.001, T1027, T1105
+  controls_expected:
+    - Application control such as WDAC or AppLocker permitting signed Microsoft binaries only from trusted paths, not user-profile Temp directories
+    - AMSI integration and PowerShell constrained language mode degrading script-based staging
+    - EDR behavioral detection on atypical parent-child chains such as powershell.exe spawning MSBuild.exe
+    - On-access antivirus hash reputation checks on dropped artifacts in user-writable paths
+  controls_fired: []
+  controls_missed:
+    - No application control prevented MSBuild.exe from executing update.xml from the Temp directory
+    - No EDR alert fired on the powershell.exe PID 7812 to MSBuild.exe PID 8104 chain
+    - No on-access detection quarantined update.xml, whose VirusTotal reputation of 34 malicious verdicts predates the incident
+    - No blocking of executable payload drops such as update.exe alongside the loader
+  gap_severity: high
+  gap_reason: A signed-binary LOLBin chain ran undetected on the endpoint despite the payload family being publicly classified as Trojan.MSIL.MSBuildLoader before the intrusion.
+
+- phase: C2 beaconing to external IPs
+  att_ck_technique: T1071.001, T1090.003
+  controls_expected:
+    - Egress proxy or secure web gateway blocking destinations on threat intelligence feeds
+    - Netflow or firewall analytics detecting periodic outbound beaconing to raw external IPs
+    - Identification and policy handling of anonymizer traffic such as Tor exits
+    - TLS inspection or JA/TLS fingerprint alerting for connections lacking corresponding DNS resolution
+  controls_fired: []
+  controls_missed:
+    - No control blocked egress to the Tor exit node 185.220.101.47 despite 9412 AbuseIPDB reports and inclusion in public Tor exit lists
+    - No control blocked egress to 91.234.99.107 despite an AbuseIPDB confidence score of 92 and a March 2026 OTX Cobalt Strike pulse
+    - No beaconing analytics alerted on the sustained connection from MSBuild.exe PID 8104 over roughly ten hours
+    - Workstation egress policy permitted direct IP connections with no DNS resolution and no proxy mediation
+  gap_severity: high
+  gap_reason: Command and control persisted overnight to infrastructure that was already flagged across multiple public intelligence sources before the incident began.
+
+- phase: LSASS credential access and Kerberos ticket extraction
+  att_ck_technique: T1003.001, T1558.003
+  controls_expected:
+    - LSASS protection via RunAsPPL and Credential Guard preventing in-memory hash extraction
+    - EDR detection on suspicious handle access to lsass.exe from untrusted processes
+    - Kerberos hardening including PAC signature enforcement and tightened service ticket lifetimes
+    - Privileged and interactive session monitoring for credential material exposure
+  controls_fired: []
+  controls_missed:
+    - NTLM hash material for dmarsh was exposed in lsass at memory capture, indicating LSASS protections were not enforced
+    - No EDR alert fired on credential access from the malicious process
+    - No Kerberos safeguards prevented subsequent reuse of the ticket material for cross-host logon
+  gap_severity: high
+  gap_reason: Unprotected LSASS memory yielded reusable credential material that directly enabled the later lateral movement to WST-WS-017.
+
+- phase: Lateral movement and PHI access
+  att_ck_technique: T1550.003, T1078, T1083, T1005
+  controls_expected:
+    - Network segmentation restricting workstation-to-clinical-server SMB access
+    - Least-privilege share ACLs and per-user access rights on LIS_REPORTS$
+    - UEBA or file access analytics alerting on anomalous bulk reads of PHI repositories
+    - DLP monitoring on sensitive data stores and egress paths
+  controls_fired:
+    - Egress flow volume monitoring existed and was used post-incident to bound the incident, though it produced no real-time alert
+  controls_missed:
+    - No segmentation isolated the clinical lab environment LIS-WSIDE-01 from compromised workstation VLANs
+    - A standard user account could silently read 14 PHI report PDFs with no access-pattern alert
+    - No DLP event surfaced the bulk PHI read, and DLP log review remains an open item outside this engagement
+  gap_severity: critical
+  gap_reason: Lateral movement via Kerberos logon reached a clinical file server and resulted in confirmed PHI access for 14 patients with no preventive or detective control intervening.

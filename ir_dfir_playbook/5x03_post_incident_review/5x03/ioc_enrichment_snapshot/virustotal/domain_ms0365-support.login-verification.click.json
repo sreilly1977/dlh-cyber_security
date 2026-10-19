@@ -1,0 +1,38 @@
+{
+  "snapshot_source": "VirusTotal API v3",
+  "snapshot_taken_at": "2026-04-14T08:14:02Z",
+  "ioc_type": "domain",
+  "ioc_value": "ms0365-support.login-verification.click",
+  "data": {
+    "id": "ms0365-support.login-verification.click",
+    "type": "domain",
+    "attributes": {
+      "creation_date": 1744020000,
+      "last_dns_records": [
+        {"type": "A", "value": "45.63.9.88", "ttl": 300},
+        {"type": "NS", "value": "ns1.namesilo.com", "ttl": 3600}
+      ],
+      "last_analysis_stats": {
+        "harmless": 41,
+        "malicious": 28,
+        "suspicious": 4,
+        "undetected": 16,
+        "timeout": 0
+      },
+      "last_analysis_date": 1744695120,
+      "categories": {
+        "Sophos": "phishing",
+        "Forcepoint": "Phishing and Other Frauds",
+        "BitDefender": "phishing"
+      },
+      "registrar": "NameSilo, LLC",
+      "reputation": -84,
+      "tags": ["phishing", "typosquat", "credential-harvesting"],
+      "tld": "click",
+      "total_votes": {"harmless": 0, "malicious": 72}
+    }
+  },
+  "resolutions": [
+    {"host_name": "ms0365-support.login-verification.click", "ip_address": "45.63.9.88", "resolver_country": "US"}
+  ]
+}

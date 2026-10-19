@@ -1,0 +1,33 @@
+{
+  "snapshot_source": "AlienVault OTX API v1",
+  "snapshot_taken_at": "2026-04-14T08:17:12Z",
+  "ioc_type": "ipv4",
+  "ioc_value": "91.234.99.107",
+  "pulse_info": {
+    "count": 12,
+    "pulses": [
+      {
+        "id": "65e908d24a1b9c0f3e8d7a11",
+        "name": "Cobalt Strike C2 infrastructure — Eastern Europe cluster",
+        "description": "Team server IPs associated with bulletproof-hosted ransomware affiliate",
+        "author_name": "ShadowServer",
+        "created": "2026-03-21T00:00:00Z",
+        "modified": "2026-04-12T00:00:00Z",
+        "tags": ["cobalt-strike", "ransomware-affiliate", "c2"],
+        "references": []
+      },
+      {
+        "id": "65fc18ab7b2e94f0c1d3e8b2",
+        "name": "Healthcare breach wave — April 2026",
+        "description": "Secondary C2 infrastructure used in multi-site US healthcare compromise",
+        "author_name": "Health-ISAC",
+        "created": "2026-04-08T14:22:00Z",
+        "modified": "2026-04-13T18:00:00Z",
+        "tags": ["healthcare", "c2", "msbuild", "kerberos-abuse"],
+        "references": ["https://h-isac.org/threat-bulletin-20260408"]
+      }
+    ]
+  },
+  "reputation": -2,
+  "geo": {"country_code": "UA", "country_name": "Ukraine"}
+}

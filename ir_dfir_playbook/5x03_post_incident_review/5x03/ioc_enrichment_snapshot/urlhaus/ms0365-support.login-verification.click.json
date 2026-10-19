@@ -1,0 +1,42 @@
+{
+  "snapshot_source": "URLhaus API v1",
+  "snapshot_taken_at": "2026-04-14T08:19:31Z",
+  "ioc_type": "domain",
+  "ioc_value": "ms0365-support.login-verification.click",
+  "query_status": "ok",
+  "urlhaus_reference": "https://urlhaus.abuse.ch/host/ms0365-support.login-verification.click/",
+  "host": "ms0365-support.login-verification.click",
+  "firstseen": "2026-04-07T14:18:00Z",
+  "url_count": 3,
+  "blacklists": {
+    "spamhaus_dbl": "listed",
+    "surbl": "listed"
+  },
+  "urls": [
+    {
+      "url": "https://ms0365-support.login-verification.click/auth",
+      "url_status": "online",
+      "date_added": "2026-04-07T14:18:00Z",
+      "threat": "credential-phishing",
+      "tags": ["Microsoft365", "phishing", "typosquat"],
+      "reporter": "abuse_ch_sandbox"
+    },
+    {
+      "url": "https://ms0365-support.login-verification.click/auth/drop/update.zip",
+      "url_status": "online",
+      "date_added": "2026-04-08T09:24:00Z",
+      "threat": "malware_download",
+      "tags": ["msbuild-loader", "dropper"],
+      "reporter": "hunter.io",
+      "payload_sha256": "3c2a1b9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a"
+    },
+    {
+      "url": "https://ms0365-support.login-verification.click/auth/submit",
+      "url_status": "online",
+      "date_added": "2026-04-08T09:24:01Z",
+      "threat": "credential-phishing",
+      "tags": ["Microsoft365", "credential-harvesting"],
+      "reporter": "hunter.io"
+    }
+  ]
+}

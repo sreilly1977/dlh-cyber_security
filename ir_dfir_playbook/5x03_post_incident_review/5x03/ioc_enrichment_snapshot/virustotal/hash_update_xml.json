@@ -1,0 +1,35 @@
+{
+  "snapshot_source": "VirusTotal API v3",
+  "snapshot_taken_at": "2026-04-14T08:15:11Z",
+  "ioc_type": "sha256",
+  "ioc_value": "a4f1e9b4fe7aa6d5d3f3e2b8c9a7d4e8f5b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3",
+  "data": {
+    "id": "a4f1e9b4fe7aa6d5d3f3e2b8c9a7d4e8f5b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3",
+    "type": "file",
+    "attributes": {
+      "type_description": "XML",
+      "type_tag": "xml",
+      "names": ["update.xml", "task.xml", "build.xml"],
+      "size": 8412,
+      "first_submission_date": 1744220400,
+      "last_submission_date": 1744694900,
+      "last_analysis_date": 1744694900,
+      "last_analysis_stats": {
+        "harmless": 0,
+        "malicious": 34,
+        "suspicious": 3,
+        "undetected": 36,
+        "timeout": 0
+      },
+      "popular_threat_classification": {
+        "suggested_threat_label": "Trojan.MSIL.MSBuildLoader",
+        "popular_threat_category": [
+          {"count": 28, "value": "trojan"},
+          {"count": 14, "value": "loader"}
+        ]
+      },
+      "tags": ["msbuild", "inline-task", "shellcode-loader", "lolbin"],
+      "reputation": -22
+    }
+  }
+}
