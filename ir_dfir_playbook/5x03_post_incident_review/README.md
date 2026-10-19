@@ -387,3 +387,60 @@ $ ./validate_rules.sh
 ```
 
 ---
+
+# [6. Update the Hardening Specification](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/hardening_updates.md)
+
+## Goal: 
+
+Translate incident findings into specific, deployable configuration changes.
+
+## Context: 
+
+Hardening changes driven by evidence are the ones that survive budget reviews. Each change here links to a finding that justifies it.
+
+## Instructions: 
+
+Create hardening_updates.md. For each recommended change, specify: the control, the exact configuration, the gap it closes (by Gap ID from Task 2), and the validation test that confirms the change is in effect.
+
+    Use Gap IDs from Task 2 and incident evidence from forensic_findings_summary.md.
+
+Cover at minimum these four controls:
+
+    PowerShell Constrained Language Mode for non-administrative user accounts: blocks [System.Management.Automation.ScriptBlock]::Create and .NET type loading that LOLBin techniques depend on. Document the GPO path and registry key.
+
+    AppLocker or Windows Defender Application Control rule for MSBuild.exe: restrict execution of MSBuild.exe to members of BUILTIN\Administrators and named CI/CD service accounts. Document the rule XML structure.
+
+    Conditional access policy for VPN authentication from new geographies: block or require step-up MFA when a VPN login originates from a country not previously seen for that account in the prior 30 days. Document the policy logic.
+
+    Windows Credential Guard: prevents LSASS credential extraction by isolating credential material in a hypervisor-protected memory region. Document the enablement path and which Windows versions support it.
+
+For each control, close with: the Gap IDs it addresses and a one-line validation test (a command or observable that confirms the control is active).
+
+**Expected output**
+
+<pre>
+# Hardening Updates: IR-2026-0414-01
+
+## HRD-001: PowerShell Constrained Language Mode
+
+**Closes:** GAP-003, GAP-004
+**Configuration:**
+- GPO: Computer Configuration > Preferences > Windows Settings > Registry
+- Key: HKLM\System\CurrentControlSet\Control\Session Manager\Environment
+- Value name: __PSLockdownPolicy
+- Value type: REG_SZ
+- Value data: 4
+
+**Effect:** Restricts PowerShell to Constrained Language Mode for standard users; blocks .NET type instantiation, COM object creation, and script block execution used in LOLBin proxy techniques.
+
+**Applies to:** Non-administrative accounts on all clinical and administrative workstations.
+
+**Validation:** Run `$ExecutionContext.SessionState.LanguageMode` as a standard user; expected output: ConstrainedLanguage
+
+---
+
+## HRD-002: AppLocker rule restricting MSBuild.exe
+...
+</pre>
+
+---
