@@ -245,3 +245,69 @@ level: ...
 ```
 
 ---
+
+# [4. Write the Sigma Rule: MSBuild C2 Beaconing](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/sigma_msbuild_network_connection.yml)
+### advanced
+
+## Goal: 
+
+Detect the C2 communication channel opened by the LOLBin at the network level.
+
+## Context: 
+
+Writing two complementary rules for the same attack chain is how detection teams build layered coverage. If the process creation rule is evaded, the network rule catches the next step.
+
+## Instructions: 
+
+Write a valid Sigma rule sigma_msbuild_network_connection.yml that detects msbuild.exe initiating an outbound network connection.
+
+Required fields: same structure as Task 3.
+
+    logsource.category: network_connection and logsource.product: windows
+
+    detection targeting Image|endswith: '\MSBuild.exe' with Initiated: 'true'
+
+    Add a filter to reduce false positives from legitimate build activity: exclude connections to private RFC 1918 address ranges and to known NuGet/package manager CDN ranges (document your exclusion logic in comments)
+
+    falsepositives: at minimum two specific scenarios involving legitimate MSBuild network activity
+
+    level: medium (slightly lower than T3 because legitimate build systems generate similar events)
+
+Document in a comment block at the top of the file why this rule is medium while the process creation rule is high.
+
+**Expected output**
+
+```yaml
+# Rule: MSBuild C2 Network Connection
+# Level rationale: Set to medium because MSBuild legitimately makes network connections
+# during NuGet restore and package manager operations from developer workstations.
+# This rule should be deployed alongside sigma_powershell_msbuild_lolbin.yml for layered coverage.
+# A medium + high correlation (both rules firing for the same host within 5 minutes)
+# should be escalated as high confidence.
+
+title: MSBuild Initiating Outbound Network Connection
+id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+status: test
+description: ...
+...
+detection:
+  selection:
+    Image|endswith: '\MSBuild.exe'
+    Initiated: 'true'
+  filter_rfc1918:
+    DestinationIp|startswith:
+      - '10.'
+      - '172.16.'
+      - '192.168.'
+  filter_localhost:
+    DestinationIp:
+      - '127.0.0.1'
+      - '::1'
+  condition: selection and not filter_rfc1918 and not filter_localhost
+falsepositives:
+  - ...
+  - ...
+level: ...
+```
+
+---

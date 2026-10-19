@@ -1,0 +1,98 @@
+# Rule: MSBuild C2 Network Connection
+# Level rationale: Set to medium, one tier below the T3 process creation
+# rule (sigma_powershell_msbuild_lolbin.yml), because MSBuild.exe
+# legitimately initiates outbound connections during NuGet package
+# restore, telemetry, and build-related operations from developer
+# workstations and CI agents. A standalone hit here is weak evidence;
+# deployed alongside the process creation rule, it provides layered
+# coverage. Correlation of both rules firing for the same host within
+# 5 minutes should be escalated as high confidence.
+#
+# Exclusion logic: The filters below drop connections to RFC 1918
+# private ranges and loopback, since C2 egress observed in
+# IR-2026-0414-01 targeted public internet addresses (a Tor exit node
+# and a bulletproof-hosted Cobalt Strike team server). Legitimate
+# build activity against internal package mirrors (NuGet, Artifactory
+# proxy) is therefore also excluded, accepting reduced visibility into
+# internal-only C2 in exchange for a substantially lower alert rate.
+# Public NuGet/CDN destination exclusions are deliberately NOT
+# hardcoded as IP ranges, because CDN egress addresses rotate too
+# frequently for a static Sigma list; instead, the two named
+# falsepositive scenarios below document how those events should be
+# tuned at the SIEM layer (e.g., asset-tag exclusions for hosts in
+# the developer and build-agent OUs).
+#
+# Known limitation: the 172.16.-172.31. range cannot be expressed with
+# 'startswith' alone, so 172.17. through 172.31. are enumerated
+# explicitly to cover the full RFC 1918 block.
+
+# Name: sigma_msbuild_network_connection.yml
+# Purpose: Detect MSBuild.exe initiating outbound network connections to
+#          public addresses, per IR-2026-0414-01 finding ART-002-M02
+#          (MSBuild.exe PID 8104 connected to Tor exit 185.220.101.47:443).
+# Author: Steve - Cybersecurity Engineer
+# Date: 19 October 2026
+
+title: MSBuild Initiating Outbound Network Connection
+id: 9d4e2b7a-1c63-4f95-8a2d-6b3c7e91f4a8
+status: test
+description: >
+  Detects MSBuild.exe initiating an outbound network connection to a
+  public destination. Trusted developer utilities such as MSBuild have
+  no routine reason to contact external hosts on general-purpose
+  workstations. Observed during IR-2026-0414-01, where MSBuild.exe
+  (PID 8104), injected with shellcode loaded from an inline-task XML,
+  established TCP connections to attacker infrastructure over port
+  443, including Tor exit node 185.220.101.47.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Msbuild/
+  - https://attack.mitre.org/techniques/T1071/001/
+  - https://attack.mitre.org/techniques/T1090/003/
+author: Steve - Cybersecurity Engineer
+date: 2026-10-19
+tags:
+  - attack.command_and_control
+  - attack.t1071.001
+  - attack.t1090.003
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\MSBuild.exe'
+    Initiated: 'true'
+  filter_rfc1918:
+    DestinationIp|startswith:
+      - '10.'
+      - '172.16.'
+      - '172.17.'
+      - '172.18.'
+      - '172.19.'
+      - '172.20.'
+      - '172.21.'
+      - '172.22.'
+      - '172.23.'
+      - '172.24.'
+      - '172.25.'
+      - '172.26.'
+      - '172.27.'
+      - '172.28.'
+      - '172.29.'
+      - '172.30.'
+      - '172.31.'
+      - '192.168.'
+  filter_localhost:
+    DestinationIp:
+      - '127.0.0.1'
+      - '::1'
+  condition: selection and not filter_rfc1918 and not filter_localhost
+falsepositives:
+  - NuGet package restore and package-manager operations during
+    solution builds on developer workstations, which contact
+    api.nuget.org and CDN endpoints; tune via host inventory or
+    DNS-based whitelist entries for the documented package sources
+    rather than disabling the rule.
+  - Visual Studio / MSBuild telemetry and extension update checks
+    (Visual Studio Marketplace, Microsoft CDN ranges) initiated by
+    msbuild.exe during interactive builds on engineering OUs.
+level: medium
