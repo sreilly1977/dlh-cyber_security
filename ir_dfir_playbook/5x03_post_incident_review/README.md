@@ -496,3 +496,93 @@ entries:
 ```
 
 ---
+
+# [8. Threat Intelligence Enrichment](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/threat_intel_brief.md)
+### advanced
+
+## Goal: 
+
+Turn the incident IOCs and TTPs into forward-looking intelligence that answers what this actor does next.
+
+## Context: 
+
+Knowing what happened is forensics. Knowing what to expect next is intelligence. This task is the bridge.
+
+## Instructions: 
+
+Create threat_intel_brief.md by enriching the incident IOCs and TTP cluster through open-source intelligence sources.
+
+    Use the offline enrichment snapshots under ioc_enrichment_snapshot/ for VirusTotal, OTX, AbuseIPDB and URLhaus results. Live API access is optional; the provided snapshots are sufficient for completing the task.
+
+Work through three stages:
+
+Stage 1: IOC enrichment. For each IOC below, query at minimum two open sources (VirusTotal, OTX AlienVault, AbuseIPDB, URLhaus, Shodan) and document: first seen, last seen, reputation tags, associated campaigns or reports.
+
+IOCs from the incident:
+
+    C2 IP: 185.220.101.47
+
+    C2 IP: 91.234.99.107
+
+    Phishing domain: ms0365-support[.]login-verification[.]click
+
+    Malicious file hash (update.xml): document the hash you computed in the forensic phase
+
+Stage 2: TTP cluster analysis. Map the observed TTPs to the ATT&CK Groups database. Which known threat actor profiles use this combination of Initial Access via credential phishing, LOLBin execution via MSBuild, LSASS credential access, and Kerberos Pass-the-Ticket? Document the closest matching profiles with confidence levels.
+
+Stage 3: Forward-looking assessment. Based on the TTP cluster, actor profile, and targeting context (healthcare organization), answer:
+
+    What does this actor typically do after establishing an initial foothold and conducting reconnaissance?
+
+    What second-stage tooling (implants, C2 frameworks) is associated with this actor class?
+
+    What proactive hunting queries would detect second-stage tooling if it was deployed but not yet triggered?
+
+Required structure for the brief:
+
+    IOC enrichment table (one row per IOC)
+
+    TTP cluster match (table: technique, actor profile, confidence)
+
+    Actor profile summary (two to three paragraphs)
+
+    Predicted next steps (bullet list)
+
+    Recommended proactive hunting rules (three to five, in plain language)
+
+Length cap: 3 pages.
+
+**Expected output**
+
+<pre>
+# Threat Intelligence Brief:  <ID>
+
+**Classification:** Internal TLP:AMBER
+**Date:** <timestamp>
+**Author:** <your_name>
+
+## IOC Enrichment
+</pre>
+
+| IOC | Type | First Seen | Last Seen | Reputation Tags | Associated Reports |
+| --- | --- | --- | --- | --- |
+| 185.220.101.47 | IP | <YYYY-MM> | <YYYY-MM> | <tag>, <tag> | Listed in 14 threat intel feeds |
+| 91.234.99.107 | IP | <YYYY-MM> | <YYYY-MM> | <tag>, <tag>, <tag> | Associated with eCrime infrastructure |
+| ms0365-support[.]login-verification[.] | Domain | <YYYY-MM-DD> | <YYYY-MM> | <tag>, <tag> | Newly registered; typosquat pattern |
+| … | … | … | … | … | … |
+
+<pre>
+## TTP Cluster Match
+...
+
+## Actor Profile Summary
+...
+
+## Predicted Next Steps
+...
+
+## Recommended Proactive Hunting
+...
+</pre>
+
+---
