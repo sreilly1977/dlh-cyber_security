@@ -32,7 +32,7 @@ Chen's guidance: "Give me things we can actually deploy. Not slides. Not awarene
 
 ---
 
-# [1. Audit Control Effectiveness]()
+# [1. Audit Control Effectiveness](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/control_effectiveness.yaml)
 
 ## Goal: 
 
@@ -107,5 +107,72 @@ Cover at minimum these six phases drawn from the incident:
   gap_severity:  <critical | high | medium | low>
   gap_reason: <one-line explanation>
 ```
+
+---
+
+# [2. Gap Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x03_post_incident_review/gap_analysis.md)
+
+## Goal: 
+
+Translate the control audit into a prioritized list of improvements, each bounded enough to assign and track.
+
+## Context: 
+
+A gap that cannot be assigned to an owner and measured is not a gap analysis. It is a wishlist.
+
+## Instructions: 
+
+Create gap_analysis.md with a structured table and a priority summary.
+
+    Use control_effectiveness.yaml plus forensic_findings_summary.md.
+
+The table must have these columns:
+
+    Gap ID (GAP-001 through GAP-N)
+
+    Phase (from Task 1)
+
+    Gap description (what is absent or broken)
+
+    Control category (preventive / detective / corrective)
+
+    Recommended improvement (specific, actionable, not generic)
+
+    Priority (P1 critical / P2 high / P3 medium)
+
+    Linked findings (evidence or task reference)
+
+After the table, add a Priority summary section listing only the P1 gaps with a one-line rationale for each.
+
+Constraints:
+
+    Descriptions must be specific to MedDefense, not generic.
+
+    Recommendations must name the specific control, tool, or configuration change, not a category.
+
+    At minimum eight gaps derived from the Task 1 audit.
+
+**Expected output**
+
+<pre>
+# Gap Analysis: IR-2026-0414-01
+
+## Gap Register
+</pre>
+
+| Gap ID | Phase | Gap Description | Control Category | Recommended Improvement | Priority | Linked Findings |
+|---|---|---|---|---|---|---|---|---|
+| GAP-001 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
+| GAP-002 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
+| GAP-003 | <incident phase name> | < description> | <preventive / detective / corrective> | <actionable action> | <P1/P2/P3> | control_eff phase 1 |
+| … | … | … | … | … | … | … |
+
+<pre>
+## Priority summary
+
+- **GAP-001** (P1): Credential theft went fully undetected; a proxy alert rule would have flagged the harvesting attempt at the earliest stage of the attack.
+- **GAP-002** (P1): Foreign-IP VPN access is the point where a single control — conditional MFA — would have stopped the entire intrusion chain.
+- ...
+</pre>
 
 ---
