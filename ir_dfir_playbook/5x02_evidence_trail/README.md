@@ -146,3 +146,93 @@ ALL ARTIFACTS VERIFIED
 ```
 
 ---
+
+# [3. Filesystem Timeline Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/filesystem_analysis.md)
+
+## Goal: 
+
+Reconstruct the sequence of attacker activity from disk artifacts.
+
+## Context: 
+
+The filesystem records when files were created, modified, and accessed. That sequence is the attacker's footprint.
+
+## Instructions: 
+
+Create filesystem_analysis.md documenting a complete TSK-based analysis of wst-ws-031.dd.
+
+Mount the image read-only before any analysis. Run at minimum the following commands and document the output:
+
+    mmls wst-ws-031.dd:: identify partition layout and sector offset for the main NTFS volume
+
+    fsstat -o <offset> wst-ws-031.dd: filesystem metadata, volume serial number, last mount time
+
+    fls -r -o <offset> wst-ws-031.dd > fls_output.txt: recursive file listing with inode numbers and flags
+
+    mactime -b fls_output.txt -d > mac_timeline.csv: MAC time body converted to a sortable timeline
+
+    icat -o <offset> wst-ws-031.dd <inode>: extract individual files of interest for further analysis
+
+Examine and document these paths specifically:
+
+    C:\Users\dmarsh\AppData\Local\Temp\: staging and execution artifacts
+
+    C:\Windows\System32\Tasks\: scheduled task XML files
+
+    C:\Users\dmarsh\AppData\Roaming\Microsoft\Windows\Recent\: LNK files showing accessed items
+
+    C:\Users\dmarsh\AppData\Local\Microsoft\Windows\History\: browser history
+
+For each suspicious file or artifact found: full path, MAC times, size in bytes, SHA-256 hash, forensic significance.
+
+**Expected output**
+
+<pre>
+# Filesystem Analysis: ART-001 (wst-ws-031.dd)
+
+## Artifact verification
+
+- Hash at analysis start: a8f2c49d... (matches baseline in hashes.txt)
+- Mounted read-only: <yes/no>
+- CoC entry updated: <yes/no>, <ART-ID> access logged at <timestamp>
+
+## Partition layout
+
+$ mmls wst-ws-031.dd
+DOS Partition Table
+Offset Sector: 0
+Units are in 512-byte sectors
+
+      Slot      Start        End          Length       Description
+000:  Meta      0000000000   0000000000   0000000001   Primary Table (#0)
+001:  -------   0000000000   0000002047   0000002048   Unallocated
+002:  000:000   0000002048   0125827071   0125825024   NTFS / exFAT (0x07)
+
+Offset used for NTFS analysis: 2048
+
+## Filesystem metadata
+
+$ fsstat -o 2048 wst-ws-031.dd
+FILE SYSTEM INFORMATION
+...
+
+## Key findings
+
+### ART-001-F01: Malicious MSBuild staging file
+
+- Path: C:\path\to\update.xml
+- Created: <timestamp>
+- Modified: <timestamp>
+- Accessed: <timestamp>
+- Size: <size> bytes
+- SHA-256: <hash>
+- Significance: MSBuild inline task XML; contains Base64-encoded C# shellcode loader; correlates with msbuild.exe execution at <time_zulu>
+
+### ART-001-F02: Second-stage dropped payload
+...
+
+### ART-001-F03: Scheduled task persistence
+...
+</pre>
+
+---
