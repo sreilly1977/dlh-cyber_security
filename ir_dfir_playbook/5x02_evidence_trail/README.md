@@ -34,7 +34,7 @@ Dr. Morales's deadline for the board briefing is 72 hours. The forensic report m
 
 ---
 
-# [1. Open the Chain of Custody Log]()
+# [1. Open the Chain of Custody Log](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/chain_of_custody.md)
 
 ## Goal: 
 
@@ -96,5 +96,53 @@ Rules:
 |---|---|---|---|---|---|---|
 | <timestamp> | <your_name> | <ART-ID> | <action> | <tool> | <yes/no> | Baseline established; hash stored in <file> |
 | ... | ... | ... | ... | ... | ... | ... |
+
+---
+
+# [2. Verify All Artifacts](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/verify_artifacts.sh)
+
+## Goal: 
+
+Establish a cryptographic baseline for every artifact before any analysis begins.
+
+## Context: 
+
+Every analysis session starts with a hash check. If the hash does not match, the session does not start.
+
+## Instructions: 
+
+Write verify_artifacts.sh. The script runs before every analysis session.
+
+It must:
+
+    Compute SHA-256 for each of the three provided artifacts
+
+    Compare each computed hash against the corresponding baseline value stored in hashes.txt
+
+    Print [PASS] or [FAIL] with the artifact name and both hash values (expected and computed)
+
+    Append a verification event to verification_log.txt with the timestamp, actor, artifact ID, result, and both hash values
+
+    Exit 0 only if all three artifacts pass; exit non-zero on any failure
+
+On first run (baseline establishment), the script detects that hashes.txt does not yet exist, computes hashes for all three artifacts, writes hashes.txt, and sets all artifacts to BASELINE_SET status instead of PASS or FAIL.
+
+    Before beginning disk analysis, review siem_alert_export.json. Treat it as the original SOC detection context only. Use findings from disk artifacts to confirm or refute SIEM indicators rather than assuming they are correct.
+
+**Expected output**
+
+```bash
+$ ./verify_artifacts.sh
+[BASELINE_SET] ART-001 wst-ws-031.dd  sha256=a8f2c49d...
+[BASELINE_SET] ART-002 wst-ws-031.mem sha256=3bc19f7e...
+[BASELINE_SET] ART-003 wst-ws-017.mem sha256=90e7d14c...
+Baseline written to hashes.txt. Run again to verify.
+
+$ ./verify_artifacts.sh
+[PASS] ART-001 wst-ws-031.dd  expected=a8f2c49d... computed=a8f2c49d...
+[PASS] ART-002 wst-ws-031.mem expected=3bc19f7e... computed=3bc19f7e...
+[PASS] ART-003 wst-ws-017.mem expected=90e7d14c... computed=90e7d14c...
+ALL ARTIFACTS VERIFIED
+```
 
 ---

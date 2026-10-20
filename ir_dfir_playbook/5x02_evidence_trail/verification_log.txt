@@ -1,0 +1,6 @@
+2026-10-20T15:16:25Z | LH-2026-0414-01 | ART-001 | wst-ws-031.dd | BASELINE_SET | n/a (no prior baseline; acquisition-era hashes not computed) | d4eaffefef6c6e7c0b99b65d94cced2752f3e556679a4789f664d7cbb4296761
+2026-10-20T15:16:25Z | LH-2026-0414-01 | ART-002 | wst-ws-031.mem | BASELINE_SET | n/a (no prior baseline; acquisition-era hashes not computed) | 8144ca9ee538268599e65104a9901d462d550064d5263f2bf4fa1f7f43e1176e
+2026-10-20T15:16:25Z | LH-2026-0414-01 | ART-003 | wst-ws-017.mem | BASELINE_SET | n/a (no prior baseline; acquisition-era hashes not computed) | a675bea9188f5a9b2d8829af15153dee714103b01afd87b5c6df4f7dfd8b0300
+2026-10-20T15:16:29Z | LH-2026-0414-01 | ART-001 | wst-ws-031.dd | PASS | d4eaffefef6c6e7c0b99b65d94cced2752f3e556679a4789f664d7cbb4296761 | d4eaffefef6c6e7c0b99b65d94cced2752f3e556679a4789f664d7cbb4296761
+2026-10-20T15:16:29Z | LH-2026-0414-01 | ART-002 | wst-ws-031.mem | PASS | 8144ca9ee538268599e65104a9901d462d550064d5263f2bf4fa1f7f43e1176e | 8144ca9ee538268599e65104a9901d462d550064d5263f2bf4fa1f7f43e1176e
+2026-10-20T15:16:29Z | LH-2026-0414-01 | ART-003 | wst-ws-017.mem | PASS | a675bea9188f5a9b2d8829af15153dee714103b01afd87b5c6df4f7dfd8b0300 | a675bea9188f5a9b2d8829af15153dee714103b01afd87b5c6df4f7dfd8b0300
