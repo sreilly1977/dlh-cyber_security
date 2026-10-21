@@ -10,21 +10,23 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 
 ## Total Exercise Count
 
-17 exercises across 2 modules
+34 exercises across 4 modules
 
 ## Module Overview
 
 | # | Directory | Focus | Exercises |
 |---|-----------|-------|-----------|
-| 1 | [5x00_incident_response](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
-| 2 | [5x01_Contain_Control](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
+| 1 | [`5x00_incident_response/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
+| 2 | [`5x01_Contain_Control/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
+| 3 | [`5x02_evidence_trail/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x02_evidence_trail) | Forensic investigation of the contained WST-WS-031 incident: chain-of-custody records, memory and filesystem analysis, persistence mechanism analysis, artifact hash verification, a correlated multi-source timeline built from proxy, AD authentication, and SIEM logs, and a forensic report that withstands external scrutiny | 7 |
+| 4 | [`5x03_post_incident_review/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x03_post_incident_review) | Closing the loop after the incident: control effectiveness assessment, gap analysis, Sigma detection rules written and validated against incident versus clean Sysmon telemetry, threat intel brief and IOC enrichment snapshot, playbook, risk register, and hardening updates, and an implementation package with owners and deadlines | 10 |
 
 ### Additional Resources
 
 | Directory | Description |
 |-----------|-------------|
-| [5x00_shared](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_shared) | Shared MedDefense organization profile: sites, technology footprint, regulatory posture, security organization, and canonical context facts used across all Module 5 projects |
-| [learning_objectives](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/learning_objectives) | Module-specific learning objectives and competency mapping covering the IR lifecycle, severity classification, evidence preservation, containment trade-offs, and HIPAA reporting pathways |
+| [`5x00_shared/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_shared) | Shared MedDefense organization profile: sites, technology footprint, regulatory posture, security organization, and canonical context facts used across all Module 5 projects |
+| [`learning_objectives/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/learning_objectives) | Module-specific learning objectives and competency mapping covering the IR lifecycle, severity classification, evidence preservation, containment trade-offs, and HIPAA reporting pathways |
 
 ## Working Through the Modules
 
