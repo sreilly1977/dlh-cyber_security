@@ -395,3 +395,80 @@ Certainty: confirmed
 </pre>
 
 ---
+
+# [6. Correlated Incident Timeline](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/correlated_timeline.md)
+
+## Goal: 
+
+Assemble all evidence sources into one timeline that no single source could produce alone.
+
+## Context: 
+
+Disk evidence, memory evidence, authentication logs, and proxy logs each tell part of the story. The correlation is the investigation.
+
+## Instructions: 
+
+Create correlated_timeline.md. Draw from all findings in Tasks 3, 4, and 5 plus the provided supplementary logs (proxy log and AD authentication log).
+
+    Use proxy_log.jsonl, ad_auth_log.jsonl, and siem_alert_export.json as supplementary evidence sources during correlation. Timeline entries should reference findings from prior tasks whenever possible rather than relying solely on raw logs.
+
+For each event in the timeline, record:
+
+    timestamp (UTC, ISO 8601)
+
+    source (artifact ID and log type)
+
+    event (one-line description)
+
+    att_ck_technique (T-number if applicable)
+
+    certainty (one of confirmed, probable, possible)
+
+    evidence_ref (the artifact ID and finding ID that supports this event)
+
+Minimum events to include:
+
+    Credential phishing link clicked (proxy log)
+
+    Credentials submitted to typosquat domain
+
+    Attacker VPN access using dmarsh credentials
+
+    powershell.exe execution with encoded payload
+
+    msbuild.exe spawned by PowerShell (C2 beacon starts)
+
+    Malicious files dropped to AppData\Local\Temp
+
+    Scheduled task and Run key persistence installed
+
+    NTLM hash and Kerberos ticket material accessible in lsass.exe
+
+    Kerberos TGS request for cifs/WST-WS-017
+
+    Lateral movement logon to WST-WS-017
+
+    Second C2 beacon from WST-WS-017
+
+    Kerberos TGS request for cifs/LIS-WSIDE-01
+
+    Logon to LIS-WSIDE-01
+
+    14 patient lab report PDFs read on LIS-WSIDE-01
+
+**Expected output**
+
+<pre>
+# Correlated Incident Timeline: LH-2026-0414-01
+</pre>
+
+| Timestamp (UTC) | Source | Event | ATT&CK | Certainty | Evidence Ref |
+| --- | --- | --- | --- | --- | --- |
+| <timestamp> | <source> | <description> | <T_number> | <confirmed/probable/possible> | <ID> line <number> |
+| <timestamp> | <source> | <description> | <T_number> | <confirmed/probable/possible> | <ID> line <number> |
+| <timestamp> | <source> | <description> | <T_number> | <confirmed/probable/possible> | <ID> line <number> |
+| <timestamp> | <source> | <description> | <T_number> | <confirmed/probable/possible> | <ID> line <number> |
+| <timestamp> | <source> | <description> | <T_number> | <confirmed/probable/possible> | <ID> line <number> |
+| … | … | … | … | … | … |
+
+---
