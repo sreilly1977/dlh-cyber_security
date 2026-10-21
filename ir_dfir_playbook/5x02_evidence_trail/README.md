@@ -303,3 +303,95 @@ For each finding: registry key or file path, value name, value data, last write 
 </pre>
 
 ---
+
+# [5. Memory Analysis with Volatility 3](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/memory_analysis.md)
+
+## Goal: 
+
+Extract the attacker's in-memory activity at the moment of acquisition.
+
+## Context: 
+
+Some evidence exists only in memory. The process that ran, the connection it held, the credential it touched, these do not survive on disk.
+
+## Instructions: 
+
+Create memory_analysis.md. Using wst-ws-031.mem, run each Volatility 3 plugin below and document: the exact command, the relevant portion of the output, and what the output means for the incident.
+
+Run all plugins on wst-ws-031.mem. For wst-ws-017.mem, run windows.pslist, windows.netscan, and windows.cmdline at minimum and document any additional findings.
+
+    The same process-chain evidence may appear in siem_alert_export.json. Use SIEM evidence only as investigative context; conclusions must come from Volatility findings.
+
+Plugins required for wst-ws-031.mem:
+
+    vol -f wst-ws-031.mem windows.pslist.PsList: full process list with PID, PPID, create time
+
+    vol -f wst-ws-031.mem windows.pstree.PsTree: process parent-child tree
+
+    vol -f wst-ws-031.mem windows.cmdline.CmdLine: command line arguments for each process
+
+    vol -f wst-ws-031.mem windows.netscan.NetScan: active and recently closed network connections with owning PID
+
+    vol -f wst-ws-031.mem windows.dlllist.DllList --pid <msbuild_pid>: DLLs loaded by msbuild.exe
+
+    vol -f wst-ws-031.mem windows.malfind.Malfind: executable memory regions with suspicious properties; note any matching msbuild.exe PID
+
+    vol -f wst-ws-031.mem windows.handles.Handles --pid <lsass_pid>: handles held by lsass.exe during capture
+
+    vol -f wst-ws-031.mem windows.hashdump.Hashdump: NTLM hashes from SAM and LSA secrets
+
+For each plugin: note the finding, the PID(s) involved, and the forensic conclusion. Tag each finding with a certainty level (confirmed, probable, possible) and an ATT&CK technique where applicable.
+
+**Expected output**
+
+<pre>
+# Memory Analysis: ART-002 (wst-ws-031.mem) and ART-003 (wst-ws-017.mem)
+
+## Artifact verification
+
+- ART-002 hash: 3bc19f7e... (matches baseline)
+- ART-003 hash: 90e7d14c... (matches baseline)
+- CoC entries updated: yes
+
+## wst-ws-031.mem findings
+
+### ART-002-M01: Suspicious process tree
+
+$ vol -f wst-ws-031.mem windows.pstree.PsTree
+...
+* 7812  powershell.exe   PPID=<explorer_ppid>  Start: <timestamp>
+** 8104  MSBuild.exe      PPID=7812             Start: <timestamp>
+
+Significance: Confirms alert; powershell.exe is direct parent of MSBuild.exe
+ATT&CK: T1127.001 (Trusted Developer Utilities Proxy Execution: MSBuild)
+Certainty: confirmed
+
+### ART-002-M02: Live C2 connection at time of capture
+
+$ vol -f wst-ws-031.mem windows.netscan.NetScan
+...
+TCP  10.14.22.31:49832  185.220.101.47:443  ESTABLISHED  PID 8104  MSBuild.exe
+
+Significance: Active C2 connection to known Tor exit relay in-memory at acquisition time
+ATT&CK: T1071.001
+Certainty: confirmed
+
+### ART-002-M03: Injected executable memory in msbuild.exe
+
+$ vol -f wst-ws-031.mem windows.malfind.Malfind
+...
+PID 8104  MSBuild.exe  Start: 0x1f0000  End: 0x1f4fff  Tag: VadS  Protection: PAGE_EXECUTE_READWRITE
+Hexdump: 4d 5a 90 00 03 00 00 00 ... (MZ header present in anonymous region)
+
+Significance: MZ/PE header in an executable anonymous memory region within MSBuild.exe confirms code injection
+ATT&CK: T1055 (Process Injection)
+Certainty: confirmed
+
+### ART-002-M04: NTLM hash exposure
+...
+
+## wst-ws-017.mem findings
+...
+</pre>
+
+---
