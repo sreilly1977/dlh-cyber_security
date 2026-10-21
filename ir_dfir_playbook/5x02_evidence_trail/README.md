@@ -236,3 +236,70 @@ FILE SYSTEM INFORMATION
 </pre>
 
 ---
+
+# [4. Registry and Persistence Artifact Analysis](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/persistence_analysis.md)
+
+## Goal: 
+
+Find every mechanism the attacker installed to survive reboots.
+
+## Context: 
+
+Persistence is the attacker's insurance policy. Every mechanism found is a gap in the eradication checklist.
+
+## Instructions: 
+
+Create persistence_analysis.md. Extract and mount the registry hives from wst-ws-031.dd and examine the following:
+
+    HKCU\Software\Microsoft\Windows\CurrentVersion\Run and RunOnce: startup entries for the dmarsh user profile
+
+    C:\Windows\System32\Tasks\: scheduled task XML files; parse each XML for triggers, actions, and principal
+
+    NTUSER.DAT UserAssist key: decoded execution evidence for the dmarsh user profile; note run counts and last execution times
+
+    AppCompatCache / ShimCache from SYSTEM hive: ordered list of executables observed on the system, useful for confirming execution without log evidence
+
+    Amcache.hve from C:\Windows\AppCompat\Programs\Amcache.hve: first execution timestamps for binaries, keyed by SHA-1 hash
+
+    C:\Users\dmarsh\AppData\Roaming\Microsoft\Windows\Recent\: LNK file targets showing what dmarsh opened before and during the compromise
+
+For each finding: registry key or file path, value name, value data, last write timestamp, forensic significance, evidence ID.
+
+**Expected output**
+
+<pre>
+# Persistence Artifact Analysis: ART-001 (wst-ws-031.dd)
+
+## Artifact verification
+
+- Hash at analysis start: a8f2c49d... (matches baseline)
+- CoC entry updated: yes, ART-001 access logged at 2026-04-14T09:05Z
+
+## Registry persistence
+
+### ART-001-R01: Run key
+
+- Key: HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+- Value name: WindowsUpdateSvc
+- Value data: C:\Users\path\toupdate.exe
+- Last write: <timestamp>
+- Significance: ...
+
+### ART-001-R02: Scheduled task
+...
+
+## Execution evidence
+
+### ART-001-E01: UserAssist - msbuild.exe
+
+- Key: HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\...
+- Value: MSBuild.exe
+- Run count: 1
+- Last executed: <timestamp>
+- Significance: Confirms user-session execution of MSBuild.exe consistent with alert time
+
+### ART-001-E02: Amcache first execution
+...
+</pre>
+
+---
