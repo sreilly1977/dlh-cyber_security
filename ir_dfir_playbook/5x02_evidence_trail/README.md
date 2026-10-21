@@ -472,3 +472,79 @@ Minimum events to include:
 | … | … | … | … | … | … |
 
 ---
+
+# 7 Quiz
+
+---
+
+# [8. Write the Forensic Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x02_evidence_trail/forensic_report.md)
+### advanced
+
+## Goal: 
+
+Deliver a single document that serves both the board and the investigation record.
+
+## Context: 
+
+Dr. Morales presents to the board in 72 hours. Helena Reyes needs findings she can cite. Both audiences read from the same document.
+
+## Instructions: 
+
+Create forensic_report.md. Every factual assertion in the report must reference at least one evidence ID from the chain of custody or a finding ID from Tasks 3, 4, 5, or 6.
+
+    The forensic report may reference findings derived from proxy_log.jsonl, ad_auth_log.jsonl, and siem_alert_export.json. Cite the supporting evidence source for every factual assertion.
+
+Required sections with length limits:
+
+    Cover block (no page count): case number, litigation hold reference, date, lead investigator, classification (Internal — Legal Hold), distribution list.
+
+    Executive summary (maximum 1 page): what happened, what was accessed, when, by what mechanism. Written for a non-technical reader. No jargon. No conclusions that exceed what the evidence supports.
+
+    Methodology (maximum 0.5 page): artifacts analyzed, tools used, how integrity was maintained.
+
+    Technical findings (maximum 2 pages): one subsection per artifact category (disk, memory, network, authentication). Each finding cites an evidence or finding ID.
+
+    Incident timeline (maximum 1 page): the condensed correlated timeline from Task 6.
+
+    Breach scope determination (maximum 0.5 page): PHI categories accessed, number of patients, certainty level, and the outcome of the four-factor HIPAA assessment.
+
+    Gaps and limitations (maximum 0.5 page): what was not analyzed, what evidence was unavailable, what conclusions cannot be drawn from the current evidence set.
+
+    Recommendations (maximum 0.5 page): three to five specific, actionable improvements for the MedDefense environment.
+
+Total length cap: 6 pages when rendered.
+
+**Expected output**
+
+<pre>
+# Forensic Investigation Report
+
+**Case number:** LH-2026-0414-01
+**Litigation hold reference:** Memo from Helena Reyes, 2026-04-14T07:30Z
+**Date:** 2026-04-14
+**Lead investigator:** <your_name>
+**Classification:** Internal — Legal Hold
+**Distribution:** Dr. Patricia Morales (CISO), Helena Reyes (General Counsel), James Chen (SOC Lead)
+
+---
+
+## Executive Summary
+
+Between April 13 and April 14, 2026, an external attacker obtained the credentials of a MedDefense laboratory technician through a phishing email. Using those credentials, the attacker connected remotely to MedDefense systems, executed malicious code on two clinical workstations, and accessed 14 patient laboratory reports on the Laboratory Information System workstation at the West Campus.
+
+The attack began at approximately 18:14 UTC on April 13 when the affected user submitted credentials to a fraudulent website mimicking a Microsoft login page (evidence: proxy_log, ART-001-F01). ...
+
+---
+
+## Methodology
+...
+
+## Technical Findings
+
+### Disk artifacts (ART-001)
+
+**Finding ART-001-F01:** Malicious staging file identified at ...
+...
+</pre>
+
+---
