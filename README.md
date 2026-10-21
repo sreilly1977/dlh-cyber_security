@@ -104,7 +104,7 @@ See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 Applied incident response and digital forensics through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
 
-### Part 5 - Cybersecurity incident response and digital forensics (modules 26-27)
+### Part 5 - Cybersecurity incident response and digital forensics (modules 26-29)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`5x00_incident_response/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
