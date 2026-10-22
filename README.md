@@ -234,6 +234,7 @@ Setup guides and configuration files available in the repository for:
 - [CyberChef - online toolbox](https://gchq.github.io/CyberChef/)
 - [CyberRange Luxembourg - Virtual live attack simulation](https://www.cyber-range.lu/)
 - [Open Threat Exchange  - Open-source threat intelligence](https://otx.alienvault.com)
+- [CIRCL - Luxembourg's cybersecurity response centre](https://www.circl.lu/)
 
 ---
 
