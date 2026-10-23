@@ -308,3 +308,75 @@ This is a tabletop exercise. You will receive situation updates from the facilit
 </pre>
 
 ---
+
+# [5. Write the Facilitator Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/facilitator_script.md)
+### advanced
+
+## Goal: 
+
+Document the exercise so completely that another facilitator can run it with the same quality.
+
+## Context: 
+
+A facilitator who improvises produces inconsistent exercises. A facilitator who reads from a script produces repeatable, comparable results.
+
+## Instructions: 
+
+Create facilitator_script.md. This is the document the facilitator has in hand throughout the exercise. It is structured around each inject but also covers setup, transitions, and wrap-up.
+
+    Use the “Notes for the tabletop facilitator” section in nexus_vendor_profile.md only in facilitator-facing guidance. Do not include those notes in participant-facing materials.
+
+Required sections:
+
+    Pre-exercise checklist: room setup, participant seating, materials distributed, recording start if applicable, observer briefing.
+
+    Facilitator ground rules (read aloud at the start): what the exercise is and is not; how injects work; the facilitator's neutrality; that there are no correct answers, there are only complete and incomplete responses.
+
+    Per-inject section: for each of the seven injects, include: the inject text (verbatim), timing instructions (when to deliver, how long to allow), three to five probing questions to use if responses are superficial, a flag if a participant role is not engaging, and a transition sentence to the next inject.
+
+    Wrap-up facilitation: structured debrief questions covering what the team felt went well, what felt uncertain, and what they would change, not a grading session, a structured reflection.
+
+    Facilitator notes per capability: private notes (not shared with participants) on what to watch for in each capability area, cross-referencing the capability map.
+
+**Expected output**
+
+<pre>
+# Facilitator Script: Nexus Supply Chain Compromise Tabletop
+
+## Pre-exercise checklist
+
+- [ ] Participant guide distributed to all seven participants
+- [ ] Observer guidance communicated to any observers
+- [ ] Recording device active (if applicable and consented)
+- [ ] Inject schedule printed for facilitator reference
+- [ ] Evaluation sheet ready for real-time note-taking
+- [ ] Clock or timer visible to facilitator
+
+---
+
+## Facilitator ground rules (read aloud)
+
+"This is a tabletop exercise. You will receive situation updates from me. Respond as you would in a real incident. I will sometimes ask follow-up questions, not because your answer was wrong, but because I want to understand your reasoning. There are no grades, no performance reviews, and no correct answers. What we are looking for is where our response would break down under real conditions. That is how we get better. Let us begin."
+
+---
+
+## INJ-00 (T+0 min)
+
+**Read aloud verbatim:**
+"The SOC has flagged unusual outbound traffic from the Nexus scheduling server at the West Campus to 193.42.100.77, a host associated with bulletproof hosting infrastructure in Eastern Europe. The alert fired 45 minutes ago. The Nexus system is currently operational. No other anomalies detected."
+
+**Allow:** 10 to 12 minutes for initial responses
+
+**Probing questions (use if responses are superficial):**
+- "Who has been notified in the last 10 minutes?"
+- "James, what evidence would you need to escalate this from a potential incident to a confirmed one?"
+- "Sarah, at what point would you make a containment recommendation?"
+- "Has the vendor been contacted yet? Should they be?"
+
+**Watch for (private):** Does anyone ask whether the update mechanism is the vector? Does anyone contact Nexus before INJ-01 delivers that information?
+
+**Transition:** "Fifteen minutes have passed. The team has taken initial actions. The following update arrives."
+...
+</pre>
+
+---
