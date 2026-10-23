@@ -436,3 +436,80 @@ criteria:
 ```
 
 ---
+
+# [7. Simulate the Exercise Execution](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/execution_record.md)
+
+## Goal: 
+
+Run your own exercise as both facilitator and participant and record exactly what decisions were made and whether they satisfied the criteria.
+
+## Context: 
+
+An exercise that has never been run by its designer has unknown failure modes. This task finds them before the real audience does.
+
+## Instructions: 
+
+Create execution_record.md. Simulate the full exercise using your scenario, injects, participant guide, facilitator script, and evaluation criteria. You play the facilitator role and provide responses for each participant role.
+
+    Use nexus_vendor_profile.md as background context when simulating participant responses, but evaluate the exercise using your own inject schedule and evaluation criteria.
+
+For each inject, document:
+
+    The inject delivered (verbatim from your inject schedule)
+
+    The simulated response per participant role (1-2 sentences per role, written as if they are in the room)
+
+    The evaluation result: PASS or FAIL per evaluation criterion, with the observed evidence
+
+    A facilitator note: what probing question you asked and what it revealed
+
+After all seven injects, write a Design feedback section: three things you discovered while running the simulation that you would change in the scenario, inject schedule, or evaluation criteria and the specific change you are making.
+
+This section is the most important one. The exercise is not complete until the designer has found and fixed at least three of their own design problems.
+
+**Expected output**
+
+<pre>
+# Exercise Execution Record: Nexus Supply Chain Compromise Tabletop
+
+**Simulation date:** <YYYY-MM-DD>
+**Simulated by:** <your_name>
+
+---
+
+## INJ-00 (T+0 min)
+
+**Inject delivered:** "The SOC has flagged unusual outbound traffic from the Nexus scheduling server at the West Campus to 193.42.100.77..."
+
+**Participant responses:**
+
+- James Chen (SOC Lead): Declares SEV2 incident; requests network evidence; does not yet contact vendor
+- Sarah Park (IT Director): Asks whether the Nexus system should be isolated; defers to SOC lead
+- Dr. Morales (CISO): Not immediately engaged; waits for SOC assessment
+- Helena Reyes (General Counsel): Silent; not yet activated
+- Marcus Webb (Communications): Not yet engaged
+- Robert Kim (Infrastructure Lead): Requests topology of the Nexus server
+- Clinical Director: Not yet engaged
+
+**Evaluation:**
+
+- Criterion 1 (incident declared within 5 min): PASS - James declares SEV2 at T+2
+- Criterion 2 (two roles notified): PASS - IR Commander and Technical Lead named
+- Criterion 3 (evidence before containment): PASS - containment not yet raised
+
+**Facilitator note:** Asked "Has anyone considered whether the outbound traffic is from the Nexus update mechanism itself?" No participant raised the vendor dimension; this gap will surface at INJ-01 but the missed probing opportunity is noted
+
+---
+
+## Design feedback
+
+### DF-01: INJ-03 is too late
+
+The patient safety dimension (appointment record integrity) arrives at INJ-03 (T+50 min) but the business continuity decision about taking Nexus offline is at INJ-01 (T+20 min). During simulation, the team decided to take the system offline before knowing records may have been modified. This creates a sequencing problem: the data integrity concern should inform the BC decision, not follow it.
+
+**Change:** Move the appointment modification detail from INJ-03 into INJ-01 as a secondary fact to create the conflict earlier.
+
+...
+</pre>
+
+---
