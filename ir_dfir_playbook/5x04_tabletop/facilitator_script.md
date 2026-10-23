@@ -48,7 +48,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 
 "Three things about how this works. First, the scenario is fictional but the facts about our systems, our vendor contract, and our obligations are real — use them as you would in a real event. Second, if you would pick up a phone, open a ticket, or call someone in real life, say so out loud and tell us who — 'someone should handle the vendor' is not an action, a name is. Third, if you do not know something, say so. Declaring the gap is worth more than performing confidence.
 
-"I am neutral. I will not tell you whether you are right. When the exercise ends, we will debrief together, and what you find in yourselves will matter more than anything I observed. Let us begin."
+"I am neutral. I will not tell you whether you are right. Keep in mind what is at stake in this scenario: patient scheduling across three sites, roughly 3,500 appointments a week. When the exercise ends, we will debrief together, and what you find in yourselves will matter more than anything I observed. Let us begin."
 
 ---
 
@@ -92,7 +92,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 - "Does the advisory change your severity? Who re-declares it?"
 - "Who decides whether scheduling goes offline, and is that person in this room?"
 - "If Nexus pushes a fix tomorrow, it comes through the same channel that delivered the malware. Do you install it?"
-- "Clinical director: what happens at three front desks tomorrow morning if this system goes dark tonight?"
+- "Clinical director: what does the loss of patient scheduling at three sites mean for tomorrow morning's front desks?"
 - "Sarah, you own the vendor relationship commercially. What do you want from Nexus right now, in priority order?"
 
 **Engagement flags:**
@@ -153,7 +153,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 - This inject must involve **Park, Chen, clinical director, and Morales** at minimum. If Morales arbitrates in the first two minutes, note it as a facilitation challenge: slow her down with "what do your leads recommend?" — the exercise is testing whether the leads can reach a recommendation, not whether the CEO can decide alone.
 - If the room smooths the conflict over to be polite, escalate it deliberately: "so everyone is fine with this? Sarah, are you fine with it?"
 
-**Watch for (private):** Does a named decision-maker emerge? Is the decision paired with compensating controls and a re-evaluation trigger? Or does it float upward without a recommendation? Record the exact minute the decision is made — time-to-decision is the core CAP-03 metric. Also note whether anyone weighs evidence destruction against containment timing (CAP-06/CAP-04 overlap with Kim).
+**Watch for (private):** Roughly 3,500 patient scheduling interactions per week makes this decision real. Does a named decision-maker emerge? Is the decision paired with compensating controls and a re-evaluation trigger? Or does it float upward without a recommendation? Record the exact minute the decision is made — time-to-decision is the core CAP-03 metric. Also note whether anyone weighs evidence destruction against containment timing (CAP-06/CAP-04 overlap with Kim).
 
 **Transition:** "A decision has been made. But the scope of what happened over the last three days is bigger than anyone in this room has yet said. The next update is the one that matters legally."
 
@@ -277,7 +277,7 @@ The vendor profile documents the contacts precisely: tier-1 SOC line, account ex
 
 ### CAP-03 — business_continuity_decision
 
-Roughly 3,500 patient-facing interactions per week across three sites is the number that makes the isolation decision real — call it about 500 per day. Watch specifically for who claims the authority to take the system offline. If nobody does, and Morales is not asked, that is the finding. If Morales is asked without a recommendation attached, that is also the finding. The distinction between those two failure signatures matters in the report.
+Roughly 3,500 patient scheduling interactions per week across three sites is the number that makes the isolation decision real — call it about 500 per day. Watch specifically for who claims the authority to take the system offline. If nobody does, and Morales is not asked, that is the finding. If Morales is asked without a recommendation attached, that is also the finding. The distinction between those two failure signatures matters in the report.
 
 ### CAP-04 — phi_exposure_assessment
 
