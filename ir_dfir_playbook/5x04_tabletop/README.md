@@ -230,3 +230,81 @@ injects:
 ```
 
 ---
+
+# [4. Define Participant Roles](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/participant_guide.md)
+### advanced
+
+## Goal: 
+
+Tell every participant exactly what they are responsible for and what success looks like for them.
+
+## Context: 
+
+Participants perform better and exercises produce better findings when roles are defined explicitly before the exercise begins, not inferred during it.
+
+## Instructions: 
+
+Create participant_guide.md. For each of the seven MedDefense participants, define: their role in this exercise, what decisions they own, what information they will receive directly (not through the facilitator), what success looks like at the end of the exercise, and one failure mode to watch for.
+
+    Use nexus_vendor_profile.md to define what information each role would realistically receive directly, especially vendor contacts, BAA obligations, system dependency, and integration details.
+
+Participants:
+
+    James Chen, SOC Lead
+
+    Sarah Park, IT Director
+
+    Dr. Patricia Morales, CISO
+
+    Helena Reyes, General Counsel
+
+    Marcus Webb, Communications Director
+
+    Robert Kim, Infrastructure Lead
+
+    Clinical Director representative
+
+For each participant, the failure mode is honest and specific, not a gentle suggestion, but the actual thing this role typically does wrong in supply chain incidents.
+
+Also include a short Observer guidance section for any non-participant observers in the room. Observers do not speak during the exercise.
+
+**Expected output**
+
+<pre>
+# Participant Guide: Nexus Supply Chain Compromise Tabletop
+
+**Exercise date:** <YYYY-MM-DD>
+**Classification:** Internal - Exercise Use Only
+
+## How this exercise works
+
+This is a tabletop exercise. You will receive situation updates from the facilitator. You respond as you would in a real incident. The facilitator may probe or challenge your responses. There are no trick questions, but there are no easy ones either. The goal is not to perform well, the goal is to find where our response would break.
+
+---
+
+## James Chen - SOC Lead
+
+**Exercise decisions you own:**
+- Detection interpretation and initial severity classification
+- Evidence collection sequencing
+- Technical escalation to IR Commander
+
+**Information you receive directly:**
+- EDR alert details as they are available
+- Network telemetry from the Nexus server
+
+**Success looks like:**
+- Severity is declared with explicit reasoning within the first inject
+- Evidence is collected before containment actions are taken
+- Scope assessments are communicated to the IR Commander within 30 minutes of each new inject
+
+**Failure mode to watch for:**
+- Treating this as a standard malware incident and missing the vendor trust dimension; containment focused on the endpoint while the Nexus vendor relationship goes unaddressed
+
+---
+
+## Sarah Park - IT Director
+...
+</pre>
+
+---
