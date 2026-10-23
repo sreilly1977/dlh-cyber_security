@@ -48,7 +48,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 
 "Three things about how this works. First, the scenario is fictional but the facts about our systems, our vendor contract, and our obligations are real — use them as you would in a real event. Second, if you would pick up a phone, open a ticket, or call someone in real life, say so out loud and tell us who — 'someone should handle the vendor' is not an action, a name is. Third, if you do not know something, say so. Declaring the gap is worth more than performing confidence.
 
-"I am neutral. I will not tell you whether you are right. Keep in mind what is at stake in this scenario: patient scheduling across three sites, roughly 3,500 appointments a week. When the exercise ends, we will debrief together, and what you find in yourselves will matter more than anything I observed. Let us begin."
+"I am neutral. I will not tell you whether you are right. Keep in mind what is at stake in this scenario: patient scheduling across three sites, roughly 3,500 appointments a week, and our HIPAA obligations as a covered entity if patient data has left the environment. When the exercise ends, we will debrief together, and what you find in yourselves will matter more than anything I observed. Let us begin."
 
 ---
 
@@ -170,7 +170,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 **Probing questions:**
 
 - "James, 2.1 gigabytes. In record terms, roughly what does that mean? Can you convert that to patients?"
-- "Helena, is this a reportable breach yet? What would you need to say yes or no?"
+- "Helena, is this a reportable breach under HIPAA yet? What would you need to say yes or no?"
 - "Who collects the evidence, from which systems, and does anyone know whether those logs even exist?"
 - "Robert, you own the infrastructure. What logging do we actually have on SCHED-SVR-01, and what is its retention?"
 - "Do Twilio and SendGrid hold our patients' data? Whose problem is that?"
@@ -178,7 +178,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 **Engagement flags:**
 
 - **Kim** not engaging if the log-retention question goes unanswered or is answered optimistically. Press for specifics: "does that log exist today, yes or no?"
-- **Reyes** should now be visibly working the notification analysis. If she has not connected BA compromise to MedDefense's own obligations, note it as a live CAP-05 gap — do not correct it in the room.
+- **Reyes** should now be visibly working the HIPAA notification analysis. If she has not connected BA compromise to MedDefense's own obligations, note it as a live CAP-05 gap — do not correct it in the room.
 
 **Watch for (private):** The key CAP-04 signature: does anyone produce a scoping methodology, or only assertions? Track whether the known-versus-unknown distinction is made explicit. Note whether subprocessors enter the assessment scope at all — the profile disclosed them, so the information was available from the start.
 
@@ -207,7 +207,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 - **Webb** not engaging if he has no statement drafted or committed by the end of this segment — press with "the reporter's deadline is real; what happens at end of day if you have said nothing?"
 - The critical dynamic to protect: **Reyes and Webb must interact directly.** If they operate as parallel tracks, name it aloud: "I notice legal and communications have not spoken to each other. Is that how this would go for real?" That question is fair facilitation, not leading.
 
-**Watch for (private):** CAP-05 live evaluation: does anyone state that MedDefense's notification duty is independent of the BA breach? CAP-07: does the holding statement avoid confirming unverified facts? Capture the drafted language verbatim if any is spoken — it goes in the after-action report.
+**Watch for (private):** CAP-05 live evaluation: does anyone state that MedDefense's HIPAA notification duty as covered entity is independent of the BA breach? CAP-07: does the holding statement avoid confirming unverified facts? Capture the drafted language verbatim if any is spoken — it goes in the after-action report.
 
 **Transition:** "The day is closing, and two more facts arrive together. One about your data. One about your board."
 
@@ -285,7 +285,7 @@ The scoping surface is larger than most teams model: FHIR API traffic both direc
 
 ### CAP-05 — hipaa_notification_posture
 
-The BAA facts that matter: executed, effective 2023-08-01, last amended 2025-05-20, Nexus owes MedDefense breach notice within 24 hours of discovery. The discovery-date discrepancy in INJ-05 is the legal spine of the exercise — if Nexus knew for weeks, their notice is late, which is a contractual breach and possibly alters MedDefense's own timeline exposure. Watch whether Reyes runs MedDefense's covered-entity obligation analysis independently of Nexus's conduct, or waits on the vendor's framing. Waiting is the expensive failure mode named in the participant guide.
+The BAA facts that matter: executed, effective 2023-08-01, last amended 2025-05-20, Nexus owes MedDefense breach notice within 24 hours of discovery. The discovery-date discrepancy in INJ-05 is the legal spine of the exercise — if Nexus knew for weeks, their notice is late, which is a contractual breach and possibly alters MedDefense's own HIPAA timeline exposure. Watch whether Reyes runs MedDefense's covered-entity notification analysis independently of Nexus's conduct, or waits on the vendor's framing. Waiting is the expensive failure mode named in the participant guide.
 
 ### CAP-06 — data_integrity_response
 
