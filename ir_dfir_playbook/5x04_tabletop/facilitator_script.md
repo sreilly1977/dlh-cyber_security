@@ -232,9 +232,9 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 **Engagement flags:**
 
 - **Morales** should be pressing the room here, not answering her own questions. If she relents and accepts vague answers, press on her behalf: "is that enough for the board chairman?"
-- All participants should touch the board-brief segment. Anyone who has been passive for the whole exercise gets named into it here: "Robert, what does your section of the brief say?"
+- All participants should touch the board-brief segment. The executive board is the audience, and every section of that brief has a contributor. Anyone who has been passive for the whole exercise gets named into it here: "Robert, what does your section of the brief say?"
 
-**Watch for (private):** This is the CAP-06 and CAP-08 climax. The single highest-value outcome is a participant explicitly saying "we cannot yet answer X" in the brief — the exercise's central test is whether the team knows what it does not know. Record which of Morales's three questions got a committed answer, which got deferred with an owner, and which got papered over. Note the difference carefully; that distinction is the headline of the after-action report.
+**Watch for (private):** This is the CAP-06 and CAP-08 climax. The audience for the brief is the executive board, and the single highest-value outcome is a participant explicitly saying "we cannot yet answer X" in it — the exercise's central test is whether the team knows what it does not know. Record which of Morales's three questions got a committed answer, which got deferred with an owner, and which got papered over. Note the difference carefully; that distinction is the headline of the after-action report.
 
 **Transition to wrap-up (read aloud):** "That is the end of the injects. The clock stops. Nothing you said leaves this room except as findings, not blame. Before we close, we reflect on the exercise itself."
 
@@ -297,7 +297,7 @@ The reporter deadline, the Twilio SMS messages already in patients' hands, and t
 
 ### CAP-08 — executive_briefing_under_pressure
 
-The 90-minute board brief demand is intentionally placed at T+95 so participants feel the compression rather than simulate it. The three questions Morales asks are calibrated: one likely answerable (is tomorrow's schedule safe — decidable via the verification plan), one partially answerable (can Nexus be trusted — assessable from their conduct in INJ-02 and INJ-05), one genuinely open (was data confirmed exfiltrated). A brief that answers all three confidently is a worse outcome than one that distinguishes between them — overclaiming to a board is the finding that costs real money later.
+The 90-minute brief demand from the executive board is intentionally placed at T+95 so participants feel the compression rather than simulate it. The three questions Morales asks are calibrated: one likely answerable (is tomorrow's schedule safe — decidable via the verification plan), one partially answerable (can Nexus be trusted — assessable from their conduct in INJ-02 and INJ-05), one genuinely open (was data confirmed exfiltrated). A brief that answers all three confidently is a worse outcome than one that distinguishes between them — overclaiming to the executive board is the finding that costs real money later.
 
 ### Cross-cutting note
 
