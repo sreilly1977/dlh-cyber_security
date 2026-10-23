@@ -73,7 +73,7 @@ Confirm nobody in the room believes this is a training session. If anyone says "
 - **Chen** not engaging if the SOC perspective stays theoretical — press with "what are your analysts doing right now, literally, in the next hour?"
 - **Park** not engaging if she defers everything upward — press with "you are the IT Director; what happens without further authorization?"
 
-**Watch for (private):** Does anyone ask whether the update mechanism is the vector? Does anyone contact Nexus before INJ-01 delivers that information? Note the exact time of incident declaration and whether a severity was named.
+**Watch for (private):** Does anyone ask whether the update mechanism is the vector? A backdoor planted through a trusted update would look exactly like this. Does anyone contact Nexus before INJ-01 delivers that information? Note the exact time of incident declaration and whether a severity was named.
 
 **Transition:** "Time has passed. The team has taken initial actions. The following update arrives."
 
@@ -269,7 +269,7 @@ This is a structured reflection, not a grading session. You do not reveal your o
 
 ### CAP-01 — supply_chain_detection
 
-The malicious update arrived signed by the vendor's valid certificate through the automatic update channel; the November 2025 vendor review flagged "no client-side hash pin at client side" as a residual finding, meaning no MedDefense-side control could have caught this. The information asymmetry is deliberate: participants could have known this vector was plausible — it is in their own risk register — and the exercise tests whether institutional knowledge survives contact with an incident. Watch whether the vendor-vector insight comes from SOC (Chen), from IT (Park), from nobody, or only from you. "From nobody" is a strong finding, not a failed exercise.
+The malicious update delivered a backdoor signed by the vendor's valid certificate through the automatic update channel; the November 2025 vendor review flagged "no client-side hash pin at client side" as a residual finding, meaning no MedDefense-side control could have caught this. The information asymmetry is deliberate: participants could have known this vector was plausible — it is in their own risk register — and the exercise tests whether institutional knowledge survives contact with an incident. Watch whether the vendor-vector insight comes from SOC (Chen), from IT (Park), from nobody, or only from you. "From nobody" is a strong finding, not a failed exercise.
 
 ### CAP-02 — vendor_communication
 
