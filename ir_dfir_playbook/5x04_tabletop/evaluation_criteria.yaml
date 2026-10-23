@@ -1,0 +1,171 @@
+# Name: evaluation_criteria.yaml
+# Purpose: Define objective, observable evaluation criteria for each inject in the 5x04 tabletop
+#          exercise. Written before the exercise to establish what should happen, not reflect
+#          on what did happen. Each fail indicator produces a finding specific enough to
+#          assign to an owner and validate completion.
+# Author: Steve - Cybersecurity Engineer
+# Date: 23 October 2026
+#
+# References: capability_map.yaml, inject_schedule.yaml, nexus_vendor_profile.md
+#
+# Scoring guidance for observers:
+#   - Pass criteria must be OBSERVED (heard in discussion, named in a decision, captured
+#     in notes) not inferred. If it was not said, it did not happen.
+#   - Fail indicators are FINDINGS, not criticisms. Every fail indicator maps to a named
+#     gap that will appear in the after-action report with an owner and deadline.
+#   - Do not grade participants; grade the organizational response patterns.
+
+criteria:
+  - inject_id: INJ-00
+    capability_tested: CAP-01
+    pass_criteria:
+      - Incident is declared within the first five minutes of the inject; severity level is stated with explicit reasoning (e.g., "SEV2 because external beaconing from production scheduling server")
+      - At least two roles are notified by name within the inject window (IR Commander, SOC Lead, IT Director, or Communications Lead)
+      - Evidence collection is initiated before any containment action is discussed
+      - The vendor Nexus is mentioned as a dimension of the alert within the inject window (even if only as "checking whether the update channel is involved")
+    fail_indicators:
+      - Incident is not declared; team continues treating this as a monitoring alert requiring further triage
+      - Containment actions (reboot, block IP, isolate host) are proposed before any evidence collection step is named
+      - Vendor Nexus is not mentioned as a dimension of the alert within the inject window
+      - No named decision-maker emerges for incident declaration
+    finding_if_fail: >
+      The team did not declare a formal incident within the first inject window and proposed
+      containment before establishing an evidence collection baseline. This gap indicates the
+      severity classification criteria do not produce consistent results under ambiguous initial
+      conditions. Recommended action: add a Tier 2 escalation trigger for vendor-origin traffic
+      anomalies to the severity matrix, and require evidence preservation as the first named
+      action in the credential exposure and malware playbooks (owner: SOC Lead; deadline: 14 days).
+
+  - inject_id: INJ-01
+    capability_tested: CAP-03
+    pass_criteria:
+      - A system isolation decision is made or explicitly escalated with a named decision authority
+      - A manual scheduling fallback is named or explicitly requested by a clinical role
+      - Patient safety impact is acknowledged in the decision rationale (appointment volume, clinical care category, front-desk workflow)
+      - The signed-update paradox is surfaced (a vendor fix would arrive through the same compromised channel)
+    fail_indicators:
+      - Decision is deferred indefinitely pending more information that is not available (no owner, no deadline)
+      - Clinical director representative is not consulted before the isolation decision is made or escalated
+      - The signed-update trust paradox is not raised by any participant or facilitator
+      - Containment is treated as a purely technical decision without patient care trade-off analysis
+    finding_if_fail: >
+      The isolation decision for a business-critical scheduling system was deferred without
+      a named decision authority or deadline, despite clear clinical impact at three sites.
+      This gap indicates no tested procedure exists for running outpatient operations without
+      Nexus integration. Recommended action: define authority chain for taking a business-
+      critical clinical support system offline, document a minimum viable manual scheduling
+      fallback for 500 daily appointments, and test both in a follow-up functional exercise
+      (owner: IT Director; co-owner: Clinical Director; deadline: 60 days).
+
+  - inject_id: INJ-02
+    capability_tested: CAP-02
+    pass_criteria:
+      - A single named owner is assigned for vendor communication (not distributed across three people)
+      - The BAA 24-hour notification clause is invoked in writing to the vendor during the inject
+      - MedDefense-side investigation proceeds in parallel to vendor response rather than waiting
+      - Escalation beyond account executive to Nexus CISO or legal counsel is attempted
+    fail_indicators:
+      - Vendor communication remains distributed with no single owner named
+      - The BAA 24-hour clause is not cited during any vendor exchange
+      - Team pauses or slows its own investigation pending vendor information
+      - No attempt to escalate beyond the account executive to the incident contact
+    finding_if_fail: >
+      Vendor communication lacked a single owner and the BAA notification clause was not
+      formally invoked, causing investigation progress to depend on vendor responsiveness.
+      This gap indicates the Business Associate incident escalation path has not been tested
+      operationally. Recommended action: designate a named vendor liaison for security
+      incidents, create a written escalation template invoking the BAA 24-hour clause, and
+      conduct a joint tabletop with Nexus within the next year (owner: IT Director; co-owner:
+      General Counsel; deadline: 30 days).
+
+  - inject_id: INJ-03
+    capability_tested: CAP-03
+    pass_criteria:
+      - Conflict between security and clinical is surfaced and explicitly worked (not smoothed over)
+      - A named decision-maker emerges or Morales is forced to arbitrate a specific recommendation, not an open question
+      - Chosen option carries a documented compensating control (enhanced monitoring, manual verification of high-risk appointments)
+      - Re-evaluation trigger and time are stated ("we revisit in 4 hours if...")
+    fail_indicators:
+      - Decision floats upward to the CEO without a recommendation attached from the leads
+      - Conflict is avoided or dismissed without being resolved between the parties
+      - No compensating control is paired with whichever option is selected
+      - No re-evaluation trigger is stated (decision becomes permanent by inertia)
+    finding_if_fail: >
+      The security-versus-clinical conflict was not resolved at the lead level and floated
+      upward without a recommendation, indicating the decision-authority framework for
+      competing operational priorities has not been tested under pressure. Recommended
+      action: document a pre-escalation framework requiring leads to surface trade-offs
+      with compensating controls before reaching executive arbitration, and rehearse this
+      pattern in a follow-up table-top (owner: CEO Office; co-owner: IT Director; deadline:
+      45 days).
+
+  - inject_id: INJ-04
+    capability_tested: CAP-04
+    pass_criteria:
+      - A scoping methodology is produced (not just assertions) identifying which systems, logs,
+        and data classes will be examined
+      - Subprocessors (Twilio, SendGrid) enter the exposure assessment scope
+      - Known-versus-unknown distinction is made explicit (e.g., "we know X, we do not know Y")
+      - Log availability is addressed with specifics (does the log exist today, yes or no, retention period)
+    fail_indicators:
+      - Exposure is assessed by assumption rather than scoping (either "everything is leaked"
+        or "nothing is leaked" with no intermediate analysis)
+      - Subprocessors are omitted from the exposure assessment despite being in the BAA
+      - No one asks or answers what logging actually exists on the affected systems
+      - Known-versus-unknown register is not created
+    finding_if_fail: >
+      PHI exposure was assessed without a defined scoping methodology and subprocessors were
+      omitted from the assessment scope, creating permanent ambiguity in the notification
+      decision. This gap indicates log availability documentation does not exist or is not
+      known by the response team. Recommended action: document log inventory and retention
+      periods for all integrated SaaS vendors processing ePHI, and add subprocessor exposure
+      as a required field in the breach scope worksheet (owner: Infrastructure Lead; deadline:
+      30 days).
+
+  - inject_id: INJ-05
+    capability_tested: CAP-05, CAP-07
+    pass_criteria:
+      - Legal establishes that MedDefense's HIPAA notification duty as covered entity runs
+        independently of the BA's discovery timeline
+      - Discovery-date discrepancy is pursued in writing to Nexus (not just discussed internally)
+      - Communications produces or commits to a holding statement before the reporter's deadline
+      - Legal and Communications coordinate directly on the statement content before release
+    fail_indicators:
+      - Notification is assumed to be the vendor's problem because the vendor was the breached party
+      - Discovery-date discrepancy is ignored or deferred to a later review
+      - Communications waits for all facts before preparing any external position
+      - Legal and Communications operate as parallel tracks with no direct coordination
+    finding_if_fail: >
+      The notification analysis deferred to the vendor's framing rather than treating MedDefense's
+      covered-entity obligation as independent, and the holding statement was not coordinated
+      with legal before the media deadline. This gap indicates the HIPAA BA-breach playbook
+      conflates vendor conduct with covered-entity obligations. Recommended action: update the
+      breach notification decision tree to separate BA delay from covered-entity clock, and
+      create a pre-approved holding statement template vetted by legal (owner: General Counsel;
+      co-owner: Communications Director; deadline: 21 days).
+
+  - inject_id: INJ-06
+    capability_tested: CAP-06, CAP-08
+    pass_criteria:
+      - An integrity-specific response distinct from confidentiality playbooks is articulated
+        (authoritative data source, verification method, clinical validation before next business day)
+      - A concrete clinical verification plan for tomorrow's schedule at three front desks is produced
+      - Patients who received SMS reminders with wrong times are accounted for in the correction plan
+      - Board brief owner is named and three-sentence summary is drafted
+      - At least one of Morales's three questions is answered as "unknown" in the brief rather than papered over
+    fail_indicators:
+      - Integrity is handed to IT with no acceptance criteria defined
+      - No method to identify which copy (Epic or Nexus) is authoritative
+      - No practical plan for verifying tomorrow's schedule before patients arrive
+      - SMS correction for misinformed patients is not addressed
+      - All three board questions receive confident answers even though data is incomplete
+    finding_if_fail: >
+      Data integrity was treated as a confidentiality problem with no clinical verification
+      plan for tomorrow morning's schedule, and the board brief did not distinguish between
+      answerable and unanswerable questions. This gap indicates no integrity-specific playbook
+      exists and executive briefing practice favors confidence over honest uncertainty.
+      Recommended action: develop a data-integrity incident response procedure that specifies
+      authoritative-data-source selection, front-desk verification protocols, and SMS-correction
+      workflows; train executives on the value of distinguishing unknown from confirmed in
+      board-level communication (owner: IT Director; co-owner: Clinical Director; deadline:
+      60 days).

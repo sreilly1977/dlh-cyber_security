@@ -380,3 +380,59 @@ Required sections:
 </pre>
 
 ---
+
+# [6. Define the Evaluation Criteria](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/evaluation_criteria.yaml)
+
+## Goal: 
+
+Establish objective, injectable criteria for what constitutes an adequate organizational response before the exercise runs.
+
+## Context: 
+
+Evaluation criteria written after the exercise reflect what happened. Criteria written before reflect what should have happened. Only the second is useful.
+
+## Instructions: 
+
+Create evaluation_criteria.yaml. For each inject, define the evaluation criteria an observer or facilitator uses to score the team's response. Criteria must be observable behaviors the facilitator can see or hear, not assumptions about intent.
+
+Each inject entry has: inject ID, capability tested (from capability_map.yaml), the pass criteria (what observable behaviors constitute an adequate response), the fail indicators (observable gaps that constitute a documented finding), and the finding text to use if the response fails.
+
+Design constraint: every fail indicator must produce a finding that is specific enough to assign to an owner and validate.
+
+    Use the residual findings in nexus_vendor_profile.md to write evaluation criteria that test whether participants identify vendor update-channel risk, untested communication paths, and Business Associate obligations.
+
+**Expected output**
+
+```yaml
+criteria:
+  - inject_id: INJ-00
+    capability_tested: CAP-01
+    pass_criteria:
+      - Incident is declared within the first five minutes of the inject; severity is stated with explicit reasoning
+      - At least two roles are notified by name within the inject window
+      - Evidence collection is initiated before any containment action is discussed
+    fail_indicators:
+      - Incident is not declared; team continues treating this as a monitoring alert
+      - Containment actions are proposed before any evidence collection step is named
+      - Vendor Nexus is not mentioned as a dimension of the alert within the inject window
+    finding_if_fail: >
+      The team did not declare a formal incident within the first inject window and proposed
+      containment before establishing an evidence collection baseline. This gap indicates the
+      severity classification criteria do not produce consistent results under ambiguous initial
+      conditions. Recommended action: add a Tier 2 escalation trigger for vendor-origin traffic
+      anomalies to the severity matrix, and require evidence preservation as the first named
+      action in the credential exposure and malware playbooks (owner: SOC Lead; deadline: 14 days).
+
+  - inject_id: INJ-01
+    capability_tested: CAP-02
+    pass_criteria:
+      - A system isolation decision is made or explicitly escalated with a named decision authority
+      - A manual scheduling fallback is named or explicitly requested by a clinical role
+      - Patient safety impact is acknowledged in the decision rationale
+    fail_indicators:
+      - Decision is deferred indefinitely pending more information that is not available
+      - Clinical director is not consulted before the isolation decision is made or escalated
+    ...
+```
+
+---
