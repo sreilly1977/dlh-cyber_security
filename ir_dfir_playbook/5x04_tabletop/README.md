@@ -162,3 +162,71 @@ capabilities:
 ```
 
 ---
+
+# [3. Design the Inject Schedule](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/inject_schedule.yaml)
+
+## Goal: 
+
+Build the timed sequence of reveals that drives the exercise from detection through resolution.
+
+## Context: 
+
+Each inject must do one of three things: escalate the pressure, introduce a conflict, or force a decision that cannot be deferred. An inject that does none of these is a briefing slide.
+
+## Instructions: 
+
+Create inject_schedule.yaml with seven injects (INJ-00 through INJ-06). For each inject, document: delivery time relative to exercise start, the situation update text read by the facilitator, the capability being tested (from capability_map.yaml), the primary decision point, the roles this inject most directly challenges, and the expected response that would satisfy the evaluation criteria.
+
+    Use nexus_vendor_profile.md to make injects specific and credible. Vendor contact details, update-channel design, and residual risk findings may be referenced when writing injects.
+
+Design constraints:
+
+    At least one inject must create a direct conflict between two MedDefense roles (for example: security says isolate, clinical director says patient care is at risk)
+
+    At least one inject must introduce new information that changes the severity or scope of the event
+
+    At least one inject must force a business continuity decision with explicit patient safety trade-offs
+
+    At least one inject must test crisis communications under an external pressure
+
+    The final inject must leave at least one open question that cannot be cleanly resolved during the exercise — this is intentional; it tests whether participants know what they do not know
+
+**Expected output**
+
+```yaml
+injects:
+  - id: INJ-00
+    time_minutes: 0
+    delivery: facilitator reads aloud
+    situation: >
+      The SOC has flagged unusual outbound traffic from the Nexus scheduling server at the West Campus to
+      193.42.100.77, a host associated with bulletproof hosting infrastructure in Eastern Europe.
+      The alert fired 45 minutes ago. The Nexus system is currently operational. Patient scheduling
+      is running normally. No other anomalies have been detected.
+    capability_tested: CAP-01
+    decision_point: Declare an incident? What severity? Who is notified in the first 15 minutes?
+    roles_challenged:
+      - James Chen (SOC Lead)
+      - Sarah Park (IT Director)
+    expected_response: Incident declared at SEV2 minimum; IR Commander and Communications Lead notified; SOC begins evidence collection without touching the Nexus system yet
+
+  - id: INJ-01
+    time_minutes: 20
+    delivery: facilitator reads aloud
+    situation: >
+      Nexus Patient Scheduling has published a security advisory. Their build pipeline was compromised
+      by a threat actor with access to their code-signing certificate. All software updates distributed
+      in the last 21 days may contain a malicious component. Nexus advises all customers to take
+      immediate action. They do not yet have a patch.
+    capability_tested: CAP-02
+    decision_point: Do you take the Nexus system offline? Who authorizes it? What replaces patient scheduling?
+    roles_challenged:
+      - Sarah Park (IT Director)
+      - Clinical Director representative
+    expected_response: Explicit decision made with clinical impact acknowledged; manual scheduling process activated or explicitly deferred with a named deadline; authorization chain documented
+
+  - id: INJ-02
+    ...
+```
+
+---

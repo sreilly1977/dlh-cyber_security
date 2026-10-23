@@ -1,0 +1,228 @@
+# Name: inject_schedule.yaml
+# Purpose: Define the timed inject sequence (INJ-00 through INJ-06) driving the 5x04 tabletop
+#          from initial detection through integrity and communications pressure. Each inject
+#          escalates pressure, introduces conflict, or forces an undeferrable decision, and
+#          traces to a capability in capability_map.yaml. Facilitator-only document.
+# Author: Steve - Cybersecurity Engineer
+# Date: 23 October 2026
+#
+# Exercise length: 120 minutes. Times are minutes relative to exercise start (T+0).
+# Delivery method: all injects read aloud by the facilitator unless marked otherwise.
+
+injects:
+  - id: INJ-00
+    time_minutes: 0
+    delivery: facilitator reads aloud
+    situation: >
+      The SOC has flagged unusual outbound traffic from the Nexus scheduling server
+      SCHED-SVR-01 at Main campus to 193.42.100.77, a host associated with bulletproof
+      hosting infrastructure in Eastern Europe. EDR shows the connections occur at
+      regular four-hour intervals, consistent with beaconing. The alert fired 45 minutes
+      ago. The Nexus agent is running under its normal service account, executed from
+      its signed binary path, and generated no antivirus alerts. Patient scheduling is
+      running normally across all three sites. No other anomalies have been detected.
+    capability_tested: CAP-01
+    decision_point: >
+      Is this an incident? What severity? Who is notified in the first 15 minutes,
+      and does anyone question WHY a trusted vendor application is beaconing?
+    roles_challenged:
+      - James Chen (SOC Lead)
+      - Sarah Park (IT Director)
+    expected_response: >
+      Incident declared at SEV2 minimum with a named incident commander; core IR and
+      communications leads notified within the first 15 minutes; SOC begins evidence
+      collection and log preservation without rebooting or wiping the host. Above
+      baseline: at least one participant notes the beaconing originates from a signed
+      vendor binary and flags the update channel as a possible vector.
+
+  - id: INJ-01
+    time_minutes: 20
+    delivery: facilitator reads aloud
+    situation: >
+      Nexus Patient Scheduling has published a security advisory. Their build
+      infrastructure was compromised by a threat actor with access to their signing
+      environment. All software updates distributed through the automatic update
+      channel in the last 21 days may contain a malicious component, including the
+      version deployed to MedDefense three days ago. The package was signed with
+      the valid Nexus Health Technologies, Inc. code-signing certificate, so
+      signature validation did not and will not catch it. Nexus advises all
+      customers to review their agent deployments immediately. They do not yet
+      have a patch or a clean-version list.
+    capability_tested: CAP-01, CAP-03
+    decision_point: >
+      Does MedDefense take scheduling offline? Who authorizes it? What replaces
+      patient scheduling for three sites running roughly 3,500 appointments a week,
+      and is a remediation pushed through the same compromised channel even
+      installable?
+    roles_challenged:
+      - Sarah Park (IT Director)
+      - Robert Kim (Infrastructure Lead)
+      - Clinical Director representative
+    expected_response: >
+      An explicit containment decision is made or consciously deferred WITH a named
+      owner and deadline; participants recognize the signed-update trust paradox
+      (a vendor fix would arrive through the same channel that delivered the
+      malware); manual scheduling fallback is activated or scoped with a named
+      clinical owner; the authorization chain for taking a business-critical system
+      offline is stated on the record.
+
+  - id: INJ-02
+    time_minutes: 35
+    delivery: facilitator reads aloud
+    situation: >
+      The team contacts Nexus. The 24x7 incident line (+1 512 555 0184) connects to
+      a tier-1 operator who can only take a ticket number. The account executive,
+      Priya Natarajan, responds to email within minutes but has no technical
+      information and offers to "schedule a call with the security team this week."
+      Ninety minutes after the advisory, Nexus still has not contacted MedDefense
+      directly, despite the BAA requirement to notify within 24 hours of THEIR
+      discovery. You have no named incident contact, no IOCs, no affected-version
+      list, and no commitment timeline.
+    capability_tested: CAP-02
+    decision_point: >
+      Who owns the vendor relationship during an active incident, how hard do you
+      push, and what do you do when the contractual escalation path exists on paper
+      but delivers nothing under pressure? Do you wait on the vendor or drive
+      MedDefense-side investigation in parallel?
+    roles_challenged:
+      - Sarah Park (IT Director)
+      - Helena Reyes (General Counsel)
+      - James Chen (SOC Lead)
+    expected_response: >
+      A single named owner for vendor communications is designated; written
+      record-keeping of all exchanges starts; the BAA 24-hour notification clause is
+      invoked explicitly, in writing, referencing the agreement; escalation to
+      Nexus CISO Marcus Oduya is attempted; the team parallel-paths and does NOT
+      suspend its own investigation pending vendor response.
+
+  - id: INJ-03
+    time_minutes: 50
+    delivery: facilitator reads aloud
+    situation: >
+      Forensics on the captured traffic confirms the beacon is receiving commands,
+      not just polling. The natural containment step is to sever the site-to-site
+      IPsec tunnel and isolate SCHED-SVR-01 — cutting the FHIR feed to and from
+      Nexus. The clinical director representative interrupts: tomorrow morning,
+      roughly 500 patients are booked across the three sites, pre-registration and
+      insurance eligibility will fail, and front desks will have no electronic
+      schedule. Some of those patients are oncology follow-ups and post-operative
+      checks. Taking scheduling offline is a patient care decision, not just a
+      security decision, and in their view it is not Sarah Park's call to make.
+    capability_tested: CAP-03
+    decision_point: >
+      Contain now and accept clinical downtime, or run a known-compromised system
+      to protect tomorrow's clinic session? Who actually holds the authority to
+      make that trade, and can the group reach a decision WITH each other rather
+      than deferring it upward?
+    roles_challenged:
+      - James Chen (SOC Lead)
+      - Sarah Park (IT Director)
+      - Clinical Director representative
+      - Dr. Patricia Morales (CEO)
+    expected_response: >
+      The conflict is surfaced and worked, not smoothed over: both positions are
+      stated with their risks; a single decision-maker is named (or Morales is
+      forced to arbitrate a specific recommendation, not an open question); the
+      chosen option carries a documented compensating control (e.g., enhanced
+      monitoring of the tunnel, manual verification of high-risk appointments)
+      and a re-evaluation trigger and time.
+
+  - id: INJ-04
+    time_minutes: 65
+    delivery: facilitator reads aloud
+    situation: >
+      Firewall log review changes the picture. During the three-day compromise
+      window, the beacon channel carried approximately 2.1 GB of outbound data
+      from SCHED-SVR-01 — far more than command-and-control traffic accounts for.
+      Correlation with FHIR API logs shows elevated reads of patient demographic
+      and insurance eligibility records through the svc-nexus-prod integration.
+      Separately, the SOC notes the data flows documented to Nexus's subprocessors
+      — Twilio and SendGrid handle SMS and email appointment reminders, meaning
+      patient contact data also transits two additional third parties whose
+      exposure status is unknown.
+    capability_tested: CAP-04
+    decision_point: >
+      How is PHI exposure actually scoped: what data left, how much, whose, and
+      from which copies — including subprocessor-held copies? What evidence would
+      you need to collect, from where, and who does the collecting? Is this a
+      reportable breach yet?
+    roles_challenged:
+      - James Chen (SOC Lead)
+      - Helena Reyes (General Counsel)
+      - Robert Kim (Infrastructure Lead)
+    expected_response: >
+      A defined scoping methodology emerges: source of truth for API logs, volume
+      accounting against expected baseline, record counts by data class, named
+      data owners, and an explicit known-versus-unknown register. Subprocessors
+      are pulled into scope. Legal begins a risk-of-exposure assessment rather
+      than declaring the answer either direction by assumption.
+
+  - id: INJ-05
+    time_minutes: 80
+    delivery: facilitator reads aloud
+    situation: >
+      Two things happen in the same ten minutes. First, Nexus sends a formal
+      notice under the BAA stating a "security incident involving certain customer
+      data" occurred, discovered by Nexus — but the notice is dated as of TODAY,
+      while the advisory implies their build infrastructure was compromised weeks
+      ago. Whether the 24-hour breach notification clock has already been blown
+      depends on when Nexus actually "discovered" it, and they will not say.
+      Second, a health reporter from the local paper emails Marcus Webb: they have
+      heard MedDefense is dealing with a "cyber incident affecting patient
+      appointments" and want a comment by end of day.
+    capability_tested: CAP-02, CAP-05, CAP-07
+    decision_point: >
+      Does the discrepancy in Nexus's discovery date get pursued, and how? What is
+      MedDefense's own HIPAA notification posture now — the covered entity's
+      obligation does not transfer to the BA. And does the external statement
+      wait for the legal position, or does it move first?
+    roles_challenged:
+      - Helena Reyes (General Counsel)
+      - Marcus Webb (Communications Director)
+      - Sarah Park (IT Director)
+    expected_response: >
+      Legal identifies that MedDefense's own notification duties run independently
+      of Nexus's, and puts the discovery-date discrepancy in writing to Nexus as
+      a BAA compliance issue. Communications produces (or commits to producing)
+      a holding statement that acknowledges awareness without confirming
+      unverified specifics, coordinated with legal, and pairs it with front-desk
+      and clinical staff talking points. Comms and legal act as one track.
+
+  - id: INJ-06
+    time_minutes: 95
+    delivery: facilitator reads aloud
+    situation: >
+      The reconciliation team reports that appointment records in the Epic inbound
+      feed do not match the schedules front-desk staff see in the Nexus portal.
+      At least forty appointments for tomorrow appear to have been modified during
+      the compromise window — times shifted, two cancellations that no staff
+      member entered, and several patients have already received Twilio SMS
+      reminders quoting the modified times. Nobody can say whether Epic or Nexus
+      holds the authoritative copy, and the modification trail may itself have
+      been altered. At the same moment, Dr. Morales tells the room the board
+      chairman wants a status brief in 90 minutes, before the next clinic day
+      begins. She asks three questions: is patient data confirmed exfiltrated;
+      is tomorrow's schedule safe to run; and can Nexus be trusted to remediate
+      this at all?
+    capability_tested: CAP-06, CAP-08
+    decision_point: >
+      Which copy of the data is authoritative and how is the schedule verified
+      before patients arrive? Who drafts the board brief, on what facts, and what
+      is said about the questions that cannot yet be answered?
+    roles_challenged:
+      - Robert Kim (Infrastructure Lead)
+      - Clinical Director representative
+      - Helena Reyes (General Counsel)
+      - Marcus Webb (Communications Director)
+      - Dr. Patricia Morales (CEO)
+    expected_response: >
+      An integrity-specific response distinct from confidentiality playbooks:
+      an attempt to establish which dataset is authoritative, a practical clinical
+      verification plan for tomorrow (e.g., staff call-out or manual confirmation
+      of affected appointments), and correction of the SMS miscommunication.
+      A board-brief owner is named with a structured draft under way covering
+      knowns, unknowns, decisions made, and owners. KEY TEST: the team
+      explicitly identifies WHICH questions remain unanswerable — whether ePHI
+      was truly exfiltrated, whether the full modification trail is recoverable,
+      whether the 24-hour clock was breached, and whether Nexus's remediation
+      can be trusted — and says so in the brief rather than papering over them.
