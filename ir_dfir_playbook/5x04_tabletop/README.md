@@ -513,3 +513,71 @@ The patient safety dimension (appointment record integrity) arrives at INJ-03 (T
 </pre>
 
 ---
+
+# [8. Write the After-Action Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x04_tabletop/after_action_report.md)
+
+## Goal: 
+
+Deliver findings that are specific enough to assign, track, and close.
+
+## Context: 
+
+The after-action report is the only artifact that outlives the exercise. Everything before this task exists to make this document credible and actionable.
+
+## Instructions: 
+
+Create after_action_report.md. Base the report on your execution record (Task 7) and evaluation criteria (Task 6). Every finding must reference the inject and criterion it came from.
+
+Required structure:
+
+    Cover block: exercise title, date, facilitator, participants, classification.
+
+    Executive summary (half a page max): what the exercise tested, what the most significant gaps were, and the single most important recommended action.
+
+    Findings table: one row per finding, with: Finding ID, Inject, Capability tested, Gap description, Severity (P1/P2/P3), Recommended action, Owner role, Deadline (days), Validation method.
+
+    Finding narratives: one paragraph per P1 finding only, the gap, what was observed, why it matters, and the specific recommended action. No prose for P2 or P3.
+
+    What worked: two to three specific observations of capability that performed well. Findings are not only about gaps.
+
+    Exercise design feedback: one to two sentences per design change made in Task 7's feedback section, included here for the record.
+
+**Expected output**
+
+<pre>
+# After-Action Report: Nexus Supply Chain Compromise Tabletop
+
+**Exercise date:** <YYYY-MM-DD>
+**Report date:** <YYYY-MM-DD>
+**Facilitator:** <your_name>
+**Participants:** <name>, <name>, <name>, <name>, <name>, <name>, Clinical Director representative
+**Classification:** Internal
+
+---
+
+## Executive summary
+
+...
+
+---
+
+## Findings table
+</pre>
+
+| ID | Inject | Capability | Gap | Severity | Recommended Action | Owner | Deadline | Validation |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| F-001 | INJ-01 | CAP-02 | No defined authority or process for isolating a vendor-operated critical system | P1 | Add vendor system isolation decision authority to IR playbook and severity matrix | IT Director | 21 days | Playbook review + TTX re-test |
+| F-002 | INJ-03 | CAP-06 | No data integrity verification procedure for FHIR-connected systems after suspected compromise | P1 | Define a data integrity checklist for Epic-connected systems triggered by BA compromise | Infrastructure Lead | 30 days | Checklist exists and has been reviewed by clinical director |
+| … | … | … | … | … | … | … | … | … |
+
+<pre>
+---
+
+## P1 Finding narratives
+
+### F-001: No vendor system isolation decision authority
+
+...
+</pre>
+
+---
