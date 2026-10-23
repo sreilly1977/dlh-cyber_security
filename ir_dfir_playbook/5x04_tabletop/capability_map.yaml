@@ -1,0 +1,152 @@
+# Name: capability_map.yaml
+# Purpose: Define the capabilities under test in the 5x04 tabletop exercise, the expected
+#          behavior, the gap hypothesis each capability is designed to expose, and the
+#          injects that evaluate it. Facilitator-side document; not distributed to participants.
+# Author: Steve - Cybersecurity Engineer
+# Date: 23 October 2026
+#
+# Inject ID scheme referenced here (full details defined in inject_schedule):
+#   INJ-00 baseline SOC alert             INJ-04 outbound data volume evidence
+#   INJ-01 malicious signed update found  INJ-05 formal BAA breach notice from Nexus
+#   INJ-02 first vendor contact           INJ-06 appointment record modification evidence
+#   INJ-03 scheduling system isolate ask  INJ-07 media inquiry
+#   INJ-08 board briefing demand (90 min notice)
+
+capabilities:
+  - capability_id: CAP-01
+    name: supply_chain_detection
+    expected_behavior: >
+      Participants recognize that the evidence pattern (beaconing from the on-prem agent,
+      benign execution path, signed binary) points to a supply chain compromise of a trusted
+      vendor rather than a direct external intrusion. Good response includes questioning the
+      update channel provenance, requesting update deployment logs and code-signing
+      verification details, and reframing the investigation scope from perimeter to vendor.
+    gap_hypothesis: >
+      Detection and response muscle memory assumes an external attacker. The team will
+      initially treat the beacon as a compromised host problem (credential theft, malware
+      dropper) and will not independently arrive at the vendor update channel as the
+      infection vector. The known residual finding from the 2025-11 vendor review (no
+      client-side hash pin on the signed update channel) means neither detection tooling
+      nor process would have flagged a legitimately signed malicious payload. Expect the
+      root cause to surface only late, if at all, without a facilitator push.
+    tested_by_inject: INJ-00, INJ-01
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-02
+    name: vendor_communication
+    expected_behavior: >
+      Participants initiate contact with Nexus through the documented 24x7 path (soc@nexushealth.io /
+      +1 512 555 0184), escalate appropriately rather than staying with the account executive,
+      preserve a written record of all vendor exchanges, and press Nexus for concrete facts
+      (build infrastructure compromise scope, affected versions, other customers, indicators).
+    gap_hypothesis: >
+      The vendor communication path is documented at contact level but has never been tested
+      jointly (last joint test 2024-09, none ever as an incident exercise). The team will
+      likely struggle with: which contact is correct mid-incident, how hard to push when
+      Nexus gives incomplete answers, and who owns the vendor relationship during the event.
+      Response may stall waiting for vendor information instead of driving MedDefense-side
+      investigation in parallel.
+    tested_by_inject: INJ-02, INJ-05
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-03
+    name: business_continuity_decision
+    expected_behavior: >
+      A named owner (with authority) makes an explicit, justified go/no-go decision on taking
+      the scheduling integration offline, weighing patient appointment volume (~3,500
+      interactions/week across three sites) against containment, and pairs the decision with
+      a documented clinical downtime procedure and a rollback/reentry criterion.
+    gap_hypothesis: >
+      There is no tested procedure for running outpatient scheduling without Nexus. Expect
+      deadlock: security (Chen/Park) will recommend isolation, clinical operations will resist
+      because the fallback (manual scheduling) is undefined, and no one will be able to name
+      who actually holds the authority to take a business-critical system offline. The
+      decision will either be deferred upward to the CEO without a recommendation, or made
+      without any downtime plan attached.
+    tested_by_inject: INJ-01, INJ-03
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-04
+    name: phi_exposure_assessment
+    expected_behavior: >
+      Participants systematically scope what data the compromised agent could reach: patient
+      demographics, appointment data, insurance eligibility data flowing through the FHIR
+      API and the svc-nexus-prod integration, plus subprocessor exposure (Twilio, SendGrid).
+      Good response produces a defined scoping methodology, named data sources to pull, and
+      an explicit statement of what is known versus unknown.
+    gap_hypothesis: >
+      Scoping will be assumed rather than performed. The team will treat "Nexus was
+      compromised" as equivalent to "all PHI is exposed" (over-notification) or assume
+      nothing left (under-assessment), with no middle path grounded in evidence. Expect
+      nobody to know what logging exists on SCHED-SVR-01 or the ehr-ingest endpoint to
+      answer the exposure question, and nobody to factor the disclosed subprocessors
+      into the assessment scope.
+    tested_by_inject: INJ-04, INJ-06
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-05
+    name: hipaa_notification_posture
+    expected_behavior: >
+      Legal (Reyes) correctly establishes the obligation framework: Nexus is a Business
+      Associate under the executed BAA; Nexus owes MedDefense notification within 24 hours
+      of discovery; MedDefense retains the covered-entity notification duty to patients and
+      HHS regardless of which party was breached. Assessment distinguishes between breach
+      presumption and risk-of-exposure analysis, names the clock, and identifies what facts
+      are still required to make the call.
+    gap_hypothesis: >
+      The team will assume breach notification is Nexus's problem because Nexus was the
+      breached party, delaying MedDefense's own obligation analysis. Expect no one to have
+      the BAA terms (24-hour notice, effective/amended dates) at hand mid-event, and expect
+      the notification decision to stall pending forensic certainty that may never arrive,
+      rather than being made on documented risk assessment under uncertainty.
+    tested_by_inject: INJ-05, INJ-08
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-06
+    name: data_integrity_response
+    expected_behavior: >
+      Given evidence that appointment records were modified during the compromise window,
+      participants identify the integrity problem as distinct from confidentiality: how to
+      identify modified records, how to reconstruct known-good state (vendor-side vs
+      Epic-side truth), how to reconcile conflicts, and how front-desk operations at three
+      sites verify tomorrow's schedule before patients arrive.
+    gap_hypothesis: >
+      Teams routinely plan for confidentiality breaches and have no procedure for integrity
+      failures. Expect no answer to "which copy of the appointment data is authoritative,"
+      no method to diff or validate the 3,500 weekly appointment records, and no clinical
+      operational plan for verifying schedules before the next business day. The problem
+      will be handed to IT with no acceptance criteria defined.
+    tested_by_inject: INJ-06
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-07
+    name: crisis_communications
+    expected_behavior: >
+      Communications (Webb) produces a holding statement, controls the information release
+      timeline in coordination with legal, prepares front-desk and clinical staff talking
+      points, and manages the media inquiry without confirming unverified facts, while
+      coordinating with the HIPAA notification decision rather than outrunning it.
+    gap_hypothesis: >
+      External communications and the legal notification decision will be run as separate,
+      uncoordinated tracks. Expect the communications response to either stay silent with
+      no prepared position, or move toward a public statement before legal has bounded what
+      can be confirmed. No pre-approved holding statement template exists; every sentence
+      will be drafted from scratch under pressure.
+    tested_by_inject: INJ-07
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
+
+  - capability_id: CAP-08
+    name: executive_briefing_under_pressure
+    expected_behavior: >
+      Within the notice period, the team delivers a board-quality brief covering: what is
+      known, what is unknown, patient safety impact, regulatory posture, decisions made and
+      their owners, financial exposure, and recommended next actions with timeframes.
+      Morales receives a decision-ready document, not a data dump.
+    gap_hypothesis: >
+      The brief will assemble raw technical detail without synthesis, omit the regulatory
+      and patient-safety angles the board cares about, and arrive late because no standard
+      executive-brief template or single drafting owner exists. Expect conflicting versions
+      of the facts across functional leads because no single source of truth was designated
+      during the event.
+    tested_by_inject: INJ-08
+    evaluation_owner: Lead Facilitator - Steve (Cybersecurity Engineer)
