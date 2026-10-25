@@ -89,3 +89,62 @@ The timeline format is the one you established in earlier work: timestamp, type 
 </pre>
 
 ---
+
+# [1. Preserve Evidence Across Four Hosts](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/evidence_preservation.md)
+
+## Goal: 
+
+Lock down the forensic record before any containment action changes it.
+
+## Context: 
+
+Four hosts are in scope. Each has a different urgency. Evidence preservation is not sequential, it is a parallel operation with a defined priority order.
+
+## Instructions: 
+
+Produce evidence_preservation.md. For each of the four affected hosts, define the acquisition priority, the exact commands or tools to capture volatile and non-volatile evidence, the SHA-256 verification step, and the chain of custody entry. The priority order must be explicitly justified based on the volatile state and the threat (ransomware staging, active beacon, credential material).
+
+Affected hosts: WS-101 (initial compromised workstation), WS-104, WS-107, WS-112 (laterally compromised), and FILE-SVR-01 (file server with patient documentation access).
+
+    Use torres_call_transcript.md to document the acquisition timeline and operational context around Torres's actions. The transcript may clarify timing assumptions and evidence handling sequence.
+
+That is five hosts. The memory dump for WS-101 was already captured by Torres at 19:38Z. You must document that acquisition in the chain of custody even though you did not perform it, note the three-minute gap before Torres's call, and verify its integrity before any analysis.
+
+For the remaining four, define the capture sequence and explicit rationale for the order chosen.
+
+End the document with a chain of custody table covering all five hosts.
+
+**Expected output**
+
+<pre>
+# Evidence Preservation: IR-YYYY-MMDD-01
+
+## Priority order rationale
+
+WS-101 is the initial compromise host; memory was already captured at 19:38Z by Mike Torres
+(ART-001). Disk image must be captured before any containment action. WS-104 and WS-107
+show active beaconing in Sysmon; memory must be captured before network isolation removes
+C2 telemetry. FILE-SVR-01 has no active beacon but holds the PHI access record; disk image
+priority is high but second to active-beacon hosts. WS-112 shows lateral logon events but
+no current beacon activity; captured last.
+
+## ART-001: cs-ws-101.mem (Torres acquisition)
+
+- acquired_by: <name>
+- acquired_at: <timestamp>
+- tool: WinPmem
+- sha256_at_acquisition: <recorded by Torres>
+- sha256_verified_by_analyst: <computed at 20:10Z; must match>
+- gap_note: 5-minute gap between acquisition (19:38Z) and declaration (19:52Z); state
+  at acquisition reflects pre-call conditions; relevant for timeline correlation
+
+## ART-002: cs-ws-101.dd
+
+- priority: 1
+- acquired_before: network isolation of WS-101
+- tool: FTK Imager over IR jumpbox
+- sha256: <computed and recorded at acquisition>
+...
+</pre>
+
+---
