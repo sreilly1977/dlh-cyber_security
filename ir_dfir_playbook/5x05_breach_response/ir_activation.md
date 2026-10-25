@@ -2,7 +2,7 @@
 
 - incident_id: IR-2026-0420-01
 - declared_at: 2026-04-20T19:52Z
-- declared_by: Steve Reilly, on-call IR
+- declared_by: Steve, on-call IR
 - initial_severity: SEV1
 
 ## Reasoning
