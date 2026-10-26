@@ -148,3 +148,128 @@ no current beacon activity; captured last.
 </pre>
 
 ---
+
+# [2. Contain the Threat](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/containment_decision.md)
+
+## Goal: 
+
+Scope the compromise, choose a containment strategy, execute it, and document every trade-off.
+
+## Context: 
+
+Four workstations have an active Cobalt Strike beacon. The file server does not. Ransomware staging scripts exist but have not executed. The clinical site is operational. Every option costs something.
+
+## Instructions: 
+
+Produce two artifacts.
+
+[containment_decision.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/containment_decision.md): present three containment strategies for the multi-host environment. For each: the action, the effect on the attacker, the effect on patient care, the evidence preserved and destroyed, the time to execute, and the reversibility. Declare the chosen strategy with a one-paragraph trade-off rationale that references the specific clinical and forensic stakes. Name the authorizing role and the rollback trigger.
+
+[containment_execution.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/containment_execution.md): the step-by-step execution record. Each step carries: UTC timestamp, actor, action, expected outcome, observed outcome, deviation notes. Append each completed step as an ACTION entry to incident_timeline.md.
+
+The execution record must cover: host isolation sequence for all five assets, the firewall egress rule for the C2 domain, the credential revocation sequence for accounts accessed during the 72-hour dwell, and the proof that the C2 beacon is severed.
+
+**Expected output**
+
+Structured Markdown following the formats established in prior projects. The decision document is bounded to one page. The execution record is append-only.
+
+---
+
+# 3. Quiz
+
+---
+
+[4. Investigate the Full 72-Hour Attack Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/forensic_findings.md)
+
+## Goal: 
+
+Reconstruct what the attacker did from first access to Sunday evening using all five artifact types.
+
+## Context: 
+
+You have memory, disk, proxy, Sysmon, and file server event logs. Each tells part of the story. None tells all of it. The forensic report is the synthesis.
+
+## Instructions: 
+
+Produce forensic_findings.md. Analyze all provided artifacts using the following toolchain. Document each finding with: the exact command run, the relevant output (abridged), the forensic conclusion, the ATT&CK technique, and the certainty level (confirmed, probable, possible).
+
+    Use proxy_72h.sample.jsonl, sysmon_multihost.sample.jsonl, and fileserver_access.sample.json as schema references only. These files demonstrate field structure and event format; conclusions must come from the investigation artifacts.
+
+Memory analysis (cs-ws-101.mem with Volatility 3)
+
+    windows.pstree.PsTree: identify the process tree showing the beacon process and its parent
+
+    windows.cmdline.CmdLine: extract command lines; identify the PowerShell downloader invocation
+
+    windows.netscan.NetScan: confirm active C2 connection at time of capture
+
+    windows.malfind.Malfind: identify injected memory regions in the beacon process
+
+    windows.hashdump.Hashdump: NTLM hashes available in memory
+
+Disk analysis (cs-ws-101.dd with TSK)
+
+    Partition layout with mmls; filesystem metadata with fsstat
+
+    File timeline with fls and mactime focused on AppData, Temp, and Windows\Tasks
+
+    Extract and hash: the original malicious Word document, the PowerShell downloader script, the Cobalt Strike beacon DLL
+
+Proxy log analysis (proxy_72h.jsonl)
+
+    Identify the initial phishing URL access on Thursday
+
+    Identify the first C2 beacon connection and its frequency pattern
+
+    Identify any data staging or exfiltration patterns in the 72-hour window
+
+Sysmon analysis (sysmon_multihost.jsonl)
+
+    Map lateral movement: NTLM authentication events across WS-104, WS-107, WS-112
+
+    Identify ransomware staging: cmd.exe or powershell.exe writing .bat or .ps1 scripts to system directories
+
+    Identify service installation events matching the SIEM alert
+
+File server analysis (fileserver_access.evtx)
+
+    Identify the window when the attacker accessed patient files
+
+    Count and categorize the 1,847 accessed records by file path and access time
+
+    Determine which clinical accounts were used to authenticate
+
+Close the document with an Attack chain summary table: one row per stage, with UTC timestamp range, ATT&CK technique, affected hosts, evidence source, and certainty.
+
+**Expected output**
+
+<pre>
+# Forensic Findings: IR-2026-0420-01
+
+## ART-001 verification
+
+- sha256 at analysis start: <matches baseline>
+- CoC entry updated: yes
+
+## Memory analysis: cs-ws-101.mem
+
+### Finding MEM-001: Beacon process in memory
+
+$ vol -f cs-ws-101.mem windows.pstree.PsTree
+...
+* 4921  WINWORD.EXE    PPID=3104  Start: 2026-04-17T14:22:11Z
+** 6201  powershell.exe PPID=4921  Start: 2026-04-17T14:22:44Z
+*** 7318  svchost32.exe  PPID=6201  Start: 2026-04-17T14:23:02Z
+
+Conclusion: WINWORD.EXE spawning PowerShell (macro execution); PowerShell spawning
+svchost32.exe (naming mimicry; not a legitimate svchost path)
+ATT&CK: T1566.001, T1059.001, T1036.005
+Certainty: confirmed
+
+### Finding MEM-002: Active C2 connection
+...
+
+## Attack chain summary
+</pre>
+
+---
