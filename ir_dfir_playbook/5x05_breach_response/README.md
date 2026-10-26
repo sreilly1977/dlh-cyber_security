@@ -330,6 +330,40 @@ Confidence: ...
 
 ---
 
+# [7. Eradicate and Validate Recovery](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/eradication_checklist.yaml)
+
+## Goal: 
+
+Remove every component of the attacker's foothold and prove the environment is clean.
+
+## Context: 
+
+A Cobalt Strike beacon with persistence, credential exposure across four hosts, staged ransomware scripts in four system directories, and a 72-hour dwell window. This is not a simple cleanup.
+
+## Instructions: 
+
+Produce two artifacts.
+
+eradication_checklist.yaml: a YAML checklist with one item per eradication action. Each item: id, category, target_host, description, command_or_action, verification_command, expected_verification_result, status, executed_at, executed_by.
+
+Categories must cover: beacon_process, persistence (service, registry run key, scheduled task), staged_payload (ransomware staging scripts), credential (all dwell-period accounts), kerberos (ticket invalidation), network (C2 domain egress block, squatted domain DNS sinkhole), machine_account (rotation for compromised hosts).
+
+The checklist must cover all five hosts. Every item has a verification step. No item is marked complete without verification output.
+
+recovery_validation.sh: a bash script that checks: no beacon process tree in the last 24 hours, no outbound connections to the C2 domain, no ransomware staging scripts in system directories across affected hosts, all clinical service endpoints responsive, all affected EDR agents reporting, the new Sigma rule (from Task 8) active in the SIEM. Exits 0 only if every check passes.
+
+Expected output
+
+$ ./recovery_validation.sh
+[PASS] beacon: no svchost32.exe or related process tree in last 24h across all affected hosts
+[PASS] c2: no outbound connections to staging.office365-cdn[.]net or 45.152.66.114
+[PASS] ransomware staging: no .bat or .ps1 staging scripts found in Windows\System32 or ProgramData
+[PASS] services: epic-api 200, lis-api 200, scheduling-api 200
+[PASS] edr: all 5 hosts reporting to EDR console in last 5 minutes
+[PASS] detection: sigma_cobalt_strike_beacon.yml active; synthetic test event returned expected hit
+[PASS] evidence hashes: 11/11 artifacts match original SHA-256 baseline
+ALL CHECKS PASSED
+
 
 ---
 

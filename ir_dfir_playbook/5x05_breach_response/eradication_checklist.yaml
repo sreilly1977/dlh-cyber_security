@@ -1,0 +1,421 @@
+---
+# Name: eradication_checklist.yaml
+# Purpose: One item per eradication action for IR-2026-0420-01, covering
+#          beacon processes, persistence, staged payloads, credentials,
+#          Kerberos ticket invalidation, network controls, and machine
+#          account rotation across all in-scope hosts. No item is marked
+#          complete without recorded verification output.
+# Author: Steve - Cybersecurity Engineer
+# Date: 26 October 2026
+meta:
+  incident_id: IR-2026-0420-01
+  prepared_by: Steve - on-call IR
+  strategy: >
+    Workstations CS-WS-101/104/107/112 and SCHED-SVR-01 are rebuilt
+    from the gold image after evidence verification. FILE-SVR-01
+    receives targeted removal plus full-volume scan because no
+    ransomware staging script was placed on it (SYS-003 covers only
+    the four workstations). Domain-level actions (credential,
+    kerberos, network, machine_account) run on the DC or firewalls
+    independently of host rebuild order.
+  register_note: >
+    Evidence register is ART-001..ART-011: memory+disk pairs for
+    CS-WS-101, CS-WS-104, CS-WS-107, CS-WS-112, FILE-SVR-01
+    (ART-001..ART-010) plus fileserver_access.evtx (ART-011).
+  defanging_note: >
+    Prose in this file defangs the C2 domain. Command values use
+    the literal string where the tool requires it; no analyst
+    should browse the domain.
+items:
+  - id: ERT-001
+    category: beacon_process
+    target_host: CS-WS-101
+    description: >
+      Remove Cobalt Strike beacon svchost32.exe (PID 7318 lineage,
+      ART-001/ART-002 preserved) and keylogger temp file by gold
+      image rebuild of the workstation.
+    command_or_action: >
+      Wipe and redeploy gold image via deployment server; rejoin
+      domain only AFTER ERT-019 completes.
+    verification_command: >
+      Get-Process | Where-Object Name -eq 'svchost32';
+      Test-Path 'C:\ProgramData\Microsoft\svchost32.exe',
+      'C:\Windows\Temp\klog.tmp'
+    expected_verification_result: >
+      Empty process list; both Test-Path calls return False; EDR
+      full-volume scan reports zero detections.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-002
+    category: beacon_process
+    target_host: CS-WS-104
+    description: Gold image rebuild removing svchost32.exe beacon.
+    command_or_action: >
+      Wipe and redeploy gold image; rejoin domain after ERT-020.
+    verification_command: >
+      Get-Process | Where-Object Name -eq 'svchost32';
+      Test-Path 'C:\ProgramData\Microsoft\svchost32.exe'
+    expected_verification_result: >
+      Empty process list; Test-Path False; EDR scan clean.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-003
+    category: beacon_process
+    target_host: CS-WS-107
+    description: Gold image rebuild removing svchost32.exe beacon.
+    command_or_action: >
+      Wipe and redeploy gold image; rejoin domain after ERT-021.
+    verification_command: >
+      Get-Process | Where-Object Name -eq 'svchost32';
+      Test-Path 'C:\ProgramData\Microsoft\svchost32.exe'
+    expected_verification_result: >
+      Empty process list; Test-Path False; EDR scan clean.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-004
+    category: beacon_process
+    target_host: CS-WS-112
+    description: Gold image rebuild removing svchost32.exe beacon.
+    command_or_action: >
+      Wipe and redeploy gold image; rejoin domain after ERT-022.
+    verification_command: >
+      Get-Process | Where-Object Name -eq 'svchost32';
+      Test-Path 'C:\ProgramData\Microsoft\svchost32.exe'
+    expected_verification_result: >
+      Empty process list; Test-Path False; EDR scan clean.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-005
+    category: beacon_process
+    target_host: FILE-SVR-01
+    description: >
+      Targeted removal of beacon binary spawned by services.exe at
+      2026-04-19T02:14:01Z (Sysmon EID 1) on the quarantined server.
+    command_or_action: >
+      Stop-Service WinHealthSvc -Force; Remove-Item
+      'C:\ProgramData\Microsoft\svchost32.exe' -Force; full-volume
+      AV/EDR scan; volume-level hunt for the binary path.
+    verification_command: >
+      Get-Process | Where-Object Name -eq 'svchost32';
+      Test-Path 'C:\ProgramData\Microsoft\svchost32.exe'
+    expected_verification_result: >
+      Empty process list; Test-Path False; full-volume scan clean.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-006
+    category: persistence
+    target_host: CS-WS-101
+    description: >
+      Remove service persistence WinHealthSvc (registry-set at
+      2026-04-17T14:23:28Z, Sysmon EID 13). Eliminated by rebuild;
+      verified post-rebuild. Run-key and scheduled-task sweep is
+      mandatory although neither was observed in evidence.
+    command_or_action: >
+      Covered by rebuild (ERT-001); post-rebuild sweep of
+      HKLM\...\Run, RunOnce, user Run keys, and schtasks for
+      non-Microsoft authored tasks.
+    verification_command: >
+      Get-Service WinHealthSvc (expect does-not-exist error);
+      reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run;
+      schtasks /query /fo csv | findstr /v /i "Microsoft"
+    expected_verification_result: >
+      Service not found; Run keys contain only documented
+      baseline entries; no unexpected scheduled tasks.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-007
+    category: persistence
+    target_host: CS-WS-104
+    description: >
+      Remove WinHealthSvc service (created via cmd.exe /c sc create
+      at 2026-04-19T00:03:44Z) plus run-key and scheduled-task
+      sweep; run key and scheduled tasks not observed in evidence.
+    command_or_action: Covered by rebuild (ERT-002) plus sweep.
+    verification_command: >
+      Get-Service WinHealthSvc; reg query
+      HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    expected_verification_result: Service not found; baseline only.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-008
+    category: persistence
+    target_host: CS-WS-107
+    description: >
+      Remove WinHealthSvc service plus run-key and scheduled-task
+      sweep; not observed in evidence, swept as mandatory.
+    command_or_action: Covered by rebuild (ERT-003) plus sweep.
+    verification_command: >
+      Get-Service WinHealthSvc; reg query
+      HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    expected_verification_result: Service not found; baseline only.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-009
+    category: persistence
+    target_host: CS-WS-112
+    description: >
+      Remove WinHealthSvc service plus run-key and scheduled-task
+      sweep; not observed in evidence, swept as mandatory.
+    command_or_action: Covered by rebuild (ERT-004) plus sweep.
+    verification_command: >
+      Get-Service WinHealthSvc; reg query
+      HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    expected_verification_result: Service not found; baseline only.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-010
+    category: persistence
+    target_host: FILE-SVR-01
+    description: >
+      Delete WinHealthSvc service registration on the file server
+      (image path pointed at the removed beacon binary).
+    command_or_action: >
+      sc.exe delete WinHealthSvc; run-key and scheduled-task sweep
+      (not observed in evidence, swept as mandatory).
+    verification_command: >
+      Get-Service WinHealthSvc; reg query
+      HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    expected_verification_result: Service not found; baseline only.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-011
+    category: staged_payload
+    target_host: CS-WS-101
+    description: >
+      Remove encryption_staging.ps1 (dropped 2026-04-20T14:23:18Z,
+      Sysmon EID 11; never executed per SYS-003).
+    command_or_action: Covered by rebuild (ERT-001).
+    verification_command: >
+      Test-Path 'C:\Windows\System32\encryption_staging.ps1'
+    expected_verification_result: False.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-012
+    category: staged_payload
+    target_host: CS-WS-104
+    description: >
+      Remove encryption_staging.ps1 (dropped 14:25:02Z; never
+      executed).
+    command_or_action: Covered by rebuild (ERT-002).
+    verification_command: >
+      Test-Path 'C:\Windows\System32\encryption_staging.ps1'
+    expected_verification_result: False.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-013
+    category: staged_payload
+    target_host: CS-WS-107
+    description: >
+      Remove encryption_staging.ps1 (dropped 14:25:42Z; never
+      executed).
+    command_or_action: Covered by rebuild (ERT-003).
+    verification_command: >
+      Test-Path 'C:\Windows\System32\encryption_staging.ps1'
+    expected_verification_result: False.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-014
+    category: staged_payload
+    target_host: CS-WS-112
+    description: >
+      Remove encryption_staging.ps1 (dropped 14:26:14Z; never
+      executed).
+    command_or_action: Covered by rebuild (ERT-004).
+    verification_command: >
+      Test-Path 'C:\Windows\System32\encryption_staging.ps1'
+    expected_verification_result: False.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-015
+    category: credential
+    target_host: DOMAIN
+    description: >
+      Reset MEDDEFENSE\jdoe and terminate all sessions, including
+      logon session 0xAF12C4B8 used for the file server access.
+    command_or_action: >
+      Set-ADAccountPassword jdoe -Reset; force logoff of listed
+      logon IDs.
+    verification_command: >
+      No further type-3 logons under jdoe after reset timestamp
+      (DC Security log, EID 4624 filter).
+    expected_verification_result: Zero matching 4624 events.
+    status: completed
+    executed_at: 2026-04-20T22:00Z
+    executed_by: Steve (via IT), verification recorded in
+      containment_execution.md STEP-08
+  - id: ERT-016
+    category: credential
+    target_host: ALL_HOSTS
+    description: >
+      Rotate local administrator credentials on every in-scope host.
+      jdoe was the sole compromised domain principal in the dwell
+      evidence, but local admin reuse cannot be excluded.
+    command_or_action: >
+      Trigger LAPS rotation on each rebuilt host before it returns
+      to the clinical VLAN.
+    verification_command: >
+      Get-LapsADPassword for each host; PasswordLastModified
+      newer than rebuild timestamp.
+    expected_verification_result: >
+      Fresh LAPS password timestamp per host, none predating
+      the rebuild.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-017
+    category: kerberos
+    target_host: DOMAIN
+    description: >
+      Second krbtgt rotation, mandatory because of the LSASS access
+      with mask 0x1010 (MEM-005). First rotation performed
+      2026-04-20T22:10Z; second must follow no sooner than 10
+      hours after the first (maximum ticket lifetime).
+    command_or_action: >
+      Set-ADAccountPassword krbtgt -Reset at T0+10h.
+    verification_command: >
+      DC Security log: zero EID 4768/4769 ticket grants to the
+      retired jdoe principal after the second rotation; test
+      workstation obtains fresh TGT successfully.
+    expected_verification_result: >
+      No stale-ticket authentication succeeds; normal TGT
+      issuance works for valid principals.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-018
+    category: network
+    target_host: PERIMETER
+    description: >
+      C2 egress block for staging[.]office365-cdn[.]net and
+      45.152.66.114 on TCP/443 bidirectional, deny with alert.
+    command_or_action: Firewall deny+alert rule, committed.
+    verification_command: >
+      Firewall counter shows deny hits on attempted beacons;
+      proxy logs show zero status-200 CONNECTs to the C2.
+    expected_verification_result: >
+      Deny counter increments; zero successful C2 sessions.
+    status: completed
+    executed_at: 2026-04-20T21:50Z
+    executed_by: Torres; verification recorded in
+      containment_execution.md STEP-07 and STEP-09
+  - id: ERT-019
+    category: machine_account
+    target_host: CS-WS-101
+    description: >
+      Rotate the host machine account before the rebuilt host
+      rejoins the domain, so any captured machine credential is
+      dead.
+    command_or_action: Set-ADAccountPassword 'CS-WS-101$' -Reset
+    verification_command: >
+      Get-ADComputer CS-WS-101 -Properties PasswordLastSet;
+      nltest /sc_verify:meddefense.local from the host
+    expected_verification_result: >
+      PasswordLastSet is post-rotation; secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-020
+    category: machine_account
+    target_host: CS-WS-104
+    description: Rotate machine account before domain rejoin.
+    command_or_action: Set-ADAccountPassword 'CS-WS-104$' -Reset
+    verification_command: >
+      PasswordLastSet post-rotation; nltest /sc_verify passes.
+    expected_verification_result: Secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-021
+    category: machine_account
+    target_host: CS-WS-107
+    description: Rotate machine account before domain rejoin.
+    command_or_action: Set-ADAccountPassword 'CS-WS-107$' -Reset
+    verification_command: >
+      PasswordLastSet post-rotation; nltest /sc_verify passes.
+    expected_verification_result: Secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-022
+    category: machine_account
+    target_host: CS-WS-112
+    description: Rotate machine account before domain rejoin.
+    command_or_action: Set-ADAccountPassword 'CS-WS-112$' -Reset
+    verification_command: >
+      PasswordLastSet post-rotation; nltest /sc_verify passes.
+    expected_verification_result: Secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-023
+    category: machine_account
+    target_host: FILE-SVR-01
+    description: Rotate file server machine account after removal.
+    command_or_action: Set-ADAccountPassword 'FILE-SVR-01$' -Reset
+    verification_command: >
+      PasswordLastSet post-rotation; nltest /sc_verify passes.
+    expected_verification_result: Secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-024
+    category: network
+    target_host: DNS
+    description: >
+      Sinkhole the squatted domain at internal DNS so any residual
+      beacon attempt on any host lands on monitored infrastructure
+      instead of the internet, complementing the perimeter deny.
+    command_or_action: >
+      Create A record staging.office365-cdn.net pointing at the
+      sinkhole host on all internal resolvers; log queries.
+    verification_command: >
+      Resolve-DnsName staging.office365-cdn.net from Site A
+      resolver.
+    expected_verification_result: >
+      Returns sinkhole address, not 45.152.66.114; sinkhole
+      query log records any attempts.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-025
+    category: beacon_process
+    target_host: SCHED-SVR-01
+    description: >
+      SCOPE ADDENDUM: rebuild scheduling server after removing the
+      svchost32.exe process spawned 2026-04-20T18:02:18Z
+      (Sysmon EID 1) and the associated WinHealthSvc service.
+    command_or_action: >
+      Stop and remove service; rebuild from gold image; rejoin
+      domain after ERT-026.
+    verification_command: >
+      Get-Process svchost32 (empty); Get-Service WinHealthSvc
+      (not found); Test-Path binary (False).
+    expected_verification_result: All three absent.
+    status: pending
+    executed_at: null
+    executed_by: null
+  - id: ERT-026
+    category: machine_account
+    target_host: SCHED-SVR-01
+    description: SCOPE ADDENDUM: rotate machine account.
+    command_or_action: Set-ADAccountPassword 'SCHED-SVR-01$' -Reset
+    verification_command: >
+      PasswordLastSet post-rotation; nltest /sc_verify passes.
+    expected_verification_result: Secure channel verifies.
+    status: pending
+    executed_at: null
+    executed_by: null
