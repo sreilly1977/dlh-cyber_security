@@ -179,7 +179,7 @@ Structured Markdown following the formats established in prior projects. The dec
 
 ---
 
-[4. Investigate the Full 72-Hour Attack Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/forensic_findings.md)
+# [4. Investigate the Full 72-Hour Attack Chain](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/forensic_findings.md)
 
 ## Goal: 
 
@@ -270,6 +270,58 @@ Certainty: confirmed
 ...
 
 ## Attack chain summary
+</pre>
+
+---
+
+# [5. Assess the Breach and Brief the Board](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/hipaa_assessment.md)
+
+## Goal: 
+
+Determine the regulatory obligation from the forensic findings and produce the executive brief that Dr. Morales presents Monday morning.
+
+## Context: 
+
+The file server evidence shows 1,847 patient files accessed. It is now 23:00 on Sunday. The board chair has requested a written brief by 07:00 Monday. Helena Reyes needs a HIPAA determination before she can advise.
+
+## Instructions: 
+
+Produce two artifacts.
+
+[hipaa_assessment.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/): apply the HIPAA four-factor risk assessment to the 1,847 patient files accessed by the attacker. For each factor: state the evidence that supports your assessment, state the conclusion for that factor, and state the confidence level. End with a determination: does the four-factor assessment support a conclusion of low probability of compromise (no notification required), or does it fail to meet that threshold (notification required)? Name who makes the final determination and when.
+
+[executive_brief.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/executive_brief.md): the document Dr. Morales will present to the board. Use the executive update template format. It must: name the incident clearly without jargon, state confirmed facts only (no speculation), describe the scope in patient terms (not technical terms), state the regulatory posture in one sentence, describe what has been done and what remains, and set the next update cadence.
+
+    The same evidence structure is also available in fileserver_access.sample.json. Use findings from your forensic investigation rather than deriving conclusions from the sample file.
+
+Constraints:
+
+    The HIPAA assessment must reference specific forensic findings by evidence ID
+
+    The executive brief is bounded to one page
+
+    The executive brief contains no technical terms that require security knowledge to understand
+
+    Every sentence in the executive brief is supported by something in the forensic findings
+
+**Expected output**
+
+<pre>
+# HIPAA Breach Risk Assessment: IR-<YYYY-MMDD>-01
+
+Assessment date: <YYYY-MM-DD>
+Conducted by: <your_name>
+Reviewed by: Helena Reyes, General Counsel (pending)
+PHI involved: 1,847 patient files - lab results and clinical notes - accessed from FILE-SVR-01
+
+## Factor 1: Nature and extent of PHI involved
+
+Evidence: ...
+Conclusion: ...
+Confidence: ...
+
+## Factor 2: ...
+...
 </pre>
 
 ---
