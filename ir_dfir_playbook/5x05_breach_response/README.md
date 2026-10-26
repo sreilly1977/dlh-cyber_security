@@ -325,3 +325,39 @@ Confidence: ...
 </pre>
 
 ---
+
+# 6. Quiz
+
+---
+
+
+---
+
+# [8. Improve the Defenses](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/sigma_cobalt_strike_beacon.yml)
+### advanced
+
+## Goal: 
+
+Encode what this incident revealed into permanent changes to detection, hardening, and procedure.
+
+## Context: 
+
+The Cobalt Strike beacon ran for 72 hours. The macro executed without an alert. The NTLM lateral movement produced no detection. Three things must change before Monday.
+
+## Instructions: 
+
+Produce three artifacts.
+
+[sigma_cobalt_strike_beacon.yml](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/sigma_cobalt_strike_beacon.yml): a Sigma rule targeting the Cobalt Strike process masquerading pattern observed in this incident: a process with a name mimicking a legitimate Windows service (e.g., svchost32.exe, lsass32.exe) running from a non-standard path, spawned by powershell.exe or wscript.exe. Include: full Sigma metadata (title, id, status, description, references, tags, author, date), correct logsource (process_creation, Windows), detection logic, at least two realistic false positives, and level high. Validate with yamllint.
+
+[hardening_updates.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/hardening_updates.md): three specific, deployable hardening changes driven by the incident findings. Each change: the control, the exact configuration or GPO path, the gap it closes by Gap ID (write the gap IDs yourself based on the incident), and the validation test. Controls must include: macro execution restriction for non-developer workstations (ASR rule or Group Policy), NTLM relay mitigation (SMB signing enforcement), and one additional control of your choice that addresses a gap the investigation surfaced.
+
+[playbook_delta.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response/playbook_delta.md): two specific updates to the credential exposure playbook. For each update: the section changed, the before text (abbreviated), the after text, and the incident finding that justifies the change. Changes must be specific, not "improve detection" but the exact trigger condition, step, or decision node that is different.
+
+    Use process and network patterns observed in sysmon_multihost.sample.jsonl as guidance when designing new detections. Improvements should target behaviors observed during the incident.
+
+**Expected output**
+
+A technically valid Sigma YAML, a hardening specification following the format established in prior projects, and a playbook delta document with before/after entries. All three artifacts are deployable without additional context.
+
+---

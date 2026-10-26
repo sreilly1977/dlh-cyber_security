@@ -1,0 +1,77 @@
+---
+title: Masqueraded Service Binary Spawned by Script Interpreter
+id: b7c4e1a9-3f82-4d61-9e05-2a7c8b1f4d33
+status: experimental
+description: >
+    Detects a process whose filename mimics a core Windows service or
+    system binary via a bogus 32 suffix (for example svchost32.exe or
+    lsass32.exe) or a close typo variant, when it is spawned by a script
+    interpreter or launched from a user-writable directory. Observed in
+    IR-2026-0420-01, where powershell.exe wrote and started
+    C:\ProgramData\Microsoft\svchost32.exe as a Cobalt Strike beacon and
+    the binary was subsequently registered as the WinHealthSvc service.
+references:
+    - https://attack.mitre.org/techniques/T1036/005/
+    - https://attack.mitre.org/techniques/T1059/001/
+    - https://attack.mitre.org/techniques/T1543/003/
+author: Steve - Cybersecurity Engineer
+date: 2026/10/26
+tags:
+    - attack.execution
+    - attack.defense-evasion
+    - attack.persistence
+    - attack.t1036.005
+    - attack.t1059.001
+    - attack.t1543.003
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    sel_masquerade:
+        Image|endswith:
+            - '\svchost32.exe'
+            - '\lsass32.exe'
+            - '\csrss32.exe'
+            - '\winlogon32.exe'
+            - '\services32.exe'
+            - '\spoolsv32.exe'
+            - '\explorer32.exe'
+            - '\wininit32.exe'
+            - '\smss32.exe'
+            - '\dllhost32.exe'
+            - '\taskhost32.exe'
+            - '\scvhost.exe'
+            - '\svchosts.exe'
+            - '\lssas.exe'
+            - '\csrsss.exe'
+    sel_parent:
+        ParentImage|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\mshta.exe'
+    sel_writable:
+        Image|startswith:
+            - 'C:\ProgramData\'
+            - 'C:\Users\Public\'
+            - 'C:\Windows\Temp\'
+            - 'C:\Temp\'
+            - 'C:\Users\*\AppData\Local\Temp\'
+    condition: sel_masquerade and 1 of (sel_parent, sel_writable)
+fields:
+    - Image
+    - ParentImage
+    - CommandLine
+    - User
+    - Computer
+falsepositives:
+    - Authorised red team or penetration testing activity using Cobalt
+      Strike or a comparable framework from an approved jump host.
+    - Legacy vendor installers or updaters that launch a helper binary
+      carrying a service-like name from a vendor directory through a WSH
+      or PowerShell wrapper.
+    - Software deployment or packaging agents such as SCCM, Intune, or
+      PDQ Deploy that stage and execute helper executables from
+      ProgramData.
+level: high
