@@ -32,7 +32,7 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 
 ## Working Through the Modules
 
-Each module directory contains its own `README.md` with detailed exercise instructions. Work through modules sequentially: the containment, eradication, and handoff exercises in module 2 consume the severity model, escalation paths, and playbooks built in module 1.
+Each module directory contains its own `README.md` with detailed exercise instructions. Work through modules sequentially: the containment, eradication, and handoff exercises in module 2 consume the severity model, escalation paths, and playbooks built in module 1. Later modules keep building on the same chain: [5x04_tabletop](./5x04_tabletop) tests the organization rather than the technical response, and [5x05_breach_response](./5x05_breach_response) is the capstone, an unscaffolded live incident that draws on everything built beforehand, including the tabletop methodology, without naming or guiding any of it.
 
 Key focus areas include:
 
@@ -41,6 +41,8 @@ Key focus areas include:
 - **Containment Trade-offs:** Weighing isolation, power-off, and selective process termination against business impact and evidentiary loss.
 - **Evidence Preservation:** Capturing volatile memory, process trees, and network state before any containment action destroys them.
 - **Regulatory Response:** HIPAA breach notification drafts aligned with 45 CFR 164.404 and the 60-day OCR reporting clock.
+- **Organizational Readiness:** Designing and running a tabletop exercise, from capability mapping and inject scheduling to evaluation criteria and an after-action report with assignable findings.
+- **Capstone Execution:** Running a full live incident end to end, from first alert through board brief, with no scaffolding and no step-by-step guidance.
 
 Operational rules throughout:
 
