@@ -65,6 +65,30 @@ The curriculum follows a progressive learning path through twelve modules across
 |-----------|-------------|
 | [`learning_objectives`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team/learning_objectives) | Module-specific learning objectives and competency mapping |
 
+## Working Through the Modules
+
+Each module directory contains its own `README.md` with detailed exercise instructions. Work through modules sequentially: later modules consume the artifacts, findings, and decisions produced in earlier ones. The hardening work in Part 2 assumes the risk register, kill chains, and remediation priorities built in Part 1; the detection and response work in Part 3 runs against the hardened environments and telemetry exported at the end of Part 2.
+
+The storyline is continuous. Module 1 establishes the security baseline: incident classification and asset criticality (`1x00`), threat intelligence and ATT&CK kill chains (`1x01`), vulnerability analysis and remediation prioritization (`1x02`), risk quantification and architecture design (`1x03`), applied cryptography (`1x04`), and executive reporting (`1x05`). Module 2 implements defense: Linux and Windows hardening (`2x00`, `2x01`), endpoint telemetry and detection proof (`2x02`), patch lifecycle automation (`2x03`), and perimeter defense (`2x04`), culminating in the `2x05` capstone that exports a structured handoff and telemetry package. Module 3 operates on what you built: evidence pipeline and schema design (`3x00`), behavioral baselining (`3x01`), Sigma detection engineering (`3x02`), alert triage and false-positive tuning (`3x03`), cross-platform SIEM querying (`3x04`), and the 24-hour watch capstone (`3x05`).
+
+Key cross-module dependencies to be aware of:
+
+| From | Consumed by | What carries forward |
+| --- | --- | --- |
+| `1x00` | `1x01`, `1x02` | Incident log, asset registry, criticality ratings, control gaps |
+| `1x01` | `1x02`, `1x03`, `1x05` | Kill chains, MITRE ATT&CK mapping, threat actor profiles |
+| `1x02` | `1x03` | Scan findings, CVE/CVSS analysis, remediation priorities |
+| `1x03` | `1x05`, `2x04` | ALE calculations, security strategy, network segmentation design |
+| `1x04` | `1x05` | Crypto priority list, encryption decisions |
+| `2x00`–`2x04` | `2x05` | Hardened hosts, validation scripts, zone model, telemetry |
+| `2x02`, `2x05` | `3x00` | Sysmon, auditd, and PowerShell telemetry exports |
+| `3x00` | `3x01`–`3x05` | Enriched events, unified schema, asset inventory |
+| `3x01` | `3x02`, `3x03` | Behavioral baselines, event taxonomy, anomaly markers |
+
+Recurring characters (James Chen, SOC Lead; Sarah Park, IT Director; Robert Kim, CFO; Dr. Patricia Morales) and realistic artifacts (incident logs, scan reports, threat dossiers, Sigma rules, structured JSON evidence packages) create an immersive, hands-on learning environment where every exercise is a task assigned on the job.
+
+Artifact files (`.txt`, `.pdf`) shipped with each module should be reviewed alongside their corresponding exercises, as several exercises require extracting evidence directly from them.
+
 ---
 
 ## Usage
