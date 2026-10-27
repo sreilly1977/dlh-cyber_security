@@ -10,7 +10,7 @@ Parent repository: [`dlh-cyber_security`](https://github.com/sreilly1977/dlh-cyb
 
 The scenario modules are built around MedDefense, a healthcare organization facing realistic security challenges. Learners take on the role of a security analyst working through incremental security incidents and defense implementations.
 
-Supporting characters (e.g., James Chen, Marcus) and realistic artifacts (network scans, diagnostic outputs, breach summaries, CFO pushback documents) create an immersive, hands-on learning environment.
+Supporting characters (James Chen, SOC Lead; Sarah Park, IT Director; Robert Kim, CFO; Dr. Patricia Morales, CISO) and realistic artifacts (scan reports, threat dossiers, GPO specifications, Sigma rules, structured JSON evidence packages) create an immersive, hands-on learning environment where every exercise is a task assigned on the job.
 
 ## Total Exercise Count
 
@@ -85,7 +85,30 @@ Key cross-module dependencies to be aware of:
 | `3x00` | `3x01`–`3x05` | Enriched events, unified schema, asset inventory |
 | `3x01` | `3x02`, `3x03` | Behavioral baselines, event taxonomy, anomaly markers |
 
-Recurring characters (James Chen, SOC Lead; Sarah Park, IT Director; Robert Kim, CFO; Dr. Patricia Morales) and realistic artifacts (incident logs, scan reports, threat dossiers, Sigma rules, structured JSON evidence packages) create an immersive, hands-on learning environment where every exercise is a task assigned on the job.
+Key focus areas include:
+
+- **Assessment before action**: CIA Triad incident classification, asset discovery, criticality assessment, and control gap analysis (`1x00`)
+- **Threat modeling**: ransomware (RaaS) kill chains, insider threats, social engineering, and supply chain risk mapped to MITRE ATT&CK (`1x01`)
+- **Vulnerability management**: CVE/CVSS/CWE analysis, false positive hunting, misconfiguration discovery, OSINT reconnaissance, and remediation prioritization (`1x02`)
+- **Risk-driven architecture**: ALE quantification, control evaluation, budget allocation, network segmentation design, and adversarial red-team validation of your own blueprint (`1x03`)
+- **Applied cryptography**: TLS auditing, certificate chains, Diffie-Hellman, LUKS disk encryption, and key management strategy (`1x04`)
+- **Executive communication**: translating technical risk into board-level decisions and demonstrating hands-on proficiency (`1x05`)
+- **Infrastructure hardening**: CIS control profiling, SSH/PAM hardening, auditd, GPO deployment, Sysmon, AppLocker, and Windows Firewall lockdown (`2x00`, `2x01`)
+- **Telemetry and proof**: instrumenting endpoints, running controlled attacker simulations, and building detection matrices that prove coverage (`2x02`)
+- **Lifecycle automation**: dependency-aware patching, maintenance window enforcement, rollback capability, and configuration drift detection (`2x03`)
+- **Perimeter defense**: zone design, nftables and Windows Firewall alignment, Suricata rules, and full perimeter validation (`2x04`)
+- **Capstone integration**: a hardened, validated, fully documented endpoint environment packaged for handoff (`2x05`)
+- **Detection engineering**: evidence pipelines and unified schema design, behavioral baselining, Sigma rule authoring, alert triage, false-positive tuning, and cross-platform SIEM querying (`3x00`–`3x04`), closing with a 24-hour SOC watch capstone (`3x05`)
+
+Operational rules throughout:
+
+- **Lab environment**: perform all exercises in your own isolated local lab environment. No centralized SIEM, Wazuh instance, or preconfigured infrastructure is required.
+- **Document everything**: every conclusion must be supported by specific evidence from logs, query results, or validation output. Detection matrices, compliance dashboards, and shift reports exist to prove claims, not assert them.
+- **Validation is the deliverable**: hardening that is not verified is not done. Scripts must check their own work, report PASS/WARN/FAIL per control, and exit with meaningful codes (0 only when every check passes).
+- **Read-only on production**: recurring validation scripts (such as weekly compliance checks) must make no changes to the system and read only deployed settings.
+- **Controlled simulation only**: attacker simulations run exclusively against your own hardened lab endpoints, include cleanup logic, and must not leave test accounts, files, or cron jobs behind.
+- **Scripts are safe by default**: idempotent where they modify state, destructive only with explicit intent, and reusable by the next engineer without a rewrite.
+- **Never investigate hostile artifacts directly**: do not navigate to suspicious URLs; use defanging, sandbox services, and command-line tools instead. Do not open attachments on your workstation; use metadata extraction tools and online sandboxes only.
 
 Artifact files (`.txt`, `.pdf`) shipped with each module should be reviewed alongside their corresponding exercises, as several exercises require extracting evidence directly from them.
 
