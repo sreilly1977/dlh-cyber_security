@@ -10,7 +10,7 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 
 ## Total Exercise Count
 
-34 exercises across 4 modules
+51 exercises across 6 modules
 
 ## Module Overview
 
@@ -20,6 +20,8 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 | 2 | [`5x01_Contain_Control/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x01_Contain_Control) | Live incident execution: authoritative incident timeline, order-of-volatility evidence preservation, containment trade-off analysis and execution, eradication checklist with verification, proof-based recovery validation, and a stand-alone incident handoff package | 7 |
 | 3 | [`5x02_evidence_trail/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x02_evidence_trail) | Forensic investigation of the contained WST-WS-031 incident: chain-of-custody records, memory and filesystem analysis, persistence mechanism analysis, artifact hash verification, a correlated multi-source timeline built from proxy, AD authentication, and SIEM logs, and a forensic report that withstands external scrutiny | 7 |
 | 4 | [`5x03_post_incident_review/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x03_post_incident_review) | Closing the loop after the incident: control effectiveness assessment, gap analysis, Sigma detection rules written and validated against incident versus clean Sysmon telemetry, threat intel brief and IOC enrichment snapshot, playbook, risk register, and hardening updates, and an implementation package with owners and deadlines | 10 |
+| 5 | [5x04_tabletop](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x04_tabletop) | Tabletop exercise (TTX) stress-testing the organization, not just the technical response: board readiness, legal and regulatory assessment under pressure, vendor communication, and business continuity decisions | 8 |
+| 6 | [5x05_breach_response](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/5x05_breach_response) | Capstone live incident: an unscaffolded end-to-end response from first alert to board brief, applying the IR program, containment discipline, forensic rigor, and HIPAA breach assessment built across all prior modules | 13 |
 
 ### Additional Resources
 
