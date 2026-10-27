@@ -34,13 +34,7 @@ Supporting characters (Dr. Patricia Morales, CISO; James Chen, SOC Lead; Sarah P
 
 Each module directory contains its own `README.md` with detailed exercise instructions. Work through modules sequentially: the containment, eradication, and handoff exercises in module 2 consume the severity model, escalation paths, and playbooks built in module 1. Later modules keep building on the same chain: [5x04_tabletop](./5x04_tabletop) tests the organization rather than the technical response, and [5x05_breach_response](./5x05_breach_response) is the capstone, an unscaffolded live incident that draws on everything built beforehand, including the tabletop methodology, without naming or guiding any of it.
 
-Key cross-module dependencies to be aware of:
-
-| From | Consumed by | What carries forward |
-| --- | --- | --- |
-| Module 4 (threat detection) | Both modules | No direct artifact dependency, but the content assumes familiarity with detection concepts from Module 4 |
-| `5x00_shared` | Both modules | Shared MedDefense organization profile: sites, technology footprint, regulatory posture, security organization, and canonical context facts |
-| `5x00_incident_response` | `5x01_Contain_Control` | Severity model with escalation rules, IR team structure with decision authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and communication templates aligned to 45 CFR 164.404 |
+No cross-module dependencies to be aware of.
 
 Within `5x01_Contain_Control`, the exercises also chain internally: the handoff package in task 8 consumes all generated artifacts, including the SHA-256 evidence hashes from task 2, the containment decision record, the eradication checklist, and the recovery validation output. The severity declared at incident intake determines who holds decision authority for every containment call that follows, which is why the matrix built in module 1 cannot be skipped.
 
