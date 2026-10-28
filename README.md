@@ -86,7 +86,7 @@ See the [`blue_team/README.md`](https://github.com/sreilly1977/dlh-cyber_securit
 
 Applied threat detection operations through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
 
-### Part 4 — Cybersecurity threat detection and analysis (Modules 19-25)
+### Part 4 — Cybersecurity threat detection and analysis (Modules 19-24)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`4x00_phishing_dissection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/4x00_phishing_dissection) | Phishing email forensics: header authentication (SPF/DKIM/DMARC), attachment metadata extraction, URL defanging, sandbox analysis, and IOC mapping to MITRE ATT&CK TTPs | 15 |
@@ -104,7 +104,7 @@ See the [`threat_detection/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 Applied incident response and digital forensics through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
 
-### Part 5 - Cybersecurity incident response and digital forensics (modules 26-31)
+### Part 5 - Cybersecurity incident response and digital forensics (modules 25-30)
 | Directory | Focus | Exercises |
 |-----------|-------|-----------|
 | [`5x00_incident_response/`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/ir_dfir_playbook/5x00_incident_response) | IR capability build: severity matrix with escalation rules, IR team structure and authority ceilings, reusable playbook template, populated playbooks (credential exposure, clinical degradation, insider access), and executive, legal, regulator, and patient communication templates aligned to 45 CFR 164.404 | 10 |
