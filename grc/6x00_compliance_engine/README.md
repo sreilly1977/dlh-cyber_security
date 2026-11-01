@@ -146,3 +146,68 @@ The Critical and High gaps above are not incidental. They represent the exact co
 </pre>
 
 ---
+
+# [2. Write the Acceptable Use Policy](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/acceptable_use_policy.md)
+
+## Goal: 
+
+Produce a policy document that MedDefense employees can actually be held accountable to.
+
+## Context: 
+
+GV.PO-01 is Critical and the AUP is the first document OCR auditors request. Every day it does not exist in writing is a day the organization is exposed.
+
+## Instructions: 
+
+Create acceptable_use_policy.md. Write it as a real policy, one a department head hands to a new employee on day one and enforces on day two. Not a summary of what an AUP should contain. Not a list of best practices. A document with teeth.
+
+Use These Materials
+
+compliance/prior_policy_inventory.md
+templates/policy_header_template.md
+compliance/hipaa_security_rule_crosswalk.md
+prior_controls/security_awareness_training_status.md
+
+The policy must close the documented written-policy gap in prior_policy_inventory.md. Use the template only for structure; write a complete MedDefense policy.
+
+Required structure:
+
+    Policy header: policy number, effective date, review date (annual), owner (IT Security), approved by (CISO).
+
+    Purpose: two sentences. What this policy protects and why it exists.
+
+    Scope: every person with access to a MedDefense system: employees, contractors, vendors with remote access, and temporary clinical staff. Named specifically, not generically.
+
+    Acceptable use: MedDefense systems and accounts exist for MedDefense business purposes and authorized clinical care delivery. Not "reasonable personal use." That phrase is unenforceable.
+
+    Prohibited activities: specific and non-negotiable. Must include:
+
+    Accessing patient records outside the active care relationship for that patient
+
+    Sharing credentials or permitting another person to use your account
+
+    Installing unauthorized software on any MedDefense endpoint
+
+    Connecting personal devices to the clinical network without IT Security authorization
+
+    Transmitting MedDefense data using personal email, consumer cloud storage, or messaging applications
+
+    Attempting to access systems, data, or network segments beyond your assigned role
+
+    Entering or processing patient data into AI tools, external web services, or third-party platforms without an approved Business Associate Agreement
+
+    PHI handling obligations: two sentences anchoring the policy to HIPAA minimum necessary requirements, without requiring users to understand HIPAA to follow the policy.
+
+    Remote access: conditions for authorized remote access; prohibition on accessing MedDefense systems from public or shared Wi-Fi without an active VPN connection.
+
+    Reporting obligations: what to report (suspicious email, anomalous system behavior, lost or stolen device, accidental PHI disclosure), how to report (IT Security ticket and phone), and when (immediately upon discovery).
+
+    Consequences of violation: reference to the HR disciplinary process up to and including termination; note that violations may constitute HIPAA violations with personal liability.
+
+    Acknowledgment and review: employees sign annually; new employees sign at onboarding before system access is granted.
+
+Constraints:
+
+    Tone: professional plain English. A clinical nurse on their first week must understand it without asking for clarification.
+
+---
