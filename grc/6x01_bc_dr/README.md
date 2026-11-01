@@ -172,3 +172,90 @@ Quality Requirements
     Restoration order must be dependency-based, not alphabetical.
 
 ---
+
+# [3. Write the Recovery Runbooks](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/recovery_runbooks.md)
+
+## Goal: 
+
+Produce command-level recovery runbooks for two Tier 1 systems: the Laboratory Information System and Active Directory single DC loss with secondary DC available.
+
+## Context
+
+A runbook that says "restore the database from backup" is not a runbook. The administrator executing a recovery under incident conditions needs the exact command, expected output, verification step and deviation handling.
+
+This rebuilt lab uses a prepared SQLite-based LIS simulation instead of Docker Compose and MariaDB. The learning objective remains the same: write a recovery runbook that can be executed and tested.
+
+## Instructions
+
+Create recovery_runbooks.md containing two complete runbooks.
+
+Use the provided materials:
+
+    /opt/meddefense/materials/runbooks/old_lis_recovery_runbook.md
+    /opt/meddefense/materials/runbooks/old_ad_recovery_notes.md
+    /opt/meddefense/materials/runbooks/command_output_examples.md
+    /opt/meddefense/materials/recovery_test/lab_config.env
+    /opt/meddefense/materials/recovery_test/app_config.env
+
+Runbook 1: Laboratory Information System Recovery
+
+The rebuilt lab simulates the LIS database as a SQLite database restored from a compressed SQL backup.
+
+Backup location:
+
+/tmp/meddefense-dr-test/backup/lis/2026-04-21/lis_backup.sql.gz
+
+Manifest location:
+
+/tmp/meddefense-dr-test/backup/lis/2026-04-21/backup_manifest.sha256
+
+Recovery target:
+
+/tmp/meddefense-dr-test/recovery/lis_recovered.db
+
+Application config:
+
+/tmp/meddefense-dr-test/config/app_config.env
+
+The old runbook incorrectly refers to /recovery/lis_dump.sql. You must preserve that expected deviation in the runbook as a known failure mode and include the corrected command for the actual lab environment.
+
+Your LIS runbook must cover:
+
+    Identify the latest recovery target.
+    Verify backup integrity with sha256sum -c.
+    Create the recovery workspace.
+    Decompress the backup to the correct staging path.
+    Restore the SQL dump into SQLite.
+    Check the row count in patient_orders.
+    Confirm the critical results for MRN-10043 and MRN-10045.
+    Inspect app_config.env and identify DB_HOST=lis-db-prod.meddefense.internal as a configuration artifact.
+    Apply the local recovery override by using the local SQLite recovery database path in the validation command.
+    Record notification content for the clinical team.
+
+Each step must include:
+
+    Command or action
+    Expected output
+    Verification check
+    Deviation handling
+
+Runbook 2: Active Directory Recovery
+
+MedDefense runs two domain controllers: DC01 and DC02. This runbook covers confirmed unrecoverable loss of DC01 with DC02 healthy.
+
+Write the runbook from the point where the administrator has confirmed DC01 is unrecoverable and DC02 is responding normally.
+
+Include, in this order:
+
+    netdom query fsmo to document current FSMO role holders.
+    Authoritative versus non-authoritative restore decision with criteria.
+    wbadmin start systemstaterecovery command sequence.
+    repadmin /showrepl health check.
+    dcdiag validation sequence.
+    Recovery declaration criteria.
+
+Because the lab container is Linux-based, the AD runbook is documentation-only. Use command output examples from:
+
+/opt/meddefense/materials/runbooks/command_output_examples.md
+
+---
