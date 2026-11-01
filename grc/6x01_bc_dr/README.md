@@ -298,7 +298,7 @@ Each quick reference must:
 
 ---
 
-# []5. Execute the Recovery Test](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/recovery_timer.sh)
+# [5. Execute the Recovery Test](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/recovery_timer.sh)
 
 ## Goal: 
 
@@ -481,3 +481,87 @@ Required structure:
     /tmp/meddefense-dr-test/recovery/lis_recovered.db
 
 ---
+
+# [6. Analyze the Gap](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/gap_analysis.md)
+### advanced
+
+## Goal: 
+
+Produce a formal gap analysis that identifies the root cause of every recovery deviation, quantifies the patient safety consequence of each additional minute of delay and delivers an updated runbook that corrects every deficiency the test revealed.
+
+## Context
+
+The test is done. You have two numbers: what the plan promised and what reality delivered. The gap between them is not a failure of execution. It is a failure of planning, and planning is what you can fix.
+
+## Instructions
+
+Create gap_analysis.md.
+
+Use:
+
+    Your business_impact_analysis.md
+    Your recovery_runbooks.md
+    Your recovery_test_record.md
+    /opt/meddefense/materials/recovery_test/condition_cards.md
+
+Required sections:
+
+# LIS Recovery Gap Analysis
+
+## Test Summary Table
+
+## Condition Analysis
+
+## Runbook Deficiencies
+
+## Revised RTO
+
+## Updated LIS Recovery Runbook
+
+## Remediation Roadmap
+
+Required Content
+
+Test Summary Table
+
+Include:
+
+    Declared RTO
+    Actual recovery time
+    Delta in minutes
+    Overall test result
+
+Condition Analysis
+
+For each condition, document:
+
+    Condition title
+    Category: Runbook Error, Environment Assumption, Configuration Drift, Documentation Gap or Training Gap
+    Root cause
+    Patient safety consequence tied to the LIS downtime thresholds in your BIA
+    Time added in minutes
+
+Runbook Deficiencies
+
+List specific deficiencies. Do not write generic statements.
+
+Example:
+
+Step 4 specifies /recovery/lis_dump.sql, but the lab recovery environment stages the decompressed file at /tmp/meddefense-dr-test/recovery/lis_dump.sql.
+
+Revised RTO
+
+Recommend a revised or corrected RTO based on evidence from the test.
+
+If the corrected recovery process can meet 30 minutes, explain which changes make that possible. If it cannot, state that the BIA must be updated honestly.
+
+Updated Runbook
+
+Provide a complete corrected LIS Recovery Runbook. Mark every changed step with [UPDATED].
+
+Remediation Roadmap
+
+Minimum five actions:
+
+| Priority | Action | Owner Role | Target Completion | Success Criterion |
+| --- | --- | --- | --- | --- |
