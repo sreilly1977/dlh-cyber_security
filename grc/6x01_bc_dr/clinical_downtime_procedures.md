@@ -11,50 +11,42 @@ Post copies of these quick references in each unit's downtime binder. Review at 
 
 # Quick Reference 1: Epic EHR Downtime Procedures
 
-For nursing stations: ICU, Emergency Department, Medical-Surgical Unit, and all clinical units.
+For all nursing units and clinical staff when Epic is unavailable.
 
 ## Who Declares Downtime
 
-The **Administrator on Call (extension 7000) authorizes the hospital-wide downtime declaration.** The IT Incident Commander (extension 7200) confirms the outage. Until declared, assume the outage is temporary and monitor for system return. Once declared, follow these procedures until the Administrator on Call announces restoration.
+The **Administrator on Call (extension 7000) authorizes the hospital-wide downtime declaration.** The Nursing Supervisor (extension 7100) coordinates nursing units, the IT Incident Commander (extension 7200) confirms the outage, and the Clinical Applications Lead (extension 7300) confirms Epic status. Follow these procedures until official restoration is announced.
+
+## Forms and Locations
+
+- **ICU:** Downtime binder (red, labeled "Downtime Forms") at the charge nurse desk. Paper MAR packets in the locked lower drawer under the charge nurse workstation. Allergy verification cards in the wall pocket next to the medication room door. Laminated escalation phone list attached to the binder.
+- **Emergency Department:** Downtime binder at the charge station, cabinet 3, top shelf. Paper triage forms in the triage desk left drawer. Medication paper MAR forms in the Pyxis room wall file.
+- **Medical-Surgical Unit:** Downtime binder (blue) in the rack at the central nursing station. Paper physician order sheets in the unit clerk desk, right cabinet. Paper MAR forms in the medication room, on the shelf above the barcode scanner docking station.
 
 ## Step-by-Step Procedures
 
-1. **Retrieve the downtime binder at your station before performing any clinical task.**
-   - ICU: red binder labeled "Downtime Forms" at the charge nurse desk.
-   - Emergency Department: cabinet 3, top shelf at the charge station.
-   - Medical-Surgical Unit: blue binder rack at the central nursing station.
-
-2. **Switch to paper documentation immediately for all new orders, medications, and assessments.**
-   - Use the Paper MAR from the binder for medication administration.
-   - Use the Physician Order Sheet from the unit clerk desk for new orders.
-   - Use the Clinical Assessment Sheet for vital signs and assessments.
-
-3. **Verify allergies before administering any medication.**
-   - Obtain the Allergy Verification Card from the medication room wall pocket.
-   - **If the patient has no allergy record available on paper, contact the pharmacist on duty at extension 7400 before administering.**
-
-4. **Document every verbal order using the Verbal Order Read-Back Form.**
-   - Have the physician state the order, read it back, and sign the form.
-
-5. **Record every administered medication on the paper MAR with full date, time, and initials.**
-
-6. **Keep the Downtime Reconciliation Cover Sheet at the unit clerk desk updated** — it tracks every paper form generated during the outage for later entry.
+1. **Retrieve your unit's downtime binder and paper forms before performing any clinical task.**
+2. **Switch to paper documentation immediately for all new orders, medications, and assessments.** Use the Physician Order Sheet and Paper MAR.
+3. **Verify allergies before administering any medication.** Use the allergy verification card. **If no paper record is available, call the pharmacist on duty at extension 7400 before giving the medication.**
+4. **Document every verbal order on the Verbal Order Read-Back Form** — the physician states the order, you read it back, both sign.
+5. Record vital signs and assessments on the Clinical Assessment Sheet.
+6. **Keep the Downtime Reconciliation Cover Sheet updated at the unit clerk desk** — track every paper form generated during the outage on it.
 
 ## Escalation Path
 
-For medication concerns: nurse, charge nurse, pharmacist on duty (extension 7400), attending physician.
+Clinical concern: primary nurse → charge nurse → nursing supervisor → attending physician → Administrator on Call.
 
-For system status: IT Incident Commander (extension 7200) or Clinical Applications Lead (extension 7300).
+Medication concern: nurse → charge nurse → pharmacist on duty (extension 7400) → attending physician.
 
 **Do not delay urgent orders waiting for the system to return. Use paper immediately.**
 
 ## After Restoration — Reconciliation
 
-1. Wait for official restoration announcement from the IT Incident Commander before entering paper records.
-2. Enter each paper form into Epic in date and time order.
+1. Wait for the official restoration announcement before entering anything.
+2. Enter paper forms into Epic in date and time order.
 3. **Have a second nurse verify each medication entry against the paper MAR before submitting.**
-4. Staple each completed paper form to the Downtime Reconciliation Cover Sheet.
-5. Notify the charge nurse when all forms from your unit are entered and verified.
+4. Staple each completed form to the Downtime Reconciliation Cover Sheet.
+5. Tell the charge nurse when all your unit's forms are entered and verified.
 
 ---
 
@@ -108,3 +100,5 @@ STAT order issue: ordering clinician, lab accessioning (extension 7500), chemist
 5. Confirm every critical value has both a system record and a completed call log entry.
 
 ---
+
+*End of Clinical Downtime Procedures*
