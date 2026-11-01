@@ -259,3 +259,41 @@ Because the lab container is Linux-based, the AD runbook is documentation-only. 
 /opt/meddefense/materials/runbooks/command_output_examples.md
 
 ---
+
+# [4. Write the Clinical Downtime Procedures](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/clinical_downtime_procedures.md)
+
+## Goal:
+
+Produce one-page quick-reference documents for clinical staff covering Epic EHR unavailability and LIS unavailability.
+
+## Context
+
+Technical recovery runbooks assume IT staff are solving the outage. Clinical downtime procedures assume nurses, lab technicians and physicians must continue care while IT is unavailable. These documents must be usable by clinical staff without IT knowledge.
+
+## Instructions
+
+Create clinical_downtime_procedures.md.
+
+Use the provided materials:
+
+    /opt/meddefense/materials/downtime/nursing_station_locations.md
+    /opt/meddefense/materials/downtime/paper_forms_inventory.md
+    /opt/meddefense/materials/downtime/clinical_escalation_contacts.md
+
+Create two quick references:
+
+    Epic EHR Downtime Procedures
+    Laboratory Information System Downtime Procedures
+
+Each quick reference must:
+
+    Be 350 to 500 words
+    Use clear numbered steps
+    Avoid IT terminology
+    Identify who declares downtime
+    Identify where paper forms are physically located
+    Include escalation path
+    Include reconciliation steps after restoration
+    Bold the most critical actions
+
+---
