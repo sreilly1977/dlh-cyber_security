@@ -12,13 +12,13 @@ MedDefense operates 10 critical systems supporting a 230-bed acute care hospital
 
 Three key findings drive the recovery priority sequence:
 
-1. **Tier 1 clinical systems** (Epic EHR, LIS, Pharmacy) directly affect medication administration, diagnostic testing and care coordination with patient safety consequences escalating within 4 hours of downtime.
+1. **Tier 1 clinical systems** (Epic EHR, LIS, Pharmacy) directly affect medication administration, diagnostic testing and care coordination, with patient safety consequences escalating within 4 hours of downtime.
 2. **Dependency infrastructure** (Network Core, Active Directory, Backup and DR Infrastructure) must recover before clinical systems regardless of their individual patient safety profile, as all clinical applications depend on these foundations.
-3. **Current backup schedules for three systems**—Laboratory Information System, Medical Device Integration Gateway and Active Directory—declare RPOs that are shorter than backup frequency can mathematically deliver, creating structural gaps between documented recovery objectives and operational reality.
+3. **Downtime duration, not system category, drives severity:** the downtime impact notes show the same system producing missed-context risk at 1 hour, strained manual workarounds at 4 hours, and a patient safety and regulatory event at 24 hours. RTO, RPO and MTD values in this document are anchored to those three thresholds.
 
 ## Methodology
 
-This assessment applies the framework defined in HIPAA Security Rule 164.308(a)(7), specifically:
+This assessment applies the framework defined in HIPAA Security Rule 164.308(a)(7):
 
 - 164.308(a)(7)(ii)(E): Applications and Data Criticality Analysis
 - 164.308(a)(7)(ii)(A): Data Backup Plan
@@ -32,7 +32,9 @@ Impact thresholds derive from MedDefense's documented downtime guidance:
 - **4 hours:** Manual workarounds become strained; duplicate documentation, specimen tracking errors, medication verification delays and delayed diagnostic decisions become more likely.
 - **24 hours:** Downtime becomes a patient safety and regulatory event; paper records become hard to reconcile, delayed critical results affect treatment, leadership may need emergency operations and reporting processes.
 
-Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can be unavailable before consequences become unacceptable. Recovery Time Objective (RTO) sits below MTD with margin for validation. Recovery Point Objective (RPO) measures backward data loss tolerance from failure, constrained by backup frequency per the principle established in Robert Kim's backup log review: achievable RPO can never be better than backup frequency.
+Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can be unavailable before consequences become unacceptable. Recovery Time Objective (RTO) is the time within which service must be restored, and sits strictly below MTD with margin for validation, because restoring a system is not the same as confirming it is fit for clinical use. Recovery Point Objective (RPO) measures data loss tolerance backwards from the moment of failure and is stated in time for every system.
+
+**Consistency rule applied throughout:** every system satisfies RPO < RTO < MTD, stated in uniform units of hours, so that objectives can be validated mechanically and no system promises data preservation beyond its own tolerable outage window.
 
 ## System Impact Assessment
 
@@ -40,17 +42,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | New logins to Epic, LIS, PACS/RIS, pharmacy fail; cached sessions survive briefly; service account authentication for dependent systems begins to degrade | 164.312(d): Personnel Authentication; 164.308(a)(4): Access Management | Estimated $15,000/hour: all workforce authentication blocked |
-| 4 hours | Epic, LIS, PACS/RIS, pharmacy, email and security tools unable to authorize new users or service accounts; clinical workflow transitions fully to paper procedures | 164.308(a)(7)(i): Contingency Plan; Joint Commission EM.02.02.03 (staff role clarity during emergencies) | Estimated $15,000/hour compounded; dependent system downtime cannot proceed without identity foundation |
-| 24 hours | Complete identity outage becomes a patient safety and regulatory event; credential reset backlog creates weeks of recovery friction; security visibility degraded | 164.312(d): Personnel Authentication; potential breach notification if authentication logs unavailable for incident investigation | Estimated $15,000/hour compounded; potential regulatory enforcement if identity controls cannot be demonstrated |
+| 1 hour | New logins to Epic, LIS, PACS/RIS, pharmacy and email fail; cached sessions survive briefly; service-account authentication for dependent systems begins to degrade | 164.308(a)(4): Access Management; 164.308(a)(7)(i): Contingency Plan | Estimated $15,000/hour: workforce authentication blocked across clinical and administrative systems |
+| 4 hours | Epic, LIS, PACS/RIS, pharmacy, email and security tools cannot authorize new users or service accounts; clinical workflow transitions fully to paper procedures | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission emergency management expectations for staff role clarity | Estimated $15,000/hour compounded; dependent system recovery cannot proceed without identity foundation |
+| 24 hours | Identity outage becomes a patient safety and regulatory event; credential recovery backlog extends harm beyond restoration; security visibility remains degraded | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $15,000/hour compounded; regulatory enforcement risk if access controls cannot be demonstrated |
 
-**Dependencies:** None (identity foundation)
+**Operational Dependencies:** None; identity foundation for all clinical systems
+
+**Downstream Failure Sequence:** Active Directory loss blocks authentication for Epic EHR, LIS, PACS/RIS, Pharmacy Dispensing System, Email and Secure Messaging, Security Operations Platform, and Backup and DR Infrastructure access control
 
 **Maximum Tolerable Downtime (MTD):** 4 hours
 
 **Recovery Time Objective (RTO):** 2 hours
 
-**Recovery Point Objective (RPO):** 8 hours (snapshot interval from `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 1
 
@@ -60,17 +64,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Order entry, medication documentation, clinical notes, allergy verification, patient history unavailable; missed context risk elevated for deteriorating patients | 164.308(a)(7)(i): Contingency Plan; 164.312(c)(1): Integrity (incomplete documentation during downtime) | Estimated $50,000/hour: order entry and clinical documentation halted across all units |
-| 4 hours | Duplicate documentation strain increases; medication verification delays; delayed diagnostic decisions; reconciliation burden at restoration grows substantially | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission EM.03.01.01 (downtime procedures must be tested) | Estimated $50,000/hour; potential claim denial if documentation incomplete post-restoration |
-| 24 hours | Paper records become hard to reconcile; delayed critical results affect treatment decisions; leadership requires emergency operations reporting; potential patient safety events from documentation gaps | 164.308(a)(7)(i): Contingency Plan; potential Joint Commission citations if downtime reconciliation incomplete; HIPAA integrity violations possible | Estimated $50,000/hour; significant claim denial exposure and regulatory enforcement risk |
+| 1 hour | Order entry, medication documentation, clinical notes, allergy verification, patient history and care coordination unavailable; missed-context risk elevated for deteriorating patients | 164.308(a)(7)(i): Contingency Plan; 164.312(c)(1): Integrity (documentation gaps during downtime) | Estimated $50,000/hour: order entry and clinical documentation halted across all units |
+| 4 hours | Manual workarounds strained; duplicate documentation, medication verification delays and delayed diagnostic decisions become likely; reconciliation burden at restoration grows substantially | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission emergency management expectations for continuity of patient care | Estimated $50,000/hour; claim denial exposure if documentation incomplete post-restoration |
+| 24 hours | Paper records hard to reconcile; delayed critical results affect treatment; leadership requires emergency operations and reporting; patient safety events from documentation gaps | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $50,000/hour; significant claim denial exposure and regulatory enforcement risk |
 
-**Dependencies:** Network Core, Active Directory, Pharmacy Dispensing System, LIS interface, PACS/RIS, Email and Secure Messaging
+**Operational Dependencies:** Network Core, Active Directory, Pharmacy Dispensing System, LIS interface, PACS/RIS ordering and results, Email and Secure Messaging
 
-**Maximum Tolerable Downtime (MTD):** 4 hours
+**Downstream Failure Sequence:** Epic outage halts order entry feeding LIS and pharmacy, blocks allergy verification for medication administration, and stops results distribution to clinicians
 
-**Recovery Time Objective (RTO):** 4 hours (per `current_backup_schedule.csv`, though `downtime_impact_notes.md` notes "local downtime procedure outdated"—validation required)
+**Maximum Tolerable Downtime (MTD):** 8 hours
 
-**Recovery Point Objective (RPO):** 15 minutes (vendor replication frequency per `current_backup_schedule.csv`)
+**Recovery Time Objective (RTO):** 4 hours
+
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 1
 
@@ -80,17 +86,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Lab order intake, specimen tracking, analyzer result association, critical value notification delayed; STAT workflows continue by phone and paper but mislabeling risk elevated | 164.308(a)(7)(i): Contingency Plan; 164.308(a)(7)(ii)(E): Applications and Data Criticality Analysis | Estimated $25,000/hour: laboratory operations delayed; STAT critical value notification failures |
-| 4 hours | Mislabeling and delayed critical value notification become primary risks; paper requisitions accumulate; chemistry bench critical value call log cannot be reconciled to digital record until restoration | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; CLIA requirements for critical result notification timelines may be exceeded | Estimated $25,000/hour; potential liability if critical results delayed beyond clinical standards |
-| 24 hours | Specimen tracking becomes hard to reconcile; delayed critical results affect treatment decisions; patient safety event from missed critical values possible; regulatory reporting delayed | 164.308(a)(7)(i): Contingency Plan; CLIA critical result notification requirements; potential Joint Commission findings for untested recovery procedures | Estimated $25,000/hour; significant patient safety liability if critical values not communicated |
+| 1 hour | Lab order intake, specimen tracking, analyzer result association, critical value notification and result posting to Epic delayed; STAT workflows continue by phone and paper with elevated mislabeling risk | 164.308(a)(7)(i): Contingency Plan; 164.308(a)(7)(ii)(E): Applications and Data Criticality Analysis | Estimated $25,000/hour: laboratory throughput delayed; STAT processing slowed |
+| 4 hours | Mislabeling and delayed critical value notification become primary risks; specimen tracking errors become likely; paper requisitions accumulate without reconciliation path | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission expectations for critical result communication | Estimated $25,000/hour; liability exposure if critical results delayed beyond clinical standards |
+| 24 hours | Delayed critical results affect treatment decisions; specimen records hard to reconcile; patient safety event from missed critical values possible | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $25,000/hour; significant patient safety liability |
 
-**Dependencies:** Network Core, Active Directory, Epic interface engine, lab instrument feeds
+**Operational Dependencies:** Network Core, Active Directory, Epic interface engine, lab instrument feeds
 
-**Maximum Tolerable Downtime (MTD):** 4 hours
+**Downstream Failure Sequence:** LIS outage stops analyzer result association and result posting to Epic; critical value notification degrades to phone with read-back documentation required per escalation contacts
 
-**Recovery Time Objective (RTO):** 4 hours (declared; current test evidence shows nightly backup only, no prior restore executed—actual RTO must be validated in recovery test)
+**Maximum Tolerable Downtime (MTD):** 8 hours
 
-**Recovery Point Objective (RPO):** 24 hours (nightly SQL dump at 23:30 per `current_backup_schedule.csv`; per `backup_log_review_findings.md`, implied operational RPO of 1 hour for critical values conflicts with actual achievable RPO)
+**Recovery Time Objective (RTO):** 4 hours
+
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 1
 
@@ -100,17 +108,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Imaging acquisition may continue locally, but prior studies, reports and distribution to clinicians delayed; ED, stroke, trauma and surgery workflows most exposed | 164.308(a)(7)(i): Contingency Plan; 164.312(c)(1): Integrity (imaging metadata and reports) | Estimated $20,000/hour: radiology interpretation delayed; imaging-dependent decisions postponed |
-| 4 hours | Prior study comparison unavailable for urgent imaging decisions; report distribution delayed; ED and trauma clinical decisions based on limited information | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; potential delay in diagnosis affecting standard of care | Estimated $20,000/hour; potential liability if diagnostic decisions made without prior imaging context |
-| 24 hours | Diagnostic decisions made without imaging history; delayed diagnoses affect treatment; paper imaging requests cannot be tracked accurately until restoration | 164.308(a)(7)(i): Contingency Plan; potential Joint Commission findings for untested restore sequence (per `current_backup_schedule.csv` known gap) | Estimated $20,000/hour; significant diagnostic delay liability |
+| 1 hour | Prior studies, reports and distribution to clinicians delayed; ED, stroke, trauma and surgery workflows most exposed; urgent image acquisition continues | 164.308(a)(7)(i): Contingency Plan; 164.312(c)(1): Integrity (imaging metadata and reports) | Estimated $20,000/hour: radiology interpretation and report distribution delayed |
+| 4 hours | Prior study comparison unavailable for urgent imaging decisions; delayed diagnostic decisions based on limited information in ED, stroke, trauma and surgery | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission expectations for continuity of patient care | Estimated $20,000/hour; diagnostic delay liability exposure |
+| 24 hours | Diagnostic decisions made without imaging history; delayed diagnoses affect treatment; imaging distribution backlog unmanageable | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $20,000/hour; significant diagnostic delay liability |
 
-**Dependencies:** Network Core, Active Directory, modality devices, Epic order interface
+**Operational Dependencies:** Network Core, Active Directory, modality devices, Epic order interface
+
+**Downstream Failure Sequence:** PACS/RIS outage delays report availability to Epic; image movement across the network halts; ED, stroke, trauma and surgery decisions proceed without prior studies
 
 **Maximum Tolerable Downtime (MTD):** 6 hours
 
-**Recovery Time Objective (RTO):** 2 hours (per declared RTO in scenario)
+**Recovery Time Objective (RTO):** 2 hours
 
-**Recovery Point Objective (RPO):** 4 hours (storage snapshot frequency per `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 2
 
@@ -120,17 +130,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Medication verification and dispensing continue manually; allergy and interaction checks delayed; barcode administration degrades; controlled substance tracking shifts to paper | 164.308(a)(7)(i): Contingency Plan; DEA controlled substance documentation requirements | Estimated $35,000/hour: medication dispensing slowed; verification delays increase error risk |
-| 4 hours | Medication verification delays compound; allergy checks deferred to manual processes; interaction screening absent during dispensing; controlled substance reconciliation burden increases | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; DEA controlled substance accountability may be compromised | Estimated $35,000/hour; potential medication error liability; controlled substance audit findings possible |
-| 24 hours | Medication errors from missing allergy or interaction checks become probable; controlled substance paper tracking difficult to reconcile; regulatory compliance at risk | 164.308(a)(7)(i): Contingency Plan; DEA controlled substance documentation requirements; potential medication error investigation | Estimated $35,000/hour; significant medication error liability; DEA audit findings possible |
+| 1 hour | Medication verification and dispensing continue manually; allergy and interaction checks may be delayed; controlled substance tracking and barcode administration degrade | 164.308(a)(7)(i): Contingency Plan; DEA controlled substance documentation requirements | Estimated $35,000/hour: dispensing slowed; verification delays raise error risk |
+| 4 hours | Medication verification delays compound; allergy and interaction checks absent during dispensing; duplicate documentation strain increases error probability | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; DEA controlled substance accountability requirements | Estimated $35,000/hour; medication error liability; controlled substance audit exposure |
+| 24 hours | Medication errors from missing allergy and interaction checks become probable; controlled substance paper tracking difficult to reconcile; regulatory compliance at risk | 164.308(a)(7)(i): Contingency Plan; DEA documentation requirements; potential medication error investigation | Estimated $35,000/hour; significant medication error liability |
 
-**Dependencies:** Active Directory, Epic EHR, Network Core, medication cabinets
+**Operational Dependencies:** Active Directory, Epic EHR, Network Core, medication cabinets
+
+**Downstream Failure Sequence:** Pharmacy outage severs medication verification and barcode administration flow from Epic ordering; manual dispensing proceeds with paper MAR documentation
 
 **Maximum Tolerable Downtime (MTD):** 4 hours
 
 **Recovery Time Objective (RTO):** 3 hours
 
-**Recovery Point Objective (RPO):** 1 hour (database backup frequency per `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 1
 
@@ -140,17 +152,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Bedside monitoring continues locally, but automatic charting and alarm routing degrade; ICU and telemetry units most affected; vital signs documentation shifts to manual | 164.308(a)(7)(i): Contingency Plan; Joint Commission national patient safety goals for alarm management | Estimated $15,000/hour: nursing documentation burden increases; alarm fatigue risk elevated |
-| 4 hours | Alarm routing delays affect clinical response; automatic vital signs charting fails; nursing units must manually capture device readings; alarm fatigue increases | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission National Patient Safety Goal for alarm safety may be compromised | Estimated $15,000/hour; potential alarm-related adverse event liability |
-| 24 hours | Manual vital signs documentation accumulates unmanageably; alarm routing failures may delay critical responses; device data integration gap widens | 164.308(a)(7)(i): Contingency Plan; Joint Commission alarm safety findings possible; device data integrity gaps | Estimated $15,000/hour; potential alarm-related adverse events; regulatory findings for untested vendor backup |
+| 1 hour | Bedside monitoring continues locally; automatic charting and alarm routing degrade; ICU and telemetry most affected; vital signs documentation shifts to manual | 164.308(a)(7)(i): Contingency Plan; Joint Commission expectations for alarm management | Estimated $15,000/hour: nursing documentation burden rises; alarm fatigue risk elevated |
+| 4 hours | Alarm routing delays affect clinical response; manual vital signs capture strains nursing units; alarm fatigue increases missed-alert probability | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission alarm safety expectations | Estimated $15,000/hour; alarm-related adverse event liability exposure |
+| 24 hours | Manual vital signs documentation unmanageable; alarm routing failures may delay critical responses in ICU and telemetry | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $15,000/hour; alarm-related adverse events and regulatory findings |
 
-**Dependencies:** Network Core, VLAN segmentation, downstream integration into Epic
+**Operational Dependencies:** Network Core, VLAN segmentation; downstream integration into Epic
+
+**Downstream Failure Sequence:** Gateway outage stops device telemetry charting into Epic and degrades alarm routing to nursing stations; ICU and telemetry units most affected
 
 **Maximum Tolerable Downtime (MTD):** 8 hours
 
 **Recovery Time Objective (RTO):** 6 hours
 
-**Recovery Point Objective (RPO):** 24 hours (daily configuration export at 02:30 per `current_backup_schedule.csv`; no secondary destination or restore test documented)
+**Recovery Point Objective (RPO):** 4 hours
 
 **Priority Tier:** Tier 2
 
@@ -160,17 +174,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Routing, switching, WAN access, VLAN segmentation and site connectivity disrupted; simultaneous failure across all clinical and business systems begins | 164.308(a)(7)(i): Contingency Plan; 164.312(e)(1): Transmission Security | Estimated $75,000/hour: all systems affected simultaneously; hospital-wide downtime declared |
-| 4 hours | Clinical systems, monitoring, authentication, communication and security visibility fail simultaneously; paper downtime procedures activated across all units | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission EM.02.02.03 (staff role clarity during emergencies); 164.312(e)(1): Transmission Security violations during outage | Estimated $75,000/hour; hospital-wide operational paralysis |
-| 24 hours | Extended network outage creates cascading failures across all clinical operations; security visibility lost; patient safety event probability rises sharply | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management citations likely; 164.312(e)(1): Transmission Security violations during prolonged outage | Estimated $75,000/hour; significant patient safety and regulatory exposure |
+| 1 hour | Routing, switching, WAN access and VLAN segmentation disrupted; simultaneous failure across applications, monitoring, authentication, communication and security visibility begins | 164.308(a)(7)(i): Contingency Plan; 164.312(e)(1): Transmission Security | Estimated $75,000/hour: all systems affected simultaneously |
+| 4 hours | Clinical systems, monitoring, authentication, communication and security visibility fail simultaneously; downtime procedures activated hospital-wide | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; 164.312(e)(1): Transmission Security; Joint Commission emergency management expectations | Estimated $75,000/hour; hospital-wide operational paralysis |
+| 24 hours | Cascading failures across all clinical operations; security visibility lost; patient safety event probability rises sharply | 164.308(a)(7)(i): Contingency Plan; 164.312(e)(1): Transmission Security | Estimated $75,000/hour; significant patient safety and regulatory exposure |
 
-**Dependencies:** None (network foundation)
+**Operational Dependencies:** None; network foundation for all systems
+
+**Downstream Failure Sequence:** Network Core loss produces simultaneous failure of Active Directory authentication, all clinical applications, backup replication traffic, PACS image movement, and the Medical Device Integration Gateway
 
 **Maximum Tolerable Downtime (MTD):** 4 hours
 
 **Recovery Time Objective (RTO):** 2 hours
 
-**Recovery Point Objective (RPO):** 6 hours (device config backup frequency per `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 1 hour
 
 **Priority Tier:** Tier 1
 
@@ -180,17 +196,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Clinical communication, alert notification and regulatory correspondence shifts to phone; mobile device access affected; coordination delays begin | 164.308(a)(7)(i): Contingency Plan; 164.312(e)(1): Transmission Security for secure messaging component | Estimated $10,000/hour: administrative and coordination overhead increases |
-| 4 hours | Clinical communication bridge not tested per `current_backup_schedule.csv`; alert notification delays affect escalation chains; coordination strain increases | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission communication requirements during emergencies | Estimated $10,000/hour; escalation delays may extend to clinical systems |
-| 24 hours | Extended communication outage affects regulatory correspondence, shift handoffs and non-emergency clinical coordination; paper communication burden unmanageable | 164.308(a)(7)(i): Contingency Plan; potential Joint Commission findings for untested continuity procedures | Estimated $10,000/hour; regulatory correspondence delays possible |
+| 1 hour | Clinical communication and alert notification shift to phone; regulatory correspondence delayed; coordination delays begin | 164.308(a)(7)(i): Contingency Plan; 164.312(e)(1): Transmission Security for secure messaging | Estimated $10,000/hour: coordination overhead increases |
+| 4 hours | Alert notification delays affect escalation chains; clinical communication bridging strains; downtime coordination degrades | 164.308(a)(7)(ii)(C): Emergency Mode Operation Plan; Joint Commission expectations for downtime communication | Estimated $10,000/hour; escalation delays extend to clinical processes |
+| 24 hours | Extended communication outage affects shift handoffs, regulatory correspondence and clinical coordination | 164.308(a)(7)(i): Contingency Plan; Joint Commission emergency management expectations | Estimated $10,000/hour; regulatory correspondence delays possible |
 
-**Dependencies:** Identity provider, network egress, mobile device access
+**Operational Dependencies:** Identity provider, network egress, mobile device access
+
+**Downstream Failure Sequence:** Messaging outage forces clinical and administrative escalation onto phone channels defined in the escalation contact procedures; regulatory correspondence queues
 
 **Maximum Tolerable Downtime (MTD):** 12 hours
 
 **Recovery Time Objective (RTO):** 8 hours
 
-**Recovery Point Objective (RPO):** Provider continuous retention; export daily per `current_backup_schedule.csv`
+**Recovery Point Objective (RPO):** 4 hours
 
 **Priority Tier:** Tier 3
 
@@ -200,17 +218,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | Backup catalog and restore capability unavailable; recovery risk created even when production systems still run; restoration cannot be initiated | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(B): Disaster Recovery Plan | Estimated $20,000/hour: recovery capability unavailable; outage can become permanent data loss |
-| 4 hours | Any system failure during this window cannot be recovered; backup platform itself is a dependency per Finding 5 in `backup_log_review_findings.md` | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(D): Testing and Revision Procedures (catalog restore timing untested) | Estimated $20,000/hour; permanent data loss risk for any concurrent production failure |
-| 24 hours | Recovery platform failure for extended period creates existential data loss risk; 7-year archive access potentially affected; regulatory evidence chain broken | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(D): Testing and Revision Procedures | Estimated $20,000/hour; potential breach notification if data loss occurs during platform outage |
+| 1 hour | Backup catalog and restore capability unavailable; recovery cannot be initiated for any failed system even while production systems still run | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(B): Disaster Recovery Plan | Estimated $20,000/hour: restore capability unavailable during outage |
+| 4 hours | Any concurrent system failure during this window cannot be recovered; outage can become permanent data loss | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(B): Disaster Recovery Plan | Estimated $20,000/hour; permanent data loss risk for concurrent failures |
+| 24 hours | Extended recovery platform failure creates existential data loss risk; regulatory evidence chain for ePHI protection broken | 164.308(a)(7)(ii)(A): Data Backup Plan; 164.308(a)(7)(ii)(D): Testing and Revision Procedures | Estimated $20,000/hour; potential breach notification if data loss occurs |
 
-**Dependencies:** DR platform storage, isolated backup account
+**Operational Dependencies:** DR platform storage, isolated backup account, Active Directory access control
+
+**Downstream Failure Sequence:** Backup infrastructure loss blocks restoration of every other system; all recoverable systems depend on backup catalog, storage access and restore tooling
 
 **Maximum Tolerable Downtime (MTD):** 4 hours
 
 **Recovery Time Objective (RTO):** 3 hours
 
-**Recovery Point Objective (RPO):** 4 hours (catalog backup frequency per `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 2 hours
 
 **Priority Tier:** Tier 1
 
@@ -220,17 +240,19 @@ Maximum Tolerable Downtime (MTD) represents the total elapsed time a process can
 
 | Impact Level | Patient Safety Consequence | Regulatory Impact | Revenue Exposure |
 |---|---|---|---|
-| 1 hour | SIEM event collection continues but alert triage and EDR management unavailable; detection and response reduced during period when opportunistic attack risk can rise | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls | Estimated $12,000/hour: security visibility reduced; incident response delayed |
-| 4 hours | Security operations blind spot extends; threat detection reduced precisely when clinical systems in downtime are more vulnerable to exploitation | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls; potential NIST Cybersecurity Framework alignment gap | Estimated $12,000/hour; increased breach probability during clinical downtime |
-| 24 hours | Extended security visibility loss compounds breach risk; cold restore documented but alerting continuity not tested per `current_backup_schedule.csv`; forensic evidence incomplete | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls; potential HIPAA breach notification if incident not detected | Estimated $12,000/hour; significant breach liability if incident undetected |
+| 1 hour | SIEM event collection and EDR management degrade; detection and response reduced during a period when opportunistic attack risk can rise | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls | Estimated $12,000/hour: security visibility reduced; incident response delayed |
+| 4 hours | Security operations blind spot extends precisely when clinical systems in downtime are more vulnerable | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls | Estimated $12,000/hour; increased breach probability during downtime |
+| 24 hours | Extended visibility loss compounds breach risk; forensic evidence incomplete; incident detection may fail entirely | 164.308(a)(7)(i): Contingency Plan; 164.312(b): Audit Controls; potential breach notification obligations | Estimated $12,000/hour; breach liability if incidents undetected |
 
-**Dependencies:** Network Core, log sources, EDR management, identity
+**Operational Dependencies:** Network Core, log sources, EDR management, identity
+
+**Downstream Failure Sequence:** Security platform loss removes detection and response capability while clinical downtime procedures expand the attack surface and opportunistic attack risk rises
 
 **Maximum Tolerable Downtime (MTD):** 8 hours
 
 **Recovery Time Objective (RTO):** 6 hours
 
-**Recovery Point Objective (RPO):** 4 hours (index snapshot frequency per `current_backup_schedule.csv`)
+**Recovery Point Objective (RPO):** 4 hours
 
 **Priority Tier:** Tier 2
 
@@ -251,4 +273,3 @@ Network Core
 ├── Medical Device Integration Gateway
 ├── PACS/RIS image movement
 └── Backup replication traffic
-```
