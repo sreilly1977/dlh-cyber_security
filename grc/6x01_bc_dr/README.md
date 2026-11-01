@@ -506,6 +506,7 @@ Use:
 
 Required sections:
 
+<pre>
 # LIS Recovery Gap Analysis
 
 ## Test Summary Table
@@ -519,6 +520,7 @@ Required sections:
 ## Updated LIS Recovery Runbook
 
 ## Remediation Roadmap
+</pre>
 
 Required Content
 
@@ -545,7 +547,7 @@ Runbook Deficiencies
 
 List specific deficiencies. Do not write generic statements.
 
-Example:
+## Example:
 
 Step 4 specifies /recovery/lis_dump.sql, but the lab recovery environment stages the decompressed file at /tmp/meddefense-dr-test/recovery/lis_dump.sql.
 
@@ -565,3 +567,85 @@ Minimum five actions:
 
 | Priority | Action | Owner Role | Target Completion | Success Criterion |
 | --- | --- | --- | --- | --- |
+
+---
+
+# [7. Package the DR Program](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/dr_plan_master.md)
+### advanced
+
+## Goal: 
+
+Produce the master DR plan document and a one-page CISO brief that consolidate all program deliverables into an auditable package satisfying HIPAA 164.308(a)(7).
+
+## Context
+
+Dr. Morales needs to sign off on the DR program and present the recovery test results to the Board Risk Committee. She also needs to demonstrate that MedDefense has a tested contingency plan.
+
+## Instructions
+
+Create two documents:
+
+    [dr_plan_master.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/dr_plan_master.md)
+    [ciso_dr_brief.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/ciso_dr_brief.md)
+
+Use:
+
+    business_impact_analysis.md
+    backup_architecture.md
+    recovery_runbooks.md
+    clinical_downtime_procedures.md
+    recovery_test_record.md
+    gap_analysis.md
+    /opt/meddefense/materials/package/hipaa_164_308_a7_reference.md
+    /opt/meddefense/materials/package/board_brief_template.md
+
+Document 1: [dr_plan_master.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/dr_plan_master.md)
+
+Target length: 3 to 5 rendered pages.
+
+Include:
+
+    Program scope
+    Covered systems, sites and scenarios
+    Explicit exclusions
+    Roles and responsibilities table
+    Activation criteria with at least four triggerable conditions
+    Communication plan with ordered notification sequence
+    Program document index
+    Testing and revision schedule
+    CISO sign-off block
+
+Required document index:
+
+| Document | Filename | Version | Last Updated | Last Tested |
+| --- | --- | --- | --- | --- |
+| Business Impact Analysis | businessimpactanalysis.md | 1.0 | [Date] | N/A |
+| Backup Architecture | backup_architecture.md | 1.0 | [Date] | N/A |
+| Recovery Runbooks | recovery_runbooks.md | 1.0 | [Date] | [Date] |
+| Clinical Downtime Procedures | clinicaldowntimeprocedures.md | 1.0 | [Date] | N/A |
+| Recovery Test Record (LIS) | recoverytestrecord.md | 1.0 | [Date] | [Date] |
+| Gap Analysis | gap_analysis.md | 1.0 | [Date] | N/A |
+
+Document 2: [ciso_dr_brief.md](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/ciso_dr_brief.md)
+
+One page. Audience: Dr. Morales and the Board Risk Committee.
+
+Include, in this order:
+
+    Program status
+    Key BIA finding
+    Recovery test result
+    Items requiring board action or budget
+    Open items with owner and date
+    Recommended board resolution
+
+Required board resolution wording:
+
+The Board Risk Committee acknowledges receipt of the MedDefense DR Program Status Report dated [Date] and authorizes [specific action with resource commitment if applicable].
+
+Expected Outputs
+
+    dr_plan_master.md
+    ciso_dr_brief.md
+
+---
