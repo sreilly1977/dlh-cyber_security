@@ -469,3 +469,62 @@ After all eight requests, add a Readiness summary:
     One sentence naming the single biggest gap the auditor would focus on
 
 ---
+
+# [7. Brief the CISO](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/)
+### advanced
+
+## Goal: 
+
+Translate the gap assessment and audit preparation findings into a one-page written communication for Dr. Morales to present to the board.
+
+## Context: 
+
+The board meets in 48 hours. They will ask one question: are we compliant? Dr. Morales needs an honest, plain-language answer with a clear call to action.
+
+## Instructions: 
+
+Create ciso_compliance_brief.md. Bound to one page when rendered. No jargon that requires a security background to parse. Every statement is supported by a finding from this project.
+
+Use These Materials
+
+templates/ciso_brief_template.md
+gap_assessment.md
+acceptable_use_policy.md
+data_classification_policy.md
+vendor_management_policy.md
+vendor_risk_assessment.md
+audit_evidence_package.md
+risk_register/risk_register_updates.yaml
+
+Required sections:
+<pre>
+# CISO Compliance Brief
+
+## Current Compliance Posture
+
+## Top Three Findings Before the Audit
+
+## What We Have Completed
+
+## What Must Be Completed Before the Audit
+
+## Board Resolution Requested
+</pre>
+
+    Current compliance posture: one paragraph. What does the gap assessment show? The framing is honest: not alarming and not dismissive.
+
+    Top three findings before the audit: the three most significant gaps, stated in business impact terms. Not subcategory identifiers. Instead: "We cannot prove to an auditor that our workforce is bound by documented security rules, because the Acceptable Use Policy did not exist in writing until this week."
+
+    What we have completed: three to four bullet points of completed work that constitutes genuine audit evidence, referencing the real technical and procedural work already in place.
+
+    What must be completed before the audit: three actions with named owners and deadlines.
+
+    Approve and distribute AUP, Data Classification Policy, and Vendor Management Policy (owner: CISO; deadline: one week before audit)
+
+    Complete CloudVault Medical risk assessment and execute BAA (owner: IT Security and Legal; deadline: two weeks before audit)
+
+    Document the security awareness training gap and provide an interim remediation plan to the auditor (owner: IT Security; deadline: before audit date)
+
+    Board resolution requested: one sentence. What action does the board need to take? (Example: formal approval of the three policies produced in this project.)
+
+---
