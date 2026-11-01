@@ -333,3 +333,66 @@ Constraints:
     The BAA requirement is unconditional: no Tier A vendor onboards without an executed BAA.
 
 ---
+
+# [5. Assess the Vendor](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/vendor_risk_assessment.md)
+
+## Goal: 
+
+Apply the Vendor Management Policy to a real vendor decision and produce a defensible risk assessment before the CloudVault Medical contract is signed.
+
+## Context: 
+
+CloudVault Medical completed MedDefense's security questionnaire last week. Dr. Morales will not sign the contract without a security sign-off. This is that sign-off.
+
+## Instructions: 
+
+Create vendor_risk_assessment.md. Evaluate CloudVault Medical using the questionnaire responses below. For each item, assign a risk rating, describe the gap if any, and state the required action.
+
+Use These Materials
+
+vendor/cloudvault_security_questionnaire.md
+vendor/cloudvault_contract_summary.md
+vendor/cloudvault_subprocessor_list.md
+vendor/baa_status_note.md
+vendor_management_policy.md
+
+CloudVault Medical must be evaluated against the Vendor Management Policy you created. If the vendor does not meet a Tier A requirement, document the gap and condition clearly.
+
+CloudVault Medical: Security Questionnaire Responses
+| # | Question | Response |
+| --- | --- | --- |
+| 1 | SOC 2 Type II certification | Yes; most recent report dated 11 months ago |
+| 2 | HITRUST CSF certification | No |
+| 3 | Encryption at rest | AES-256 |
+| 4 | Encryption in transit | TLS 1.2 |
+| 5 | Last penetration test date | 22 months ago; findings summary not provided |
+| 6 | Sub-processors that may handle MedDefense data | Two disclosed: a US-based CDN provider and an EU-based data analytics firm |
+| 7 | All data stored in US-only data centers | Primary datacenter is US-based; disaster recovery site location not disclosed |
+| 8 | Incident notification SLA to customer | 72 hours after internal confirmation of a breach |
+| 9 | Data deletion on contract termination | Within 90 days of written request |
+| 10 | Background checks on staff with data access | At hire; no recurring checks |
+| 11 | MFA on administrative and privileged accounts | Yes; TOTP-based |
+| 12 | Vulnerability management cadence | Monthly scanning; quarterly remediation target for critical findings |
+| 13 | Right-to-audit clause | Will permit with 60 days written notice |
+| 14 | Business Associate Agreement | Willing to execute |
+| 15 | PHI handling training for relevant staff | Annual online training module |
+
+Required document structure:
+
+    Vendor overview: vendor name, service type, proposed Tier classification under the Vendor Management Policy, and whether ePHI will be stored or processed.
+
+    Findings table: one row per questionnaire item. Columns: Item number, Finding (abbreviated response), Risk rating (Pass / Acceptable / Concern / Critical Concern), Gap description (if rated Concern or Critical Concern), Required action.
+
+    Critical findings: a dedicated paragraph for each item rated Critical Concern. Name the specific risk, what the finding means for MedDefense's regulatory exposure, and what the vendor must provide before approval.
+
+    Recommendation: one of three options with explicit rationale.
+
+    Approve
+
+    Approve with Conditions
+
+    Do Not Approve
+
+    Required conditions (if Approve with Conditions): specific and measurable. Not "the vendor should improve their security posture." Something like: "Vendor must provide a penetration test report dated within the last 12 months and evidence that all critical findings identified therein have been remediated, prior to any ePHI access."
+
+---
