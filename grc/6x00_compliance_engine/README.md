@@ -268,3 +268,68 @@ Constraints:
     Transmission requirements must name the protocol, not a category. "Encrypted transmission" is not sufficient. "TLS 1.2 or higher with server certificate verification" is.
 
 ---
+
+# [4. Write the Vendor Management Policy](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/vendor_management_policy.md)
+
+## Goal: 
+
+Establish enforceable security requirements for every third party with access to MedDefense systems or data before the CloudVault decision is made.
+
+## Context: 
+
+A Business Associate Agreement alone is not vendor management. The Nexus compromise entered through a trusted vendor with a signed contract and a legitimate software update mechanism.
+
+## Instructions: 
+
+Create vendor_management_policy.md. This policy must be specific enough for Sarah Park to use it to evaluate CloudVault Medical, and specific enough for Helena Reyes to draft BAA requirements from it.
+
+Use These Materials
+
+templates/policy_header_template.md
+compliance/prior_policy_inventory.md
+vendor/cloudvault_contract_summary.md
+vendor/baa_status_note.md
+vendor/cloudvault_subprocessor_list.md
+compliance/hipaa_security_rule_crosswalk.md
+
+The policy must be written so it can be used directly in Task 5 to evaluate CloudVault Medical.
+
+Required structure:
+
+    Policy header: policy number, effective date, review date, owner (IT Security and Procurement jointly), approved by (CISO).
+
+    Purpose and scope: applies to all third parties with access to MedDefense systems, networks, or data: SaaS providers, managed service providers, cloud infrastructure providers, medical device vendors with network-connected products, and staffing agencies with IT system access.
+
+    Vendor risk tiers: three tiers based on access and data exposure.
+
+    Tier A (Critical): access to ePHI or clinical systems. Examples: scheduling platforms, imaging vendors, backup providers with PHI, Epic integration partners.
+
+    Tier B (Standard): access to MedDefense internal systems or networks, but not ePHI.
+
+    Tier C (Low): no system or data access. Physical vendors, office suppliers, facilities contractors.
+
+    Pre-engagement requirements by tier: Tier A vendors must provide all of the following before any data access is permitted:
+
+    SOC 2 Type II report or HITRUST CSF certification, current within 12 months
+
+    Completed MedDefense vendor security questionnaire
+
+    Penetration test results dated within 12 months, with a summary of critical findings and remediation status
+
+    Identification of all sub-processors that will handle MedDefense data, with their jurisdictions
+
+    An executed Business Associate Agreement before any ePHI access begins, with no exceptions
+
+    BAA requirements: when required (any Tier A vendor; any vendor whose service may incidentally expose ePHI), minimum required content, and the specific incident notification SLA: the vendor must notify MedDefense within 24 hours of a confirmed or suspected security incident affecting MedDefense data.
+
+    Ongoing monitoring: Tier A vendors reviewed annually. Material changes (ownership transfer, new sub-processors, data center relocation, significant security incidents) trigger an immediate out-of-cycle review.
+
+    Vendor offboarding: access revoked within 24 hours of contract termination. Data return or certified destruction within 30 days. Documentation retained for six years per HIPAA.
+
+    Incident notification obligations: the vendor notifies MedDefense within 24 hours of confirmed or suspected breach. MedDefense retains the right to conduct its own investigation independent of the vendor's.
+
+Constraints:
+
+    The BAA requirement is unconditional: no Tier A vendor onboards without an executed BAA.
+
+---
