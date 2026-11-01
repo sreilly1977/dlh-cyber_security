@@ -211,3 +211,60 @@ Constraints:
     Tone: professional plain English. A clinical nurse on their first week must understand it without asking for clarification.
 
 ---
+
+# [3. Write the Data Classification Policy](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/data_classification_policy.md)
+### advanced
+
+## Goal: 
+
+Give MedDefense a clear, enforced framework for handling data at every sensitivity level.
+
+## Context: 
+
+Without a classification policy, "protect sensitive data" is an aspiration. The auditor needs to see that data is categorized and that handling requirements are defined per category.
+
+## Instructions: 
+
+Create data_classification_policy.md. Define four classification tiers and the handling rules for each. Every tier must reference MedDefense's actual data landscape, not generic enterprise examples.
+
+Use These Materials
+
+templates/policy_header_template.md
+compliance/prior_policy_inventory.md
+compliance/hipaa_security_rule_crosswalk.md
+prior_controls/forensic_findings_summary.md
+vendor/cloudvault_contract_summary.md
+
+Use MedDefense-specific data examples from the materials, including ePHI, lab results, backup archives, security configurations, employee records, contracts, and vendor data flows.
+
+Required structure:
+
+    Policy header: policy number, effective date, review date, owner (IT Security), approved by (CISO).
+
+    Purpose and scope: three sentences. Applies to all data created, stored, transmitted, or processed by or on behalf of MedDefense.
+
+    Classification tiers: four tiers. For each: definition, three or more examples from MedDefense operations, and the handling requirements below.
+
+    Tier 1: Public: approved for release to the general public.
+
+    Tier 2: Internal: for MedDefense employees and authorized contractors only. Unauthorized exposure causes operational inconvenience, not regulatory or patient harm.
+
+    Tier 3: Confidential: exposure could cause financial, legal, or reputational harm. Includes employee records, financial data, contracts, strategic plans, security configurations.
+
+    Tier 4: Restricted / ePHI: subject to the HIPAA Security Rule and Breach Notification Rule. Any unauthorized access triggers the four-factor breach risk assessment.
+
+    Handling matrix: a table. Columns: Tier, Storage, Transmission, Internal sharing, External sharing, Disposal. Every cell is specific. "Use secure methods" is not a cell value.
+
+    Disposal must specify a method for each tier: for Tier 4, NIST SP 800-88 media sanitization or equivalent for electronic media; secure cross-cut shred for paper.
+
+    Classification responsibility: who classifies data at creation; the default when classification is unclear (Tier 3 until reviewed); who holds authority to reclassify.
+
+    Exceptions process: who grants exceptions, how they are documented, and the maximum duration before re-review.
+
+    Review cycle: annually and following any incident that exposed data handling as a control gap.
+
+Constraints:
+
+    Transmission requirements must name the protocol, not a category. "Encrypted transmission" is not sufficient. "TLS 1.2 or higher with server certificate verification" is.
+
+---
