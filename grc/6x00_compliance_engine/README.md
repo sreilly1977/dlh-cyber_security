@@ -396,3 +396,76 @@ Required document structure:
     Required conditions (if Approve with Conditions): specific and measurable. Not "the vendor should improve their security posture." Something like: "Vendor must provide a penetration test report dated within the last 12 months and evidence that all critical findings identified therein have been remediated, prior to any ePHI access."
 
 ---
+
+# [6. Package the Evidence for the Auditor](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/audit_evidence_package.md)
+
+## Goal: 
+
+Demonstrate that the compliance documentation produced in this project, combined with prior security work, can answer eight specific OCR audit requests without verbal explanation.
+
+## Context: 
+
+OCR desk audits run entirely on submitted documentation. If the submission does not answer the question, the auditor rules against it regardless of what the organization actually does.
+
+## Instructions: 
+
+Create audit_evidence_package.md. The audit letter below contains eight specific evidence requests. For each request, document the evidence available, any gap, and the remediation action if evidence is incomplete.
+
+Use These Materials
+
+compliance/ocr_audit_letter.md
+compliance/hipaa_security_rule_crosswalk.md
+prior_controls/endpoint_hardening_baseline.md
+prior_controls/sigma_detection_catalog.md
+prior_controls/ir_playbook_index.md
+prior_controls/forensic_findings_summary.md
+prior_controls/recovery_validation_summary.md
+prior_controls/security_awareness_training_status.md
+risk_register/risk_register_updates.yaml
+risk_register/risk_treatment_plan.md
+acceptable_use_policy.md
+data_classification_policy.md
+vendor_management_policy.md
+vendor_risk_assessment.md
+
+For each OCR request, name the evidence artifact directly. If evidence is missing, write None or Partial and specify the owner and remediation timeline.
+
+OCR Audit Letter: Evidence Requests
+
+    Documentation of the organization's security risk analysis, including methodology (164.308(a)(1)(ii)(A))
+
+    A risk management plan documenting how identified risks are being addressed and by whom (164.308(a)(1)(ii)(B))
+
+    Evidence of security awareness and training delivered to workforce members in the past 12 months (164.308(a)(5))
+
+    Audit control evidence demonstrating system activity review (164.312(b))
+
+    Workforce security procedures including user access provisioning and periodic access review (164.308(a)(3))
+
+    Business Associate Agreement for CloudVault Medical (164.308(b))
+
+    Evidence of a periodic technical evaluation of security controls within the past 12 months (164.308(a)(8))
+
+    Incident response procedures and evidence of testing or activation in the past 24 months (164.308(a)(6))
+
+Required format for each request:
+
+<pre>
+### Request [N]: [Short title]
+
+**HIPAA specification:** 164.xxx(x)
+**Evidence status:** Full / Partial / None
+**Evidence description:** [What exists, by artifact name]
+**Gap:** [What is missing, if anything]
+**Remediation owner and timeline:** [Specific, leave blank if no gap]
+</pre>
+
+After all eight requests, add a Readiness summary:
+
+    Count of Full / Partial / None evidence
+
+    Overall audit readiness rating (Ready / At Risk / Not Ready)
+
+    One sentence naming the single biggest gap the auditor would focus on
+
+---
