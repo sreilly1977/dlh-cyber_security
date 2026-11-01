@@ -33,3 +33,116 @@ You have the controls. You built most of them. Now you prove they exist and clos
 # 0. Quiz
 
 ---
+
+# [1. Map Your Controls to the Framework](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine/gap_assessment.md)
+
+## Goal: 
+
+Produce an evidence-referenced gap assessment matrix that shows exactly where MedDefense stands against the 22 most auditable NIST CSF 2.0 subcategories.
+
+## Context: 
+
+The gap assessment is the foundation every other deliverable in this project depends on. It is only credible when gaps are documented alongside strengths.
+
+## Instructions: 
+
+Create gap_assessment.md. For each subcategory in the list below, document the implementation status, the specific evidence that supports it, the gap severity, and a one-line description of what is missing or weak.
+
+Use These Materials
+
+Use the following files from the provided material folder:
+
+prior_controls/endpoint_hardening_baseline.md
+prior_controls/sigma_detection_catalog.md
+prior_controls/ir_playbook_index.md
+prior_controls/forensic_findings_summary.md
+prior_controls/recovery_validation_summary.md
+prior_controls/security_awareness_training_status.md
+risk_register/risk_register_updates.yaml
+risk_register/risk_treatment_plan.md
+compliance/nist_csf_2_0_subcategory_reference.md
+compliance/hipaa_security_rule_crosswalk.md
+
+Evidence references in gap_assessment.md must use these artifact names or None. Do not cite generic evidence such as "security documents" or "technical controls."
+
+The evidence column must reference actual MedDefense artifacts by name: the risk register, the endpoint hardening baseline, the IR playbooks, the Sigma detection rules, the post-incident forensic report, the recovery validation script. If you built it, cite it. If it does not exist, say so clearly.
+
+Required columns:
+
+    CSF Function and Subcategory ID (e.g., DE.CM-01)
+
+    Subcategory title (abbreviated to 5-7 words)
+
+    Implementation status: Implemented, Partial, or Not Implemented
+
+    Evidence reference (artifact name, or None)
+
+    Gap severity: Critical, High, Medium, Low, or None
+
+    Gap description (one line, specific not generic)
+
+Subcategories to assess:
+
+GOVERN: GV.OC-01, GV.PO-01, GV.SC-04, GV.SC-07
+
+IDENTIFY: ID.AM-01, ID.RA-01, ID.RA-06
+
+PROTECT: PR.AA-01, PR.AA-05, PR.AT-01, PR.DS-01, PR.PS-01, PR.PS-04
+
+DETECT: DE.CM-01, DE.CM-06, DE.AE-02
+
+RESPOND: RS.MA-01, RS.AN-03, RS.CO-02
+
+RECOVER: RC.RP-01, RC.CO-01
+
+After the matrix, add a Summary section with:
+
+    Counts by implementation status
+
+    Top 3 Critical or High gaps requiring pre-audit remediation, stated in one line each
+
+    A one-paragraph note connecting the identified gaps to the upcoming governance and resilience work in this project
+
+**Expected output**
+
+<pre>
+# NIST CSF 2.0 Gap Assessment: MedDefense Health Systems
+
+**Assessment date:** <YYYY-MM-DD>
+**Assessor:** <your_name>
+**Framework version:** NIST CSF 2.0
+**Regulatory context:** HIPAA Security Rule, 45 CFR Part 164
+
+## Gap Assessment Matrix
+
+</pre>
+| CSF Function | Subcategory | Title (abbreviated) | Status | Evidence Reference | Gap Severity | Gap Description |
+| --- | --- | --- | --- | --- | --- | --- |
+| GOVERN | GV.OC-01 | Org risk strategy established | Partial | riskregisterupdates.yaml | High | Risk register exists and is updated post-incident; no board-approved risk appetite statement or formal governance charter |
+| GOVERN | GV.PO-01 | Cybersecurity policy established | Not Implemented | None | Critical | No written AUP or data classification policy; verbal policy is not auditable |
+| GOVERN | GV.SC-04 | Suppliers inventoried by criticality | Not Implemented | None | High | No formal vendor inventory; Nexus, CloudVault, and other ePHI-adjacent vendors are not tiered or catalogued |
+| GOVERN | GV.SC-07 | Supplier risks in risk register | Not Implemented | None | High | Vendor risk not represented in the risk register; supply chain exposure identified in incident not yet formalized |
+| IDENTIFY | ID.AM-01 | Asset inventory maintained | Partial | endpointhardeningbaseline | Medium | Clinical workstation inventory exists from hardening phase; cloud assets, network devices, and medical devices not inventoried |
+| IDENTIFY | ID.RA-01 | Vulnerabilities identified and recorded | Implemented | riskregisterupdates.yaml; forensic_findings.md 	None | Vulnerability identification evident through incident findings and risk register entries |
+| IDENTIFY | ID.RA-06 | Risk responses tracked | Partial | implementation_package.md | Medium | Treatment plans exist post-incident; no ongoing risk treatment tracking cadence or ownership assignments |
+| PROTECT | PR.AA-01 | Identity and credential management | Partial | playbookcredentialexposure.yaml; eradication_checklist.yaml | High | Credential procedures exist in IR context only; no proactive IAM program, privileged access policy, or periodic access review |
+| … | … | … | … | … | … | … |
+
+<pre>
+## Summary
+
+**Implementation counts:**
+- Implemented: X
+- Partial: X
+- Not Implemented: X
+
+**Top 3 pre-audit priorities:**
+1. GV.PO-01 (Critical): ...
+2. PR.AT-01 (Critical): ...
+3. RC.RP-01 (High): ...
+
+**Connection to upcoming governance work:**
+The Critical and High gaps above are not incidental. They represent the exact control areas this project and the projects that follow are designed to close...
+</pre>
+
+---
