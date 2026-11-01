@@ -297,3 +297,187 @@ Each quick reference must:
     Bold the most critical actions
 
 ---
+
+# []5. Execute the Recovery Test](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/recovery_timer.sh)
+
+## Goal: 
+
+Execute a timed recovery of the Laboratory Information System against a simulated failure, document every deviation as it occurs and produce a test record showing actual wall-clock time against the declared RTO of 30 minutes.
+
+## Context
+
+The declared RTO for the MedDefense LIS is 30 minutes. James Chen has scheduled the recovery test and made one thing clear:
+
+    "I do not want a report that says everything went fine. I want to know what the plan got wrong."
+
+This rebuilt lab removes Docker-in-Docker. The LIS recovery target is a SQLite database restored from a compressed SQL backup already staged in the lab container.
+
+Step 1: Write the Timing Script
+
+Create recovery_timer.sh.
+
+The script must:
+
+    Accept a step name and status: START, PASS, FAIL or SUMMARY.
+    Record timestamps with date '+%H:%M:%S'.
+    On PASS or FAIL, compute elapsed time for that step in minutes and seconds.
+    Write completed steps to recovery_test_log.txt as they complete.
+    Store state in /tmp/rtest_state.
+    Print total elapsed time and PASS/FAIL against the 30-minute RTO when called with SUMMARY.
+
+Example usage:
+
+./recovery_timer.sh "Verify backup integrity" START
+./recovery_timer.sh "Verify backup integrity" PASS
+./recovery_timer.sh SUMMARY
+
+Expected log format:
+
+[STEP 01] Identify recovery target     | Start: 09:14:32 | End: 09:15:18 | Duration: 0m 46s | PASS
+[STEP 02] Verify backup integrity      | Start: 09:15:18 | End: 09:16:05 | Duration: 0m 47s | PASS
+
+Step 2: Confirm the Prepared Test Environment
+
+Do not run Docker commands.
+
+Confirm these files exist:
+
+ls -l /tmp/meddefense-dr-test/backup/lis/2026-04-21/
+ls -l /tmp/meddefense-dr-test/config/
+
+Required files:
+
+/tmp/meddefense-dr-test/backup/lis/2026-04-21/lis_backup.sql.gz
+/tmp/meddefense-dr-test/backup/lis/2026-04-21/backup_manifest.sha256
+/tmp/meddefense-dr-test/config/app_config.env
+
+Step 3: Execute the Recovery
+
+Follow your LIS runbook from Task 3. Call recovery_timer.sh at the start and end of each numbered recovery step.
+
+You must encounter and document these three conditions:
+
+Condition 1: Path mismatch
+
+The old runbook specifies the backup decompresses to:
+
+/recovery/lis_dump.sql
+
+The actual lab path must be:
+
+/tmp/meddefense-dr-test/recovery/lis_dump.sql
+
+Document what the runbook got wrong, then correct your command.
+
+Condition 2: Configuration artifact
+
+Before validating the restored LIS, inspect:
+
+/tmp/meddefense-dr-test/config/app_config.env
+
+It contains:
+
+DB_HOST=lis-db-prod.meddefense.internal
+
+For the lab recovery, the validation must use the local SQLite recovery database path instead. Document the configuration artifact and the local override you applied.
+
+Condition 3: Row count check
+
+After restore, run:
+
+sqlite3 /tmp/meddefense-dr-test/recovery/lis_recovered.db "SELECT COUNT(*) FROM patient_orders;"
+
+Expected result:
+
+5
+
+Document the result exactly.
+
+Required Recovery Commands
+
+The exact commands may vary if your runbook is more detailed, but the recovery must include these actions:
+
+sha256sum -c /tmp/meddefense-dr-test/backup/lis/2026-04-21/backup_manifest.sha256
+
+mkdir -p /tmp/meddefense-dr-test/recovery
+
+gzip -dc /tmp/meddefense-dr-test/backup/lis/2026-04-21/lis_backup.sql.gz \
+  > /tmp/meddefense-dr-test/recovery/lis_dump.sql
+
+sqlite3 /tmp/meddefense-dr-test/recovery/lis_recovered.db \
+  < /tmp/meddefense-dr-test/recovery/lis_dump.sql
+
+sqlite3 /tmp/meddefense-dr-test/recovery/lis_recovered.db \
+  "SELECT COUNT(*) FROM patient_orders;"
+
+sqlite3 /tmp/meddefense-dr-test/recovery/lis_recovered.db \
+  "SELECT patient_mrn, test_code, result_value, critical_flag FROM patient_orders WHERE patient_mrn IN ('MRN-10043','MRN-10045');"
+
+Produce the Test Record
+
+Create recovery_test_record.md.
+
+Required structure:
+
+<pre>
+# LIS Recovery Test Record
+
+**Test date:** [Date]
+**Test conductor:** [Your name]
+**Declared RTO:** 30 minutes
+**Test environment:** /tmp/meddefense-dr-test/
+
+## Step Timing Log
+
+[Full output from recovery_test_log.txt and recovery_timer.sh SUMMARY]
+
+## Conditions Encountered
+
+### Condition 1: Path mismatch
+
+**Discovered at:** [Timestamp]
+**Runbook specified:** /recovery/lis_dump.sql
+**Actual path:** /tmp/meddefense-dr-test/recovery/lis_dump.sql
+**Resolution:** [Exact commands executed]
+**Time added:** [Minutes]
+
+### Condition 2: Configuration artifact
+
+**Discovered at:** [Timestamp]
+**Expected:** Local recovery database path for validation
+**Actual:** DB_HOST=lis-db-prod.meddefense.internal
+**Resolution:** [Exact override or validation command used]
+**Time added:** [Minutes]
+
+### Condition 3: Row count check
+
+**Query:** SELECT COUNT(*) FROM patient_orders;
+**Expected:** 5
+**Actual:** [Your result]
+**Outcome:** PASS / FAIL
+
+## Recovery Validation
+
+**Recovered database file:**
+
+[Paste ls -l output]
+
+**Critical values accessible:**
+
+[Paste query output confirming MRN-10043 K+ 6.1 mEq/L and MRN-10045 Troponin 0.08 ng/mL exist]
+
+## Test Result
+
+**Actual recovery time:** [From timer log]
+**RTO met:** YES / NO
+**Test outcome:** PASS / CONDITIONAL PASS / FAIL
+</pre>
+
+**Expected Outputs**
+
+    recovery_timer.sh
+    recovery_test_log.txt
+    recovery_test_record.md
+    /tmp/meddefense-dr-test/recovery/lis_recovered.db
+
+---
