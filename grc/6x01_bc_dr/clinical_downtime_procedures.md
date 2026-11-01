@@ -100,5 +100,3 @@ STAT order issue: ordering clinician, lab accessioning (extension 7500), chemist
 5. Confirm every critical value has both a system record and a completed call log entry.
 
 ---
-
-*End of Clinical Downtime Procedures*
