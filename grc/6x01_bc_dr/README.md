@@ -110,3 +110,65 @@ Quality Requirements
     Generic statements such as "operations are affected" are not sufficient.
 
 ---
+
+# [2. Design the Backup Architecture](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr/backup_architecture.md)
+
+## Goal: 
+
+Design a specific, implementable backup strategy for each Tier 1 and Tier 2 system that satisfies the RTO and RPO values from the BIA, and produce a dependency-aware restoration sequence for a full data center loss scenario.
+
+## Context
+
+The BIA produces the requirements. This task produces the architecture that meets them. Robert Kim's log review found three cases where the declared RPO was shorter than the backup frequency. The backup architecture must show the math: if a system has an RPO of 1 hour, the backup schedule must produce a verified recovery point no older than 1 hour.
+
+## Instructions
+
+Create backup_architecture.md.
+
+Use the provided materials:
+
+    /opt/meddefense/materials/backup_architecture/current_backup_schedule.csv
+    /opt/meddefense/materials/backup_architecture/backup_log_review_findings.md
+    /opt/meddefense/materials/backup_architecture/dependency_map_seed.md
+    Your business_impact_analysis.md
+
+For each Tier 1 and Tier 2 system in your BIA, include a per-system backup specification table with these fields:
+
+|Field | Required Content |
+| --- | --- |
+| Backup type | Full, incremental, differential, snapshot or combination |
+| Schedule | Exact frequency per backup type |
+| Retention | Recent, monthly and archive retention |
+| Primary destination | On-site location and storage type |
+| Secondary destination | Off-site or cloud location |
+| Encryption at rest | AES-256 and key management approach |
+| Encryption in transit | TLS 1.2+ |
+| Integrity verification | Hash and restore-test method |
+| Restoration sequence | Ordered recovery steps |
+| Responsible role | Who executes and who verifies |
+
+Required sections:
+
+<pre>
+# MedDefense Backup Architecture
+
+## Strategy Overview
+
+## RPO Compliance Verification
+
+## Per-System Backup Specifications
+
+## Full Data Center Loss: Restoration Sequence
+
+## Dependency Restore Constraints
+</pre>
+
+Quality Requirements
+
+    The RPO Compliance Verification table is mandatory.
+    No Tier 1 system may have a backup frequency longer than its declared RPO.
+    Every Tier 1 system must have geographically separate backup storage.
+    Every ePHI backup must specify AES-256 at rest and TLS 1.2 or later in transit.
+    Restoration order must be dependency-based, not alphabetical.
+
+---
