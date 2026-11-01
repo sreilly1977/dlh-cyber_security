@@ -107,6 +107,4 @@ STAT order issue: ordering clinician, lab accessioning (extension 7500), chemist
 4. Compare the paper tracking log against system records; flag discrepancies to the chemistry lead.
 5. Confirm every critical value has both a system record and a completed call log entry.
 
-(Word count: approximately 430)
-
 ---
