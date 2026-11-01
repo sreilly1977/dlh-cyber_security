@@ -56,8 +56,6 @@ For system status: IT Incident Commander (extension 7200) or Clinical Applicatio
 4. Staple each completed paper form to the Downtime Reconciliation Cover Sheet.
 5. Notify the charge nurse when all forms from your unit are entered and verified.
 
-(Word count: approximately 420)
-
 ---
 
 # Quick Reference 2: Laboratory Information System Downtime Procedures
