@@ -1,7 +1,7 @@
 # NIST CSF 2.0 Gap Assessment: MedDefense Health Systems
 
 **Assessment date:** 2026-11-01
-**Assessor:** Stephen Reilly
+**Assessor:** Steve, IT Security
 **Framework version:** NIST CSF 2.0
 **Regulatory context:** HIPAA Security Rule, 45 CFR Part 164
 
