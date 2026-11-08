@@ -62,3 +62,52 @@
 
 ---
 
+## The SOC Playbook
+
+---
+
+### Technical
+
+**Q: What does the IOC enrichment module do?**
+
+**A:** Auto-classifies each IOC by type (IP, domain, URL, hash, email), checks it against a bundled local threat intel feed, applies standard-library-only DNS/IP heuristics (RFC1918, loopback, bogon ranges), and emits a structured verdict with additive scoring.
+
+**Q: How is the SQLite case manager designed?**
+
+**A:** A normalized schema with cases, notes, iocs and case_iocs tables (foreign-keyed), exposing functions to create cases, append timestamped notes, transition status, and link IOCs many-to-many.
+
+**Q: What do the two automation playbooks do?**
+
+**A:** Each imports the shared modules, runs scenario alerts through the enrichment verdict, applies threshold decision logic to pick verdict, severity and action (block, monitor, close), writes structured case output, and appends a full audit-log trail.
+
+**Q: What does the end-to-end integration test verify?**
+
+**A:** That each of the five alert scenarios flows through enrichment into a case with the expected verdict, severity and action asserted against pre-defined expectations, confirming the full pipeline works as one system.
+
+---
+
+### Conceptual
+
+**Q: Why separate enrichment actions from response actions?**
+
+**A:** Enrichment is read-only and safe to fully automate, while response actions (blocking, quarantining) carry disruption risk, so they require measured false-positive rates and human override before automating.
+
+**Q: Why is deduplication a prerequisite for alert-to-ticket integration?**
+
+**A:** At SOC volume, recurring detections or mass campaigns of the same IOC would otherwise spawn one ticket per alert, creating ticket storms that drown analysts and destroy queue triage, so identical signals must collapse into one tracked case.
+
+**Q: Why is TTL-based caching the standard answer to rate limiting?**
+
+**A:** Most threat intel APIs throttle by request count, and TTL caches serve repeat lookups of the same IOC from memory until expiry, cutting API calls while keeping results acceptably fresh.
+
+---
+
+### Transversal
+
+**Q: What goes into the automation strategy document?**
+
+**A:** Quantified current manual effort (analyst hours per enrichment and triage task), projected ROI from automating those hours, and explicit naming of over-automation risks, which in a healthcare setting include automated blocking disrupting clinical systems and patient-safety impact.
+
+**Q: How long should the strategy document be?**
+
+**A:** Two to three pages, not twenty: lead with effort numbers, ROI estimate and risk caveats, keeping it decision-ready for leadership rather than exhaustive documentation.
