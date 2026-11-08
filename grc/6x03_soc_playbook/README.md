@@ -34,7 +34,7 @@ Mike Torres, who has been building his own one-off bash scripts since the incide
 
 ---
 
-# [1. Build the IOC Enrichment Engine]()
+# [1. Build the IOC Enrichment Engine](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/enrich_ioc.py)
 
 ## Goal: 
 
@@ -175,6 +175,76 @@ $ python3 enrich_ioc.py 192.168.1.100
   "note": "Private address range; internal network traffic",
   "enriched_at": "2026-04-28T10:15:47Z"
 }
+```
+
+---
+
+# [2. Build the Case Manager](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/case_manager.py)
+
+## Goal: 
+
+Write case_manager.py, a Python module and CLI tool that creates and manages security cases in a local SQLite database, serving as the output system for all automated playbook decisions.
+
+## Context: 
+
+When a playbook reaches a verdict, something must happen with it. In enterprise environments, that something is a SIEM ticket, a Jira issue or a TheHive case. At MedDefense today, it is a message in a Slack channel that nobody follows up on systematically. The case manager built here is lightweight enough to run anywhere Python runs, persistent enough to survive process restarts, queryable enough to show open cases at a glance and structured enough that every case has a complete audit trail from creation through closure. It becomes the single source of truth for all automated triage decisions.
+
+## Instructions: 
+
+Write case_manager.py implementing the schema and functions below. The module must create cases.db in the current directory on first import if it does not already exist.
+
+### Use These Materials
+
+Use the following files from the provided material folder:
+
+case_management/case_schema_reference.sql
+case_management/case_id_generation_notes.md
+case_management/sample_case_output.json
+
+The schema in your case_manager.py must match the reference SQL. The sample output is provided only to clarify formatting and nested case structure; your script must generate real cases in cases.db.
+
+### Required functions
+
+init_db(db_path: str = "cases.db") -> None: creates the database and all three tables if they do not exist. Called automatically on module import.
+
+generate_case_id() -> str: returns a unique case ID in the format CASE-YYYYMMDD-NNN where NNN is zero-padded sequential within the day (e.g., CASE-20260428-001). Derives the sequence from the count of cases created today stored in cases.db.
+
+create_case(alert_id: str, severity: str, title: str, description: str, iocs: list[dict]) -> str: inserts a new row into cases, inserts each IOC dict from the iocs list into case_iocs, returns the case_id. The iocs list contains dicts with keys ioc_value, ioc_type, verdict and score, matching the output format of enrich_ioc().
+
+add_case_note(case_id: str, note: str) -> bool: inserts a row into case_notes, updates cases.updated_at, returns True on success or False if the case does not exist.
+
+update_case_status(case_id: str, status: str) -> bool: updates cases.status and cases.updated_at. Valid status values: "open", "investigating", "escalated", "closed". Returns False for invalid status values without raising an exception.
+
+close_case(case_id: str, resolution: str) -> bool: sets status = "closed" and resolution = resolution, returns True on success.
+
+get_case(case_id: str) -> dict: returns a dict representation of the case including all notes and IOCs, or None if not found. Notes and IOCs are nested lists in the returned dict.
+
+list_cases(status: str = None) -> list[dict]: returns a list of case summary dicts (no notes, no IOCs). If status is provided, filters by that status. Each dict contains case_id, alert_id, severity, title, status and created_at.
+
+### CLI behavior
+
+python3 case_manager.py list: prints all open cases in a formatted table.
+
+python3 case_manager.py list --status escalated: filters by status.
+
+python3 case_manager.py get CASE-20260428-001: prints the full case dict including notes and IOCs.
+
+python3 case_manager.py close CASE-20260428-001 "benign; confirmed newsletter sender": closes a case with the provided resolution.
+
+**Expected output**
+
+```bash
+$ python3 case_manager.py list
++---------------------+---------------------+----------+----------------------------------------+-----------+
+| Case ID             | Alert ID            | Severity | Title                                  | Status    |
++---------------------+---------------------+----------+----------------------------------------+-----------+
+| CASE-20260428-001   | ALT-20260428-001    | Critical | Phishing: Known C2 IP Escalated        | escalated |
+| CASE-20260428-002   | ALT-20260428-002    | High     | Phishing: Suspicious sender review     | open      |
++---------------------+---------------------+----------+----------------------------------------+-----------+
+2 cases (filter: open + escalated)
+
+$ python3 case_manager.py get CASE-20260428-001
+// `case_management/sample_case_output.json`
 ```
 
 ---
