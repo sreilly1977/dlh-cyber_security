@@ -1,0 +1,52 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BreakGlassAdminWithControls",
+      "Effect": "Allow",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        },
+        "IpAddress": {
+          "aws:SourceIp": "198.51.100.0/24"
+        }
+      }
+    },
+    {
+      "Sid": "ExplicitDenyWithoutMfa",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    },
+    {
+      "Sid": "ExplicitDenyOutsideCorporateNetwork",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "NotIpAddress": {
+          "aws:SourceIp": "198.51.100.0/24"
+        }
+      }
+    },
+    {
+      "Sid": "ExplicitDenyTamperingWithBreakGlassControls",
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeletePolicy",
+        "iam:DeleteRole",
+        "iam:UpdateRole",
+        "organizations:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

@@ -36,7 +36,7 @@ Your assignment has four components. Understand SSO federation by configuring it
 
 ---
 
-# [1. Configure SSO Federation]()
+# [1. Configure SSO Federation](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/keycloak_saml_config.md)
 
 ## Goal: 
 
@@ -85,5 +85,45 @@ Required content:
     Inline comments for Issuer, NameID, Conditions, NotBefore, NotOnOrAfter, AuthnStatement, AttributeStatement, Signature
     Paragraph on expired assertions and replay prevention
     Paragraph on assertion signing risk
+
+---
+
+# [2. Audit and Correct Cloud IAM Policies](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policy_analysis.md)
+
+Goal: Identify specific least-privilege violations in three MedDefense AWS IAM policies and produce corrected policy documents with per-change justification.
+
+Context: When MedDefense's cloud environment was provisioned two years ago, the IAM policies were written by a systems administrator optimizing for speed of deployment, not least privilege. The standard approach was: grant the broad action set needed to make something work, intend to tighten it later. Later arrived with the compliance audit. Helena Reyes flagged the policies as part of her cloud review and brought them to James Chen. He assigned you to fix them.
+
+Each policy below is a real MedDefense configuration. Each has specific violations. Your job is to identify every violation, write the corrected policy and explain each change in terms of what attack surface the over-privilege creates and how the correction closes it.
+
+Instructions: Create three corrected IAM policy files and one analysis document.
+
+Create:
+
+    [iam_policies/siem_reader_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/siem_reader_policy.json)
+    [iam_policies/ehr_backup_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/ehr_backup_policy.json)
+    [iam_policies/break_glass_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/break_glass_policy.json)
+    [iam_policy_analysis.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policy_analysis.md)
+
+Use:
+
+    /opt/meddefense/materials/cloud_iam/original_siem_reader_policy.json
+    /opt/meddefense/materials/cloud_iam/original_ehr_backup_policy.json
+    /opt/meddefense/materials/cloud_iam/original_break_glass_policy.json
+
+Policy requirements:
+
+    SIEM reader: only s3:GetObject, s3:ListBucket scoped to meddefense-siemlog-prod; CloudWatch Logs write only for /aws/lambda/siem-log-reader.
+    EHR backup: scope S3 to meddefense-ehr-backup-prod; scope KMS to arn:aws:kms:us-east-1:123456789012:key/mrk-abc123def456; use only needed KMS actions.
+    Break-glass: preserve emergency admin capability but require MFA and restrict source IP to 198.51.100.0/24; include explicit denies where appropriate.
+
+iam_policy_analysis.md sections:
+
+    # MedDefense IAM Policy Analysis
+    ## Policy 1: MedDefenseSIEMLogReader Violations
+    ## Policy 2: MedDefenseEHRBackupRole Violations
+    ## Policy 3: MedDefenseBreakGlassAdmin Violations
+    ## Least Privilege Summary
+    ## Residual Risk and Operational Notes
 
 ---
