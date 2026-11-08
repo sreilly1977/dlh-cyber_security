@@ -429,3 +429,49 @@ Assess all ten observations:
 For Observation 6, explain Principal: "*", s3:GetObject, ePHI exposure and HIPAA Breach Notification Rule terminology under 45 CFR 164.402.
 
 ---
+
+# [7. Brief the CISO on the Identity Program](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_program_brief.md)
+
+## Goal: 
+
+Produce a one-page written brief for Dr. Morales that connects the IAM audit findings and cloud security assessment to the prior incident, presents the current identity risk posture honestly and proposes a program-level improvement roadmap she can present to the Board Risk Committee.
+
+## Context: 
+
+Dr. Morales needs to answer one question at next month's board meeting: "We had a breach. What is different about our identity posture now?" The answer has to be honest, specific and forward-looking. It cannot be "we are reviewing our policies." It must be: "We found X specific misconfigurations. Y of them directly enabled the attack path. We have remediated Z. Here is what remains and what we need to complete it."
+
+## Instructions: 
+
+Create [iam_program_brief.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_program_brief.md). Bound to one page when rendered. No jargon requiring a security background to parse. Every claim supported by a finding from Tasks 4, 5 or 6.
+
+Use:
+
+    iam_findings.json
+    iam_audit_report.md
+    cloud_security_assessment.md
+    iam_policy_analysis.md
+    vault_pam_lab.md
+    /opt/meddefense/materials/package/ciso_brief_template.md
+    /opt/meddefense/materials/package/identity_program_evidence_index.md
+
+Required sections:
+
+    # Identity Program Brief for Dr. Morales
+    ## Identity Posture Summary
+    ## Connection to the Incident
+    ## What Has Been Completed
+    ## What Must Be Completed Before the Next Board Meeting
+    ## What Requires Board Authorization or Budget
+    ## Board Resolution Requested
+
+Requirements:
+
+    Include number of Critical and High findings
+    Cite finding IDs
+    Connect at least one finding to prior lateral movement
+    Include three to four completed risk-reduction bullets
+    Include three next actions with owner roles and target dates
+    Name board-level authorization or funding request
+    Keep it one page and non-technical
+
+---
