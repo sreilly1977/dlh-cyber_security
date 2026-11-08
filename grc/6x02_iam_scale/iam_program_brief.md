@@ -5,75 +5,58 @@
 
 ## Identity Posture Summary
 
-We completed the first full audit of every privileged account in the
-organization. Across the 20 accounts reviewed, we found 22 problems: 5
-Critical and 9 High. Separately, the cloud environment review found 10
-problems, including 2 Critical. Six accounts still carry standing
-administrator rights nobody can justify, three privileged accounts have no
-second-factor protection, and two configurations expose us today: a
-clinical backup bucket open to the internet, and the AWS root account
-protected by a password alone with permanent access keys dating to March
-2022. Our identity posture currently permits the same attack that
-succeeded against us before. That is the honest position. The difference
-is that we can now prove exactly where we stand, with evidence, and we
-have begun closing it.
+We audited every privileged account in the organization for the first
+time. We found 22 problems: 5 Critical and 9 High. Six accounts hold
+full administrator rights that no one can justify. A cloud review found 10
+more problems, 2 of them Critical: a clinical backup storage location
+readable by anyone on the internet, and our highest-level cloud account
+protected by a password alone. Our identity controls today would still
+allow the same attack that succeeded before. We now know exactly where we
+stand, and we have started fixing it.
 
 ## Connection to the Incident
 
-The prior breach reached Domain Admin in under two hours through a
-service account credential extracted from a workstation. Four of the five
-Critical audit findings recreate that exact path today: service and
-administrative accounts with full domain rights but no valid business
-need. The clearest example is finding IAM-003/IAM-004 (svc_epic_int): a
-domain administrator service account, dormant for over three years, whose
-own record states "no current function identified". Anyone extracting
-that credential tomorrow repeats the original attack. Findings IAM-001
-(departed contractor with administrator rights) and IAM-005 (vendor
-installation account never reviewed) are the same pattern. These are not
-hypothetical risks; they are the current state that made the incident
-possible.
+Last time, an attacker went from one infected computer to full control of
+our network in under two hours by stealing a service account password.
+Four of our five Critical findings recreate that path today. The clearest
+is IAM-003/IAM-004: a service account with full network rights, unused for
+over three years, whose record says no current function exists. Stealing
+that password tomorrow would repeat the original attack. Findings IAM-001
+(a departed contractor who still has administrator access) and IAM-005
+(an unreviewed vendor account) are the same story.
 
 ## What Has Been Completed
 
-- **Full privileged account audit.** Every privileged account inventoried
-  and scored, with 22 documented findings, each traceable to a named
-  account and named check (findings IAM-001 to IAM-022). The audit is now
-  repeatable software, so the board can expect a fresh, comparable result
-  every quarter.
-- **Least-privilege corrections for the cloud.** All three overly broad
-  AWS policies were rewritten to the minimum access each function needs,
-  with per-change justification and an MFA-gated emergency access design.
-- **Single sign-on designed.** A working reference configuration for one
-  login across our systems, so one off-boarding action disables a leaver
-  everywhere, ending the two-stale-Epic-accounts problem permanently.
-- **Replacement for standing service passwords.** A tested design for
-  automatically expiring, individually issued credentials, proving that
-  the svc_epic_int class of risk can be eliminated rather than merely
-  rotated.
+- Audited all 20 privileged accounts; every finding is documented,
+  evidenced, and re-checkable on demand (IAM-001 through IAM-022).
+- Rewrote the three overly broad cloud access permissions to the minimum
+  each job needs, and added identity verification plus network
+  restrictions to emergency access.
+- Designed single sign-on: one login for all staff systems, so disabling
+  a departing employee's access once shuts every door at once.
+- Built and tested an expiring-password design that makes stolen service
+  account passwords worthless within minutes.
 
 ## What Must Be Completed Before the Next Board Meeting
 
-1. **Disable and strip the unjustified administrator accounts**
-   (IAM-001 to IAM-005). Owner: IT Director and SOC Lead. By
+1. Disable the five unjustified administrator accounts (IAM-001 to
+   IAM-005). Owner: IT Director and SOC Lead. By 01 December 2026.
+2. Close the internet-readable clinical backups and lock down the top
+   cloud account. Owner: Systems Administrator and IT Security. By
    01 December 2026.
-2. **Close the internet-facing clinical backup exposure and lock the
-   AWS root account.** Owner: Systems Administration, IT Security. By
-   01 December 2026.
-3. **Require second-factor authentication for every administrative
-   login.** Owner: IT Security. By 15 December 2026.
+3. Require identity verification for every administrator login. Owner:
+   IT Security. By 15 December 2026.
 
 ## What Requires Board Authorization or Budget
 
-An identity program budget covering three items: enterprise single
-sign-on deployment, the privileged-access (expiring-credential) platform,
-and security engineering time to execute the roadmap, estimated at two to
-three engineer-months of remediation work. If deferred, the specific risk
-is that findings IAM-003/IAM-004 remain exploitable, and the open clinical
-backup bucket could convert exposure into a reportable HIPAA breach with
-mandatory 60-day notification.
+Funding for the identity program: single sign-on rollout, the
+expiring-password platform, and roughly two to three engineer-months of
+remediation effort. Without it, the dormant administrator accounts remain
+usable by an attacker, and the open backup storage could become a legally
+reportable patient-data breach carrying mandatory 60-day notification.
 
 ## Board Resolution Requested
 
 The Board Risk Committee authorizes the identity program budget and grants
-the IT Director emergency authority to disable any account shown by the
-audit to hold administrator rights without documented business need.
+the IT Director authority to immediately disable any account the audit
+shows holding administrator rights without a documented business need.
