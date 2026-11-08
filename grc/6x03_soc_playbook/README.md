@@ -422,3 +422,68 @@ Processing logic
 Include a static dict mapping the techniques that appear in MedDefense endpoint alerts to their ATT&CK descriptions. Minimum entries: T1003.001 (LSASS Memory), T1550.002 (Pass the Hash), T1021.002 (SMB/Windows Admin Shares), T1059.001 (PowerShell). The stdout summary must include the technique name alongside the technique ID.
 
 ---
+
+# [5. Run the Integration Test](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/integration_test_results.md)
+
+## Goal: 
+
+Execute both playbooks against five provided test alert scenarios, verify that each produces the expected verdict, case severity and action, and document the results in integration_test_results.md.
+
+## Context: 
+
+A playbook that has never been run against known inputs is not a playbook; it is a theory. The integration test verifies that the enrichment engine, case manager and both playbooks are correctly wired together end to end. It also serves as the regression test suite: if the playbooks are modified later, running these five scenarios must still produce the same five outcomes. That is what "must actually run" means in practice.
+
+## Instructions: Create the five alert files below in a directory called alerts/. Run both playbooks against the appropriate alerts. Document every result in integration_test_results.md.
+
+Use These Materials
+
+Use the following files from the provided material folder:
+
+alerts/phishing/ALT-20260428-001.json
+alerts/phishing/ALT-20260428-002.json
+alerts/phishing/ALT-20260428-003.json
+alerts/credential/ALT-20260428-007.json
+alerts/credential/ALT-20260428-009.json
+integration/expected_outcomes.csv
+integration/integration_test_checklist.md
+integration/sample_stdout_outputs.md
+
+Use the provided alerts as the canonical integration fixtures. Your integration_test_results.md must document the actual command run, actual stdout summary, case created, expected outcome, actual outcome, and PASS/FAIL for each scenario.
+
+the test alerts
+
+alerts/ALT-20260428-001.json: Known malicious sender. Expected verdict: ESCALATE, Critical.
+
+alerts/ALT-20260428-002.json: Unknown sender, external. Expected verdict: REVIEW, High.
+
+alerts/ALT-20260428-003.json: Internal sender (private IP). Expected verdict: CLOSE, Low.
+
+alerts/ALT-20260428-007.json: LSASS dump from known C2 IP, Domain Admin username. Expected verdict: ESCALATE, Critical, host written to isolation queue.
+
+alerts/ALT-20260428-009.json: Pass the hash lateral movement from internal IP, standard user. Expected verdict: Medium, manual review, no isolation queue entry.
+
+Run the tests
+
+integration/integration_test_checklist.md
+
+Document results in integration_test_results.md
+
+For each test:
+
+    Alert ID and scenario description
+
+    Command executed
+
+    Actual stdout output (pasted as-is, not summarized)
+
+    Actual case created: case ID, severity, status (from python3 case_manager.py get [CASE-ID])
+
+    Expected vs actual verdict: PASS or FAIL
+
+    If FAIL: exact discrepancy and the code change required to correct it
+
+After all five tests, paste the full output of python3 case_manager.py list and cat isolation_queue.json.
+
+A test suite that all passes on the first run is not necessarily correct; a student who found a bug, fixed it and documents the fix demonstrates more understanding than one who reports all-pass with no investigation.
+
+---
