@@ -339,3 +339,86 @@ The script must exit with code 0 on successful execution regardless of the verdi
 Handle the following conditions without crashing: missing from_ip field (skip that IOC), malformed URL in body_urls (log a warning and skip), enrichment enrich_ioc() raising an exception (log the exception, set verdict to "INVESTIGATE" for that IOC, continue). Never let a missing IOC field abort the entire playbook run.
 
 ---
+
+# [4. Write the Credential Exposure Playbook](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/playbook_credential_exposure.py)
+
+## Goal: 
+
+Write playbook_credential_exposure.py, an automation playbook for credential access and lateral movement alerts that enriches the source IP, checks whether the involved account is privileged and writes flagged hosts to an isolation queue for human-authorized action.
+
+## Context: 
+
+The Cobalt Strike incident's detection failure was partly a speed problem: by the time a human analyst enriched the source IP, verified that svc_helpdesk was a Domain Admin account and escalated, 40 minutes had passed. A playbook that does those lookups in under 10 seconds and immediately surfaces a pre-enriched Critical case changes the analyst's first action from "I need to look this up" to "I need to decide what to do with this." The isolation queue is intentional: this playbook flags hosts, it does not isolate them. Automated isolation requires a validated false-positive rate and an exception mechanism that does not yet exist at MedDefense.
+
+## Instructions: 
+
+Write playbook_credential_exposure.py. It imports enrich_ioc and case_manager from the same directory.
+
+### Use These Materials
+
+Use the following files from the provided material folder:
+
+iam/privileged_accounts.json
+iam/privileged_account_context.md
+alerts/credential/ALT-20260428-007.json
+alerts/credential/ALT-20260428-008.json
+alerts/credential/ALT-20260428-009.json
+playbooks/credential_exposure_decision_logic.md
+playbooks/mitre_technique_reference.md
+playbooks/audit_log_format_reference.md
+
+Copy the privileged account inventory into the project root before testing:
+
+cp /opt/meddefense/materials/iam/privileged_accounts.json ./privileged_accounts.json
+mkdir -p alerts
+cp /opt/meddefense/materials/alerts/credential/*.json alerts/
+
+The isolation queue is a human-authorization queue only. Do not implement real host isolation.
+
+### Alert input format
+
+The playbook accepts a single JSON file path: python3 playbook_credential_exposure.py alerts/ALT-20260428-007.json
+
+Processing logic
+
+    Extract: source_ip, username, host, mitre_technique from raw_log
+
+    Enrich source_ip via enrich_ioc()
+
+    Check username against privileged_accounts.json: is the account in domain_admins or server_admins?
+
+    Apply decision logic:
+
+| Source IP verdict | Username is DA | Username is SA | Outcome |
+| --- | --- | --- | --- |
+| BLOCK | Any | Any | Critical, escalate, write host to isolation queue |
+| INVESTIGATE | TRUE | - | Critical, escalate, write host to isolation queue |
+| INVESTIGATE | FALSE | TRUE | High, manual review |
+| INVESTIGATE | FALSE | FALSE | High, manual review |
+| ALLOW | TRUE | - | High, escalate: privileged account anomaly even from internal IP |
+| ALLOW | FALSE | TRUE | Medium, manual review |
+| ALLOW | FALSE | FALSE | Medium, manual review |
+
+    If the outcome includes "write host to isolation queue": append an entry to isolation_queue.json. If the file does not exist, create it with an empty list and append. Each entry:
+
+```json
+{
+  "queued_at": "2026-04-28T14:33:22Z",
+  "host": "WST-WS-031",
+  "alert_id": "ALT-20260428-007",
+  "case_id": "CASE-20260428-003",
+  "reason": "LSASS dump from known C2 IP 198.51.100.42 by Domain Admin svc_helpdesk",
+  "action_required": "Analyst must authorize isolation via EDR console before execution",
+  "status": "pending_authorization"
+}
+```
+
+    Create a case via case_manager.create_case() and add a case note with the full enrichment summary and the reasoning behind the verdict.
+
+    Append to playbook_audit.log and print a structured stdout summary mirroring the format from Task 3.
+
+### MITRE ATT&CK enrichment
+
+Include a static dict mapping the techniques that appear in MedDefense endpoint alerts to their ATT&CK descriptions. Minimum entries: T1003.001 (LSASS Memory), T1550.002 (Pass the Hash), T1021.002 (SMB/Windows Admin Shares), T1059.001 (PowerShell). The stdout summary must include the technique name alongside the technique ID.
+
+---

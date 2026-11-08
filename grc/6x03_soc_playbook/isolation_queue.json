@@ -1,0 +1,11 @@
+[
+  {
+    "queued_at": "2026-11-08T17:32:51Z",
+    "host": "WST-WS-031",
+    "alert_id": "ALT-20260428-007",
+    "case_id": "CASE-20261108-004",
+    "reason": "T1003.001 from BLOCK-verdict source IP 198.51.100.42 by Domain Admin account svc_helpdesk",
+    "action_required": "Analyst must authorize isolation via EDR console before execution",
+    "status": "pending_authorization"
+  }
+]
