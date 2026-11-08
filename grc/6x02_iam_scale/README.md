@@ -366,3 +366,66 @@ Use:
 The executive summary must connect at least one finding directly to the lateral movement path used in the Cobalt Strike incident. The report must not name the attacker or frame the findings as speculative: frame them as current-state organizational risk.
 
 ---
+
+# [6. Assess the Cloud Security Posture](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/cloud_security_assessment.md)
+
+## Goal: 
+
+Review the current state of MedDefense's AWS IAM configuration against CIS AWS Foundations Benchmark controls, produce a structured findings table and write specific remediation recommendations for every gap.
+
+## Context: 
+
+Helena Reyes completed a manual walk-through of the MedDefense AWS environment as part of the post-incident cloud review. She documented 10 specific configuration states below. None of them have been formally assessed against a benchmark. Three of them create direct ePHI exposure or unrestricted administrative access. This assessment converts her observations into a structured, auditable record.
+
+## Instructions: 
+
+Review each environment observation below against the CIS AWS Foundations Benchmark v3.0 control it maps to. For each observation, document the specific CIS control, the finding severity, the compliance status and a specific remediation with the exact AWS console or CLI action required.
+
+MedDefense AWS environment observations
+
+| # | Observation |
+| --- | --- |
+| 1 | AWS root account has no MFA configured; root access keys were created on 2022-03-15 and have never been deleted |
+| 2 | Seven IAM users have AWS console access; four have MFA enrolled; three do not |
+| 3 | Four IAM users have long-lived programmatic access keys; two of those keys were created more than 22 months ago and have no documented rotation schedule |
+| 4 | IAM password policy: minimum 8 characters; no complexity requirement; no expiration; no MFA requirement for console login |
+| 5 | CloudTrail is enabled in us-east-1; not enabled in us-east-2 (the DR region where clinical backup S3 buckets reside) |
+| 6 | S3 bucket meddefense-clinical-backup-2022: Block Public Access is disabled; the bucket policy contains "Principal": "*" for s3:GetObject; this bucket contains ePHI backup archives |
+| 7 | Three IAM roles carry the AWS-managed AdministratorAccess policy: MedDefenseDevRole, MedDefenseLegacyRole and MedDefenseVendorAccess |
+| 8 | VPC Flow Logs are not enabled on any VPC |
+| 9 | IAM role MedDefenseEHRBackupRole uses the policy corrected in Task 2 (pre-correction state: s3:* on Resource: *) |
+| 10 | AWS Organizations is not configured; no Service Control Policies exist |
+
+Create [cloud_security_assessment.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/cloud_security_assessment.md).
+
+Use:
+
+    /opt/meddefense/materials/cloud_iam/aws_environment_observations.md
+    /opt/meddefense/materials/cloud_iam/cis_aws_control_map.md
+    Corrected policies from Task 2
+
+Required sections:
+
+    # MedDefense Cloud Security Assessment
+    ## Assessment Scope
+    ## Findings Table
+    ## Critical Findings
+    ## Remediation Priority Order
+    ## Estimated Effort
+
+Assess all ten observations:
+
+    Root account has no MFA and root access keys exist
+    IAM console MFA coverage incomplete
+    Long-lived access keys
+    Weak password policy
+    CloudTrail not enabled in DR region
+    Public ePHI backup S3 bucket
+    Roles with AdministratorAccess
+    VPC Flow Logs disabled
+    EHR backup role had s3:* on Resource: *
+    AWS Organizations and SCPs not configured
+
+For Observation 6, explain Principal: "*", s3:GetObject, ePHI exposure and HIPAA Breach Notification Rule terminology under 45 CFR 164.402.
+
+---
