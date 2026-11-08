@@ -545,3 +545,46 @@ Three specific risks in the MedDefense healthcare context, not generic risks. Fo
 Three phases. Each phase has a 90-day scope, specific deliverables, success criteria and the gate condition that must be true before Phase 2 begins. Phase 1 is enrichment only; no automated actions. Phase 2 introduces auto-close for confirmed-benign. Phase 3 introduces conditional escalation. This sequencing is not negotiable and the document must explain why.
 
 ---
+
+# [7. Brief the SOC Lead](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/soc_automation_brief.md)
+### advanced
+
+## Goal: 
+
+Produce a one-page written brief for James Chen summarizing what was built, what it saves, what it cannot do yet and what he needs to authorize to move this from a lab project to a production deployment.
+
+## Context: 
+
+James Chen does not need to know how sqlite3 works. He needs to know: what runs, what it decides, how often it will be wrong, what happens when it is wrong and what it costs to deploy it. That is the brief. One page. No code. No architecture diagrams. The kind of document that gets read in four minutes before a team meeting and produces a concrete decision.
+
+## Instructions: 
+
+Create soc_automation_brief.md. Bound to one page rendered. No jargon requiring a security background to parse. Every number is traceable to the integration test results or the automation strategy.
+
+### Use These Materials
+
+Use the following files from the provided material folder:
+
+strategy/soc_brief_template.md
+strategy/soc_volume_baseline.md
+strategy/false_positive_governance.md
+integration/expected_outcomes.csv
+integration/sample_stdout_outputs.md
+
+The brief must be based on the automation components you built, the integration test results you documented, and the strategy assumptions from Task 6. It should not describe production capabilities that your lab artifacts do not yet support.
+
+### Required content in this order:
+
+    What was built: Three to four bullets naming each component (enrichment engine, case manager, phishing triage playbook, credential exposure playbook) and what each does in plain English.
+
+    Integration test results: One sentence per test scenario. Not the technical output but the outcome. "Alert ALT-001 with a known malicious sender was correctly escalated to Critical within 2 seconds without analyst involvement."
+
+    Efficiency estimate: One paragraph. Analyst hours saved per month if the phishing playbook is deployed at current alert volume. State the assumption and the uncertainty.
+
+    What the playbooks cannot do yet: Three specific limitations, not theoretical limitations, but gaps observed during the integration test or identified in the strategy document. For example: no TTL-based caching (every IOC queries the feed on every run), no deduplication across alerts (same sender IP will create a new case each time), no integration with the email gateway for automated quarantine.
+
+    What James Chen needs to authorize: Specific asks. Deployment to a staging SIEM feed, access to the email gateway API for quarantine integration, a 30-day false-positive measurement period before the auto-close logic goes live.
+
+    Recommendation: One sentence. What should happen next and by when.
+
+---
