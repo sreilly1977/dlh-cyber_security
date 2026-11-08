@@ -487,3 +487,61 @@ After all five tests, paste the full output of python3 case_manager.py list and 
 A test suite that all passes on the first run is not necessarily correct; a student who found a bug, fixed it and documents the fix demonstrates more understanding than one who reports all-pass with no investigation.
 
 ---
+
+# [6. Write the Automation Strategy](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/automation_strategy.md)
+### advanced
+
+## Goal: 
+
+Produce a concise automation strategy document for MedDefense that identifies the highest-value automation candidates, quantifies the expected efficiency gain, names the risks of over-automation in a healthcare environment and recommends a phased implementation roadmap.
+
+## Context: 
+
+Robert Kim flagged the risk clearly in the team meeting: automation applied without measuring the false-positive rate first will produce an automated version of the same problems MedDefense already has. The strategy document is not a list of everything that could be automated. It is a prioritized, justified argument for what to automate first, in what order and with what safeguards. James Chen will use it to plan the SOC staffing model for the next year. Dr. Morales will use it to justify the tooling budget request.
+
+## Instructions: 
+
+Create automation_strategy.md. Maximum length: 3 pages rendered. Every claim must be supported by either the alert data described in the Context section (150 phishing alerts per day, 8 minutes per alert, 67 percent enrichment time) or findings from the integration test and playbooks you built in Tasks 1 through 5.
+
+### Use These Materials
+
+Use the following files from the provided material folder:
+
+strategy/soc_volume_baseline.md
+strategy/automation_candidate_matrix_seed.csv
+strategy/false_positive_governance.md
+integration/expected_outcomes.csv
+integration/integration_test_checklist.md
+playbooks/phishing_triage_decision_logic.md
+playbooks/credential_exposure_decision_logic.md
+
+Use the SOC baseline numbers and integration outcomes as the numeric support for automation_strategy.md. Do not invent alternate alert volumes or analyst effort estimates unless you explicitly label them as assumptions.
+
+### Required sections:
+
+### Current state analysis: 
+
+The current manual workload in numbers. Total daily alerts by type, estimated analyst hours consumed by enrichment versus decision-making, the cost of the manual triage queue during a real incident (use the Cobalt Strike incident as the specific example: 45 minutes lost to manual enrichment during an active breach).
+
+### Automation candidates: 
+
+A prioritized table of SOC processes that are candidates for automation. For each: process name, current manual effort estimate, automation complexity (Low/Medium/High), false-positive risk (Low/Medium/High), recommended automation type (enrich-only, enrich-and-triage, enrich-and-act) and the condition that must be met before automation of the action tier is appropriate. Minimum five candidates.
+
+| Process | Daily volume | Manual effort | Automation complexity | FP risk | Recommended tier | FP threshold required |
+| --- | --- | --- | --- | --- | --- | --- |
+| Phishing enrichment | 150/day | 8 min/alert | Low | Medium | Enrich + triage | < 5% before auto-close |
+| [Next candidate] | … | … | … | … | … | … |
+
+### Expected efficiency gains: 
+
+Quantify the analyst hours saved per month if the phishing triage playbook from Task 3 is deployed at scale. Use the formula: (volume × manual_effort × automation_rate) / 60 = hours_saved_per_day. Project to monthly. State the confidence level of this estimate and what would invalidate it.
+
+### Risks of over-automation: 
+
+Three specific risks in the MedDefense healthcare context, not generic risks. For each: the specific scenario, the patient safety or regulatory consequence if it occurs and the control that prevents it. One of the three must address the risk of automated alert closure masking a real incident during a multi-phase attack.
+
+### Implementation roadmap: 
+
+Three phases. Each phase has a 90-day scope, specific deliverables, success criteria and the gate condition that must be true before Phase 2 begins. Phase 1 is enrichment only; no automated actions. Phase 2 introduces auto-close for confirmed-benign. Phase 3 introduces conditional escalation. This sequencing is not negotiable and the document must explain why.
+
+---
