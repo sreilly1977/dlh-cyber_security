@@ -248,3 +248,94 @@ $ python3 case_manager.py get CASE-20260428-001
 ```
 
 ---
+
+# [3. Write the Phishing Triage Playbook](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x03_soc_playbook/playbook_phishing_triage.py)
+
+## Goal: 
+
+Write playbook_phishing_triage.py, an executable automation playbook that ingests a structured phishing alert, enriches all extracted IOCs, applies decision logic and creates a case with a full audit trail.
+
+## Context: 
+
+Phishing alerts are the highest-volume alert type at MedDefense: between 80 and 100 per day. The triage decision for most of them is deterministic: if the sender IP is in the threat intel feed as C2 infrastructure, the case is Critical and gets escalated to the on-call analyst immediately. If all IOCs are unknown, it gets queued for manual review at lower priority. The analyst judgment is needed only when IOCs are partially known or contradictory. This playbook handles the deterministic cases automatically, creating cases that are pre-enriched and pre-prioritized so analysts spend their time on investigation, not lookups.
+
+## Instructions: 
+
+Write playbook_phishing_triage.py. The script imports enrich_ioc and case_manager from the same directory; both must be complete before this task can be executed.
+
+### Use These Materials
+
+Use the following files from the provided material folder:
+
+alerts/phishing/ALT-20260428-001.json
+alerts/phishing/ALT-20260428-002.json
+alerts/phishing/ALT-20260428-003.json
+playbooks/phishing_triage_decision_logic.md
+playbooks/audit_log_format_reference.md
+integration/expected_outcomes.csv
+
+Create an alerts/ directory in your project and copy the phishing alerts there for testing:
+
+mkdir -p alerts
+cp /opt/meddefense/materials/alerts/phishing/*.json alerts/
+
+The playbook must still accept any alert path as a CLI argument. The provided alerts are deterministic test fixtures for development and integration testing.
+
+### Alert input format
+
+The playbook accepts a single JSON file path as a CLI argument: python3 playbook_phishing_triage.py alerts/ALT-20260428-001.json
+
+### IOC extraction
+
+Extract the following IOCs from the alert:
+
+    raw_log.from_ip: classified as ipv4
+
+    Email domain from raw_log.from (the part after @): classified as domain
+
+    For each URL in raw_log.body_urls: extract the hostname (strip scheme and path) and classify it as ipv4 or domain. Deduplicate: if a hostname was already extracted from from_ip or the email domain, do not enrich it twice.
+
+### Decision logic
+
+After enriching all extracted IOCs, apply this logic in order:
+
+    If any IOC has verdict "BLOCK": playbook_verdict = "ESCALATE", case_severity = "Critical", case_status = "escalated"
+
+    Else if any IOC has verdict "INVESTIGATE": playbook_verdict = "REVIEW", case_severity = "High", case_status = "open"
+
+    Else (all "ALLOW"): playbook_verdict = "CLOSE", case_severity = "Low", case_status = "closed", resolution = "no_indicators_of_compromise"
+
+### Case creation and audit logging
+
+For all verdicts including "CLOSE": create a case via case_manager.create_case().
+
+For "CLOSE" verdict: immediately call case_manager.close_case() with the resolution above.
+
+For "ESCALATE" verdict: call case_manager.update_case_status() to "escalated" and add a case note via case_manager.add_case_note() summarizing which IOC triggered escalation.
+
+Append one line per playbook execution to playbook_audit.log in this format:
+
+2026-04-28T10:15:48Z | PHISHING_TRIAGE | ALT-20260428-001 | IOCs:3 | BLOCK:2,INVESTIGATE:0,ALLOW:1 | Verdict:ESCALATE | Case:CASE-20260428-001 | Severity:Critical
+
+Print a structured summary to stdout:
+
+```bash
+[2026-04-28T10:15:48Z] PHISHING TRIAGE PLAYBOOK
+Alert      : ALT-20260428-001
+Rule       : phishing_email_suspicious_sender
+IOCs       : 3 extracted, 3 enriched
+  198.51.100.42          ipv4    BLOCK       score=95  (c2, cobalt_strike)
+  meddefense-secure.net  domain  BLOCK       score=97  (typosquat, phishing)
+  198.51.100.42          [dedup, skipped]
+Verdict    : ESCALATE
+Case       : CASE-20260428-001  Severity: Critical  Status: escalated
+Action     : SOC notification queued for on-call analyst
+```
+
+The script must exit with code 0 on successful execution regardless of the verdict. Exit code 1 only on unrecoverable errors (malformed JSON, missing required fields, database write failure).
+
+### Error handling requirements
+
+Handle the following conditions without crashing: missing from_ip field (skip that IOC), malformed URL in body_urls (log a warning and skip), enrichment enrich_ioc() raising an exception (log the exception, set verdict to "INVESTIGATE" for that IOC, continue). Never let a missing IOC field abort the entire playbook run.
+
+---
