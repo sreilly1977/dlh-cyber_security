@@ -100,10 +100,10 @@ Instructions: Create three corrected IAM policy files and one analysis document.
 
 Create:
 
-    [iam_policies/siem_reader_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/siem_reader_policy.json)
-    [iam_policies/ehr_backup_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/ehr_backup_policy.json)
-    [iam_policies/break_glass_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/break_glass_policy.json)
-    [iam_policy_analysis.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policy_analysis.md)
+[iam_policies/siem_reader_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/siem_reader_policy.json)
+[iam_policies/ehr_backup_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/ehr_backup_policy.json)
+[iam_policies/break_glass_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/break_glass_policy.json)
+[iam_policy_analysis.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policy_analysis.md)
 
 Use:
 
@@ -125,5 +125,49 @@ iam_policy_analysis.md sections:
     ## Policy 3: MedDefenseBreakGlassAdmin Violations
     ## Least Privilege Summary
     ## Residual Risk and Operational Notes
+
+---
+
+# [3. Implement PAM Controls with HashiCorp Vault](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/vault_pam_lab.md)
+### advanced
+
+## Goal: 
+
+Analyze Vault database secrets engine evidence and explain how TTL-based dynamic credentials eliminate static service account risk.
+
+## Context: 
+
+svc_epic_int was a Domain Admin service account with a static password stored in a configuration file. Nobody knew what it was for. Nobody rotated its password. When the attacker extracted credentials from memory, svc_epic_int was in the list and the attacker used it for three hours before detection. The password had not changed in three years.
+
+The PAM model this task implements is different at the architectural level: no service account holds a standing password. When an application needs database access, it requests a credential from Vault. Vault issues a unique username and password with a defined TTL. When the TTL expires, the credential is automatically revoked at the database. If an attacker extracts the credential from memory, it is valid only until the TTL expires. There is no svc_epic_int to steal.
+
+## Instructions:
+
+Create [vault_pam_lab.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/vault_pam_lab.md).
+
+Use:
+
+    /opt/meddefense/materials/pam/vault_database_secrets_transcript.md
+    /opt/meddefense/materials/pam/vault_lease_revoke_transcript.md
+    /opt/meddefense/materials/pam/svc_epic_int_static_account_risk.md
+    /opt/meddefense/materials/pam/pam_migration_candidates.csv
+
+Required sections:
+
+    # MedDefense Vault PAM Lab
+    ## Lab Evidence Summary
+    ## Dynamic Credential Demonstration
+    ## Lease and TTL Evidence
+    ## Revocation Evidence
+    ## Static vs Dynamic Credential Comparison
+    ## Migration Recommendation
+
+Required content:
+
+    Read-only lease ID, username and TTL
+    Read-write lease ID, username and TTL
+    Explanation of vault lease revoke
+    Comparison table: credential lifetime, rotation method, blast radius if stolen, audit trail, off-boarding
+    Migration recommendation for highest-risk service accounts
 
 ---
