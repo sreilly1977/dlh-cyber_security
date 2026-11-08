@@ -287,3 +287,82 @@ Expected outputs:
     iam_findings.json
     
 ---
+
+# [5. Write the IAM Audit Report](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_audit_report.md)
+
+## Goal: 
+
+Produce a professional IAM audit report that documents every finding from iam_findings.json with severity rating, evidence, patient safety or regulatory consequence and specific remediation action, ordered so the CISO knows exactly what to fix first.
+
+## Context: 
+
+The script produces the evidence. The report produces the argument for action. James Chen will take this report to Dr. Morales with a proposed remediation plan. The report must speak clearly to non-technical stakeholders where the consequences matter, and precisely to the systems administrators who will execute the remediations. It must not require the reader to have seen the inventory data or the script output to understand the findings.
+
+## Instructions: 
+
+Create iam_audit_report.md using the structure below. Every finding must reference the specific row in accounts.csv that produced it. Every severity rating must be justified. Every remediation must be specific: not "remove excessive permissions" but "remove svc_helpdesk from the Domain Admins group; verify that helpdesk automation functions continue to operate with Helpdesk group membership only; document the verification result."
+
+Use:
+
+    accounts.csv
+    audit_iam.py
+    iam_findings.json
+    /opt/meddefense/materials/iam_audit/severity_model.md
+    /opt/meddefense/materials/iam_audit/incident_identity_path.md
+
+**Required structure:**
+
+<pre>
+# MedDefense IAM Audit Report
+**Classification:** Confidential
+**Audit date:** [Date]
+**Prepared by:** [Your name]
+**Reviewed by:** James Chen, SOC Lead
+**Approved by:** _________________________ Date: _________
+
+## Executive Summary
+[3 paragraphs: overall posture, most critical finding, 
+ connection to the prior incident and what the audit changes]
+
+## Audit Scope and Methodology
+[What was audited, what was out of scope, how findings were classified,
+ how severity was assigned]
+
+## Findings Summary Table
+| Finding ID | Account | Category | Severity | Status |
+|---|---|---|---|---|
+| IAM-001 | svc_epic_int | Service account over-privilege | Critical | Open |
+| ... | ... | ... | ... | ... |
+
+## Detailed Findings
+
+### IAM-001: [Title]
+**Account:** svc_epic_int
+**Severity:** Critical
+**Check:** Service account privilege review
+**Evidence:** [Specific fields from accounts.csv that support this finding]
+**Risk:** [What an attacker can do with this access and what the patient safety or regulatory consequence is]
+**Remediation:** [Specific, numbered steps; not a category description]
+**Owner:** [Role]
+**Target completion:** [Relative date: immediate / 7 days / 30 days]
+
+[Continue for every finding in iam_findings.json]
+
+## MFA Coverage Analysis
+[Counts: privileged accounts with MFA / without MFA; 
+ percentage; comparison against HIPAA 164.312(d) requirements for unique user ID]
+
+## Service Account Risk Summary
+[All service accounts with Domain Admin or Server Admin membership;
+ whether each has a documented function; recommendation for each]
+
+## Remediation Roadmap
+[Prioritized action table: Priority | Action | Owner Role | Target | Success Criterion]
+
+## Appendix: Audit Script
+[Reference to audit_iam.py and iam_findings.json as source evidence]
+</pre>
+
+The executive summary must connect at least one finding directly to the lateral movement path used in the Cobalt Strike incident. The report must not name the attacker or frame the findings as speculative: frame them as current-state organizational risk.
+
+---
