@@ -1,0 +1,213 @@
+{
+  "audit_metadata": {
+    "script_version": "1.0",
+    "accounts_processed": 20,
+    "audit_timestamp": "2026-11-08T13:13:29Z",
+    "findings_count": {
+      "Critical": 5,
+      "High": 9,
+      "Medium": 3,
+      "Low": 5
+    }
+  },
+  "findings": [
+    {
+      "finding_id": "IAM-001",
+      "account": "t.morrison",
+      "check": "check_departed_or_transferred",
+      "severity": "Critical",
+      "title": "Departed or transferred account flagged for manual review (keyword: 'contract ended')",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=248; mfa_enrolled=FALSE; description=Contract ended 2025-09-01",
+      "remediation": "Manual review: confirm employment or transfer status with HR. If departed or transferred, disable the account, strip all privileged group memberships, and synchronize off-boarding across every connected system."
+    },
+    {
+      "finding_id": "IAM-002",
+      "account": "svc_backup",
+      "check": "check_service_account_overpriv",
+      "severity": "Critical",
+      "title": "Service account with Domain Admin membership",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Domain Admins; last_login_days_ago=1; mfa_enrolled=N/A; description=Nightly backup automation; DA granted per legacy config",
+      "remediation": "Remove the Domain Admins membership and re-scope the automation to the minimum required permissions, or migrate it to short-TTL dynamic credentials via Vault (see pam_migration_candidates.csv)."
+    },
+    {
+      "finding_id": "IAM-003",
+      "account": "svc_epic_int",
+      "check": "check_dormant_privileged",
+      "severity": "Critical",
+      "title": "Dormant privileged service account (1156 days since last login)",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Domain Admins; last_login_days_ago=1156; mfa_enrolled=N/A; description=Post-EHR-migration service account; no current function identified",
+      "remediation": "Disable immediately and audit recent activity; identify the owning team. If no function is confirmed, delete the account. Any replacement workload must receive short-TTL dynamic credentials (Vault) instead of a standing privileged service credential, which repeats the prior incident path."
+    },
+    {
+      "finding_id": "IAM-004",
+      "account": "svc_epic_int",
+      "check": "check_service_account_overpriv",
+      "severity": "Critical",
+      "title": "Service account with Domain Admin membership",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Domain Admins; last_login_days_ago=1156; mfa_enrolled=N/A; description=Post-EHR-migration service account; no current function identified",
+      "remediation": "Disable immediately; audit all actions taken under this account in the past 90 days; remove Domain Admins membership; if no function confirmed within 30 days, delete the account"
+    },
+    {
+      "finding_id": "IAM-005",
+      "account": "svc_helpdesk",
+      "check": "check_service_account_overpriv",
+      "severity": "Critical",
+      "title": "Service account with Domain Admin membership",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Domain Admins; last_login_days_ago=0; mfa_enrolled=N/A; description=Ticket routing automation; DA granted by vendor during install; review later",
+      "remediation": "Remove the Domain Admins membership and re-scope the automation to the minimum required permissions, or migrate it to short-TTL dynamic credentials via Vault (see pam_migration_candidates.csv)."
+    },
+    {
+      "finding_id": "IAM-006",
+      "account": "admin.legacy",
+      "check": "check_dormant_privileged",
+      "severity": "High",
+      "title": "Dormant privileged user account (187 days since last login)",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins; last_login_days_ago=187; mfa_enrolled=FALSE; description=Created for EHR migration 2021; migration complete",
+      "remediation": "Confirm ownership and business need; remove the privileged group membership if none exists. If the account is still required, enforce MFA and replace standing privilege with just-in-time elevation."
+    },
+    {
+      "finding_id": "IAM-007",
+      "account": "admin.legacy",
+      "check": "check_mfa_coverage",
+      "severity": "High",
+      "title": "Privileged account (Domain Admins) without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins; last_login_days_ago=187; mfa_enrolled=FALSE; description=Created for EHR migration 2021; migration complete",
+      "remediation": "Enroll the account holder in MFA immediately and enforce MFA for all privileged logins; alternatively remove the privileged membership if it is no longer required."
+    },
+    {
+      "finding_id": "IAM-008",
+      "account": "admin.legacy",
+      "check": "check_departed_or_transferred",
+      "severity": "High",
+      "title": "Departed or transferred account flagged for manual review (keyword: 'migration complete')",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins; last_login_days_ago=187; mfa_enrolled=FALSE; description=Created for EHR migration 2021; migration complete",
+      "remediation": "Manual review: confirm employment or transfer status with HR. If departed or transferred, disable the account, strip all privileged group memberships, and synchronize off-boarding across every connected system."
+    },
+    {
+      "finding_id": "IAM-009",
+      "account": "t.morrison",
+      "check": "check_dormant_privileged",
+      "severity": "High",
+      "title": "Dormant privileged user account (248 days since last login)",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=248; mfa_enrolled=FALSE; description=Contract ended 2025-09-01",
+      "remediation": "Confirm ownership and business need; remove the privileged group membership if none exists. If the account is still required, enforce MFA and replace standing privilege with just-in-time elevation."
+    },
+    {
+      "finding_id": "IAM-010",
+      "account": "t.morrison",
+      "check": "check_mfa_coverage",
+      "severity": "High",
+      "title": "Privileged account (Domain Admins; Server Admins) without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=248; mfa_enrolled=FALSE; description=Contract ended 2025-09-01",
+      "remediation": "Enroll the account holder in MFA immediately and enforce MFA for all privileged logins; alternatively remove the privileged membership if it is no longer required."
+    },
+    {
+      "finding_id": "IAM-011",
+      "account": "l.okafor",
+      "check": "check_departed_or_transferred",
+      "severity": "High",
+      "title": "Departed or transferred account flagged for manual review (keyword: 'left organization')",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Finance Users; last_login_days_ago=142; mfa_enrolled=FALSE; description=Left organization per HR 2025-11-28",
+      "remediation": "Manual review: confirm employment or transfer status with HR. If departed or transferred, disable the account, strip all privileged group memberships, and synchronize off-boarding across every connected system."
+    },
+    {
+      "finding_id": "IAM-012",
+      "account": "j.yamamoto",
+      "check": "check_dormant_privileged",
+      "severity": "High",
+      "title": "Dormant privileged user account (312 days since last login)",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=312; mfa_enrolled=FALSE; description=Transferred from IT to Finance 2024-02; elevated rights not removed",
+      "remediation": "Confirm ownership and business need; remove the privileged group membership if none exists. If the account is still required, enforce MFA and replace standing privilege with just-in-time elevation."
+    },
+    {
+      "finding_id": "IAM-013",
+      "account": "j.yamamoto",
+      "check": "check_mfa_coverage",
+      "severity": "High",
+      "title": "Privileged account (Domain Admins; Server Admins) without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=312; mfa_enrolled=FALSE; description=Transferred from IT to Finance 2024-02; elevated rights not removed",
+      "remediation": "Enroll the account holder in MFA immediately and enforce MFA for all privileged logins; alternatively remove the privileged membership if it is no longer required."
+    },
+    {
+      "finding_id": "IAM-014",
+      "account": "j.yamamoto",
+      "check": "check_departed_or_transferred",
+      "severity": "High",
+      "title": "Departed or transferred account flagged for manual review (keyword: 'transferred from')",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=312; mfa_enrolled=FALSE; description=Transferred from IT to Finance 2024-02; elevated rights not removed",
+      "remediation": "Manual review: confirm employment or transfer status with HR. If departed or transferred, disable the account, strip all privileged group memberships, and synchronize off-boarding across every connected system."
+    },
+    {
+      "finding_id": "IAM-015",
+      "account": "k.nguyen",
+      "check": "check_no_mfa_high_risk",
+      "severity": "Medium",
+      "title": "Enabled user account without MFA and repeated security failures",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Epic Users;PACS Users; last_login_days_ago=1; mfa_enrolled=FALSE; description=Three phishing simulation failures in 90 days",
+      "remediation": "Prioritize MFA enrollment; given the repeated security failures, combine with targeted phishing and security awareness follow-up, and consider conditional access restrictions."
+    },
+    {
+      "finding_id": "IAM-016",
+      "account": "b.carter",
+      "check": "check_disabled_with_groups",
+      "severity": "Medium",
+      "title": "Disabled account retaining privileged group memberships",
+      "evidence": "enabled=FALSE; account_type=user; privileged_groups=Server Admins;Helpdesk; last_login_days_ago=224; mfa_enrolled=TRUE; description=Account disabled; group memberships not removed at offboarding",
+      "remediation": "Strip all privileged group memberships from the disabled account now; retain the disabled account for the standard retention period, then delete it. Update the off-boarding process to remove groups at disablement."
+    },
+    {
+      "finding_id": "IAM-017",
+      "account": "svc_monitoring",
+      "check": "check_service_account_overpriv",
+      "severity": "Medium",
+      "title": "Service account with Server Admin membership",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Server Admins; last_login_days_ago=0; mfa_enrolled=N/A; description=Prometheus metrics collection",
+      "remediation": "Re-scope the agent to read-only access for its stated function and issue least-privilege credentials; evaluate a scoped role per pam_migration_candidates.csv."
+    },
+    {
+      "finding_id": "IAM-018",
+      "account": "admin.legacy",
+      "check": "check_no_mfa_high_risk",
+      "severity": "Low",
+      "title": "Enabled user account without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins; last_login_days_ago=187; mfa_enrolled=FALSE; description=Created for EHR migration 2021; migration complete",
+      "remediation": "Enroll the account holder in MFA and include the account in the next access review cycle."
+    },
+    {
+      "finding_id": "IAM-019",
+      "account": "t.morrison",
+      "check": "check_no_mfa_high_risk",
+      "severity": "Low",
+      "title": "Enabled user account without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=248; mfa_enrolled=FALSE; description=Contract ended 2025-09-01",
+      "remediation": "Enroll the account holder in MFA and include the account in the next access review cycle."
+    },
+    {
+      "finding_id": "IAM-020",
+      "account": "l.okafor",
+      "check": "check_no_mfa_high_risk",
+      "severity": "Low",
+      "title": "Enabled user account without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Finance Users; last_login_days_ago=142; mfa_enrolled=FALSE; description=Left organization per HR 2025-11-28",
+      "remediation": "Enroll the account holder in MFA and include the account in the next access review cycle."
+    },
+    {
+      "finding_id": "IAM-021",
+      "account": "svc_av_mgmt",
+      "check": "check_service_account_overpriv",
+      "severity": "Low",
+      "title": "Service account with Workstation Admin membership",
+      "evidence": "enabled=TRUE; account_type=service; privileged_groups=Workstation Admins; last_login_days_ago=0; mfa_enrolled=N/A; description=EDR agent management",
+      "remediation": "Evaluate the agent for a scoped management role or just-in-time elevation; confirm Workstation Admins is truly required for the agent function."
+    },
+    {
+      "finding_id": "IAM-022",
+      "account": "j.yamamoto",
+      "check": "check_no_mfa_high_risk",
+      "severity": "Low",
+      "title": "Enabled user account without MFA enrollment",
+      "evidence": "enabled=TRUE; account_type=user; privileged_groups=Domain Admins;Server Admins; last_login_days_ago=312; mfa_enrolled=FALSE; description=Transferred from IT to Finance 2024-02; elevated rights not removed",
+      "remediation": "Enroll the account holder in MFA and include the account in the next access review cycle."
+    }
+  ]
+}

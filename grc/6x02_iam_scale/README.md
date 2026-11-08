@@ -101,8 +101,11 @@ Instructions: Create three corrected IAM policy files and one analysis document.
 Create:
 
 [iam_policies/siem_reader_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/siem_reader_policy.json)
+
 [iam_policies/ehr_backup_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/ehr_backup_policy.json)
+
 [iam_policies/break_glass_policy.json](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policies/break_glass_policy.json)
+
 [iam_policy_analysis.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/iam_policy_analysis.md)
 
 Use:
@@ -170,4 +173,117 @@ Required content:
     Comparison table: credential lifetime, rotation method, blast radius if stolen, audit trail, off-boarding
     Migration recommendation for highest-risk service accounts
 
+---
+
+# [4. Write the IAM Audit Script](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x02_iam_scale/audit_iam.py)
+### advanced
+
+## Goal: 
+
+Write a Python script that processes a structured account inventory, identifies privilege misconfigurations and dormant account risks, and produces a severity-scored findings report as structured JSON output.
+
+## Context: 
+
+Robert Kim exported the full MedDefense Active Directory account inventory after the post-incident review. The export covers every account with any level of privileged group membership. Running through 200 accounts manually and producing consistent findings is error-prone and slow. A script that processes the inventory, applies consistent scoring logic and produces machine-readable output is both faster and more defensible: the same logic applied to every account, documented in version-controlled code.
+
+The script output feeds directly into Task 5. Every finding in the audit report must be traceable to a row in the inventory and a check in the script.
+
+## Instructions: 
+
+Write audit_iam.py to process account inventory and produce severity-scored JSON findings.
+
+### Copy:
+
+cp /opt/meddefense/materials/iam_audit/accounts.csv ./accounts.csv
+
+### Implement:
+
+check_dormant_privileged(account, dormancy_threshold_days=90)
+check_mfa_coverage(account)
+check_service_account_overpriv(account)
+check_departed_or_transferred(account)
+check_disabled_with_groups(account)
+check_no_mfa_high_risk(account)
+
+### Required behavior:
+
+    Read accounts.csv
+    Process 20 accounts
+    Write iam_findings.json
+    Include audit_metadata, accounts_processed, audit_timestamp, and severity counts
+    Generate finding IDs such as IAM-001
+    Print a human-readable summary to stdout
+
+**Script requirements**
+
+audit_iam.py must implement the following checks in defined, named functions:
+
+check_dormant_privileged(account, dormancy_threshold_days=90): flags any account (user or service) with membership in Domain Admins or Server Admins whose last_login_days_ago exceeds the threshold and whose account_type is user. Service accounts with last_login_days_ago exceeding 365 days are flagged separately as dormant_service_privileged.
+
+check_mfa_coverage(account): flags any enabled user account with membership in Domain Admins or Server Admins where mfa_enrolled is FALSE.
+
+check_service_account_overpriv(account): flags any service account with Domain Admins membership. Server Admins on service accounts is Medium severity; Domain Admins is Critical.
+
+check_departed_or_transferred(account): scans the description field for keywords including "contract ended", "left organization", "transferred from" and "migration complete" and flags the account for manual review with the matched keyword.
+
+check_disabled_with_groups(account): flags any account where enabled is FALSE but privileged_groups is not empty.
+
+check_no_mfa_high_risk(account): flags enabled user accounts with mfa_enrolled as FALSE regardless of privilege level, with Low severity; escalate to Medium if the description references repeated security failures.
+
+### Output format
+
+The script must write findings to iam_findings.json with this structure:
+
+```json
+{
+  "audit_metadata": {
+    "script_version": "1.0",
+    "accounts_processed": 20,
+    "audit_timestamp": "2026-04-28T10:00:00Z",
+    "findings_count": {
+      "Critical": 0,
+      "High": 0,
+      "Medium": 0,
+      "Low": 0
+    }
+  },
+  "findings": [
+    {
+      "finding_id": "IAM-001",
+      "account": "svc_epic_int",
+      "check": "check_service_account_overpriv",
+      "severity": "Critical",
+      "title": "Service account with Domain Admin membership and no documented function",
+      "evidence": "account_type=service; privileged_groups=Domain Admins; last_login_days_ago=1156; description=Post-EHR-migration service account; no current function identified",
+      "remediation": "Disable immediately; audit all actions taken under this account in the past 90 days; remove Domain Admins membership; if no function confirmed within 30 days, delete the account"
+    }
+  ]
+}
+```
+
+The script must also print a human-readable summary to stdout after writing the JSON:
+
+```bash
+Accounts processed : 20
+Critical findings  : X
+High findings      : X
+Medium findings    : X
+Low findings       : X
+
+Critical:
+  [IAM-001] svc_epic_int: Service account with Domain Admin membership and no documented function
+  ...
+
+High:
+  ...
+```
+
+Run the script and verify the output before submitting. The findings count must match the actual inventory issues; if your script misses a finding present in the data, the audit report in Task 5 will be incomplete.
+
+Expected outputs:
+
+    accounts.csv
+    audit_iam.py
+    iam_findings.json
+    
 ---
