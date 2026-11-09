@@ -166,3 +166,49 @@ security verification. Click here to restore access before your next shift."
 </pre>
 
 ---
+
+# [2. Phishing Simulation Campaign Plan](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/phishing_campaign_plan.md)
+
+## Goal: 
+
+Design a structured phishing simulation campaign for MedDefense with targeting strategy, wave schedule, escalation criteria and a metrics framework that measures behavior rather than completion.
+
+## Context: 
+
+The threat profile from Task 1 is the design brief. The campaign plan is the operational document. Sarah Park has approved a 90-day initial rollout window. HR Director Maria Santos has confirmed one firm constraint: individual click results are not to appear in performance reviews and are not to be shared with department managers without a second confirmed offense and a formal HR escalation trigger. Managers receive aggregate team data only.
+
+## Instructions: 
+
+Create phishing_campaign_plan.md. This is an operational planning document. A simulation campaign manager must be able to run the program from this document without asking you to clarify anything verbally.
+
+### Use These Materials
+
+social_engineering_threat_profile.md
+iam_context/role_inventory.csv
+iam_context/employee_segments.csv
+iam_context/iam_audit_summary_6x02.md
+campaign_design/hr_privacy_rules.md
+campaign_design/workforce_population_breakdown.csv
+campaign_design/clinical_schedule_constraints.md
+campaign_design/simulation_ethics_guidelines.md
+program_governance/metrics_baseline.csv
+
+The six employee segments in the campaign plan must map to the provided role and population materials. HR privacy boundaries must follow hr_privacy_rules.md; do not create escalation or manager-reporting rules that conflict with it.
+
+### Required sections:
+
+1. Campaign overview. Scope (total employee population, simulation platform), program objectives (click rate target, report rate target, 18-month improvement trajectory), and governance (who approves templates, who reviews results, how findings escalate to HR).
+
+2. Employee segmentation. Divide the MedDefense workforce into targeting segments based on role and risk profile. Use the six role categories from the IAM audit in 6x02 as the basis. For each segment include: estimated population, primary risk vectors from the threat profile, template assignment rationale and exclusion criteria.
+
+3. Wave schedule. Design a four-wave schedule across the 90-day initial window. For each wave specify: delivery window, target segments, templates assigned by difficulty tier (baseline, intermediate or advanced), delivery time-of-day and day-of-week rationale, and the minimum cool-down period before the same population is targeted again.
+
+4. Metrics framework. Define every metric the program tracks. For each metric specify: metric name, formula, measurement interval, 90-day target, 18-month target and what a deteriorating result means operationally.
+
+Required metrics: click rate, report rate, repeat clicker rate (same employee clicking in two consecutive waves), mean time to report (from delivery timestamp to report action), post-simulation training completion rate, false-positive report rate (real emails reported as phishing).
+
+5. Escalation criteria. Define the conditions that escalate a simulation result from a training event to a security team investigation: at what point does a failure pattern become a potential insider threat or security hygiene risk requiring HR coordination?
+
+6. Exclusion and ethics policy. Document exclusion criteria and the program's ethical obligations: aggregate vs. individual disclosure framework, post-simulation support for employees who experience distress, and the governance sign-off required before any template is deployed.
+
+---
