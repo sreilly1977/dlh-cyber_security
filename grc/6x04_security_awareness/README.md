@@ -314,3 +314,42 @@ before the campaign wave is sent, so the attacker knows the email was opened.
 </pre>
 
 ---
+
+# [4. Post-Click Intervention Design](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/post_click_intervention.md)
+
+## Goal: 
+
+Design the moment-of-failure intervention that converts a simulated phishing click into a durable learning event rather than a negative emotional experience that produces anxiety without behavior change.
+
+## Context: 
+
+Most phishing simulation programs deliver a landing page that says "You were phished." Research consistently shows this produces negative affect, not behavior change. The click rate declines slightly in the next wave because employees are more anxious, not because they know what to look for. Programs that produce durable click-rate reduction deliver something different at the moment of failure: immediate, specific, non-blaming content that shows the employee exactly what they missed and exactly what to do next time.
+
+MedDefense will implement immediate post-click microtraining: a landing page that does not shame the employee, explains precisely what made this email a phishing lure using the actual template as the teaching example, and delivers a 5-minute role-appropriate intervention within the same browser session. This is the component that separates programs that work from programs that audit well.
+
+## Instructions: 
+
+Create post_click_intervention.md. Design the complete post-click experience for all four simulation templates.
+
+### Use These Materials
+
+phishing_templates.md
+phishing_campaign_plan.md
+templates/post_click_microtraining_reference.md
+campaign_design/hr_privacy_rules.md
+campaign_design/simulation_ethics_guidelines.md
+program_governance/metrics_baseline.csv
+
+Landing pages and microtraining must be non-shaming. Repeat-click escalation must follow the HR privacy boundary: individual results are not shared with department managers unless the formal escalation threshold is met.
+
+### Required components:
+
+1. Landing page variants. Write the full text content for the simulation landing page for each of the four templates (LPV-01 through LPV-04). Requirements: no shaming language, acknowledge the training context explicitly, explain specifically what made this email suspicious using the actual template signals as the teaching material, pivot immediately to the learning content. One variant per template.
+
+2. Microtraining module structure. For each landing page variant, design a 5-minute microtraining module structured as: (a) what you saw: specific red flags in that template with annotations, (b) what a real attacker gains: concrete operational consequence for this specific lure type, (c) what to do next time: three specific pre-click verification steps the employee should take with any similar email, (d) how to report: 30-second walkthrough of the MedDefense phishing reporting mechanism.
+
+3. Repeat-click escalation protocol. Define the escalating response for employees who click in two or more consecutive simulation waves. At what point does repeated simulation failure escalate from a training program event to an HR-coordinated coaching intervention? Specify the escalation path, who is notified at each stage and what the employee is told.
+
+4. Positive reinforcement design. Design the immediate automated response an employee receives within 60 seconds of correctly reporting a simulation email using the phishing report button. The reinforcement must be immediate, specific and proportional. Describe exactly what the employee sees or receives.
+
+---
