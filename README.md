@@ -119,7 +119,7 @@ See the [`ir_dfir_playbook/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 ---
 
-## `grc`
+## `grc/`
 
 Applied governance, risk, and compliance through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
 
