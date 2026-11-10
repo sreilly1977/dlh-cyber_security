@@ -461,3 +461,47 @@ V-02: Vendor Support Escalation. Target: clinical staff or clinical supervisor. 
 V-03: Executive Authority Impersonation. Target: administrative or finance staff. Objective: get the employee to initiate a financial action or send a sensitive document based solely on a phone call from someone impersonating an executive by name.
 
 ---
+
+# [7. Insider Threat Awareness Program](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/insider_threat_program.md)
+### advanced
+
+## Goal: 
+
+Design an insider threat awareness framework that gives MedDefense employees and managers actionable behavioral indicators without creating a surveillance culture or chilling legitimate workplace communication.
+
+## Context: 
+
+The forensic investigation revealed that svc_helpdesk, a service account identified in the IAM audit as holding Domain Admin rights with no current business justification and a dormancy period of over 300 days, was used as a lateral movement pivot point. Whether that account was compromised externally or misused by a trusted insider, the access patterns were visible before the incident: dormant account activating at 02:00, LSASS dump executed from a privileged context, lateral movement to systems outside the account's documented function.
+
+James Chen's position: "We are not building a surveillance program. We are building a framework for recognizing when something is wrong before it becomes a breach. There is a difference."
+
+HR Director Maria Santos requires that any program document distributed to managers be reviewed by legal before deployment, and that any anonymous reporting path have documented triage procedures before going live.
+
+## Instructions: 
+
+Create insider_threat_program.md.
+
+### Use These Materials
+
+iam_context/privileged_account_findings.md
+iam_context/iam_audit_summary_6x02.md
+insider_threat/insider_threat_case_notes.md
+insider_threat/technical_indicators_reference.md
+insider_threat/reporting_and_triage_model.md
+insider_threat/manager_reference_constraints.md
+campaign_design/hr_privacy_rules.md
+campaign_design/simulation_ethics_guidelines.md
+
+The insider threat program must not become a surveillance program. Reporting, triage and escalation must follow the provided HR/legal constraints and must include non-retaliation language. Required sections:
+
+1. Behavioral indicator framework. Define three categories of indicators: access-based, behavioral and contextual. For each category, list five specific observable indicators appropriate for MedDefense's healthcare environment. Each indicator must be specific and observable, not psychological speculation. For each indicator, note who is positioned to observe it: manager, IT, HR, SOC or coworker.
+
+2. Technical indicator framework. Define five specific technical indicators the MedDefense SOC should monitor for insider threat signals. Reference specific log sources and detection logic from the Module 3 detection pipeline. Cross-reference IAM audit findings from 6x02 where directly relevant.
+
+3. Reporting process. Design a reporting path for employees and managers to raise concerns without triggering premature investigation or confronting the subject. Include: anonymous reporting option with documented triage steps, the threshold that escalates to HR and legal, and a non-retaliation statement with enforcement reference.
+
+4. Manager reference guide. Write a one-page guide for department managers: what they are responsible for observing, what to document before escalating, when to escalate and specifically what not to do.
+
+5. Culture and ethics statement. Write the 200-word program statement distributed to all MedDefense employees explaining why this program exists, how employee privacy is protected and what this program is not.
+
+---
