@@ -2,19 +2,24 @@
 
 **Prepared by:** Steve, Cybersecurity Engineer
 **Date:** 2026-11-10
-**Version:** 1.0
+**Version:** 2.0 (board-readability revision)
 **Classification:** Confidential
 **Prepared for:** Dr. Patricia Morales, CISO — 6-month board presentation
 **Framing (James Chen):** "Three questions. Are we safer? Are we improving? What changes next?"
 **Materials basis:** `awareness_program_plan.md`, `phishing_campaign_plan.md`, `metrics_baseline.csv`, `board_reporting_template.md`, `program_governance_roles.md`, `post_incident_click_rate_review.md`, `security_awareness_gap_notes.md`, `lure_effectiveness_benchmarks.md`
 
-**Honesty commitment for this artifact:** the brief template below is written to prevent a specific board-room failure — claiming the awareness program alone caused incident reduction when the SOC automation rollout and IAM remediation occurred in the same period. Where causation cannot be established, the templates force trend language, confidence labels, and stated caveats. The attribution methodology in Part 3 governs every number that reaches the board.
+**How this document works:** Part 1 is the brief Dr. Morales presents — written entirely for a board audience. Part 2 is the quarterly tracking sheet the program manager uses between presentations (kept compact on purpose; the board sees only its headline). Part 3 answers the board's hardest question in plain language: "how do we know this program reduced real incidents?" Part 4 defines, in one paragraph each, the conditions under which the program formally reviews itself.
+
+Two rules govern every number that reaches the board:
+
+1. **Numbers are always people, never naked percentages.** "1 in 4" travels with "of the employees tested." A percentage a board member cannot picture has not been presented.
+2. **Attribution honesty is built in, not appended.** Concurrent security improvements (SOC automation, IAM remediation) ran during the same period; every claim distinguishes what this program directly controls from what it merely correlates with.
 
 ---
 
 ## Part 1: Board-Ready Effectiveness Brief Template (6-Month)
 
-*Instructions to the program owner: fill every `[bracketed]` field with actual data; delete no caveats. **Every number in this brief must be expressed twice: once as a percentage or count, and once as people** — "1 in N," "X of every 10," or "X of the [N] employees targeted." A percentage the board cannot convert to a picture of the workforce has not been presented. The brief is designed to be presented by Dr. Morales without a security engineer translating. Two pages, printed.*
+*Instructions to the program owner: fill each `[bracketed]` field with actual data and follow the worked example shown in the "Before" column — every figure appears with its people-context. Two pages, printed, presented without technical support in the room.*
 
 ---
 
@@ -24,168 +29,120 @@
 
 ## Program Summary
 
-Since [PROGRAM_START], MedDefense has run a behavior-measurement security awareness program in place of compliance-only training. [X] simulation waves reached [N] employees across clinical, administrative, IT, finance, and executive segments, using realistic, healthcare-specific attack scenarios modeled on the Q1 2026 incident. Every employee who clicked received a five-minute, non-punitive training moment, and every report earned a same-minute thank-you. Individual results are protected — they never appear in performance reviews, and managers see team averages only. This brief answers three questions: whether we are safer, whether we are improving, and what changes next.
+In March, a realistic fake email about blocked patient records reached 41 of our staff. More than half acted on it, six typed their passwords into a fake site, and only a handful raised the alarm — the resulting security incident took a full response effort to contain. Since [PROGRAM_START], this program has tested our workforce with the same kinds of realistic attacks in a safe, no-blame setting, taught every person who clicked for five minutes at the moment of the mistake, and thanked every person who reported — immediately. Individual results stay private; managers see only team averages; nothing touches performance reviews. This brief answers three questions: are we safer, are we improving, and what changes next.
 
-## Metrics Table
+## How We Compare — Today Against Where We Started
 
-*Fill every cell in the two-part format: figure first, people-context immediately after the dash. Compute the people-context from the wave's actual denominator ([employees targeted] is shown in the "People in the measurement" column).*
+*The comparison standard for a program this age is threefold: our own Q1 incident baseline (fully documented), the Year 1 goals the board approved in March, and healthcare-sector planning ranges from our Year 1 research — shown as a reference range, clearly labeled, until the external benchmarking study the board funded returns its first data. Where a figure is not yet measured, the cell says so plainly.*
 
-| What we measure (plain language) | People in the measurement | Before the program | Today (6 months) | 12-month goal | Benchmark† |
-|---|---|---|---|---|---|
-| Employees who act on a simulated attack | [N] employees were tested this wave | 56% — more than 1 in every 2 employees tested acted on the attack | [X]% — about [1 in N] of the [N] tested | 25% or lower — at most 1 in 4 | [pending] |
-| Employees who report a simulated attack instead of acting on it | Same [N] employees | 15% — only about 6 of the 41 employees targeted raised the alarm | [X]% — [N of every 10] targeted employees now report | 50% or higher — at least half act as early alarms | [pending] |
-| How fast a suspicious message gets reported | [N] reports this period | 74 minutes — the attacker had over an hour of head start | [X] minutes — head start cut to [under/at] [X] minutes | 15 minutes or less | [pending] |
-| Employees who click again in the next wave, after coaching | [N] employees were tested in both consecutive waves | Never measured | [X]% — [N] of the [N] retested employees | Under 8% — fewer than 1 in 12 | [pending] |
-| Clicked-then-trained: employees who finish the 5-minute lesson within 3 days | [N] clickers this period | Never measured | [X]% — [N] of the [N] who clicked finished their lesson | 95% or higher — nearly everyone | [pending] |
-| Clinically targeted staff who act on a lure | [N] clinical employees tested | 67% — 10 of the 15 clinical staff targeted, our worst-performing group | [X]% — about [1 in N] of the [N] clinical staff tested | 25% or lower | [pending] |
+| What we measure | Before (March incident) | Where we are today | Goal for this year | Sector reference range* |
+|---|---|---|---|---|
+| Employees who act on a realistic test attack | 56% — more than 1 in every 2 tested employees | [X]% — about 1 in [N] of the [N] tested this wave | 25% or less — at most 1 in 4 | Typical healthcare results run [30-60]% on first exposures |
+| Employees who report the test attack | 15% — only about 6 of 41 raised the alarm | [X]% — [N] in every 10 targeted now report | 50% or more — half act as early alarms | Reported rates in sector programs typically sit [below 35%] |
+| How fast an attack gets reported | 74 minutes — the attacker had over an hour of head start | [X] minutes — roughly [a quarter of] the original head start | 15 minutes or less | No comparable internal range; first-year goal is the standard |
+| Staff who clicked again in the following test, after coaching | Never measured before this program | [X]% — [N] of the [N] retested | Under 8% | New measurement for the sector; the goal is the standard |
+| Clickers finishing their 5-minute lesson within 3 days | Never measured before this program | [X]% — [N] of the [N] who clicked | 95% | New measurement for the sector |
+| Clinical staff acting on a lure | 67% — 10 of the 15 clinical staff targeted in March | [X]% — about 1 in [N] of the [N] tested | 25% or less | Highest-risk group in every sector dataset we hold |
 
-† **Benchmark note (retain in presentation):** healthcare-sector benchmarks come from the external benchmarking engagement funded in Year 1; until that data returns, cells stay "pending" rather than estimated. Our internal planning ranges from sector research (`lure_effectiveness_benchmarks.md`) are the fallback reference, labeled as internal assumptions, never as industry fact.
+*Sector reference ranges come from our Year 1 research into healthcare phishing programs (`lure_effectiveness_benchmarks.md`) — internal planning figures, not certified industry data. The external benchmarking study replaces these once its first report is delivered. **Never present a reference range as an industry statistic.***
 
 ## Key Findings — What the Data Says About Employee Behavior
 
-*(Each finding must contain at least one people-form number. If a drafted finding has only a percentage, rewrite it before it goes on the slide.)*
+*(Draft each finding in people terms; a finding with only a percentage is rewritten before it reaches the slide.)*
 
-1. **[Finding on trajectory — template]:** "Acting on a realistic, healthcare-specific attack fell from 56% — more than half of the [41] employees targeted in the Q1 incident — to [X]%, roughly [1 in N] of the [N] employees tested this wave. In people terms: last spring, [over half] of a room of our nurses acted on a fake Epic message; today, about [N] in that same-sized room would."
+1. **Fewer of us fall for realistic attacks.** Acting on a realistic, healthcare-specific attack fell from 56% — more than half of everyone tested in March — to [X]%, roughly [1 in N] of the [N] employees tested this wave. In people terms: in a typical shift-start team of twelve nurses, [seven] would have acted on the fake Epic message in March; today, about [one] would.
+2. **More of us raise the alarm, faster.** Reporting rose from 15% (six people out of forty-one) to [X]% — [N] in every 10 targeted employees — and the alarm now reaches the security team in [X] minutes instead of 74. Every report is an early warning that arrives from a person instead of a machine hours later.
+3. **The group most at risk improved the most.** Clinical staff — the group that acted on 67% of attacks in March — now act on [X]%. The people our attackers target hardest are measurably harder to deceive.
+4. **What this does not yet prove.** Strong results against the attack patterns we test do not guarantee immunity to a brand-new attack type; we measure the threats actually in circulation against our sector. Confidence in the trend is [high/moderate/low], because [N] waves over [N] months is still a short measurement history.
+5. **Other things improved at the same time — and we say so.** During this period MedDefense also upgraded [its monitoring automation / identity controls]. We cannot cleanly separate credit for fewer real incidents between those technical upgrades and this program. What we *can* say directly is this: the behavior numbers above measure what employees actually did when tested, and no technical upgrade can produce them.
 
-2. **[Finding on reporting culture — template]:** "Reporting rose from 15% (6 employees out of 41) to [X]% ([N] of [N] targeted), and the alarm now reaches the SOC in [X] minutes instead of 74 — cutting the attacker's head start from over an hour to [less than half that / minutes]."
+## What Changes Next (Months 7-12)
 
-3. **[Finding on the hardest group — template]:** "Our clinical staff — the group that clicked at 67% (10 of 15) in Q1 — now click at [X]% ([N] of [N] tested). Whatever the room for improvement, the group most exposed during a shift change is measurably harder to deceive than before."
-
-4. **[Honest limitation — template]:** "A low click rate proves improved performance against the attack patterns we know are in use — the patterns documented in the Q1 investigation — not immunity to novel attacks. Confidence in this trend: [high/moderate/low], because [N] waves across [N] months is still a short measurement history."
-
-5. **[Concurrent-controls caveat — mandatory]:** "During the same six months, MedDefense also completed [SOC automation improvements / IAM remediation from the 6x02 audit]. We cannot cleanly separate how much of the improvement in real-incident detection belongs to the awareness program versus these technical controls. The simulation metrics above are the program's own: they measure what [N] employees actually did when tested, and no technical control can produce them."
-
-## Recommendations for the Next Six Months
-
-1. [Recommendation — e.g., tier escalation, new segment, refresh of retired templates]
-2. [Recommendation — e.g., vishing expansion per Month 3 tabletop results]
-3. [Budget/action request, phrased for the Decisions Needed table of `board_reporting_template.md`]
+1. [Recommendation — e.g., move advanced testing to finance and executive teams now that foundations are in place]
+2. [Recommendation — e.g., extend phone-based training to supervisors based on the tabletop results]
+3. [Decision requested — phrased for the Decisions Needed table the board already uses]
 
 ## Bottom Line
 
-**[ONE SENTENCE — template, people-numbers required: "In March, more than half of the employees who received a realistic attack acted on it and almost no one reported it; today, after [N] training waves, roughly [1 in N] act and [N in 10] report within [X] minutes — so the human layer that failed in Q1 is measurably harder to exploit, and the next six months will show whether the trend holds."]**
+**[ONE SENTENCE — template: "In March, more than half of tested employees acted on a realistic attack and almost nobody reported it; today, about [1 in N] act and [N in 10] report within [X] minutes — the human layer that failed in the spring incident is measurably harder to exploit, and the next six months will show whether the trend holds."]**
 
 ---
 
 ## Part 2: Quarterly Metrics Dashboard Template
 
-*Instructions to the program manager: complete one copy per quarter. Delta notation is percentage points (pp) between the two most recent quarters; time metrics use minutes. Status rules are fixed and non-discretionary.*
+*Tooling note: this sheet is the program manager's working instrument — it tracks every metric from the campaign plan with quarter-over-quarter movement and a color status per metric. The board sees only its final one-line status, quoted into Part 1. Fill one copy per quarter; deltas are percentage points between the two most recent quarters (minutes for time metrics).*
 
 # Quarterly Metrics Dashboard — Q[X] FY[YYYY]
 
-**Reporting period:** [DATES] | **Waves run this quarter:** [IDs] | **Segments targeted:** [LIST] | **Prepared:** [DATE] | **Reviewer:** SOC Manager | **Approvers:** CISO, HR Director
+**Period:** [DATES] | **Waves run:** [IDs] | **Segments tested:** [LIST] | **Prepared:** [DATE] | **Reviewed by:** SOC Manager | **Approved by:** CISO, HR Director
 
-## Metric Tracking Table
+| # | Metric | Prior quarter | This quarter | Δ | Target | Status |
+|---|---|---:|---:|---:|---:|---|
+| 1 | Overall click rate | [%] | [%] | [±X pp] | ≤ [tier target] | 🟢/🟡/🔴 |
+| 2 | Clinical click rate | [%] | [%] | [±X pp] | ≤ [tier target] | 🟢/🟡/🔴 |
+| 3 | Report rate | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 |
+| 4 | Mean time to report | [min] | [min] | [±X min] | ≤ [tier target] | 🟢/🟡/🔴 |
+| 5 | Repeat-clicker rate | [%] | [%] | [±X pp] | < [tier target] | 🟢/🟡/🔴 |
+| 6 | Training completion within 72h | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 |
+| 7 | False-positive report rate | [%] | [%] | [±X pp] | operationally manageable | 🟢/🟡/🔴 |
+| 8 | Finance BEC verification rate | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 |
+| 9 | Phone-exercise verification success | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 |
+| 10 | Manager escalation confidence (survey) | [score] | [score] | [±X] | +improvement | 🟢/🟡/🔴 |
+| 11 | Reports made before anyone clicked | [#] | [#] | [±X] | rising | 🟢/🟡/🔴 |
+| 12 | Real phishing emails reported by staff | [#] | [#] | [±X] | rising | 🟢/🟡/🔴 |
 
-| # | Metric | Prior quarter | This quarter | Δ (pp / min) | Target | Status | Notes |
-|---|---|---:|---:|---:|---:|---|---|
-| 1 | Overall click rate | [%] | [%] | [±X pp] | ≤ [tier target] | 🟢/🟡/🔴 | |
-| 2 | Clinical click rate (SEG-A/B) | [%] | [%] | [±X pp] | ≤ [tier target] | 🟢/🟡/🔴 | |
-| 3 | Report rate | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 | |
-| 4 | Mean time to report | [min] | [min] | [±X min] | ≤ [tier target] | 🟢/🟡/🔴 | |
-| 5 | Repeat-clicker rate | [%] | [%] | [±X pp] | < [tier target] | 🟢/🟡/🔴 | |
-| 6 | Post-simulation training completion (72h) | [%] | [%] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 | |
-| 7 | False-positive report rate | [%] | [%] | [±X pp] | "operationally manageable" | 🟢/🟡/🔴 | SOC workload note |
-| 8 | Finance BEC verification rate (Wave 4 onward) | [%/n.m.] | [%/n.m.] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 | n.m. = not measured |
-| 9 | Vishing verification success (exercises this quarter) | [%/n.m.] | [%/n.m.] | [±X pp] | ≥ [tier target] | 🟢/🟡/🔴 | |
-| 10 | Manager escalation confidence (survey) | [score] | [score] | [±X] | improvement vs. baseline | 🟢/🟡/🔴 | Survey quarters only |
-| 11 | Report-before-click events (leading indicator) | [#] | [#] | [±X] | rising | 🟢/🟡/🔴 | Count, not rate |
-| 12 | Real phishing emails reported by employees (not simulations) | [#] | [#] | [±X] | rising | 🟢/🟡/🔴 | Feeds Part 3 |
+**Status rules (applied mechanically):** 🟢 at or better than target; 🟡 within 10 points of target and moving the right way; 🔴 more than 10 points off, moving the wrong way, or reversing sharply in a single quarter. Metric 7 is expected to rise alongside report rate and stays green while the SOC absorbs the workload. Metrics 11-12 are early-warning counters: flat is yellow, falling is red.
 
-## Status Definitions (fixed rules — apply mechanically)
+**Overall quarter status:** 🟢 all core metrics (1-6) green · 🟡 one or two core metrics yellow, none red · 🔴 any core metric red, three or more yellow, **or the failure signature: clicks rising while reports fall in the same quarter** — that combination means either the program is failing or the workforce has stopped trusting it, and either way a formal review starts immediately (Part 4).
 
-- **🟢 Green:** at or better than the current-quarter tier target, or improving on trajectory to it.
-- **🟡 Yellow:** within 10 percentage points of target (or 10 minutes for time metrics) and directionally correct, **or** any metric at target but flat for two consecutive quarters (flat-at-target is green only when it has hit its tier ceiling).
-- **🔴 Red:** worse than 10 points from target, moving away from target, **or** any direction reversal of ≥10 points in a single quarter.
-- **Special rules:** metric 7 (false positives) is yellow only when SOC triage absorbs reports without added analyst queue time — a rising false-positive rate with report rate rising is expected and typically green; metric 11 and 12 are count-based leading indicators — yellow if flat, red if declining while simulation volume continued.
-
-## Overall Program Status (single determination per quarter)
-
-**Overall status: 🟢 / 🟡 / 🔴 — determined by fixed aggregation rules, not judgment:**
-
-| Condition | Overall status |
-|---|---|
-| Metrics 1–6 (core behavior metrics) all Green | 🟢 Green |
-| 1–2 core metrics Yellow, none Red | 🟡 Yellow |
-| Any core metric Red, **or** 3+ Yellow | 🔴 Red |
-| **Override rule:** metrics 1 (click) and 3 (report) both worsening in the same quarter forces 🔴 regardless of the rest — simultaneous click-rise/report-fall is the signature of a program failing or of an outside event corrupting the data, and either requires review (Part 4) |
-
-**Quarter narrative (3 sentences max):** [What moved, why, what happens next quarter.]
-
-**Actions triggered this quarter:** [List any Part 4 reviews initiated, waves paused, or template retirements — with initiator and date.]
+**Narrative (three sentences):** [What moved, why, what happens next.]
 
 ---
 
-## Part 3: Incident Correlation Methodology
+## Part 3: Did This Program Reduce Real Incidents? — Answering the Board Honestly
 
-### The core challenge, stated plainly
+This is the section a board member will want but rarely gets: a straight answer about what we can and cannot claim. The short version: **we can prove this program changed tested behavior; we can observe that real-incident indicators moved in the right direction; we cannot cleanly prove the program alone caused the incident improvement, because other security upgrades happened during the same period — and pretending otherwise would be the fastest way to lose this board's trust.**
 
-We cannot run a controlled experiment on a live workforce. There is no control group of MedDefense employees left untrained while the rest are trained, and we would not create one if we could. Additionally, real incident frequency is a lagging, noisy, low-frequency signal — a healthcare organization hopes to have so few real phishing incidents per quarter that no single quarter's count is statistically meaningful on its own. The methodology therefore measures what can be measured directly (behavior in simulations), correlates what can only be correlated (real incidents), and assigns confidence honestly rather than claiming causation the data cannot support.
+### Why we cannot run a perfect experiment
 
-### What data to collect
+The only way to *prove* causation would be to leave part of the workforce untrained and compare their incident rates against the trained majority. We will not deliberately leave colleagues unprotected, and the board would not ask us to. Instead we work with the evidence available — the March incident gives us an exceptionally well-documented "before" picture — and we are disciplined about what each piece of evidence can honestly support.
 
-**Tier A — direct behavioral measurement (simulation telemetry; the program's own evidence):** click, report, and repeat rates; mean time to report; training completion — by wave, segment, and template. These measure employee behavior directly and cannot be produced by any concurrent technical control, which makes them the program's defensible core.
+### The three kinds of evidence, in plain terms
 
-**Tier B — real-world leading indicators (behavioral, outside simulations):** employee reports of *real* phishing emails (dashboard metric 12); report-before-first-click events on genuine campaigns; helpdesk verification calls initiated by employees who refused to act on a request first. These show trained behavior occurring unprompted in the wild.
+**1. Numbers we fully control (our strongest evidence).** Every test wave measures the same thing the same way: did the employee act, did they report, how fast. Because these results come from our own controlled tests, they measure employee behavior alone — no email filter, monitoring upgrade, or identity control can manufacture them. When we say click rate moved from 56% to [X]%, that claim rests entirely on the program.
 
-**Tier C — real incident and threat data (lagging, contaminated by confounders):** phishing emails reaching inboxes (gateway volume), credential-exposure incidents, incidents requiring IR activation, and mean detection time. Also collected: the confounder registry (below), because Tier C is exactly where concurrent security improvements muddy attribution.
+**2. Early-warning signals in the wild (good corroborating evidence).** We track how often employees spontaneously report *real* suspicious emails — not our tests. In March, spontaneous reporting barely existed (two reports reached the security team before its own alerts fired). Rising voluntary reporting of genuine attacks means trained behavior is happening when nobody is running a test. This is strong circumstantial evidence, though technically other factors could contribute.
 
-**The confounder registry (maintained quarterly by the program manager, reviewed by the SOC Manager):** every concurrent control change that plausibly affects Tier C — e.g., email gateway policy updates, the SOC automation rollout, MFA enforcement from the 6x02 remediation, mail-filter tuning, EDR coverage changes. Any quarter in which a registry entry materially changed, Tier C analysis for that quarter carries an automatic attribution caveat. This is the mechanism that makes honest failure-to-attribute systematic instead of ad hoc.
+**3. Real incident counts (the number the board cares most about — and the least reliable).** Incidents are rare and lumpy. In a good year MedDefense hopes to count them in single digits per quarter, which means any single quarter's rise or fall of one or two incidents tells us almost nothing. We therefore assess real incidents only over rolling six-month windows, and we maintain a plain running list of **every other security change made in the same period** — filter upgrades, monitoring automation, identity fixes from the spring audit. Any quarter in which one of those changed, our incident commentary says so out loud.
 
-### Attribution rules — how to attribute, and how to honestly fail to
+### How we present this to the board — the three-sentence discipline
 
-1. **Claim direct attribution only for Tier A.** "The awareness program moved click rate from 56% to X%" is a causal claim the program's own data supports — the only influence on simulation click rate is employee behavior and lure calibration (both disclosed via the tier system).
-2. **Claim association, not causation, for Tier B and C, with named alternatives.** Correct form: "Real-incident detections improved [X]% during the program period, *consistent with* the measured behavioral improvements, though improved gateway filtering and SOC automation were also in effect and cannot be excluded as contributors." Incorrect form: "The awareness program cut incidents by X%." The brief template's mandatory caveat section (Part 1, Finding 5) enforces this.
-3. **Use the interrupted time-series logic where data allows:** compare the pre-program baseline period (which we are lucky to have — the Q1 2026 incident provides a fully documented pre-program baseline: 56% click, 15% report, 74-minute MTTR, `post_incident_click_rate_review.md`) against post-program quarters, looking for a change in *level and trend* rather than a single before/after comparison. An isolated bad quarter during a correctly trending series is noise; a genuine trend break is evidence.
-4. **Refuse small-number conclusions.** With expected real-incident counts in single digits per quarter, quarter-over-quarter changes of one or two incidents mean nothing and the methodology says so. Interpretation of Tier C requires rolling 6-month windows minimum.
-5. **Attribute by exclusion where possible:** if an incident class the program targets (credential exposure via phishing) improves while an unrelated class (e.g., lost devices) stays flat, the differential pattern weakly supports the program's contribution — this triangulation across incident classes is the closest a live workforce gets to a control condition, and it is labeled "weak" evidence even when it works.
+1. **What we prove:** "The program directly moved tested behavior: [56% → X%] of employees act on attacks, [15% → X%] report them."
+2. **What we observe:** "Real-world incident indicators moved in the same direction during the program period, consistent with — though not solely caused by — this program."
+3. **What we refuse to claim:** "We cannot state a dollar figure for breaches prevented, because we cannot prove an attack that never happened would have succeeded." Where the finance committee requires a figure, we present a clearly labeled *planning scenario*: documented incident-response costs from March (response team activation, containment, forensics, password resets for the enterprise, executive communications) weighed against the measured behavior change, with every assumption listed beside it. It is a scenario, never a receipt.
 
-### Presenting ROI honestly to a board that wants numbers
-
-Boards want "we spent $84,000 and avoided $X in losses." The honest, defensible version the brief delivers has three elements, in this order:
-
-1. **The program's guaranteed output:** behavioral metrics against baseline, presented as risk-reduction input — "the failure that started the Q1 incident (a 56% click rate) has been reduced to [X]% in controlled testing."
-2. **The conditional framing:** "Reducing click rate and increasing report speed decreases attacker dwell time and downstream containment cost" (`budget_assumptions.md`) — presented as mechanism, not receipt: *if* the behavioral improvements hold, *then* the incident path documented in Q1 becomes proportionally less probable, because the documented chain began at the human layer and had no other entry point.
-3. **The explicit non-claim:** "We cannot guarantee that prevented incidents would have occurred; avoided-cost figures are therefore scenario estimates, and we present them as such if at all." Where an estimate is unavoidable for the finance committee, derive it from documented incident-response costs (IR activation, containment, forensics, credential reset, executive communications from the Q1 activation) against the measured behavioral delta, label it a planning scenario, and show the assumption list on the same page.
-
-One-sentence board answer, ready-made: *"The awareness program directly controls and demonstrates employee behavior change; real-world incident trends are consistent with improvement but cannot be solely attributed to this program given concurrent security investments — which is why the board sees both numbers every quarter, labeled separately."*
+**One ready-made sentence for the board:** *"This program directly proves employee behavior change; real-incident trends moved the same way, and while monitoring and identity upgrades contributed, no other control can produce the behavior numbers themselves."*
 
 ---
 
-## Part 4: Program Improvement Triggers
+## Part 4: When the Program Reviews Itself
 
-### Thresholds that initiate a formal program review
+Formal reviews are not discretionary — the dashboard starts them. The rules below state, in one paragraph each, what triggers a review, who starts it, and what happens.
 
-Reviews are triggered mechanically by the dashboard (Part 2); nobody has to argue for one. The program manager records trigger conditions in the quarterly dashboard's "Actions triggered" field; the review itself is a standing agenda item at the next quarterly CISO+HR metrics review.
+**A trend that keeps going the wrong way.** One bad quarter can be a scheduling accident — a wave landing during a staffing crunch, a harder test, a seasonal burden on clinical staff. Three consecutive quarters of a core metric moving the wrong way is a different thing: it is a pattern. The monitoring team flags it, the CISO convenes a formal review, and the review examines the four likely causes in order: a measurement problem, stale test scenarios, poor delivery timing, or pressure on the workforce that has nothing to do with security (turnover, competing training load).
 
-| Trigger | Definition | Review initiator | Data assessed |
-|---|---|---|---|
-| **T1 — Deteriorating core trend** | Any core metric (dashboard 1–6) shows a worsening delta for **three consecutive quarters**, or worsens ≥10 points within a single quarter | SOC Manager flags; CISO initiates | Wave-level telemetry, tier mix, template ages, delivery timing, segment breakdowns |
-| **T2 — Signature failure pattern** | Click rate rising while report rate falls in the same quarter (the Part 2 override signature) | Automatic on dashboard completion | Culture indicators: reinforcement SLA performance, HR distress-contact volume, manager feedback, any punitive signal leaking into the organization |
-| **T3 — Segment stall** | Any segment's click rate misses its tier target by >10 points for two consecutive quarters | Program manager flags; CISO initiates with the relevant advisory reviewer (Clinical Ops for clinical segments, Finance Rep for SEG-E/F) | Segment-specific guides, wave timing against `clinical_schedule_constraints.md`, lure realism review |
-| **T4 — Escalation-signal trigger** | Repeat-clicker rate exceeding its tier target after coaching is complete, or any single metric requiring HR coordination | HR Director initiates | Coaching-process data under `hr_privacy_rules.md` handling |
-| **T5 — Real-incident correlation** | A real phishing or social-engineering incident occurs that the simulation program's current templates did not model, or that succeeded against trained employees | SOC Manager initiates within 5 business days | Incident lure vs. current template inventory; failure point mapped against `cobalt_strike_phishing_path.md` human-layer decision points |
-| **T6 — Welfare trigger** | Any employee welfare concern raised mid-campaign (see below) | HR Director (or Clinical Operations for patient-safety concerns) — either may act unilaterally | The specific concern, its scope, and remediation |
+**The trust alarm.** If click rates rise while reporting falls in the same quarter, the program pauses for a specific check: employees may be back to hiding mistakes, as they did in March out of fear of blame. The HR Director leads this review, looking at how fast we thanked reporters, whether any discipline signal has leaked into the culture, and what managers are hearing. No finding in this review can wait a quarter.
 
-**What a deteriorating trend looks like across three consecutive quarters (the T1 test made concrete):** it is not one bad quarter — a wave that lands during a staffing crunch, a new template tier, or a seasonal stressor can dip any single metric. A T1-worthy deterioration is: click rate up two quarters in a row *while* report rate is flat or down; or mean time to report rising across three quarters; or training completion decaying monotonically while assignment volumes are constant. The pattern matters more than any single delta, which is why T1 reads the dashboard's trend column, not the quarterly snapshot.
+**A stubborn segment.** If one department misses its target by more than 10 points for two straight quarters, the CISO and the relevant operational leader (Clinical Operations for clinical units, Finance for payment teams) review that segment specifically — its delivery times, its guides, and whether the test content still resembles what that group actually faces.
 
-### Review mechanics
+**A real attack our tests did not predict.** If a genuine phishing or phone attack succeeds using a pattern our current tests never modeled, the monitoring team conducts a review within five business days, maps the real attacker's steps against our test scenarios, and the next wave incorporates the pattern. This is the fastest improvement loop the program has.
 
-Every triggered review assesses the same four questions: (1) is the measurement sound (platform telemetry, denominators, segment sampling)? (2) is the content stale (template ages against the retirement rule in `awareness_program_plan.md`)? (3) is delivery misaligned (timing, exclusions, cool-downs)? (4) is there an organizational cause outside the program's control (seasonal load, turnover, concurrent change fatigue from the 14-module clinical burden)? Findings go to the next CISO+HR quarterly review; corrective actions enter the dashboard's action log with owners and dates.
+**Stopping a wave that may be hurting someone.** Three people can halt a live wave immediately and without asking permission: the **HR Director** for any employee-welfare concern (distress, a coaching need surfacing mid-wave), the **Clinical Operations lead** for any patient-safety concern (staffing shortfall, active clinical event), and the **SOC Manager** during a real incident, so our test data never muddies a live investigation. A paused wave is rescheduled — never compressed — and the waiting-period rules recalculate from the actual restart date.
 
-### Authority to pause a simulation wave mid-campaign
-
-This authority is deliberately split and deliberately fast, because a wave pause is a safety action, not a governance debate:
-
-- **HR Director (Maria Santos): unilateral authority to pause any wave, mid-send, on any employee welfare concern** — distress reports, support-plan conflicts, or a punitive signal observed anywhere in the organization. Pause does not require CISO concurrence and is reported, not requested. The HR privacy boundary makes welfare the one domain where the program's own rules say training stops until the people are safe.
-- **Clinical Operations (Sarah Park): unilateral authority to pause any clinical wave** on a patient-safety concern — staffing shortage declaration, active code activity, or an emerging clinical event intersecting a delivery window. This mirrors the exclusion rules in `clinical_schedule_constraints.md`: "campaign design must balance realism with operational safety."
-- **SOC Manager: unilateral authority to pause any wave during a real incident** or when simulation telemetry is contaminating incident triage, per the mid-wave incident protocol in `awareness_program_plan.md` Section 4.
-- **Resume authority:** the pausing authority confirms the condition is cleared and the cool-down is recalculated from the actual resume date; the program manager documents the pause window and re-plans the wave against the 21-day rule. Paused waves are rescheduled, never compressed.
-
-**Standing rule for all six triggers:** no trigger is a career event for the program manager. The program's measurement system is designed so that deterioration surfaces automatically and improvement is the *expected* response — a program that hides its bad quarters loses the board's trust in its good ones, and the same principle applies inward.
+**A closing principle for the board:** these triggers exist so that bad news surfaces automatically, not when it is politically convenient. A program that reports its own worst quarters honestly is the only kind this board should keep funding — and these rules are what make the honesty structural rather than personal.
 
 ---
 
 ## Closing Note — The Feedback Loop This Artifact Completes
 
-The program now closes its own loop: the threat profile (Task 1) dictates the simulations; simulations generate the behavioral data; the dashboard converts data to status each quarter; triggers convert bad status to reviews; reviews convert to calendar and template changes; and the board brief converts all of it into the two sentences that sustain funding: **what employees now do differently, and what changes next.** A program with this loop defends its own budget at renewal time — with numbers it can prove are its own.
+The program now closes its own loop: the threat profile dictates the tests; tests generate behavior data; the dashboard turns data into a quarterly status; the triggers turn bad status into reviews; reviews turn into calendar and content changes; and this brief turns all of it into the three answers that sustain funding — **are we safer (yes, measurably, with stated limits), are we improving (the trend says so, quarter by quarter), and what changes next (on the last page, with the decision the board owns).**
