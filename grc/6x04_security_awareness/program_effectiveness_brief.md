@@ -14,7 +14,7 @@
 
 ## Part 1: Board-Ready Effectiveness Brief Template (6-Month)
 
-*Instructions to the program owner: fill every `[bracketed]` field with actual data; delete no caveats. The brief is designed to be presented by Dr. Morales without a security engineer translating. Two pages, printed.*
+*Instructions to the program owner: fill every `[bracketed]` field with actual data; delete no caveats. **Every number in this brief must be expressed twice: once as a percentage or count, and once as people** — "1 in N," "X of every 10," or "X of the [N] employees targeted." A percentage the board cannot convert to a picture of the workforce has not been presented. The brief is designed to be presented by Dr. Morales without a security engineer translating. Two pages, printed.*
 
 ---
 
@@ -28,24 +28,32 @@ Since [PROGRAM_START], MedDefense has run a behavior-measurement security awaren
 
 ## Metrics Table
 
-| What we measure | Before the program | Today (6 months) | 12-month target | Healthcare benchmark | Status |
-|---|---:|---:|---:|---:|---|
-| Employees acting on a simulated attack ("click rate") | 56% — more than 1 in 2 | [CURRENT]% | ≤25% | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
-| Employees reporting a simulated attack ("report rate") | 15% — 6 of 41 targeted | [CURRENT]% | ≥50% | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
-| Average time to report a suspicious message | 74 minutes | [CURRENT] min | ≤15 min | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
-| Employees clicking in consecutive waves, after coaching ("repeat rate") | Never measured | [CURRENT]% | <8% | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
-| Clicked-then-trained within 72 hours | Never measured | [CURRENT]% | ≥95% | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
-| Clinically targeted staff acting on a lure | 67% — the Q1 worst-performing group | [CURRENT]% | ≤25% | [BENCHMARK](#ref-BENCHMARK) | [G/Y/R] |
+*Fill every cell in the two-part format: figure first, people-context immediately after the dash. Compute the people-context from the wave's actual denominator ([employees targeted] is shown in the "People in the measurement" column).*
 
-† **Benchmark note (retain in presentation):** healthcare-sector benchmarks come from the external benchmarking engagement funded in Year 1; where the engagement has not yet returned data, present the column as "pending" rather than estimating. Internal planning ranges from our own sector research (`lure_effectiveness_benchmarks.md`) are the fallback reference, labeled as internal assumptions, never as industry fact.
+| What we measure (plain language) | People in the measurement | Before the program | Today (6 months) | 12-month goal | Benchmark† |
+|---|---|---|---|---|---|
+| Employees who act on a simulated attack | [N] employees were tested this wave | 56% — more than 1 in every 2 employees tested acted on the attack | [X]% — about [1 in N] of the [N] tested | 25% or lower — at most 1 in 4 | [pending] |
+| Employees who report a simulated attack instead of acting on it | Same [N] employees | 15% — only about 6 of the 41 employees targeted raised the alarm | [X]% — [N of every 10] targeted employees now report | 50% or higher — at least half act as early alarms | [pending] |
+| How fast a suspicious message gets reported | [N] reports this period | 74 minutes — the attacker had over an hour of head start | [X] minutes — head start cut to [under/at] [X] minutes | 15 minutes or less | [pending] |
+| Employees who click again in the next wave, after coaching | [N] employees were tested in both consecutive waves | Never measured | [X]% — [N] of the [N] retested employees | Under 8% — fewer than 1 in 12 | [pending] |
+| Clicked-then-trained: employees who finish the 5-minute lesson within 3 days | [N] clickers this period | Never measured | [X]% — [N] of the [N] who clicked finished their lesson | 95% or higher — nearly everyone | [pending] |
+| Clinically targeted staff who act on a lure | [N] clinical employees tested | 67% — 10 of the 15 clinical staff targeted, our worst-performing group | [X]% — about [1 in N] of the [N] clinical staff tested | 25% or lower | [pending] |
+
+† **Benchmark note (retain in presentation):** healthcare-sector benchmarks come from the external benchmarking engagement funded in Year 1; until that data returns, cells stay "pending" rather than estimated. Our internal planning ranges from sector research (`lure_effectiveness_benchmarks.md`) are the fallback reference, labeled as internal assumptions, never as industry fact.
 
 ## Key Findings — What the Data Says About Employee Behavior
 
-1. **[Finding on trajectory]:** e.g., "Acting on simulated attacks fell from 56% to [X]%. Put plainly: at the start of the year, more than half of us who received a realistic attack would act on it; today that is roughly [1 in N]." *(State the finding as a fraction of people, not only a percentage.)*
-2. **[Finding on reporting culture]:** e.g., "Reports rose from 15% to [X]% and arrive in [X] minutes instead of 74. Each report is an early alarm the SOC receives from a person instead of a machine hours later."
-3. **[Finding on the hardest group]:** [Clinical staff / finance staff / executives] finding, with the comparison to their own baseline spelled out.
-4. **[Honest limitation]:** e.g., "A low click rate on simulations does not prove immunity to novel attacks; it proves improved performance against the attack patterns we know are in use. Confidence in the trend: [high/moderate/low], because [N] waves / [N] months of data."
-5. **[Concurrent-controls caveat — mandatory]:** "During the same six months, MedDefense also completed [SOC automation improvements / IAM remediation from the 6x02 audit]. We cannot cleanly separate how much of the improvement in real-incident detection belongs to the awareness program versus these technical controls. The simulation metrics above are the program's own: they measure employee behavior directly and cannot be produced by any technical control."
+*(Each finding must contain at least one people-form number. If a drafted finding has only a percentage, rewrite it before it goes on the slide.)*
+
+1. **[Finding on trajectory — template]:** "Acting on a realistic, healthcare-specific attack fell from 56% — more than half of the [41] employees targeted in the Q1 incident — to [X]%, roughly [1 in N] of the [N] employees tested this wave. In people terms: last spring, [over half] of a room of our nurses acted on a fake Epic message; today, about [N] in that same-sized room would."
+
+2. **[Finding on reporting culture — template]:** "Reporting rose from 15% (6 employees out of 41) to [X]% ([N] of [N] targeted), and the alarm now reaches the SOC in [X] minutes instead of 74 — cutting the attacker's head start from over an hour to [less than half that / minutes]."
+
+3. **[Finding on the hardest group — template]:** "Our clinical staff — the group that clicked at 67% (10 of 15) in Q1 — now click at [X]% ([N] of [N] tested). Whatever the room for improvement, the group most exposed during a shift change is measurably harder to deceive than before."
+
+4. **[Honest limitation — template]:** "A low click rate proves improved performance against the attack patterns we know are in use — the patterns documented in the Q1 investigation — not immunity to novel attacks. Confidence in this trend: [high/moderate/low], because [N] waves across [N] months is still a short measurement history."
+
+5. **[Concurrent-controls caveat — mandatory]:** "During the same six months, MedDefense also completed [SOC automation improvements / IAM remediation from the 6x02 audit]. We cannot cleanly separate how much of the improvement in real-incident detection belongs to the awareness program versus these technical controls. The simulation metrics above are the program's own: they measure what [N] employees actually did when tested, and no technical control can produce them."
 
 ## Recommendations for the Next Six Months
 
@@ -55,7 +63,7 @@ Since [PROGRAM_START], MedDefense has run a behavior-measurement security awaren
 
 ## Bottom Line
 
-**[ONE SENTENCE — template: "Employees are clicking less ([56%→X%]), reporting faster ([74→X] minutes), and repeat risky behavior is [declining/being established at X%], so the human layer that failed in Q1 is measurably harder to exploit — and the next six months will show whether the trend holds."]**
+**[ONE SENTENCE — template, people-numbers required: "In March, more than half of the employees who received a realistic attack acted on it and almost no one reported it; today, after [N] training waves, roughly [1 in N] act and [N in 10] report within [X] minutes — so the human layer that failed in Q1 is measurably harder to exploit, and the next six months will show whether the trend holds."]**
 
 ---
 
