@@ -212,3 +212,105 @@ Required metrics: click rate, report rate, repeat clicker rate (same employee cl
 6. Exclusion and ethics policy. Document exclusion criteria and the program's ethical obligations: aggregate vs. individual disclosure framework, post-simulation support for employees who experience distress, and the governance sign-off required before any template is deployed.
 
 ---
+
+# [3. Phishing Email Templates](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/phishing_templates.md)
+
+## Goal: 
+
+Write four complete, deployable phishing simulation email templates calibrated to documented healthcare attacker behavior patterns and the MedDefense targeting segments defined in the campaign plan.
+
+## Context: 
+
+James Chen's approval rule for any template: it must pass the "would I have clicked this?" test from the perspective of a MedDefense employee in the target segment, operating under normal shift conditions. Generic IT password expiration emails produce 18% click rates. Epic EHR authority emails produce 54%. The difference is specificity, operational consequence and timing precision. Each template exploits a different psychological mechanism, targets a different segment and is immediately usable in the wave schedule from Task 2.
+
+## Instructions: 
+
+Create phishing_templates.md. Each template must be a complete, deployable simulation email: sender display name, spoofed From address, subject line, full email body and a call-to-action link placeholder ([SIMULATION_LINK]). Include a header block for each template describing targeting rationale, psychological mechanism, expected click-rate range and deployment constraints.
+
+### Use These Materials
+
+social_engineering_threat_profile.md
+phishing_campaign_plan.md
+threat_intel/phishing_kit_analysis_summary.md
+threat_intel/email_header_inspection_results.md
+threat_intel/healthcare_social_engineering_patterns.md
+templates/phishing_template_constraints.md
+campaign_design/clinical_schedule_constraints.md
+campaign_design/simulation_ethics_guidelines.md
+
+Templates must use [SIMULATION_LINK] only. Do not include real credential-harvesting URLs, real domains intended for deception, or instructions for collecting passwords. Every template must be usable only inside an approved internal simulation campaign. Required templates:
+
+T-EPIC-01: Epic EHR Account Management (Baseline). Target: SEG-B (general clinical floor staff). Mechanism: authority + urgency. Lure: account suspension due to failed security verification will block patient record access within 48 hours. Must reference Epic by name, use a credible internal notification format and create urgency without being obviously fabricated.
+
+T-MFA-02: IT Helpdesk MFA Enrollment (Baseline). Target: SEG-C (administrative and billing staff). Mechanism: familiarity + authority. Lure: mandatory MFA enrollment required before a compliance deadline. Exploits the timing of MedDefense's actual MFA rollout from 6x02 and the familiarity of receiving IT compliance communications.
+
+T-HR-03: HR Open Enrollment Benefits Deadline (Intermediate). Target: SEG-C and SEG-E (administrative and finance staff). Mechanism: urgency + scarcity. Lure: benefits enrollment deadline with financial consequence for missing the window. A cross-departmental lure that exploits a process every employee has experienced and trusts.
+
+T-BEC-04: Executive Wire Fraud (Advanced). Target: SEG-F and SEG-E (executive and finance staff). Mechanism: authority + social proof. Lure: CFO impersonation requesting urgent document review or financial action. The highest-damage scenario in healthcare and the hardest to detect because no technical indicator distinguishes it from a legitimate executive request.
+
+For each template include: a complete header block (segment, tier, mechanism, expected click-rate range and deployment timing constraints), the full email formatted as the recipient would see it, and an attacker notes section explaining what a real threat actor would add to make this more dangerous.
+
+**Expected output**
+
+<pre>
+# Phishing Email Templates: MedDefense Health Systems
+
+**Inventory:** T-EPIC-01 (Baseline), T-MFA-02 (Baseline), T-HR-03 (Intermediate),
+T-BEC-04 (Advanced)
+**Ethics review completed:** 2026-05-01
+**Approved by:** Dr. Patricia Morales, CISO
+Do not deploy without campaign plan sign-off. See phishing_campaign_plan.md.
+
+---
+
+## T-EPIC-01: Epic EHR Account Management (Baseline)
+
+**Target segment:** SEG-B (General clinical floor staff)
+**Tier:** Baseline
+**Mechanism:** Authority + Urgency
+**Expected click rate (first exposure):** 40-58%
+**Deployment:** Weekdays 07:15-08:30. Do not deploy during ICU or OR shift windows.
+
+---
+
+From:    Epic Health Systems Notifications <notifications@epic-healthsystems.net>
+To:      [First Name Last Name] <[employee@meddefense.org]>
+Subject: ACTION REQUIRED: Epic account security verification required —
+         access suspended in 48 hours
+
+---
+
+Dear [First Name],
+
+A failed security verification has been recorded against your Epic EHR account.
+
+Per MedDefense IT Security Policy, accounts with failed verifications are suspended
+after 48 hours to protect patient data. Your access to patient records, medication
+administration logs and clinical documentation will be unavailable during suspension.
+
+To complete verification and maintain uninterrupted access, click the secure link
+below before 11:59 PM on [DATE+2]:
+
+    [SIMULATION_LINK]
+
+If you believe this message was sent in error, contact the IT helpdesk at ext. 4-HELP
+or help@meddefense.org before the deadline to request a manual review.
+
+Epic Health Systems | Account Security
+Sent on behalf of MedDefense Health Systems Information Security
+
+---
+
+**Attacker notes:** A real attacker registers epic-healthsystems.net 72 hours before
+launch and adds DKIM signing to pass spam filters. The credential harvest page matches
+the actual Epic login interface pixel-for-pixel. The attacker embeds the target's actual
+username in the URL to pre-populate the login form, removing one friction point between
+click and credential submission. A pixel tracker in the email header confirms delivery
+before the campaign wave is sent, so the attacker knows the email was opened.
+
+---
+
+.....
+</pre>
+
+---
