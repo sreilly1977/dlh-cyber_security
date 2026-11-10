@@ -551,3 +551,46 @@ The annual plan must respect healthcare scheduling constraints, including accred
 5. Success criteria. Specific measurable outcomes that constitute program success at 12 months, 24 months and 36 months. These must be the exact metrics Dr. Morales reports to the board: specific enough that a board member with no security background can assess whether the program is working.
 
 ---
+
+# [9. Program Effectiveness Brief](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/program_effectiveness_brief.md)
+### advanced
+
+## Goal: 
+
+Produce the CISO-ready effectiveness brief and the quarterly metrics dashboard template that operationalize program governance and close the feedback loop between security operations and executive leadership.
+
+## Context: 
+
+Six months into the program, Dr. Morales presents results to the MedDefense board. She needs two artifacts: a written brief she can present without a security engineer in the room to translate it, and a metrics dashboard template she can update each quarter without commissioning a new report every time.
+
+This is the final artifact in the awareness program build. You designed the program, built the components, wrote the calendar and justified the budget. Now you instrument the feedback mechanism that tells leadership whether any of it is working. A program with no feedback loop cannot improve and cannot defend its budget at renewal time.
+
+James Chen's framing for the brief: "Three questions. Are we safer? Are we improving? What changes next?"
+
+## Instructions: 
+
+Create program_effectiveness_brief.md.
+
+### Use These Materials
+
+awareness_program_plan.md
+phishing_campaign_plan.md
+program_governance/metrics_baseline.csv
+program_governance/board_reporting_template.md
+program_governance/program_governance_roles.md
+incident_context/post_incident_click_rate_review.md
+incident_context/security_awareness_gap_notes.md
+
+The effectiveness brief must be board-ready and honest about attribution limits. Do not claim the awareness program alone caused incident reduction if other security improvements occurred at the same time. Use trend language, confidence limits and caveats where appropriate.
+
+### Required components:
+
+1. Board-ready effectiveness brief template (6-month). A 2-page brief template Dr. Morales fills with actual data at the 6-month mark. Structure for a board audience: non-technical language, numbers with context (not just percentages), comparison to baseline and to industry benchmark, and a single bottom-line sentence. Sections: program summary, metrics table (current vs. target vs. industry benchmark), key findings (what the data shows about employee behavior), recommendations for the next 6 months, and the one-sentence bottom line.
+
+2. Quarterly metrics dashboard template. A structured tracking template a program manager fills in each quarter. Must track every metric from the campaign plan, show trend direction using delta notation (+ or - percentage points between quarters), flag metrics outside target range with explicit status (Green/Yellow/Red), and produce a single overall program status per quarter.
+
+3. Incident correlation methodology. Design a methodology for evaluating whether the awareness program is influencing real security incident frequency. Address the core challenge directly: you cannot run a controlled experiment on a live workforce. Define what data to collect, how to attribute or honestly fail to attribute incident reduction to the awareness program vs. concurrent security improvements, and how to present this analysis honestly to a board that wants ROI numbers.
+
+4. Program improvement triggers. Define the specific metric thresholds that initiate a formal program review. What does a deteriorating trend look like across three consecutive quarters? Who initiates the review, what data is assessed and who has authority to pause a simulation wave if an employee welfare concern is raised mid-campaign?
+
+---
