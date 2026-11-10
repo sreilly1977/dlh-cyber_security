@@ -505,3 +505,49 @@ The insider threat program must not become a surveillance program. Reporting, tr
 5. Culture and ethics statement. Write the 200-word program statement distributed to all MedDefense employees explaining why this program exists, how employee privacy is protected and what this program is not.
 
 ---
+
+# [8. Annual Security Awareness Program Plan](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/awareness_program_plan.md)
+### advanced
+
+## Goal: 
+
+Produce a 12-month operational plan for MedDefense's security awareness program with a campaign calendar, budget justification and governance framework that Dr. Morales can present to the board of directors.
+
+## Context: 
+
+Dr. Morales's board presentation is scheduled for Q3 2026. She needs three things from this project: a plan that shows what will happen and when, a budget that justifies every line against measurable risk reduction, and a governance structure that answers the board's fundamental question: who is responsible and how will we know it is working?
+
+Sarah Park adds one scheduling constraint: no new training content during the Joint Commission accreditation window in Q4 or during the flu season peak between November and January, when clinical staff coverage is at minimum and training availability drops significantly. Existing content may be delivered; new campaigns targeting clinical staff are paused during these windows.
+
+## Instructions: 
+
+Create awareness_program_plan.md.
+
+### Use These Materials
+
+phishing_campaign_plan.md
+post_click_intervention.md
+guidance_clinical_staff.md
+guidance_it_staff.md
+guidance_executives.md
+guidance_remote_workers.md
+program_governance/annual_calendar_constraints.md
+program_governance/budget_assumptions.md
+program_governance/metrics_baseline.csv
+program_governance/program_governance_roles.md
+campaign_design/workforce_population_breakdown.csv
+campaign_design/clinical_schedule_constraints.md
+
+The annual plan must respect healthcare scheduling constraints, including accreditation windows and flu season pressure. Budget lines must be justified against measurable risk reduction, not generic training value. Required sections:
+
+1. Executive summary. Three paragraphs: problem statement (the Q1 2026 incident, estimated cost, root cause at the human layer), program approach (what this program does and why this approach produces behavior change rather than compliance artifacts), and expected outcomes at 12 months and 36 months with specific metric targets.
+
+2. Annual campaign calendar. Month-by-month schedule for the first 12 months. For each month specify: campaign type, target audience, delivery method and success metric for that campaign. Account for healthcare seasonality and the scheduling constraints above.
+
+3. Budget justification. Year 1 line-item budget. Categories: simulation platform licensing, content development, training delivery time (opportunity cost calculation), external benchmarking, program management overhead. For each line item: estimated cost, what it purchases and the cost of not having it.
+
+4. Governance framework. Roles and responsibilities (program owner, content approver, simulation operator, metrics reviewer, escalation authority), reporting cadence (what metrics go to whom and how often) and review cycle (when templates are retired, when targeting strategy updates, how the program responds to a real phishing incident during an active simulation wave).
+
+5. Success criteria. Specific measurable outcomes that constitute program success at 12 months, 24 months and 36 months. These must be the exact metrics Dr. Morales reports to the board: specific enough that a board member with no security background can assess whether the program is working.
+
+---
