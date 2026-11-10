@@ -15,6 +15,7 @@ A comprehensive cybersecurity study repository structured around two primary lea
 |-----------|-------------|
 | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | Applied defensive operations through a scenario-driven case study (MedDefense) |
 | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Foundational coursework covering all five Security+ domains |
+| [`grc/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc) | Applied governance, risk and compliance through a scenario-driven case study (MedDefense) |
 | [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) | Incident response and digital forensics through a scenario-driven case study (MedDefense) |
 | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Practical SOC references — Splunk/Wazuh queries, open-source security stack architecture, and project presentations |
 | [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Official publications from CIS, CISA, CompTIA, Crypt101, Gartner, HIPAA, KnowB4, Micorsoft, NIST CSF & Special Publications, NSA, and SANS |
@@ -118,6 +119,24 @@ See the [`ir_dfir_playbook/README.md`](https://github.com/sreilly1977/dlh-cyber_
 
 ---
 
+## `grc`
+
+Applied governance, risk, and compliance through a scenario-driven case study centered on MedDefense, a fictional healthcare organization.
+
+### Part 6 - Cybersecurity governance, risk, and compliance (31 - 35)
+
+| Directory | Focus | Exercises |
+|-----------|-------|-----------|
+| [`6x00_compliance_engine/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x00_compliance_engine) | Compliance engine: an evidence-referenced gap assessment against NIST CSF 2.0 and the HIPAA Security Rule, three enforceable policies written from scratch (Acceptable Use, Data Classification, Vendor Management), a CloudVault Medical vendor risk assessment, an OCR desk audit evidence package, and a board-facing CISO compliance brief | 8 |
+| [`6x01_bc_dr/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x01_bc_dr) | Business continuity and disaster recovery: a signed Business Impact Analysis across ten MedDefense systems with patient-safety-driven RTO, RPO and MTD values, a dependency-aware backup architecture, command-level recovery runbooks for the Laboratory Information System and Active Directory, clinical downtime procedures, a timed LIS recovery test against a 30-minute RTO, a formal gap analysis, and a DR master plan satisfying HIPAA 164.308(a)(7) | 8 |
+| [`6x02_iam_scale/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x02_iam_scale) | Identity and access management: SAML SSO federation with Keycloak, least-privilege corrections to three AWS IAM policies, Vault-issued dynamic credentials replacing static service account passwords, a Python IAM audit script processing a 20-account inventory into severity-scored JSON findings, a professional audit report, a CIS AWS Foundations Benchmark assessment, and an identity program brief for the board | 8 |
+| [`6x03_soc_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x03_soc_playbook) | SOC automation: a modular IOC enrichment engine, a SQLite-backed case manager, executable phishing triage and credential exposure playbooks with human-authorization checkpoints for destructive actions, a five-scenario integration test suite, an automation strategy gated by measured false-positive rates, and a one-page SOC lead brief | 8 |
+| [`6x04_security_awareness/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/6x04_security_awareness) | Security awareness and human risk: an adversary-perspective social engineering threat profile, a 90-day four-wave phishing simulation campaign plan bounded by HR privacy rules, four deployable phishing templates, non-shaming post-click microtraining, four role-based one-page security guides, vishing scenario scripts, and an insider threat framework that protects the organization without creating a surveillance culture | 8 |
+
+See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/README.md) for the full curriculum map.
+
+---
+
 ### Reference Libraries
 
 | Directory | Description |
@@ -188,7 +207,8 @@ Work through the tracks based on your learning goals:
 3. **Blue team aspirants:** Follow [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) modules in order, document findings cumulatively
 4. **Threat detectives and hunters:** Follow [`threat_detection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection) modules in order, document findings cumulatively
 5. **For incident response and foresic excercises:** Follow [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) modules in order, document findings cumulatively
-6. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
+6. **For governance, risk and compliance:*** Follow [`grc/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/) modules in order, document findings cumulatively
+7. **Working analysts:** Use [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) query collections during incident response activities
 
 ---
 
