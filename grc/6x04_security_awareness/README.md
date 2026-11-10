@@ -353,3 +353,65 @@ Landing pages and microtraining must be non-shaming. Repeat-click escalation mus
 4. Positive reinforcement design. Design the immediate automated response an employee receives within 60 seconds of correctly reporting a simulation email using the phishing report button. The reinforcement must be immediate, specific and proportional. Describe exactly what the employee sees or receives.
 
 ---
+
+# [5. Role-Based Security Guidance](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/guidance_clinical_staff.md)
+
+## Goal: 
+
+Produce four one-page security guidance documents that four distinct MedDefense employee populations will actually read, retain and act on within their existing daily workflows.
+
+## Context: 
+
+Sarah Park's constraint is real: clinical staff carry 14 mandatory training modules. Adding a 20-page security policy binder produces resentment, not behavior change. The answer is four audience-specific documents: 90 seconds to read, three threats specific to this role, three actions specific to this workflow, one reporting path. The language must match how each audience actually communicates at work. Not security language. Their language.
+
+Robert Kim notes that the executive guidance specifically needs to address business email compromise. Three finance-sector executives at peer organizations were targeted with wire fraud attempts in Q1 2026 using a near-identical scenario to T-BEC-04 from Task 3.
+
+## Instructions: 
+
+Create four separate files: [guidance_clinical_staff.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/guidance_clinical_staff.md), [guidance_it_staff.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/guidance_it_staff.md), [guidance_executives.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/guidance_executives.md) and [guidance_remote_workers.md](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/guidance_remote_workers.md).
+
+### Use These Materials
+
+threat_intel/healthcare_social_engineering_patterns.md
+incident_context/security_awareness_gap_notes.md
+iam_context/privileged_account_findings.md
+iam_context/iam_audit_summary_6x02.md
+templates/role_based_guidance_style_guide.md
+campaign_design/workforce_population_breakdown.csv
+campaign_design/clinical_schedule_constraints.md
+
+Each one-page guide must use the language of its audience. IT staff guidance must specifically reflect the 6x02 IAM findings: dormant service accounts, over-privileged roles and service-account hygiene.
+
+Each document follows the same one-page structure:
+
+    Header: "Security Quick Reference: [Audience]" with MedDefense branding placeholder, version number and date
+
+    Your biggest threats (3 bullets): specific threat scenarios for this role, not generic categories; each bullet names the threat, describes how it targets this specific role and gives a one-sentence behavioral signal to watch for
+
+    What to do right now (3 bullets): specific, immediate actions the employee can take this week to reduce actual risk; no general advice
+
+    When something looks wrong (1 action): a single, unambiguous reporting action with contact information
+
+    What not to do (3 bullets): the three highest-frequency mistakes this specific audience makes, stated plainly without condescension
+
+    Footer: Security team contact (ext. 4-SECURITY, security@meddefense.org) and phishing report button location in Outlook
+
+Audience-specific content requirements:
+
+### Clinical staff: 
+
+Use nursing and clinical workflow language. Reference Epic by name. Address EHR credential phishing, USB drops in clinical areas, shoulder surfing at workstations and fake vendor support calls during equipment issues.
+
+### IT staff: 
+
+Assume technical proficiency. Address privileged access discipline (no admin actions from personal email or personal devices), insider threat indicators that IT staff are uniquely positioned to observe, service account hygiene and the specific failure modes documented in the 6x02 IAM audit (dormant service accounts, over-privileged roles).
+
+### Executives: 
+
+Use board-level language, not IT language. Address spear phishing targeting executives (BEC and wire fraud specifically), travel security and the operational impact of an executive credential compromise on MedDefense operations. Authoritative tone. Concise.
+
+### Remote workers: 
+
+Address the home environment specifically. Home WiFi security, VPN discipline before any work system access, shoulder surfing in public spaces, device separation between personal and work machines, and the risk of using personal email or personal cloud storage for work documents.
+
+---
