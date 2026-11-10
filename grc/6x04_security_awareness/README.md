@@ -415,3 +415,49 @@ Use board-level language, not IT language. Address spear phishing targeting exec
 Address the home environment specifically. Home WiFi security, VPN discipline before any work system access, shoulder surfing in public spaces, device separation between personal and work machines, and the risk of using personal email or personal cloud storage for work documents.
 
 ---
+
+# [6. Vishing and Social Engineering Scenario Scripts](https://github.com/sreilly1977/dlh-cyber_security/blob/main/grc/6x04_security_awareness/vishing_scenarios.md)
+### advanced
+
+## Goal: 
+
+Produce three complete vishing simulation scenario scripts with caller guides, employee assessment rubrics and post-exercise debrief protocols usable for live simulation exercises or tabletop training sessions.
+
+## Context: 
+
+The Module 5 incident began with a phishing email, but the post-incident review documented a second failure: a helpdesk verification call was misdirected because the receiving employee had no framework for verifying a caller's identity. Vishing is the social engineering vector most organizations simulate least but that carries the highest per-incident impact. A successful vishing call bypasses every technical control by getting a trained employee to take the action on behalf of the attacker.
+
+Mike Torres notes that two peer healthcare organizations reported vishing incidents in Q1 2026. Both targeted clinical supervisors and finance staff. Both began with publicly available information from LinkedIn and facility websites.
+
+## Instructions: 
+
+Create vishing_scenarios.md. Produce three complete scenario scripts each usable for live simulation exercises, tabletop training or onboarding awareness sessions.
+
+### Use These Materials
+
+threat_intel/healthcare_social_engineering_patterns.md
+incident_context/module5_incident_summary.md
+incident_context/cobalt_strike_phishing_path.md
+templates/vishing_facilitator_notes.md
+campaign_design/simulation_ethics_guidelines.md
+campaign_design/hr_privacy_rules.md
+
+Vishing scenarios must be safe for controlled internal simulation. Each script must include verification opportunities, scoring guidance and debrief notes. Do not write scripts that normalize unsafe behavior such as installing unauthorized remote support tools or sharing passwords. Each scenario must include:
+
+    Scenario header: scenario ID, target role, attack objective, psychological mechanisms and success criteria from the attacker's perspective
+
+    Caller script: exact dialogue the simulation caller uses, with three response branches (compliance, hesitation and verification request)
+
+    Assessment rubric: what the employee must do at each decision point to pass, partially pass or fail; definition of a full pass
+
+    Debrief notes: what to explain after the exercise, what made this scenario realistic and what a real attacker would have accessed if they succeeded
+
+### Required scenarios:
+
+V-01: IT Helpdesk Impersonation. Target: general clinical or administrative staff. Objective: get the employee to provide their current password or accept an attacker-initiated password reset.
+
+V-02: Vendor Support Escalation. Target: clinical staff or clinical supervisor. Objective: get the employee to install a remote support tool or grant screen access for an "emergency Epic patch."
+
+V-03: Executive Authority Impersonation. Target: administrative or finance staff. Objective: get the employee to initiate a financial action or send a sensitive document based solely on a phone call from someone impersonating an executive by name.
+
+---
