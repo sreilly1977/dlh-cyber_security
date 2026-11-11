@@ -176,12 +176,12 @@ This repository supports preparation for:
 
 | Certification | Domain Coverage |
 | --- | --- |
-| [CompTIA Security+ (SY0-701)](https://www.comptia.org/certifications/security) | All 5 domains |
-| [CompTIA CySA+ (CS0-003)](https://www.comptia.org/certifications/cybersecurity-analyst) | Threat detection, analysis, response |
-| [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework) | Identify, Protect, Detect, Respond, Recover |
-| [CIS Controls v8](https://www.cisecurity.org/controls) | Prioritized security best practices |
-| [HIPAA Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/index.html) | Healthcare compliance fundamentals |
-| [MITRE ATT&CK Framework](https://attack.mitre.org/) | Adversary TTPs mapping |
+| [`CompTIA Security+ (SY0-701)`](https://www.comptia.org/certifications/security) | All 5 domains |
+| [`CompTIA CySA+ (CS0-003)`](https://www.comptia.org/certifications/cybersecurity-analyst) | Threat detection, analysis, response |
+| [`NIST Cybersecurity Framework 2.0`](https://www.nist.gov/cyberframework) | Identify, Protect, Detect, Respond, Recover |
+| [`CIS Controls v8`](https://www.cisecurity.org/controls) | Prioritized security best practices |
+| [`HIPAA Security Rule`](https://www.hhs.gov/hipaa/for-professionals/security/index.html) | Healthcare compliance fundamentals |
+| [`MITRE ATT&CK Framework`](https://attack.mitre.org/) | Adversary TTPs mapping |
 
 ---
 
@@ -197,7 +197,7 @@ Work through the tracks based on your learning goals:
 | Applied Defense | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | SOC skills, hands-on practice |
 | Threat Detection | [`threat_detection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/) | SOC skills, hands-on practice |
 | Incident Response & Digital Forensics | [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) | SOC skills, hands-on practice |
-| Governance, Risk, and Compliance | [`grc/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/) | GRC skills, hands-on practice |
+| Governance, Risk, & Compliance | [`grc/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/) | GRC skills, hands-on practice |
 | Reference Libraries | [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Working professionals, standards, frameworks and security benchmarks | 
 | Quick References | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Working professionals, query lookups |
 
@@ -223,12 +223,12 @@ Available in the [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tr
 
 ### Online Training Resources
 
-- [TryHackMe](https://tryhackme.com) — Guided learning rooms
-- [HackTheBox](https://www.hackthebox.com) — Hands-on labs
-- [OverTheWire](https://overthewire.org) — Command line and security challenges
-- [CyberStudyHub](https://nishtman-k.github.io/cyber-study-hub/) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
+- [`TryHackMe`](https://tryhackme.com) — Guided learning rooms
+- [`HackTheBox`](https://www.hackthebox.com) — Hands-on labs
+- [`OverTheWire`](https://overthewire.org) — Command line and security challenges
+- [`CyberStudyHub`](https://nishtman-k.github.io/cyber-study-hub/) — A friendly, hands-on collection of cheatsheets for cybersecurity students.
 
-### [Open Source Infrastructure](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md)
+### [`Open Source Infrastructure`](https://github.com/sreilly1977/dlh-cyber_security/blob/main/notes/Open-Source_Security_Stack.md)
 
 Setup guides and configuration files available in the repository for:
 - Wazuh SIEM deployment
@@ -237,27 +237,27 @@ Setup guides and configuration files available in the repository for:
 - Home lab architecture recommendations
 
 ### Detection, Logging, Baselines and Auditing Frameworks
-- [Linux AuditD - Linux audit daemon rules](https://github.com/neo23x0/auditd)
-- [Swift-on-Security Windows Sysmon Event ID filtering](https://github.com/SwiftOnSecurity/sysmon-config)
-- [Groundcover - Log retention policies](https://www.groundcover.com/learn/logging/log-retention-policies)
-- [CIS - Compliance-aligned baselines](https://learn.cisecurity.org/benchmarks)
-- [Linux AIDE - Advanced Intrusion Detection Environment](https://aide.github.io/)
-- [rkhunter - Linux Rootkit Hunter](https://rkhunter.sourceforge.net/)
+- [`Linux AuditD - Linux audit daemon rules`](https://github.com/neo23x0/auditd)
+- [`Swift-on-Security Windows Sysmon Event ID filtering`](https://github.com/SwiftOnSecurity/sysmon-config)
+- [`Groundcover - Log retention policies`](https://www.groundcover.com/learn/logging/log-retention-policies)
+- [`CIS - Compliance-aligned baselines`](https://learn.cisecurity.org/benchmarks)
+- [`Linux AIDE - Advanced Intrusion Detection Environment`](https://aide.github.io/)
+- [`rkhunter - Linux Rootkit Hunter`](https://rkhunter.sourceforge.net/)
 
 > **Note:** Remember to enable browser ad blockers for windows clients, and configure local DNS exclusions, for optimal log collection:
 > C:\ wevtutil sl Microsoft-Windows-DNS-Client/Operational /enabled:true
 
 ### Threat Intelligence Sources and Toolkits
 
-- [MISP - Luxembourg open-source threat intelligence](https://www.misp-project.org/)
-- [VirusTotal - URL, file and hash scanning](https://www.virustotal.com/)
-- [AbuseIPDB - IP reputation lookup](https://www.abuseipdb.com/)
-- [HybridAnalysis - online file and URL sandbox](https://hybrid-analysis.com/) 
-- [MXToolbox - online email analysis](https://mxtoolbox.com)
-- [CyberChef - online toolbox](https://gchq.github.io/CyberChef/)
-- [CyberRange Luxembourg - Virtual live attack simulation](https://www.cyber-range.lu/)
-- [Open Threat Exchange  - Open-source threat intelligence](https://otx.alienvault.com)
-- [CIRCL - Luxembourg's cybersecurity response centre](https://www.circl.lu/)
+- [`MISP - Luxembourg open-source threat intelligence`](https://www.misp-project.org/)
+- [`VirusTotal - URL, file and hash scanning`](https://www.virustotal.com/)
+- [`AbuseIPDB - IP reputation lookup`](https://www.abuseipdb.com/)
+- [`HybridAnalysis - online file and URL sandbox`](https://hybrid-analysis.com/) 
+- [`MXToolbox - online email analysis`](https://mxtoolbox.com)
+- [`CyberChef - online toolbox`](https://gchq.github.io/CyberChef/)
+- [`CyberRange Luxembourg - Virtual live attack simulation`](https://www.cyber-range.lu/)
+- [`Open Threat Exchange  - Open-source threat intelligence`](https://otx.alienvault.com)
+- [`CIRCL - Luxembourg's cybersecurity response centre`](https://www.circl.lu/)
 
 ---
 
