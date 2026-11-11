@@ -196,7 +196,8 @@ Work through the tracks based on your learning goals:
 | Foundation First | [`common_core/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/common_core) | Security+ exam prep, new learners |
 | Applied Defense | [`blue_team/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/blue_team) | SOC skills, hands-on practice |
 | Threat Detection | [`threat_detection/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/threat_detection/) | SOC skills, hands-on practice |
-| Incedent Response & Digital Forensics | [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) | SOC skills, hands-on practice |
+| Incident Response & Digital Forensics | [`ir_dfir_playbook/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/ir_dfir_playbook/) | SOC skills, hands-on practice |
+| Governance, Risk, and Compliance | [`grc/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/grc/) | GRC skills, hands-on practice |
 | Reference Libraries | [`reference_libraries/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/) | Working professionals, standards, frameworks and security benchmarks | 
 | Quick References | [`notes/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/notes) | Working professionals, query lookups |
 
