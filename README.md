@@ -7,7 +7,7 @@
 
 </div>
 
-A comprehensive cybersecurity study repository structured around two primary learning tracks — foundational coursework and applied blue team operations — supplemented by a practical SOC notes collection. Content aligns with the CompTIA Security+ (SY0-701) certification exam domains and NIST/CIS security frameworks.
+A comprehensive cybersecurity study repository structured around five learning tracks — foundational coursework, applied blue team operations, threat detection, incident response/digital forensics, and GRC — supplemented by a practical SOC notes collection, and a reference library. Content aligns with the CompTIA Security+ (SY0-701) certification exam domains and NIST/CIS security frameworks.
 
 ## Repository Structure
 
