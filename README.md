@@ -139,8 +139,8 @@ See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob
 
 ### Reference Libraries
 
-| Directory | Description | Contents |
-|-----------|-------------|----------|
+| Directory | Description |
+|-----------|-------------|
 | [`Amazon`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Amazon) | AWS documentation |
 | [`CIS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CIS) | CIS Benchmarks and Critical Security Controls for system hardening |
 | [`CISA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CISA) | CISA advisories, playbooks, and guidance |
