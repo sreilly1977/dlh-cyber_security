@@ -148,10 +148,10 @@ See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob
 | [`Crypt101/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Crypt101) | Foundational cryptography concepts, algorithms, and implementation guides |
 | [`ENISA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/ENISA) | ENISA guidance |
 | [`Gartner`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Gartner) | Gartner security research and market analysis |
-| [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HIPAA) | HIPAA and healthcare regulatory compliance references (HICP, NIPP Sector-Specific Plan) |
+| [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HIPAA) | HIPAA and healthcare regulatory compliance |
 | [`HSEEP`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HSEEP) | Exercise and evaluation doctrine |
 | [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Knowbe4) | Security awareness training resources and social engineering red flags |
-| [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Microsoft) | Microsoft security methodologies (STRIDE Threat Model) |
+| [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Microsoft) | Microsoft security methodologies |
 | [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_CSF) | NIST Cybersecurity Framework |
 | [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_Special_Publications) | NIST Special Publications (SP 800 series) and whitepapers |
 | [`NSA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NSA) | NSA cybersecurity guidance and advisories |
