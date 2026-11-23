@@ -152,8 +152,8 @@ See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob
 | [`HSEEP`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HSEEP) | Exercise and evaluation doctrine |
 | [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Knowbe4) | Security awareness training resources and social engineering red flags |
 | [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Microsoft) | Microsoft security methodologies (STRIDE Threat Model) |
-| [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_CSF) | NIST Cybersecurity Framework references (CIS Controls Guide v8.1.2, CSWP.29) |
-| [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_Special_Publications) | NIST SP 800-series reference documents (SP 800-12, 800-30, 800-53, 800-61) |
+| [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_CSF) | NIST Cybersecurity Framework |
+| [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_Special_Publications) | NIST Special Publications (SP 800 series) and whitepapers |
 | [`NSA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NSA) | NSA cybersecurity guidance and advisories |
 | [`OASIS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/OASIS) | OASIS standards technical documentation |
 | [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/SANS) | SANS Institute reading room materials and security research papers |
