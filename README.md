@@ -161,6 +161,8 @@ See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob
 | [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/SANS) | SANS Institute reading room materials and security research papers |
 | [`Threat_Hunting_Dot_Net`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Threat_Hunting_Dot_Net) | Threat hunting methodology and guidance |
 
+See the [`reference_libraries/README.md`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/README.md) for full list of publications.
+
 ---
 
 ## `notes/`
