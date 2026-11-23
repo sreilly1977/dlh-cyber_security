@@ -143,23 +143,23 @@ See the [`grc/README.md`](https://github.com/sreilly1977/dlh-cyber_security/blob
 
 | Directory | Description |
 |-----------|-------------|
-| [`Amazon`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Amazon) | AWS documentation |
-| [`CIS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CIS) | CIS Benchmarks and Critical Security Controls for system hardening |
-| [`CISA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CISA) | CISA advisories, playbooks, and guidance |
-| [`CompTIA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CompTIA) | CompTIA course and exam reference material |
+| [`Amazon/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Amazon) | AWS documentation |
+| [`CIS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CIS) | CIS Benchmarks and Critical Security Controls for system hardening |
+| [`CISA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CISA) | CISA advisories, playbooks, and guidance |
+| [`CompTIA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/CompTIA) | CompTIA course and exam reference material |
 | [`Crypt101/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Crypt101) | Foundational cryptography concepts, algorithms, and implementation guides |
-| [`ENISA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/ENISA) | ENISA guidance |
-| [`Gartner`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Gartner) | Gartner security research and market analysis |
+| [`ENISA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/ENISA) | ENISA guidance |
+| [`Gartner/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Gartner) | Gartner security research and market analysis |
 | [`HIPAA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HIPAA) | HIPAA and healthcare regulatory compliance |
-| [`HSEEP`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HSEEP) | Exercise and evaluation doctrine |
+| [`HSEEP/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/HSEEP) | Exercise and evaluation doctrine |
 | [`Knowbe4/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Knowbe4) | Security awareness training resources and social engineering red flags |
 | [`Microsoft/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Microsoft) | Microsoft security methodologies |
 | [`NIST_CSF/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_CSF) | NIST Cybersecurity Framework |
 | [`NIST_Special_Publications/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NIST_Special_Publications) | NIST Special Publications (SP 800 series) and whitepapers |
-| [`NSA`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NSA) | NSA cybersecurity guidance and advisories |
-| [`OASIS`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/OASIS) | OASIS standards technical documentation |
+| [`NSA/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/NSA) | NSA cybersecurity guidance and advisories |
+| [`OASIS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/OASIS) | OASIS standards technical documentation |
 | [`SANS/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/SANS) | SANS Institute reading room materials and security research papers |
-| [`Threat_Hunting_Dot_Net`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Threat_Hunting_Dot_Net) | Threat hunting methodology and guidance |
+| [`Threat_Hunting_Dot_Net/`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/Threat_Hunting_Dot_Net) | Threat hunting methodology and guidance |
 
 See the [`reference_libraries/README.md`](https://github.com/sreilly1977/dlh-cyber_security/tree/main/reference_libraries/README.md) for full list of publications.
 
